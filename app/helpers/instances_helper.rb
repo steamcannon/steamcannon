@@ -10,4 +10,12 @@ module InstancesHelper
                end
     instances.select { |x| x.image_id == image_id && x.status != 'terminated' }
   end
+
+  def render_dns_name instance
+    if instance.frontend? && instance.public_dns.any? 
+      link_to instance.public_dns, "http://#{instance.public_dns}/mod_cluster_manager"
+    else 
+      instance.public_dns
+    end
+  end
 end
