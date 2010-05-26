@@ -1,6 +1,6 @@
 <%= link_to instance.id, instance %>
 <%= link_to 'shutdown', instance, :class => 'shutdown', :confirm => 'Are you sure?', :method => :delete %>
 <ul>
-  <li><%=h instance.public_dns %></li>
+  <li><%= instance.frontend? && instance.public_dns.any? ? link_to(instance.public_dns, "http://#{instance.public_dns}/mod_cluster_manager") : instance.public_dns %></li>
   <li><%=h instance.status %></li>
 </ul>

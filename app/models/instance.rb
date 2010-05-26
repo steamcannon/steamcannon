@@ -10,7 +10,26 @@ class Instance
     @attrs[attr]
   end
 
+  def backend?
+    image_id == APP_CONFIG['backend_image_id']
+  end
 
+  def frontend?
+    image_id == APP_CONFIG['frontend_image_id']
+  end
+
+  def running?
+    status == 'running'
+  end
+
+  def self.backend
+    all.find {|x| x.backend? && x.running? }
+  end
+
+  def upload file
+    # TODO: figure out why Net::SSH won't authenticate
+    `scp #{file} #{public_dns}:#{::INSTANCE_FACTORY.deploy_path}`
+  end
 
   # Required ActiveRecord interface
 

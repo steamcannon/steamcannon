@@ -1,4 +1,5 @@
 class EC2
+  DEPLOY_DIR = "/opt/jboss-as6/server/cluster-ec2/farm/"
 
   def instances
     ec2.describe_instances.map do |aws|
@@ -18,6 +19,10 @@ class EC2
 
   def terminate instance_id
     ec2.terminate_instances [instance_id]
+  end
+
+  def deploy_path
+    DEPLOY_DIR
   end
 
   def ec2
