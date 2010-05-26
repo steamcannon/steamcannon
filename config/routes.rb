@@ -1,6 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :instances
 
+  map.upload 'app/upload', :controller => 'app', :action => 'upload'
+
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
