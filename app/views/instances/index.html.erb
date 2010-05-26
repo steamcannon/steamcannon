@@ -1,0 +1,19 @@
+<h1>CirrAS Instances</h1>
+
+<h3>
+  Management 
+  <%= link_to 'New', new_instance_path(:image_id => APP_CONFIG['management_image_id']) %>
+</h3>
+<%= render :partial => 'instance', :collection => filter(@instances, :management) %>
+
+<h3>
+  Frontend
+  <%= link_to 'New', new_instance_path(:image_id => APP_CONFIG['frontend_image_id']) %>
+</h3>
+<%= render :partial => 'instance', :collection => filter(@instances, :frontend) %>
+
+<h3>
+  Backend
+  <%= link_to 'New', new_instance_path(:image_id => APP_CONFIG['backend_image_id']) %>
+</h3>
+<%= render :partial => 'instance', :collection => filter(@instances, :backend) %>

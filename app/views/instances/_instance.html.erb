@@ -1,0 +1,6 @@
+<%= link_to instance.id, instance %>
+<%= link_to 'shutdown', instance, :class => 'shutdown', :confirm => 'Are you sure?', :method => :delete %>
+<ul>
+  <li><%=h instance.public_dns %></li>
+  <li><%=h instance.status %></li>
+</ul>
