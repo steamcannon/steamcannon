@@ -12,10 +12,15 @@ module InstancesHelper
   end
 
   def render_dns_name instance
-    if instance.frontend? && instance.public_dns.any? 
-      link_to instance.public_dns, "http://#{instance.public_dns}/mod_cluster_manager"
-    else 
-      instance.public_dns
+    if instance.public_dns.any? 
+      case
+      when instance.frontend?
+        link_to instance.public_dns, "http://#{instance.public_dns}/mod_cluster_manager"
+      when instance.management?
+        link_to instance.public_dns, "http://#{instance.public_dns}:7080"
+      else
+        instance.public_dns
+      end
     end
   end
 end

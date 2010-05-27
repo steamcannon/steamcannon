@@ -27,6 +27,10 @@ class Instance
     image_id == APP_CONFIG['frontend_image_id']
   end
 
+  def management?
+    image_id == APP_CONFIG['management_image_id']
+  end
+
   def running?
     status == 'running'
   end
