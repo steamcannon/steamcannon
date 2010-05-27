@@ -7,6 +7,7 @@ class InstancesController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @instances }
+      format.json  { render :json => @instances }
     end
   end
 
@@ -18,6 +19,7 @@ class InstancesController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @instance }
+      format.json  { render :json => @instance }
     end
   end
 

@@ -10,6 +10,15 @@ class Instance
     @attrs[attr]
   end
 
+  def to_json options = {}
+    @attrs.to_json options
+  end
+
+  def to_xml options = {}
+    options[:root] ||= self.class.name.downcase
+    @attrs.to_xml options
+  end
+
   def backend?
     image_id == APP_CONFIG['backend_image_id']
   end
