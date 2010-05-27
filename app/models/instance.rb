@@ -28,7 +28,7 @@ class Instance
 
   def upload file
     # TODO: figure out why Net::SSH won't authenticate
-    `scp #{file} #{public_dns}:#{::INSTANCE_FACTORY.deploy_path}`
+    `scp -o StrictHostKeyChecking=no #{file} #{public_dns}:#{::INSTANCE_FACTORY.deploy_path}`
   end
 
   # Required ActiveRecord interface
