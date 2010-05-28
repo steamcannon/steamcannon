@@ -5,16 +5,22 @@ Its contents should look something like this:
     access_key: YOUR_EC2_ACCESS_KEY
     secret_access_key: YOUR_SECRET_EC2_ACCESS_KEY
     
-    # Optional, only required if starting a mgmt server from ctjr
-    bucket: some-s3-bucket
-    
     management_image_id: ami-2741ad4e
     backend_image_id:    ami-5949a530
     frontend_image_id:   ami-2749a54e
     
-    # Optional, defaults to 'default'
-    key_pair_name: some-key-pair
+    # Optional, only required if starting a mgmt server from ctjr
+    bucket: SOME-S3-BUCKET
     
-    # These are currently ignored, so set ~/.ssh/config properly
-    private_key_file: /Users/jim/.ssh/aws/jimkey.pem
-    deployer_username: root
+    # Optional, defaults to 'default'
+    key_pair_name: YOUR_KEY_PAIR_NAME
+    
+    # Optional, as long as you have working ~/.ssh/config
+    ssh_private_key_file: /Users/YOU/.ssh/YOUR_PRIVATE_KEY.pem
+    ssh_username: root
+
+
+Regarding the ssh private key, you'll need the public key to reside in
+the same directory, with a .pub extension.  To obtain it, try this:
+
+  ssh-keygen -y -f ~/.ssh/YOUR_KEY.pem > ~/.ssh/YOUR_KEY.pem.pub

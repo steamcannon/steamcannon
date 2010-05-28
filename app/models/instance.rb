@@ -40,8 +40,10 @@ class Instance
   end
 
   def upload file
-    # TODO: figure out why Net::SSH won't authenticate
-    `scp -o StrictHostKeyChecking=no #{file} #{public_dns}:#{::INSTANCE_FACTORY.deploy_path}`
+    # `scp -o StrictHostKeyChecking=no #{file} #{public_dns}:#{::INSTANCE_FACTORY.deploy_path}`
+    Net::SCP.start(public_dns, APP_CONFIG['ssh_username'], :keys => [APP_CONFIG['ssh_private_key_file']]) do |scp|
+      scp.upload file.to_s, File.join(::INSTANCE_FACTORY.deploy_path, File.basename(file))
+    end
   end
 
   # Required ActiveRecord interface
