@@ -79,3 +79,13 @@ pre {
 .instance-list tbody tr:hover td {
    color:#000099;
 }
+
+td.running {
+   color: green;
+}
+td.terminated {
+   color: red;
+}
+td.changing {
+   color: goldenRod;
+}

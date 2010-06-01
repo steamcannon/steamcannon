@@ -12,7 +12,7 @@ class AppController < ApplicationController
       File.open(path, 'w') do |file| 
         file.write(input.read)
       end
-      backend.upload path
+      backend.deploy path
     end
     respond_to do |format|
       format.html { redirect_to(instances_url) }

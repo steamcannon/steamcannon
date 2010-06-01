@@ -23,4 +23,13 @@ module InstancesHelper
       end
     end
   end
+
+  def status instance
+    if %w{ running terminated }.include? instance.status
+      instance.status
+    else
+      'changing'
+    end
+  end
+
 end

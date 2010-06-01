@@ -20,6 +20,7 @@ class InstancesController < ApplicationController
       format.html # show.html.erb
       format.xml  { render :xml => @instance }
       format.json  { render :json => @instance }
+      format.js  { render :layout => false }
     end
   end
 
