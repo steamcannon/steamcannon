@@ -1,10 +1,19 @@
-class App
 
-  # The war file's basename
-  attr_accessor :id
+class App 
+
+  attr_accessor :id, :archive
 
   def initialize attrs = {}
-    @id = attrs[:id]
+    @archive = attrs[:archive]
+    @id = File.basename(@archive, ".war") unless @archive.blank?
+  end
+
+  def deployed?
+    true
+  end
+
+  def url
+    "http://wherever.com"
   end
 
   def self.all
@@ -12,7 +21,7 @@ class App
   end
 
   def self.find id
-    all.find {|x| x.id == id}
+    all.find {|x| x.id == id} || App.new
   end
 
   # Used by url_for
@@ -25,8 +34,12 @@ class App
     id
   end
 
+  def to_param
+    id
+  end
+
   def save
-    # TODO
+    true
   end
 
   def destroy

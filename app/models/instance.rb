@@ -84,6 +84,11 @@ class Instance
     id
   end
 
+  # This may obviate the to_s def
+  def to_param
+    to_s
+  end
+
   def save
     ::INSTANCE_FACTORY.launch(image_id, key_pair_name)
   end

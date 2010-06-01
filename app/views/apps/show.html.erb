@@ -1,3 +1,6 @@
 
-<%= link_to 'Edit', edit_app_path(@app) %> |
-<%= link_to 'Back', apps_path %>
+<% if @app.deployed? %>
+<p>The app is running</p>
+<p>Your URL is <%= link_to @app.url %></p>
+<%= button_to 'Undeploy', @app, :method => :delete %>
+<% end %>
