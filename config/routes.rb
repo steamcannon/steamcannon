@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :apps
+
   map.resources :instances
 
   map.upload 'app/upload', :controller => 'app', :action => 'upload'

@@ -39,6 +39,10 @@ class Instance
     all.find {|x| x.backend? && x.running? }
   end
 
+  def self.frontend
+    all.find {|x| x.frontend? && x.running? }
+  end
+
   def deploy file
     # `scp -o StrictHostKeyChecking=no #{file} #{public_dns}:#{::INSTANCE_FACTORY.deploy_path}`
     remote = File.join(::INSTANCE_FACTORY.deploy_path, File.basename(file))
