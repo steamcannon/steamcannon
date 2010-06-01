@@ -19,3 +19,7 @@ Its contents should look something like this:
     ssh_private_key_file: /Users/YOU/.ssh/YOUR_PRIVATE_KEY.pem
     ssh_username: root
 
+If, upon starting the app, you see errors regarding an "already
+activated net-ssh", try updating your gem:
+
+  $ sudo gem update net-ssh
