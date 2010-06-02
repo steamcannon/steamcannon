@@ -32,11 +32,6 @@ class AppsController < ApplicationController
     end
   end
 
-  # GET /apps/1/edit
-  def edit
-    @app = App.find(params[:id])
-  end
-
   # POST /apps
   # POST /apps.xml
   def create
@@ -54,23 +49,6 @@ class AppsController < ApplicationController
     end
   end
 
-  # PUT /apps/1
-  # PUT /apps/1.xml
-  def update
-    @app = App.find(params[:id])
-
-    respond_to do |format|
-      if @app.update_attributes(params[:app])
-        flash[:notice] = 'App was successfully updated.'
-        format.html { redirect_to(@app) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
   # DELETE /apps/1
   # DELETE /apps/1.xml
   def destroy
@@ -78,7 +56,7 @@ class AppsController < ApplicationController
     @app.destroy
 
     respond_to do |format|
-      format.html { redirect_to(apps_url) }
+      format.html { redirect_to new_app_path }
       format.xml  { head :ok }
     end
   end

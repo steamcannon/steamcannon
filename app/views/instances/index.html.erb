@@ -1,14 +1,13 @@
-<h1>CirrAS</h1>
 
-<h3>Upload an application</h3>
+<%= render :partial => 'instances', :locals => {:type => 'backend'} %>
+<%= render :partial => 'instances', :locals => {:type => 'frontend'} %>
+<%= render :partial => 'instances', :locals => {:type => 'management'} %>
+
+<h3>Deploy an application</h3>
 <% form_tag({:controller => :app, :action => :upload}, :multipart => true) do %>
 <%= file_field_tag 'archive' %>
 <p>
   <%= submit_tag 'Upload' %>
 </p>
 <% end %> 
-
-<%= render :partial => 'instances', :locals => {:type => 'backend'} %>
-<%= render :partial => 'instances', :locals => {:type => 'frontend'} %>
-<%= render :partial => 'instances', :locals => {:type => 'management'} %>
 

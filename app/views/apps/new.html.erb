@@ -1,6 +1,6 @@
 <h1>Deploy Your App!</h1>
 
-<% form_for(@app, :multipart => true) do |f| %>
+<% form_for(@app, :html => {:multipart => true}) do |f| %>
   <%#= f.error_messages %>
 
   <p>

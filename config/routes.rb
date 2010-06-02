@@ -4,6 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :instances
 
   map.upload 'app/upload', :controller => 'app', :action => 'upload'
+  map.admin '/admin', :controller => "instances"
 
   # The priority is based upon order of creation: first created -> highest priority.
 
@@ -37,7 +38,7 @@ ActionController::Routing::Routes.draw do |map|
   #   end
 
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
-  map.root :controller => "instances"
+  map.root :controller => "apps", :action => "new"
 
   # See how all your routes lay out with "rake routes"
 
