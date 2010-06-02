@@ -8,7 +8,7 @@ class App
 
   def initialize attrs = {}
     @archive = attrs[:archive]
-    @status = attrs[:status]
+    @status = attrs[:status] || 'staged'
     @id = File.basename(filename, ".war") unless filename.blank?
   end
 
@@ -22,12 +22,17 @@ class App
 
   def self.all
     u = uploads
+    p = pending
     d = deployed
-    u - d + d
+    u - p + p - d + d
   end
 
   def self.uploads
     Dir.glob(UPLOADS_DIR.join('*.war')).map{|x| App.new(:archive => File.basename(x))}
+  end
+
+  def self.pending
+    Instance.backend.list.map{|x| App.new(:archive => x, :status => 'pending')} rescue []
   end
 
   def self.deployed
@@ -40,6 +45,8 @@ class App
           map{|n,e| App.new(:archive=>"#{n}.war", :status => e=='ENABLED' ? 'running' : 'disabled')}
       end
     end
+    return []
+  rescue
     return []
   end
 

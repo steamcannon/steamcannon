@@ -2,5 +2,5 @@
     <td><%= link_to app, app %></td>
     <td><%= app.status %></td>
     <td><%= link_to(app.url, app.url) if app.url %></td>
-    <td><%= button_to 'Undeploy', app, :method => :delete %></td>
+    <td><%= button_to('Undeploy', app, :method => :delete) unless app.status == 'staged' %></td>
   </tr>
