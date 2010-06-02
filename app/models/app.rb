@@ -2,17 +2,18 @@ require 'open-uri'
 
 class App 
 
-  attr_accessor :id, :archive
+  UPLOADS_DIR = Rails.root.join('public', 'uploads')
+
+  attr_reader :id, :archive, :status
 
   def initialize attrs = {}
     @archive = attrs[:archive]
-    @deployed = attrs[:deployed]
-    name = @archive.respond_to?(:original_filename) ? @archive.original_filename : @archive
-    @id = File.basename(name, ".war") unless name.blank?
+    @status = attrs[:status]
+    @id = File.basename(filename, ".war") unless filename.blank?
   end
 
-  def deployed?
-    @deployed
+  def filename
+    @archive.respond_to?(:original_filename) ? @archive.original_filename : @archive
   end
 
   def url
@@ -20,17 +21,26 @@ class App
   end
 
   def self.all
-    frontend = Instance.frontend
-    raise "No frontend host available" unless frontend
-    content = open("http://#{frontend.public_dns}/mod_cluster_manager") {|f| f.read}
-    if content =~ /<h3>Contexts:<\/h3><pre>(.*?)<\/pre>/m
-      contexts = $1
-      contexts.gsub(/<.*?>/,'').split("/n").
-        map{|x| x.scan(/\/(.*?), Status: (\w+)/) }[0].
-        map{|n,e| App.new(:archive=>"#{n}.war", :deployed=>e=='ENABLED')}
-    else
-      []
+    u = uploads
+    d = deployed
+    u - d + d
+  end
+
+  def self.uploads
+    Dir.glob(UPLOADS_DIR.join('*.war')).map{|x| App.new(:archive => File.basename(x))}
+  end
+
+  def self.deployed
+    if frontend = Instance.frontend
+      content = open("http://#{frontend.public_dns}/mod_cluster_manager") {|f| f.read}
+      if content =~ /<h3>Contexts:<\/h3><pre>(.*?)<\/pre>/m
+        contexts = $1
+        return contexts.gsub(/<.*?>/,'').split("/n").
+          map{|x| x.scan(/\/(.*?), Status: (\w+)/) }[0].
+          map{|n,e| App.new(:archive=>"#{n}.war", :status => e=='ENABLED' ? 'running' : 'disabled')}
+      end
     end
+    return []
   end
 
   def self.find id
@@ -53,14 +63,15 @@ class App
 
   # Only works if archive is a multipart file upload
   def save
-    path = Rails.root.join('public', 'uploads', archive.original_filename)
+    path = UPLOADS_DIR.join(archive.original_filename)
     File.open(path, 'w') do |file| 
       file.write(archive.read)
     end
     Instance.backend.deploy path
     true
-  rescue
-    RAILS_DEFAULT_LOGGER.error "#{$!} #{$@}"
+  rescue Exception => e
+    RAILS_DEFAULT_LOGGER.error e.inspect
+    RAILS_DEFAULT_LOGGER.error e.backtrace.join("\n")
     false
   end
 
@@ -72,4 +83,19 @@ class App
     []
   end
 
+  def cluster
+    @cluster ||= Cluster.new
+  end
+
+  def == other
+    self.id == other.id
+  end
+
+  def eql? other
+    self == other
+  end
+
+  def hash
+    self.id.hash
+  end
 end

@@ -48,8 +48,8 @@ pre {
    list-style: square;
 }
 
-.instances {
-   width: 700px;
+div.admin {
+   width: 800px;
    /* border: 1px solid lightgray; */
    margin: 5px;
    padding: 5px;

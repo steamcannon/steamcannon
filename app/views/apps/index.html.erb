@@ -1,17 +1,5 @@
-<h1>Listing apps</h1>
 
-<table>
-  <tr>
-  </tr>
-
-<% @apps.each do |app| %>
-  <tr>
-    <td><%= link_to 'Show', app %></td>
-    <td><%= link_to 'Edit', edit_app_path(app) %></td>
-    <td><%= link_to 'Destroy', app, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
+<%= render :partial => 'apps', :object => @apps %>
 
 <br />
 

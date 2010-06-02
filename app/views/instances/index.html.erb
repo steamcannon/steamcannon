@@ -1,13 +1,13 @@
-
-<%= render :partial => 'instances', :locals => {:type => 'backend'} %>
+<h1>Cluster Management</h1>
 <%= render :partial => 'instances', :locals => {:type => 'frontend'} %>
+<%= render :partial => 'instances', :locals => {:type => 'backend'} %>
 <%= render :partial => 'instances', :locals => {:type => 'management'} %>
 
-<h3>Deploy an application</h3>
-<% form_tag({:controller => :app, :action => :upload}, :multipart => true) do %>
-<%= file_field_tag 'archive' %>
-<p>
-  <%= submit_tag 'Upload' %>
-</p>
-<% end %> 
-
+<h1>App Management</h1>
+<div class="admin">
+  <% form_tag({:controller => :app, :action => :upload}, :multipart => true) do %>
+  <%= file_field_tag 'archive' %>
+  <%= submit_tag 'Deploy' %>
+  <% end %> 
+  <%= render :partial => 'apps/apps', :object => App.all %>
+</div>

@@ -56,7 +56,7 @@ class AppsController < ApplicationController
     @app.destroy
 
     respond_to do |format|
-      format.html { redirect_to new_app_path }
+      format.html { redirect_to :back }
       format.xml  { head :ok }
     end
   end

@@ -1,6 +1,5 @@
 
-<% if @app.deployed? %>
-<p>The app is running</p>
-<p>Your URL is <%= link_to @app.url, @app.url %></p>
+<p>Name: <%= @app %> </p>
+<p>Status: <%= @app.status %> </p>
+<p>URL: <%= link_to @app.url, @app.url %></p>
 <%= button_to 'Undeploy', @app, :method => :delete %>
-<% end %>

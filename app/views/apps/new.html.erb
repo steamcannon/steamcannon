@@ -2,13 +2,7 @@
 
 <% form_for(@app, :html => {:multipart => true}) do |f| %>
   <%#= f.error_messages %>
-
-  <p>
-    <%= f.label :archive %>
-    <%= f.file_field :archive %>
-  </p>
-  <p>
-    <%= f.submit 'Deploy' %>
-  </p>
+  <%= f.file_field :archive %>
+  <%= f.submit 'Deploy' %>
 <% end %>
 
