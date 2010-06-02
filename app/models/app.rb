@@ -17,7 +17,7 @@ class App
   end
 
   def url
-    "http://#{Instance.frontend.public_dns}/#@id"
+    "http://#{Instance.frontend.public_dns}/#@id" rescue nil
   end
 
   def self.all

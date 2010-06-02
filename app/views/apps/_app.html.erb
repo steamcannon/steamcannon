@@ -1,6 +1,6 @@
   <tr>
     <td><%= link_to app, app %></td>
     <td><%= app.status %></td>
-    <td><%= link_to app.url, app.url %></td>
+    <td><%= link_to(app.url, app.url) if app.url %></td>
     <td><%= button_to 'Undeploy', app, :method => :delete %></td>
   </tr>
