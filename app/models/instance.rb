@@ -60,6 +60,16 @@ class Instance
     end
   end
 
+  def list dir = ::INSTANCE_FACTORY.deploy_path
+    result = []
+    Net::SSH.start(public_dns, APP_CONFIG['ssh_username'], :keys => [APP_CONFIG['ssh_private_key_file']]) do |ssh|
+      ssh.exec!("ls #{dir}") do |ch, stream, data|
+        result = data.split("\n") if stream == :stdout
+      end
+    end
+    result
+  end
+
   # Required ActiveRecord interface
 
   def self.all
