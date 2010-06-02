@@ -18,6 +18,8 @@ module InstancesHelper
         link_to instance.public_dns, "http://#{instance.public_dns}/mod_cluster_manager"
       when instance.management?
         link_to instance.public_dns, "http://#{instance.public_dns}:7080"
+      when instance.backend?
+        link_to instance.public_dns, "http://#{instance.public_dns}:8080/admin-console"
       else
         instance.public_dns
       end
