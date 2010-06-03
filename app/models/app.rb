@@ -74,7 +74,7 @@ class App
     File.open(path, 'w') do |file| 
       file.write(archive.read)
     end
-    Instance.backend.deploy path
+    Instance.backend.deploy path rescue nil
     true
   rescue Exception => e
     RAILS_DEFAULT_LOGGER.error e.inspect

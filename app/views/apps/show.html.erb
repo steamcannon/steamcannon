@@ -1,5 +1,5 @@
 
 <p>Name: <%= @app %> </p>
 <p>Status: <%= @app.status %> </p>
-<p>URL: <%= link_to @app.url, @app.url %></p>
+<p>URL: <%= link_to(@app.url, @app.url) if @app.url %></p>
 <%= button_to 'Undeploy', @app, :method => :delete %>
