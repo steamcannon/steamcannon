@@ -24,7 +24,7 @@ class App
     u = uploads
     p = pending
     d = deployed
-    u - p + p - d + d
+    (u - p + p - d + d).reverse
   end
 
   def self.uploads
@@ -80,6 +80,11 @@ class App
     RAILS_DEFAULT_LOGGER.error e.inspect
     RAILS_DEFAULT_LOGGER.error e.backtrace.join("\n")
     false
+  end
+
+  def redeploy
+    path = UPLOADS_DIR.join(archive)
+    Instance.backend.deploy path
   end
 
   def destroy

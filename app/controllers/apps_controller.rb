@@ -60,4 +60,13 @@ class AppsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  def redeploy
+    @app = App.find(params[:id])
+    @app.redeploy
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.xml  { head :ok }
+    end
+  end
 end

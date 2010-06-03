@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :apps
+  map.resources :apps, :member => {:redeploy => :post}
 
   map.resources :instances
 
