@@ -84,11 +84,12 @@ class App
 
   def redeploy
     path = UPLOADS_DIR.join(archive)
-    Instance.backend.deploy path
+    Instance.backend.deploy path rescue nil
   end
 
   def destroy
     Instance.backend.undeploy archive
+    File.delete(UPLOADS_DIR.join(archive))
   end
 
   def errors
