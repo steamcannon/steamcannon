@@ -51,6 +51,7 @@ class Instance
       ssh.scp.upload! file.to_s, remote
       ssh.exec!("/opt/jboss-as6/bin/twiddle.sh -s $(hostname -i) invoke jboss.deployment:flavor=URL,type=DeploymentScanner start")
     end
+    remote
   end
 
   def undeploy file

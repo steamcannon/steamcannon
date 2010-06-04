@@ -100,3 +100,9 @@ td img {
 td form {
    float: left;
 }
+
+#shutdown {
+   float: right;
+   padding-top: 15px;
+   padding-right: 15px;
+}

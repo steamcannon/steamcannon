@@ -1,4 +1,8 @@
+<div id="shutdown"><%= button_to('Shutdown All', shutdown_instances_path) %></div>
+
 <h1>Cluster Management</h1>
+
+
 <%= render :partial => 'instances', :locals => {:type => 'frontend'} %>
 <%= render :partial => 'instances', :locals => {:type => 'backend'} %>
 <%= render :partial => 'instances', :locals => {:type => 'management'} %>

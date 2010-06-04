@@ -1,7 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :apps, :member => {:redeploy => :post}
 
-  map.resources :instances
+  map.resources :instances, :collection => {:shutdown => :post}
 
   map.upload 'app/upload', :controller => 'app', :action => 'upload'
   map.admin '/admin', :controller => "instances"

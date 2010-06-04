@@ -2,7 +2,7 @@ class EC2
   DEPLOY_DIR = "/opt/jboss-as6/server/cluster-ec2/farm/"
 
   def instances
-    ec2.describe_instances.map do |aws|
+    select_instances.map do |aws|
       Instance.new(
                    :id            => aws[:aws_instance_id], 
                    :image_id      => aws[:aws_image_id], 
@@ -27,6 +27,10 @@ class EC2
 
   def ec2
     @ec2 ||= Aws::Ec2.new(APP_CONFIG['access_key'], APP_CONFIG['secret_access_key'])
+  end
+
+  def select_instances
+    ec2.describe_instances.select{|x| APP_CONFIG['image_ids'].include?(x[:aws_image_id])}
   end
 
 end

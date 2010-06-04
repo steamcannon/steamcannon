@@ -39,11 +39,15 @@ class AppsController < ApplicationController
 
     respond_to do |format|
       if @app.save
-        flash[:notice] = 'App was successfully created.'
+        flash[:notice] = 'App successfully uploaded and should be running shortly'
         format.html { redirect_to(@app) }
         format.xml  { render :xml => @app, :status => :created, :location => @app }
       else
-        format.html { render :action => "new" }
+        unless cluster.running?
+          flash[:error] = 'App uploaded, cluster startup initiated, patience is a virtue'
+          cluster.startup
+        end
+        format.html { redirect_to(@app) }
         format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
       end
     end
@@ -69,4 +73,5 @@ class AppsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
 end

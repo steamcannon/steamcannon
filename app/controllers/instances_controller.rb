@@ -63,4 +63,13 @@ class InstancesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  def shutdown
+    cluster.shutdown
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.xml  { head :ok }
+    end
+  end
+
 end
