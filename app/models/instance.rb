@@ -47,9 +47,9 @@ class Instance
     # `scp -o StrictHostKeyChecking=no #{file} #{public_dns}:#{::INSTANCE_FACTORY.deploy_path}`
     remote = File.join(::INSTANCE_FACTORY.deploy_path, File.basename(file))
     Net::SSH.start(public_dns, APP_CONFIG['ssh_username'], :keys => [APP_CONFIG['ssh_private_key_file']]) do |ssh|
+      ssh.exec!("/opt/jboss-as6/bin/twiddle.sh -s $(hostname -i) invoke jboss.deployment:flavor=URL,type=DeploymentScanner stop")
       ssh.scp.upload! file.to_s, remote
-      # touch the file to mitigate a potential race condition with the deploy scanner
-      ssh.exec! "touch #{remote}" 
+      ssh.exec!("/opt/jboss-as6/bin/twiddle.sh -s $(hostname -i) invoke jboss.deployment:flavor=URL,type=DeploymentScanner start")
     end
   end
 
