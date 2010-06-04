@@ -1,24 +1,39 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Instances: <%= controller.action_name %></title>
+    <%= stylesheet_link_tag 'scaffold' %>
+    <%= stylesheet_link_tag 'custom' %>
+    <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js' %>
+    <%= javascript_include_tag 'application' %>
+  </head>
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <title>Instances: <%= controller.action_name %></title>
-  <%= stylesheet_link_tag 'scaffold' %>
-  <%= javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js' %>
-  <%= javascript_include_tag 'application' %>
-</head>
-<body>
+  <body class="main-body">
+    <div id="container">
+      <div id="header">
+        <h1><a href="http://jboss.org/stormgrind/projects/coolingtower.html">AppDeployer</a></h1>
+      </div>
+      <div id="contentcontainer">
+    	<div id="container_grey">
+      	  <div id="main-contentwrapper"> 
+            <div id="menu">
 
-<div id="menu">
-  [<%= link_to 'admins', admin_path %>]&nbsp;[<%= link_to 'devs', root_path %>]
-</div>
+              <%= yield :menu %>
 
-<p style="color: green"><%= flash[:notice] %></p>
-<p style="color: red"><%= flash[:error] %></p>
+            </div>
+      	    <div class="formcontainer">
 
-<%= yield %>
+	      <%= yield %>
 
-</body>
+            </div>
+          </div>
+          <div id="one-col-corners"/>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <p> Powered by <a href="http://jboss.org/stormgrind/projects/coolingtower.html">Cooling Tower</a></p> 
+    </div>
+  </body>
 </html>

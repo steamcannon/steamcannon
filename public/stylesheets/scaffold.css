@@ -2,8 +2,8 @@ body { background-color: #fff; color: #333; }
 
 body, p, ol, ul, td {
    font-family:"Lucida Sans Unicode","Lucida Grande",Sans-Serif;
-   font-size:   13px;
-   line-height: 18px;
+/*font-size:   13px;*/
+/*line-height: 18px;*/
 }
 
 pre {
@@ -48,11 +48,11 @@ pre {
    list-style: square;
 }
 
-div.admin {
-   width: 800px;
+.instances {
+   width: 700px;
    /* border: 1px solid lightgray; */
-   margin: 5px;
-   padding: 5px;
+margin: 5px 0px;
+padding: 5px 0px;
 }
 
 .instance-list {
@@ -61,23 +61,25 @@ div.admin {
    font-size:12px;
    /* margin:20px; */
    text-align:left;
-   width: 780px;
+width: 870px;
+border:1px solid #EAEAEA;
 }
 .instance-list th {
-   border-bottom:2px solid #6678B1;
-   color:#003399;
+border-bottom:2px solid #6695AF;
+color:#01293A;
    font-size:14px;
    font-weight:normal;
    text-align:middle;
    padding:10px 8px;
 }
 .instance-list td {
-   /* border-bottom:1px solid #CCCCCC; */
-   color:#666699;
+   border-bottom:1px solid #EAEAEA;
+color:#678C99;
    padding:6px 8px;
 }
 .instance-list tbody tr:hover td {
-   color:#000099;
+color:#005E8F;
+background-color:#DADEE0;
 }
 
 td.running {

@@ -4,10 +4,5 @@
 <%= render :partial => 'instances', :locals => {:type => 'management'} %>
 
 <h1>App Management</h1>
-<div class="admin">
-  <% form_tag({:controller => :app, :action => :upload}, :multipart => true) do %>
-  <%= file_field_tag 'archive' %>
-  <%= submit_tag 'Deploy' %>
-  <% end %> 
-  <%= render :partial => 'apps/apps', :object => App.all %>
-</div>
+<%= render :partial => 'apps/apps', :object => App.all %>
+<%= render :partial => 'apps/upload', :object => App.new %>

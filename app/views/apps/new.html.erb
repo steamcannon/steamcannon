@@ -1,8 +1,1 @@
-<h1>Deploy Your App!</h1>
-
-<% form_for(@app, :html => {:multipart => true}) do |f| %>
-  <%#= f.error_messages %>
-  <%= f.file_field :archive %>
-  <%= f.submit 'Deploy' %>
-<% end %>
-
+<%= render :partial => 'upload', :object => @app %>

@@ -1,0 +1,10 @@
+<div id="deploy">
+  <h2>Deploy Your App!</h2>
+
+  <% form_for(upload, :html => {:multipart => true}) do |f| %>
+  <%#= f.error_messages %>
+  <%= f.label :archive, 'Web ARchive (war file)' %>
+  <%= f.file_field :archive, :size => '30' %>
+  <%= f.submit 'Deploy' %>
+  <% end %>
+</div>
