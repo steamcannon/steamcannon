@@ -16,7 +16,7 @@ class AppsController < ApplicationController
     @app = App.find(params[:id])
 
     respond_to do |format|
-      format.html { render(:text => "Not Found", :status => 404) unless @app }
+      format.html { redirect_to root_path unless @app }
       format.xml  { render :xml => @app }
     end
   end

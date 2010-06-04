@@ -3,10 +3,7 @@
     <td><%= app.status %></td>
     <td><%= render_app_link(app) %></td>
     <td>
-      <% if app.status == 'staged' %>
       <%= button_to('Redeploy', redeploy_app_path(app)) %>
-      <% else %>
       <%= button_to('Undeploy', app, :method => :delete) %>
-      <% end %>
     </td>
   </tr>

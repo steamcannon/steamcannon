@@ -91,3 +91,12 @@ td.terminated {
 td.changing {
    color: goldenRod;
 }
+
+td img {
+   vertical-align: middle;
+   padding-right: 7px;
+}
+
+td form {
+   float: left;
+}

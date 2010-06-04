@@ -88,7 +88,7 @@ class App
   end
 
   def destroy
-    Instance.backend.undeploy archive
+    Instance.backend.undeploy archive rescue nil
     File.delete(UPLOADS_DIR.join(archive))
   end
 
