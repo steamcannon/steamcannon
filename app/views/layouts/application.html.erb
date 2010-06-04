@@ -25,6 +25,13 @@
             </div>
       	    <div class="formcontainer">
 
+	      <% if flash[:notice] %>
+	      <p class="callout_success"><%= flash[:notice] %></p>
+	      <% end %>
+	      <% if flash[:error] %>
+	      <p class="callout_fail"><%= flash[:error] %></p>
+	      <% end %>
+
 	      <%= yield %>
 
             </div>
