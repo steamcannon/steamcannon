@@ -32,7 +32,8 @@ class App
   end
 
   def self.pending
-    Instance.backend.list.map{|x| App.new(:archive => x, :status => 'pending')} rescue []
+    Instance.backend.list.select{|x| x.ends_with?('.war')}.
+      map{|x| App.new(:archive => x, :status => 'pending')} rescue []
   end
 
   def self.deployed

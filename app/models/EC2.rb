@@ -22,7 +22,7 @@ class EC2
   end
 
   def deploy_path
-    DEPLOY_DIR
+    APP_CONFIG['deploy_dir'] || DEPLOY_DIR
   end
 
   def ec2
