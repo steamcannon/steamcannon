@@ -3,6 +3,7 @@
 
 $(function() {
     $('.changing').each(function() { checkup(this.id); });
+    $('td.changing').pulsate();
 });
 
 function checkup(id) {
@@ -13,10 +14,14 @@ function checkup(id) {
 	    success: function() { 
 		var e = $('#'+id);
 		if (e.length && e.hasClass('changing')) {
+		    e.find('td.changing').pulsate();
 		    checkup(id);
 		}
 	    }
 	});
     }, 5000);
-    
+}
+
+jQuery.fn.pulsate = function() {
+    this.pulse({opacity: [1,.2]}, 500, 10);
 }
