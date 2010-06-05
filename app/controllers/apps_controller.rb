@@ -58,7 +58,7 @@ class AppsController < ApplicationController
   def destroy
     @app = App.find(params[:id])
     @app.destroy
-
+    flash[:notice] = "The #{@app} app was successfully undeployed"
     respond_to do |format|
       format.html { redirect_to :back }
       format.xml  { head :ok }
@@ -68,6 +68,7 @@ class AppsController < ApplicationController
   def redeploy
     @app = App.find(params[:id])
     @app.redeploy
+    flash[:notice] = "The #{@app} app was successfully redeployed"
     respond_to do |format|
       format.html { redirect_to :back }
       format.xml  { head :ok }

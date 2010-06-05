@@ -21,32 +21,38 @@ class App
   end
 
   def self.all
-    u = uploads
+    # pending are the wars on the backends
     p = pending
-    d = deployed
-    (u - p + p - d + d).reverse
+    # wars are only running if they exist on the backends
+    result = running & p
+    # now we add the pending wars that aren't running
+    result += (p - result)
+    # and finally the staged wars that aren't pending
+    result + (staged - result)
   end
 
-  def self.uploads
+  # the apps in our uploads directory
+  def self.staged
     Dir.glob(UPLOADS_DIR.join('*.war')).map{|x| App.new(:archive => File.basename(x))}
   end
 
+  # the apps in the deploy directory on the backends
   def self.pending
     Instance.backend.list.select{|x| x.ends_with?('.war')}.
       map{|x| App.new(:archive => x, :status => 'pending')} rescue []
   end
 
-  def self.deployed
+  # the apps reported as enabled by the mod_cluster_manager
+  def self.running
     if frontend = Instance.frontend
       content = open("http://#{frontend.public_dns}/mod_cluster_manager") {|f| f.read}
-      if content =~ /<h3>Contexts:<\/h3><pre>(.*?)<\/pre>/m
-        contexts = $1
-        return contexts.gsub(/<.*?>/,'').split("/n").
-          map{|x| x.scan(/\/(.*?), Status: (\w+)/) }[0].
-          map{|n,e| App.new(:archive=>"#{n}.war", :status => e=='ENABLED' ? 'running' : 'disabled')}
-      end
+      contexts = content.scan /<h3>Contexts:<\/h3><pre>(.*?)<\/pre>/m
+      return contexts.map {|arr| arr.first.gsub(/<.*?>/,'').split("\n")}.flatten.uniq.
+        select{|x| x =~ /ENABLED/}.
+        map{|x| App.new(:archive => x.match(/\/(.*?),/)[1]+'.war', :status => 'running')}
+    else
+      []
     end
-    return []
   rescue
     return []
   end

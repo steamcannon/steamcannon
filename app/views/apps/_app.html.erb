@@ -1,6 +1,6 @@
   <tr>
     <td><%= link_to app, app %></td>
-    <td><%= app.status %></td>
+    <td class="<%= class_for(app.status) %>"><%= app.status %></td>
     <td><%= render_app_link(app) %></td>
     <td>
       <%= button_to('Redeploy', redeploy_app_path(app)) %>

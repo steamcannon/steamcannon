@@ -1,3 +1,4 @@
+<% if apps.any? %>
 <table class="instance-list">
   <tr>
     <th>Name</th>
@@ -7,3 +8,4 @@
   </tr>
   <%= render :partial => 'apps/app', :collection => apps %>
 </table>
+<% end %>

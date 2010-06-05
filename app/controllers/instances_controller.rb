@@ -42,7 +42,7 @@ class InstancesController < ApplicationController
 
     respond_to do |format|
       if @instance.save
-        flash[:notice] = 'Instance was successfully created.'
+        flash[:notice] = 'Instance was successfully created'
         format.html { redirect_to(@instance) }
         format.xml  { render :xml => @instance, :status => :created, :location => @instance }
       else
@@ -57,7 +57,7 @@ class InstancesController < ApplicationController
   def destroy
     @instance = Instance.find(params[:id])
     @instance.destroy
-
+    flash[:notice] = 'Instance is shutting down'
     respond_to do |format|
       format.html { redirect_to(instances_url) }
       format.xml  { head :ok }
@@ -66,6 +66,7 @@ class InstancesController < ApplicationController
 
   def shutdown
     cluster.shutdown
+    flash[:notice] = 'All instances are shutting down'
     respond_to do |format|
       format.html { redirect_to :back }
       format.xml  { head :ok }

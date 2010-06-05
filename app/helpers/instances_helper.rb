@@ -26,14 +26,6 @@ module InstancesHelper
     end
   end
 
-  def status instance
-    if %w{ running terminated }.include? instance.status
-      instance.status
-    else
-      'changing'
-    end
-  end
-
   def ajax_loader instance
     image_tag('ajax-loader.gif') unless %w{ running terminated }.include? instance.status
   end
