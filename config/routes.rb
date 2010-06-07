@@ -3,7 +3,6 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :instances, :collection => {:shutdown => :post}
 
-  map.upload 'app/upload', :controller => 'app', :action => 'upload'
   map.admin '/admin', :controller => "instances"
 
   # The priority is based upon order of creation: first created -> highest priority.
