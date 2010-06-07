@@ -1,9 +1,7 @@
-  <tr>
+  <tr id="<%= app.id %>" class="app <%= class_for(app.status) %>">
     <td><%= link_to app, app %></td>
     <td class="<%= class_for(app.status) %>"><%= app.status %></td>
     <td><%= render_app_link(app) %></td>
-    <td>
-      <%= button_to('Redeploy', redeploy_app_path(app)) %>
-      <%= button_to('Undeploy', app, :method => :delete) %>
-    </td>
+    <td><%= button_to('Redeploy', redeploy_app_path(app)) if app.status == 'staged' %></td>
+    <td><%= button_to('Undeploy', app, :method => :delete) %></td>
   </tr>

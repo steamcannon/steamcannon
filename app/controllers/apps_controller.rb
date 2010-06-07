@@ -18,6 +18,7 @@ class AppsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to root_path unless @app }
       format.xml  { render :xml => @app }
+      format.js  { render :layout => false }
     end
   end
 
@@ -39,14 +40,11 @@ class AppsController < ApplicationController
 
     respond_to do |format|
       if @app.save
-        flash[:notice] = 'App successfully uploaded and should be running shortly'
+        flash[:notice] = "The #{@app} app was successfully deployed"
         format.html { redirect_to(@app) }
         format.xml  { render :xml => @app, :status => :created, :location => @app }
       else
-        unless cluster.running?
-          flash[:error] = 'App uploaded, cluster startup initiated, patience is a virtue'
-          cluster.startup
-        end
+        cluster_check
         format.html { redirect_to(@app) }
         format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
       end
@@ -67,11 +65,24 @@ class AppsController < ApplicationController
 
   def redeploy
     @app = App.find(params[:id])
-    @app.redeploy
-    flash[:notice] = "The #{@app} app was successfully redeployed"
+    if cluster_check
+      @app.redeploy
+      flash[:notice] = "The #{@app} app was successfully redeployed"
+    end
     respond_to do |format|
       format.html { redirect_to :back }
       format.xml  { head :ok }
+    end
+  end
+
+  private
+  
+  def cluster_check
+    unless cluster.running?
+      flash[:error] = "Cluster startup initiated, patience is a virtue"
+      cluster.startup
+    else
+      true
     end
   end
 

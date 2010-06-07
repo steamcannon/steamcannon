@@ -2,24 +2,23 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 $(function() {
-    $('.changing').each(function() { checkup(this.id); });
-    $('td.changing').pulsate();
+    $('tr.changing').each(function() { checkup($(this)); });
 });
 
-function checkup(id) {
-    setTimeout(function() {
-	$.ajax({
-	    url: '/instances/'+id, 
-	    dataType: 'script', 
-	    success: function() { 
-		var e = $('#'+id);
-		if (e.length && e.hasClass('changing')) {
-		    e.find('td.changing').pulsate();
-		    checkup(id);
+function checkup(e) {
+    if (e.is('.changing')) {
+	e.find('.changing').pulsate();
+	var id = e[0].id;
+	setTimeout(function() {
+	    $.ajax({
+		url: (e.is('.app') ? '/apps/' : '/instances/') + id, 
+		dataType: 'script', 
+		success: function() { 
+		    checkup($('#'+id));
 		}
-	    }
-	});
-    }, 5000);
+	    });
+	}, 5000);
+    }
 }
 
 jQuery.fn.pulsate = function() {

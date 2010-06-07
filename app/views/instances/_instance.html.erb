@@ -1,5 +1,5 @@
-<tr id="<%= instance.id %>" class="<%= class_for(instance.status) %>">
-  <td><%= link_to instance.id, instance %></td>
+<tr id="<%= instance.id %>" class="instance <%= class_for(instance.status) %>">
+  <td><%= link_to instance, instance %></td>
   <td><%= render_dns_name(instance) %></td>
   <td class="<%= class_for(instance.status) %>"><%=h instance.status %></td>
   <td><%= button_to 'Down', instance, :class => 'down', :method => :delete %></td>
