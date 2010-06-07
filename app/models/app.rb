@@ -100,10 +100,6 @@ class App
     []
   end
 
-  def cluster
-    @cluster ||= Cluster.new
-  end
-
   def == other
     self.id == other.id
   end
