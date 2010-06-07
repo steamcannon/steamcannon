@@ -1,9 +1,9 @@
 class Cluster
 
   def running? nodes = Instance.all
-    b = nodes.select {|x| x.backend? && x.running?}
-    f = nodes.select {|x| x.frontend? && x.running?}
-    m = nodes.select {|x| x.management? && x.running?}
+    b = backend :nodes => nodes, :running => true
+    f = frontend :nodes => nodes, :running => true
+    m = management :nodes => nodes, :running => true
     b.any? && f.any? && m.any?
   end
 
@@ -24,6 +24,16 @@ class Cluster
       end
     end
     running? nodes
+  end
+
+  def management options = {}
+    options.fetch(:nodes, Instance.all).select {|x| x.management? && (!options[:running] || x.running?)}
+  end
+  def backend options = {}
+    options.fetch(:nodes, Instance.all).select {|x| x.backend? && (!options[:running] || x.running?)}
+  end
+  def frontend options = {}
+    options.fetch(:nodes, Instance.all).select {|x| x.frontend? && (!options[:running] || x.running?)}
   end
 
 end

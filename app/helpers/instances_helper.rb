@@ -26,7 +26,23 @@ module InstancesHelper
     end
   end
 
-  def ajax_loader instance
-    image_tag('ajax-loader.gif') unless %w{ running terminated }.include? instance.status
+  def cluster_status
+    cluster.running? ? 'up' : 'down'
+  end
+
+  def type_ratio type, instances
+    "#{running(type, instances).size}/#{started(type, instances).size}"
+  end
+
+  def ajax_loader type, instances
+    image_tag('ajax-loader.gif') if running(type, instances).size == 0 && started(type, instances).size > 0
+  end
+
+  def running type, instances
+    cluster.send(type, :nodes => instances, :running => true)
+  end
+
+  def started type, instances
+    cluster.send(type, :nodes => instances.select {|x| %w{pending running}.include? x.status})
   end
 end

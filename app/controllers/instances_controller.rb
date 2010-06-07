@@ -8,6 +8,7 @@ class InstancesController < ApplicationController
       format.html # index.html.erb
       format.xml  { render :xml => @instances }
       format.json  { render :json => @instances }
+      format.js { render :partial => 'summary', :object => @instances }
     end
   end
 

@@ -1,2 +1,14 @@
 
 <%= render :partial => 'apps', :object => [@app] %>
+
+<div id="summary" class="striped">
+  <%= render :partial => 'instances/summary', :object => Instance.all %>
+</div>
+
+<script type="text/javascript">
+  $(function() {
+    $.get("/instances", function(data) {
+      $("#summary").html(data);
+    }, 'script');
+  });
+</script>

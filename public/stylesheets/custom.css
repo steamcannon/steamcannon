@@ -186,7 +186,7 @@ a:hover {
 		}
 	
 		
-#deploy {
+.striped {
 		width:360px;
 		-moz-border-radius:7px 7px 7px 7px;
 		background:url(../images/bkg_login.png) repeat-x scroll 0 0 #EBEBEB;
@@ -194,7 +194,7 @@ a:hover {
 		margin: 20px 0px 10px;
 		padding:10px 20px;
 		}
-#deploy h2  {
+.striped h2  {
 		color:#009933;
 		font-size:18px;
 		}

@@ -106,3 +106,13 @@ td form {
    padding-top: 15px;
    padding-right: 15px;
 }
+
+#summary {
+   width: 200px;
+}
+#cluster {
+   font-size: 14px;
+}
+#cluster td {
+   padding: 2px 15px;
+}
