@@ -26,8 +26,12 @@ module InstancesHelper
     end
   end
 
-  def cluster_status
-    cluster.running? ? 'up' : 'down'
+  def cluster_status instances = Instance.started
+    cluster_incomplete?(instances) ? 'pending' : cluster.running?(instances) ? 'up' : 'down'
+  end
+
+  def cluster_incomplete? instances = Instance.started
+    [:management, :backend, :frontend].any? {|type| (type_ratio(type, instances) =~ /(\d+)\/\1/).nil?}
   end
 
   def type_ratio type, instances
@@ -35,7 +39,7 @@ module InstancesHelper
   end
 
   def ajax_loader type, instances
-    image_tag('ajax-loader.gif') if running(type, instances).size == 0 && started(type, instances).size > 0
+    image_tag('ajax-loader.gif') if running(type, instances).size != started(type, instances).size
   end
 
   def running type, instances
@@ -43,6 +47,6 @@ module InstancesHelper
   end
 
   def started type, instances
-    cluster.send(type, :nodes => instances.select {|x| %w{pending running}.include? x.status})
+    cluster.send(type, :nodes => instances.select {|x| x.started?})
   end
 end

@@ -7,8 +7,16 @@
 
 <script type="text/javascript">
   $(function() {
-    $.get("/instances", function(data) {
-      $("#summary").html(data);
-    }, 'script');
+    cluster_status();
   });
+  function cluster_status() {
+    if ($('#cluster').is('.pending')) {
+      setTimeout(function() {
+        $.get("/instances", function(data) {
+          $("#summary").html(data);
+          cluster_status();
+        });
+      }, 5000);
+    }
+  }
 </script>

@@ -35,6 +35,10 @@ class Instance
     status == 'running'
   end
 
+  def started?
+    %w{pending running}.include? status
+  end
+
   def self.backend
     all.find {|x| x.backend? && x.running? }
   end
@@ -71,9 +75,14 @@ class Instance
     result
   end
 
+  def self.started 
+    all.select {|x| x.started?}
+  end
+
   # Required ActiveRecord interface
 
   def self.all
+    RAILS_DEFAULT_LOGGER.debug("JC: calling all cars")
     ::INSTANCE_FACTORY.instances
   end
 
