@@ -9,3 +9,8 @@
 <%= render :partial => 'apps/apps', :object => App.all %>
 <%= render :partial => 'apps/upload', :object => App.new %>
 
+<script type="text/javascript">
+  $(function() {
+    monitor_changing("tr.changing");
+  });
+</script>

@@ -8,11 +8,6 @@ $.ajaxSetup({
     }
 });
 
-$(function() {
-    monitor_changing("tr.changing");
-    redeploy_staged("tr.staged");
-});
-
 function monitor_changing(selector) {
     $(selector).each(function() {
 	var id = this.id;
@@ -29,9 +24,11 @@ function monitor_changing(selector) {
 function redeploy_staged(selector) {
     $(selector).each(function() {
 	var id = this.id;
+        $(this).find('.pulsate').pulsate();
 	setTimeout(function() {
             $.post("/apps/"+id+"/redeploy", function(data) {
 		redeploy_staged("#"+id+".staged");
+		monitor_changing("#"+id+".changing");
             });
 	}, 5000);
     });

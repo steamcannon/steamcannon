@@ -72,7 +72,7 @@ class AppsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(@app) }
       format.xml  { head :ok }
-      format.js { render :nothing => true }
+      format.js  { render :action => 'show', :layout => false }
     end
   end
 

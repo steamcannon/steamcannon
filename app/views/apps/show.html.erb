@@ -7,6 +7,8 @@
 
 <script type="text/javascript">
   $(function() {
+    monitor_changing("tr.changing");
+    redeploy_staged("tr.staged");
     cluster_status();
   });
   function cluster_status() {

@@ -2,10 +2,8 @@
 module ApplicationHelper
 
   def class_for status
-    if %w{ running terminated }.include? status
+    if %w{ running terminated staged }.include? status
       status
-    elsif status == 'staged'
-      'changing staged'
     else
       'changing'
     end

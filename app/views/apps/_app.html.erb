@@ -2,6 +2,6 @@
     <td><%= link_to app, app %></td>
     <td class="pulsate <%= class_for(app.status) %>"><%= app.status %></td>
     <td><%= render_app_link(app) %></td>
-    <td><%= button_to('Redeploy', redeploy_app_path(app)) if app.status == 'staged' %></td>
+    <td><%= button_to('Deploy', redeploy_app_path(app)) if app.status == 'staged' %></td>
     <td><%= button_to('Undeploy', app, :method => :delete) %></td>
   </tr>
