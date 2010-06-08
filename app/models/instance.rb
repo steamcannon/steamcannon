@@ -82,8 +82,7 @@ class Instance
   # Required ActiveRecord interface
 
   def self.all
-    RAILS_DEFAULT_LOGGER.debug("JC: calling all cars")
-    ::INSTANCE_FACTORY.instances
+    Rails.cache.fetch(Instance) { ::INSTANCE_FACTORY.instances }
   end
 
   def self.find id

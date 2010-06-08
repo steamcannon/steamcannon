@@ -8,10 +8,17 @@ class ApplicationController < ActionController::Base
   # Export to views
   helper_method :cluster
 
+  # Clear the instances cache
+  before_filter :clear_instance_cache
+
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
 
   def cluster
     @cluster ||= Cluster.new
+  end
+
+  def clear_instance_cache
+    Rails.cache.delete(Instance)
   end
 end
