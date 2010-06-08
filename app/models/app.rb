@@ -88,7 +88,7 @@ class App
 
   def redeploy
     path = UPLOADS_DIR.join(archive)
-    Instance.backend.deploy path rescue nil
+    Instance.backend.deploy path 
   end
 
   def destroy
