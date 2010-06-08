@@ -70,8 +70,9 @@ class AppsController < ApplicationController
       flash[:notice] = "The #{@app} app was successfully redeployed"
     end
     respond_to do |format|
-      format.html { redirect_to :back }
+      format.html { redirect_to(@app) }
       format.xml  { head :ok }
+      format.js { render :nothing => true }
     end
   end
 

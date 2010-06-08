@@ -89,6 +89,9 @@ class App
   def redeploy
     path = UPLOADS_DIR.join(archive)
     Instance.backend.deploy path 
+  rescue Exception => e
+    RAILS_DEFAULT_LOGGER.error e.inspect
+    RAILS_DEFAULT_LOGGER.error e.backtrace.join("\n")
   end
 
   def destroy

@@ -9,23 +9,32 @@ $.ajaxSetup({
 });
 
 $(function() {
-    $('tr.changing').each(function() { checkup($(this)); });
+    monitor_changing("tr.changing");
+    redeploy_staged("tr.staged");
 });
 
-function checkup(e) {
-    if (e.is('.changing')) {
-        e.find('.changing').pulsate();
-        var id = e[0].id;
+function monitor_changing(selector) {
+    $(selector).each(function() {
+	var id = this.id;
+	var e = $(this);
+        e.find('.pulsate').pulsate();
         setTimeout(function() {
-            $.ajax({
-                url: (e.is('.app') ? '/apps/' : '/instances/') + id, 
-                dataType: 'script', 
-                success: function() { 
-                    checkup($('#'+id));
-                }
+            $.get((e.is('.app') ? '/apps/' : '/instances/') + id, function() { 
+                monitor_changing("#"+id+".changing");
             });
         }, 5000);
-    }
+    });
+}
+
+function redeploy_staged(selector) {
+    $(selector).each(function() {
+	var id = this.id;
+	setTimeout(function() {
+            $.post("/apps/"+id+"/redeploy", function(data) {
+		redeploy_staged("#"+id+".staged");
+            });
+	}, 5000);
+    });
 }
 
 jQuery.fn.pulsate = function() {
