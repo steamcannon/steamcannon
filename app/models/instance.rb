@@ -82,7 +82,7 @@ class Instance
   # Required ActiveRecord interface
 
   def self.all
-    Rails.cache.fetch(Instance) { ::INSTANCE_FACTORY.instances }
+    Thread.current[:instances] ||= ::INSTANCE_FACTORY.instances 
   end
 
   def self.find id

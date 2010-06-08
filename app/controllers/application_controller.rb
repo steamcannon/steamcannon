@@ -19,6 +19,6 @@ class ApplicationController < ActionController::Base
   end
 
   def clear_instance_cache
-    Rails.cache.delete(Instance)
+    Thread.current[:instances] = nil
   end
 end
