@@ -12,7 +12,7 @@ module InstancesHelper
   end
 
   def render_dns_name instance
-    if instance.public_dns.any? 
+    if !instance.public_dns.blank?
       case
       when instance.frontend?
         link_to instance.public_dns, "http://#{instance.public_dns}/mod_cluster_manager"

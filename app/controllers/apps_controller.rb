@@ -67,7 +67,7 @@ class AppsController < ApplicationController
     @app = App.find(params[:id])
     if cluster_check
       @app.redeploy
-      flash[:notice] = "The #{@app} app was successfully redeployed"
+      flash[:notice] = "The #{@app} app was successfully deployed"
     end
     respond_to do |format|
       format.html { redirect_to(@app) }

@@ -22,8 +22,17 @@ Its contents should look something like this:
     # Optional, unless you're using latest EAP instances
     deploy_dir: /opt/jboss-eap-5.0.1/jboss-as/server/cluster-ec2/farm/
 
+    # Optional, one of CoolingTower::Deltacloud or CoolingTower::EC2 (default)
+    cloud: CoolingTower::Deltacloud
+
+    # Optional, only required if using Deltacloud
+    deltacloud_url:  http://localhost:3001/api
 
 If, upon starting the app, you see errors regarding an "already
 activated net-ssh", try updating your gem:
 
   $ sudo gem update net-ssh
+
+The Deltacloud client and core gems may be outdated.  Best results
+will come building/installing the gems from source:
+http://deltacloud.org/contribute.html

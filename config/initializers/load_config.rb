@@ -1,6 +1,4 @@
 
-INSTANCE_FACTORY = EC2.new
-
 APP_CONFIG = YAML.load_file("#{ENV['HOME']}/.cooling-tower/config.yml")
 
 # User data for management instance
@@ -9,3 +7,6 @@ APP_CONFIG['user_data'] = Base64.encode64(user_data)
 
 # We shouldn't mess with instances we're not configured to care about
 APP_CONFIG['image_ids'] = APP_CONFIG.entries.select{|x,y| x.ends_with? 'image_id'}.map{|x,y| y}
+
+# Which cloud service will we use?
+CLOUD = (APP_CONFIG['cloud'] || 'CoolingTower::EC2').constantize.new
