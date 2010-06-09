@@ -12,17 +12,25 @@ module InstancesHelper
   end
 
   def render_dns_name instance
-    if !instance.public_dns.blank?
-      case
-      when instance.frontend?
-        link_to instance.public_dns, "http://#{instance.public_dns}/mod_cluster_manager"
-      when instance.management?
-        link_to instance.public_dns, "http://#{instance.public_dns}:7080"
-      when instance.backend?
-        link_to instance.public_dns, "http://#{instance.public_dns}:8080/admin-console"
-      else
-        instance.public_dns
-      end
+    result = unless instance.public_dns.blank?
+               case
+               when instance.frontend?
+                 link_to "mod_cluster_manager", "http://#{instance.public_dns}/mod_cluster_manager"
+               when instance.management?
+                 link_to "RHQ", "http://#{instance.public_dns}:7080"
+               when instance.backend?
+                 link_to "admin-console", "http://#{instance.public_dns}:8080/admin-console"
+               else
+                 instance.public_dns
+               end
+             end
+    "["+result+"]" if result
+  end
+
+  def render_ssh_link instance
+    unless instance.public_dns.blank?
+      user = APP_CONFIG['ssh_username'].blank? ? '' : APP_CONFIG['ssh_username']+'@'
+      "[" + link_to("ssh", "ssh://#{user}#{instance.public_dns}") + "]"
     end
   end
 
