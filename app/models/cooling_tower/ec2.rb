@@ -1,5 +1,5 @@
 module CoolingTower
-  class EC2
+  class Ec2
 
     def instances
       select_instances.map do |aws|

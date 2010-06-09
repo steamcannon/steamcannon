@@ -22,8 +22,8 @@ Its contents should look something like this:
     # Optional, unless you're using latest EAP instances
     deploy_dir: /opt/jboss-eap-5.0.1/jboss-as/server/cluster-ec2/farm/
 
-    # Optional, one of CoolingTower::Deltacloud or CoolingTower::EC2 (default)
-    cloud: CoolingTower::Deltacloud
+    # Optional, one of deltacloud or ec2 (default)
+    cloud: deltacloud
 
     # Optional, only required if using Deltacloud
     deltacloud_url:  http://localhost:3001/api
