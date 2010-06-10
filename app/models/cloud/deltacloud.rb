@@ -1,4 +1,4 @@
-module CoolingTower
+module Cloud
   class Deltacloud
 
     def instances

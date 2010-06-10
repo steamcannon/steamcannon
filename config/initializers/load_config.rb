@@ -9,4 +9,4 @@ APP_CONFIG['user_data'] = Base64.encode64(user_data)
 APP_CONFIG['image_ids'] = APP_CONFIG.entries.select{|x,y| x.ends_with? 'image_id'}.map{|x,y| y}
 
 # Which cloud service will we use?
-CLOUD = "CoolingTower::#{(APP_CONFIG['cloud'] || 'ec2').capitalize}".constantize.new
+CLOUD = "Cloud::#{(APP_CONFIG['cloud'] || 'ec2').capitalize}".constantize.new

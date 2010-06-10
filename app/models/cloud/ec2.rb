@@ -1,4 +1,4 @@
-module CoolingTower
+module Cloud
   class Ec2
 
     def instances

@@ -1,6 +1,6 @@
 <tr id="<%= instance.id %>" class="instance <%= class_for(instance.status) %>">
   <td><%= link_to instance, instance %></td>
-  <td><%= instance.public_dns %> <%= monitor_link(instance) %> <%= ssh_link(instance) %></td>
+  <td><%= monitor_link(instance) %> <%= ssh_link(instance) %></td>
   <td class="pulsate <%= class_for(instance.status) %>"><%=h instance.status %></td>
   <td><%= button_to 'Down', instance, :class => 'down', :method => :delete %></td>
 </tr>
