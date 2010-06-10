@@ -51,29 +51,36 @@ class Instance
   def deploy file
     # `scp -o StrictHostKeyChecking=no #{file} #{public_dns}:#{deploy_path}`
     remote = File.join(deploy_path, File.basename(file))
-    Net::SSH.start(public_dns, APP_CONFIG['ssh_username'], :keys => [APP_CONFIG['ssh_private_key_file']]) do |ssh|
-      ssh.exec!("/opt/jboss-as6/bin/twiddle.sh -s $(hostname -i) invoke jboss.deployment:flavor=URL,type=DeploymentScanner stop")
-      ssh.scp.upload! file.to_s, remote
-      ssh.exec!("/opt/jboss-as6/bin/twiddle.sh -s $(hostname -i) invoke jboss.deployment:flavor=URL,type=DeploymentScanner start")
+    ssh do |shell|
+      shell.exec!("/opt/jboss-as6/bin/twiddle.sh -s $(hostname -i) invoke jboss.deployment:flavor=URL,type=DeploymentScanner stop")
+      shell.scp.upload! file.to_s, remote
+      shell.exec!("/opt/jboss-as6/bin/twiddle.sh -s $(hostname -i) invoke jboss.deployment:flavor=URL,type=DeploymentScanner start")
     end
     remote
   end
 
   def undeploy file
     remote = File.join(deploy_path, File.basename(file))
-    Net::SSH.start(public_dns, APP_CONFIG['ssh_username'], :keys => [APP_CONFIG['ssh_private_key_file']]) do |ssh|
-      ssh.exec! "rm -f #{remote}" 
+    ssh do |shell|
+      shell.exec! "rm -f #{remote}" 
     end
   end
 
   def list dir = deploy_path
     result = []
-    Net::SSH.start(public_dns, APP_CONFIG['ssh_username'], :keys => [APP_CONFIG['ssh_private_key_file']]) do |ssh|
-      ssh.exec!("ls #{dir}") do |ch, stream, data|
+    ssh do |shell|
+      shell.exec!("ls #{dir}") do |ch, stream, data|
         result = data.split("\n") if stream == :stdout
       end
     end
     result
+  end
+
+  def ssh
+    options = APP_CONFIG['ssh_private_key_file'] ? {:keys => [APP_CONFIG['ssh_private_key_file']]} : {}
+    Net::SSH.start(public_dns, APP_CONFIG['ssh_username'], options) do |shell|
+      yield shell
+    end
   end
 
   def self.started 
