@@ -45,7 +45,7 @@ class AppsController < ApplicationController
         format.xml  { render :xml => @app, :status => :created, :location => @app }
       else
         cluster_check
-        format.html { redirect_to(@app) }
+        format.html { flash[:redeploy]=true; redirect_to(@app) }
         format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
       end
     end
@@ -70,7 +70,7 @@ class AppsController < ApplicationController
       flash[:notice] = "The #{@app} app was successfully deployed"
     end
     respond_to do |format|
-      format.html { redirect_to(@app) }
+      format.html { flash[:redeploy]=true; redirect_to(@app) }
       format.xml  { head :ok }
       format.js  { render :action => 'show', :layout => false }
     end

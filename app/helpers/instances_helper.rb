@@ -11,8 +11,8 @@ module InstancesHelper
     instances.select { |x| x.image_id == image_id && x.status != 'terminated' }
   end
 
-  def render_dns_name instance
-    result = unless instance.public_dns.blank?
+  def monitor_link instance
+    result = unless instance.public_dns.blank? || !instance.running?
                case
                when instance.frontend?
                  link_to "mod_cluster_manager", "http://#{instance.public_dns}/mod_cluster_manager"
@@ -20,15 +20,13 @@ module InstancesHelper
                  link_to "RHQ", "http://#{instance.public_dns}:7080"
                when instance.backend?
                  link_to "admin-console", "http://#{instance.public_dns}:8080/admin-console"
-               else
-                 instance.public_dns
                end
              end
     "["+result+"]" if result
   end
 
-  def render_ssh_link instance
-    unless instance.public_dns.blank?
+  def ssh_link instance
+    unless instance.public_dns.blank? || !instance.running?
       user = APP_CONFIG['ssh_username'].blank? ? '' : APP_CONFIG['ssh_username']+'@'
       "[" + link_to("ssh", "ssh://#{user}#{instance.public_dns}") + "]"
     end

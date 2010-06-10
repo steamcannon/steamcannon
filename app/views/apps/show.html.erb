@@ -8,8 +8,10 @@
 <script type="text/javascript">
   $(function() {
     monitor_changing("tr.changing");
-    redeploy_staged("tr.staged");
     cluster_status();
+    <% if flash[:redeploy] %>
+    redeploy_staged("tr.staged");
+    <% end %>
   });
   function cluster_status() {
     if ($('#cluster').is('.pending')) {
