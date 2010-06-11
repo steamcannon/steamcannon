@@ -33,6 +33,5 @@ activated net-ssh", try updating your gem:
 
   $ sudo gem update net-ssh
 
-The Deltacloud client and core gems may be outdated.  Best results
-will come building/installing the gems from source:
-http://deltacloud.org/contribute.html
+Make sure you're running at least version 0.0.2 of deltacloud-core
+(the server to which ctjr connects)

@@ -18,7 +18,9 @@ module Cloud
     end
 
     def launch image_id, key_pair_name
-      client.create_instance(image_id, :key_name => key_pair_name, :user_data => APP_CONFIG['user_data'])
+      client.create_instance(image_id, 
+                             :keyname => key_pair_name, 
+                             :user_data => Base64.encode64(APP_CONFIG['user_data']))
     end
 
     def terminate instance_id
