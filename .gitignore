@@ -4,3 +4,4 @@ public/uploads/*.war
 Vagrantfile
 .vagrant
 config/cooling-tower.yml
+config/*.pem
