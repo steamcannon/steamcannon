@@ -1,4 +1,4 @@
-Before running the app, first create $HOME/.cooling-tower/config.yml
+Before running the app, first create $RAILS_ROOT/config/cooling-tower.yml
 
 Its contents should look something like this:
 

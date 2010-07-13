@@ -1,5 +1,5 @@
 
-APP_CONFIG = YAML.load_file("#{ENV['HOME']}/.cooling-tower/config.yml")
+APP_CONFIG = YAML.load_file("#{RAILS_ROOT}/config/cooling-tower.yml")
 
 # User data for management instance
 user_data = %w{access_key secret_access_key bucket}.map{|x| "#{x}: #{APP_CONFIG[x]}"}.join("\n")
