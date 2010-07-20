@@ -1,18 +1,11 @@
 require 'spec_helper'
 
 describe UserSessionsController do
-  before(:each) do
-    @user_session = mock_model(UserSession)
-    UserSession.stub!(:new).and_return(@user_session)
-    UserSession.stub!(:find).and_return(@user_session)
-  end
 
   describe "GET user_session/new" do
 
     describe "when not logged in" do
-      before(:each) do
-        @user_session.stub!(:record).and_return(nil)
-      end
+      before(:each) { logout }
 
       it "should be successful" do
         get :new
@@ -21,15 +14,12 @@ describe UserSessionsController do
 
       it "should render the new form" do
         get :new
-        response.should render_template('new')
+        response.should render_template(:new)
       end
     end
 
     describe "when logged in" do
-      before(:each) do
-        @user = mock_model(User)
-        @user_session.stub!(:record).and_return(@user)
-      end
+      before(:each) { login }
 
       it "should redirect to root page" do
         get :new
@@ -41,12 +31,13 @@ describe UserSessionsController do
 
   describe "POST user_session" do
     before(:each) do
-      @user_session.stub!(:record).and_return(nil)
+      logout
+      UserSession.stub!(:new).and_return(@current_user_session)
     end
 
     describe "with valid params" do
       before(:each) do
-        @user_session.stub!(:save).and_return(true)
+        @current_user_session.stub!(:save).and_return(true)
       end
 
       it "should redirect to root page" do
@@ -57,24 +48,23 @@ describe UserSessionsController do
 
     describe "with invalid params" do
       before(:each) do
-        @user_session.stub!(:save).and_return(false)
+        @current_user_session.stub!(:save).and_return(false)
       end
 
       it "should display login form" do
         post :create
-        response.should render_template("new")
+        response.should render_template(:new)
       end
     end
 
     describe "DELETE user_session" do
       before(:each) do
-        @user = mock_model(User)
-        @user_session.stub!(:record).and_return(@user)
-        @user_session.stub!(:destroy)
+        login
+        @current_user_session.stub!(:destroy)
       end
 
       it "should destroy the session" do
-        @user_session.should_receive(:destroy)
+        @current_user_session.should_receive(:destroy)
         delete :destroy
       end
 

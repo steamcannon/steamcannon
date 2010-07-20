@@ -51,4 +51,19 @@ Spec::Runner.configure do |config|
   # == Notes
   #
   # For more information take a look at Spec::Runner::Configuration and Spec::Runner
+
+  config.before(:each) do
+    # AuthLogic test helpers
+    def login(session_stubs = {}, user_stubs = {})
+      @current_user = mock_model(User, user_stubs)
+      session_stubs = {:record => @current_user}.merge(session_stubs)
+      @current_user_session = mock_model(UserSession, session_stubs)
+      UserSession.stub!(:find).and_return(@current_user_session)
+    end
+    def logout
+      @current_user_session = nil
+      UserSession.stub!(:find).and_return(nil)
+    end
+
+  end
 end
