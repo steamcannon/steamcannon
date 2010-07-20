@@ -5,3 +5,4 @@ Vagrantfile
 .vagrant
 config/cooling-tower.yml
 config/*.pem
+coverage/*
