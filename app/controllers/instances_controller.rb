@@ -1,4 +1,6 @@
 class InstancesController < ApplicationController
+  before_filter :require_user
+
   # GET /instances
   # GET /instances.xml
   def index

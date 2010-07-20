@@ -1,4 +1,6 @@
 class AppsController < ApplicationController
+  before_filter :require_user
+
   # GET /apps
   # GET /apps.xml
   def index
@@ -77,7 +79,7 @@ class AppsController < ApplicationController
   end
 
   private
-  
+
   def cluster_check
     unless cluster.running?
       flash[:error] = "Cluster startup initiated, patience is a virtue"

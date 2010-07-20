@@ -47,6 +47,16 @@ body.main-body {
 		text-shadow:2px 2px 2px #020202;
 		}	
 
+#header_nav {
+    float: right;
+    margin-top: 20px;
+}
+
+#header_nav a {
+    color: #5bee5b;
+    text-decoration: none;
+}
+
 #contentcontainer {
 		background-color:transparent;
 		background-image:url(../images/bkgblur_right.png);
