@@ -1,5 +1,6 @@
 log/*.log
 tmp/**/*
+public/stylesheets/compiled/*
 public/uploads/*.war
 Vagrantfile
 .vagrant

@@ -23,9 +23,11 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "authlogic", :version => "2.1.5"
   config.gem "aws"
+  config.gem "compass", :version => "0.10.2"
+  config.gem "haml", :version => "3.0.13"
+  config.gem "jcrossley-deltacloud-client", :lib => "deltacloud"
   config.gem "net-ssh", :version => '2.0.22', :lib => "net/ssh"
   config.gem "net-scp", :lib => "net/scp"
-  config.gem "jcrossley-deltacloud-client", :lib => "deltacloud"
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
