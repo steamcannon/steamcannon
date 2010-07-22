@@ -1,2 +1,2 @@
---exclude "spec/*,gems/*"
+--exclude "spec/*,gems/*,(eval),(erb),(recognize_optimized),yaml/*,lib/tmail/*"
 --rails
