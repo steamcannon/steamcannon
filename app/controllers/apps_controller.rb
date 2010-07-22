@@ -1,4 +1,5 @@
 class AppsController < ApplicationController
+  navigation :devs
   before_filter :require_user
 
   # GET /apps

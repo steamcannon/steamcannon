@@ -25,7 +25,7 @@
         #container_grey
           #main-contentwrapper
             #menu
-              = yield :menu
+              = render_navigation
             .formcontainer
               - if flash[:notice]
                 %p.callout_success= flash[:notice]

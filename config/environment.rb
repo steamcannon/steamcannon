@@ -28,6 +28,7 @@ Rails::Initializer.run do |config|
   config.gem "jcrossley-deltacloud-client", :lib => "deltacloud"
   config.gem "net-ssh", :version => '2.0.22', :lib => "net/ssh"
   config.gem "net-scp", :lib => "net/scp"
+  config.gem "simple-navigation", :version => "2.6.0"
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
