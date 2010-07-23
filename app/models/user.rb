@@ -3,6 +3,6 @@ class User < ActiveRecord::Base
   end
 
   def cloud
-    Cloud::DeltaCloud.new(cloud_username, cloud_password)
+    Cloud::Ec2.new(cloud_username, cloud_password)
   end
 end

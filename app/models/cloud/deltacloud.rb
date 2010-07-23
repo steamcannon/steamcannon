@@ -34,7 +34,7 @@ module Cloud
     end
 
     def client
-      @client ||= DeltaCloud.new(cloud_username, cloud_password, APP_CONFIG['deltacloud_url'])
+      @client ||= DeltaCloud.new(@cloud_username, @cloud_password, APP_CONFIG['deltacloud_url'])
     end
 
     def user_data(bucket)

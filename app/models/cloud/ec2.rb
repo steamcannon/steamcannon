@@ -1,13 +1,18 @@
 module Cloud
   class Ec2
 
+    def initialize(cloud_username, cloud_password)
+      @cloud_username = cloud_username
+      @cloud_password = cloud_password
+    end
+
     def instances
       select_instances.map do |aws|
         Instance.new(
-                     :id            => aws[:aws_instance_id], 
-                     :image_id      => aws[:aws_image_id], 
-                     :key_pair_name => aws[:ssh_key_name], 
-                     :public_dns    => aws[:dns_name], 
+                     :id            => aws[:aws_instance_id],
+                     :image_id      => aws[:aws_image_id],
+                     :key_pair_name => aws[:ssh_key_name],
+                     :public_dns    => aws[:dns_name],
                      :status        => aws[:aws_state]
                      )
       end
@@ -20,7 +25,7 @@ module Cloud
     end
 
     def launch image_id, key_pair_name
-      launched = client.launch_instances(image_id, :key_name => key_pair_name, :user_data => APP_CONFIG['user_data'])
+      launched = client.launch_instances(image_id, :key_name => key_pair_name, :user_data => user_data)
       RAILS_DEFAULT_LOGGER.debug("ec2.launch_instances returned #{launched.size}")
     end
 
@@ -30,7 +35,14 @@ module Cloud
     end
 
     def client
-      @client ||= Aws::Ec2.new(APP_CONFIG['access_key'], APP_CONFIG['secret_access_key'])
+      @client ||= Aws::Ec2.new(@cloud_username, @cloud_password)
+    end
+
+    def user_data(bucket)
+      Base64.encode64(["access_key: #{@cloud_username}",
+                       "secret_access_key: #{@cloud_password}",
+                       "bucket: #{bucket}"
+                      ].join("\n"))
     end
 
   end

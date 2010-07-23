@@ -1,6 +1,6 @@
 class Instance
   DEPLOY_DIR = "/opt/jboss-as6/server/cluster-ec2/farm/"
-  
+
   def initialize attrs = {}
     @attrs = attrs
     @attrs[:image_id] ||= APP_CONFIG['backend_image_id']
@@ -62,7 +62,7 @@ class Instance
   def undeploy file
     remote = File.join(deploy_path, File.basename(file))
     ssh do |shell|
-      shell.exec! "rm -f #{remote}" 
+      shell.exec! "rm -f #{remote}"
     end
   end
 
@@ -83,7 +83,7 @@ class Instance
     end
   end
 
-  def self.started 
+  def self.started
     all.select {|x| x.started?}
   end
 
@@ -94,7 +94,7 @@ class Instance
   # Required ActiveRecord interface
 
   def self.all
-    Thread.current[:instances] ||= CLOUD.instances 
+    Thread.current[:instances] ||= CLOUD.instances
   end
 
   def self.find id

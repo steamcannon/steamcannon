@@ -5,7 +5,7 @@ class InstancesController < ApplicationController
   # GET /instances
   # GET /instances.xml
   def index
-    @instances = Instance.all
+    @instances = current_user.cloud.instances
 
     respond_to do |format|
       format.html # index.html.erb
