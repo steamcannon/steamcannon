@@ -52,9 +52,12 @@ SimpleNavigation::Configuration.run do |navigation|
 
     # You can turn off auto highlighting for a specific level
     # primary.auto_highlight = false
+    primary.auto_highlight = false
 
-    primary.item :devs, 'devs', root_path
-    primary.item :admins, 'admins', admin_path
+    primary.item :dashboard, 'dashboard', root_path
+    primary.item :applications, 'applications', apps_path
+    primary.item :deployments, 'deployments', root_path
+    primary.item :environments, 'environments', admin_path
   end
 
 end

@@ -1,0 +1,7 @@
+#deploy.striped
+  %h2
+    Edit Your App
+  - form_for(@app, :html => {:multipart => true}) do |f|
+    = f.error_messages
+    = render :partial => "form", :object => f
+    = f.submit 'Save'

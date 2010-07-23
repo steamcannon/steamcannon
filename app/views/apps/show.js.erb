@@ -1,5 +1,0 @@
-<% if @app %>
-   $('#<%=@app.id%>').replaceWith('<%=escape_javascript(render(:partial=>@app))%>');
-<% else %>
-   $('#<%=@app.id%>').remove();
-<% end %>

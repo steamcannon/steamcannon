@@ -1,7 +1,7 @@
 log/*.log
 tmp/**/*
 public/stylesheets/compiled/*
-public/uploads/*.war
+public/uploads/*
 Vagrantfile
 .vagrant
 config/cooling-tower.yml

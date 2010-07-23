@@ -1,27 +1,15 @@
 class AppsController < ApplicationController
-  navigation :devs
+  navigation :applications
   before_filter :require_user
 
   # GET /apps
   # GET /apps.xml
   def index
-    @apps = App.all
+    @apps = App.all(:order => 'created_at desc')
 
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @apps }
-    end
-  end
-
-  # GET /apps/1
-  # GET /apps/1.xml
-  def show
-    @app = App.find(params[:id])
-
-    respond_to do |format|
-      format.html { redirect_to root_path unless @app }
-      format.xml  { render :xml => @app }
-      format.js  { render :layout => false }
     end
   end
 
@@ -43,12 +31,29 @@ class AppsController < ApplicationController
 
     respond_to do |format|
       if @app.save
-        flash[:notice] = "The #{@app} app was successfully deployed"
-        format.html { redirect_to(@app) }
+        flash[:notice] = "The #{@app.name} app was successfully uploaded"
+        format.html { redirect_to apps_path }
         format.xml  { render :xml => @app, :status => :created, :location => @app }
       else
-        cluster_check
-        format.html { flash[:redeploy]=true; redirect_to(@app) }
+        format.html { render :action => :new }
+        format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
+  def edit
+    @app = App.find(params[:id])
+  end
+
+  def update
+    @app = App.find(params[:id])
+    respond_to do |format|
+      if @app.update_attributes(params[:app])
+        flash[:notice] = "The #{@app.name} app was successfully updated"
+        format.html { redirect_to apps_path }
+        format.xml  { render :xml => @app, :status => :updated, :location => @app }
+      else
+        format.html { render :action => :edit }
         format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
       end
     end
@@ -59,34 +64,10 @@ class AppsController < ApplicationController
   def destroy
     @app = App.find(params[:id])
     @app.destroy
-    flash[:notice] = "The #{@app} app was successfully undeployed"
+    flash[:notice] = "The #{@app.name} app was successfully deleted"
     respond_to do |format|
-      format.html { redirect_to :back }
+      format.html { redirect_to apps_path }
       format.xml  { head :ok }
-    end
-  end
-
-  def redeploy
-    @app = App.find(params[:id])
-    if cluster_check
-      @app.redeploy
-      flash[:notice] = "The #{@app} app was successfully deployed"
-    end
-    respond_to do |format|
-      format.html { flash[:redeploy]=true; redirect_to(@app) }
-      format.xml  { head :ok }
-      format.js  { render :action => 'show', :layout => false }
-    end
-  end
-
-  private
-
-  def cluster_check
-    unless cluster.running?
-      flash[:error] = "Cluster startup initiated, patience is a virtue"
-      cluster.startup
-    else
-      true
     end
   end
 

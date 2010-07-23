@@ -1,5 +1,5 @@
 class InstancesController < ApplicationController
-  navigation :admins
+  navigation :environments
   before_filter :require_user
 
   # GET /instances

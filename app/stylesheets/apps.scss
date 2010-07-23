@@ -1,0 +1,23 @@
+#apps_container {
+  @include container;
+
+  #apps_header {
+    font-weight: bold;
+  }
+
+  .app_name {
+    @include column(10);
+  }
+
+  .app_archive_file_name {
+    @include column(9);
+  }
+
+  .app_edit {
+    @include column(2);
+  }
+
+  .app_delete {
+    @include column(2, true);
+  }
+}
