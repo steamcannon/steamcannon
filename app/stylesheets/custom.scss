@@ -1,3 +1,9 @@
+@mixin rounded($topleft, $topright, $bottomright, $bottomleft) {
+  border-radius: $topleft $topright $bottomright $bottomleft;
+  -moz-border-radius: $topleft $topright $bottomright $bottomleft;
+  -webkit-border-radius: $topleft $topright $bottomright $bottomleft;
+}
+
 h1 {
   font-weight: bold;
   font-size: 22px;
@@ -171,7 +177,7 @@ body.main-body {
 }
 		
 #menu a {
-  -moz-border-radius: 5px 5px 0px 0px;
+  @include rounded(5px, 5px, 0px, 0px);
   padding: 10px 15px;
   margin: 0 5px -1px 0;
   background: #EAEAEA url(../../images/bkg-menufade.png) repeat-x scroll left bottom;
@@ -194,7 +200,7 @@ body.main-body {
 		
 .striped {
   width: 360px;
-  -moz-border-radius: 7px 7px 7px 7px;
+  @include rounded(7px, 7px, 7px, 7px);
   background: url(../../images/bkg_login.png) repeat-x scroll 0 0 #EBEBEB;
   border: 1px solid #D3D3D3;
   margin: 20px 0px 10px;
