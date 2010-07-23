@@ -19,6 +19,8 @@
           %a(href="http://jboss.org/stormgrind/projects/coolingtower.html") AppDeployer
         #header_nav
           - if current_user
+            = link_to('My Account', account_path)
+            |
             = link_to('Logout', user_session_path, :method => :delete)
       #contentcontainer
         #container_grey

@@ -1,10 +1,12 @@
+%h2
+  Account
+
 %p
   %b Email:
   &= @user.email
 %p
-  %b Access Key:
+  %b Cloud username:
   &= @user.cloud_username
 
 %p
-  %b Secret Access Key:
-  &= @user.cloud_password
+  = link_to('Edit', edit_account_path)
