@@ -20,4 +20,8 @@ describe User do
   it "should have a cloud password attribute" do
     User.new.should respond_to(:cloud_password)
   end
+
+  it "should have a cloud object" do
+    User.new.should respond_to(:cloud)
+  end
 end
