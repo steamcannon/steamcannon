@@ -1,0 +1,124 @@
+body {
+  background-color: #fff;
+  color: #333;
+}
+
+body, p, ol, ul, td {
+  font-family: "Lucida Sans Unicode","Lucida Grande",Sans-Serif;
+}
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px;
+}
+
+.fieldWithErrors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+#errorExplanation {
+  width: 400px;
+  border: 2px solid red;
+  padding: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#errorExplanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#errorExplanation p {
+  color: #333;
+  margin-bottom: 0;
+  padding: 5px;
+}
+
+#errorExplanation ul li {
+  font-size: 12px;
+  list-style: square;
+}
+
+.instances {
+  width: 700px;
+  margin: 5px 0px;
+  padding: 5px 0px;
+}
+
+.instance-list {
+  background: none repeat scroll 0 0 #FFFFFF;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+  width: 870px;
+  border: 1px solid #EAEAEA;
+}
+
+.instance-list th {
+  border-bottom: 2px solid #6695AF;
+  color: #01293A;
+  font-size: 14px;
+  font-weight: normal;
+  text-align: middle;
+  padding: 10px 8px;
+}
+
+.instance-list td {
+  border-bottom: 1px solid #EAEAEA;
+  color: #678C99;
+  padding: 6px 8px;
+}
+
+.instance-list tbody tr:hover td {
+  color: #005E8F;
+  background-color: #DADEE0;
+}
+
+td.running {
+  color: green;
+}
+
+td.terminated {
+  color: red;
+}
+
+td.changing {
+  color: goldenRod;
+}
+
+td img {
+  vertical-align: middle;
+  padding-right: 7px;
+}
+
+td form {
+  float: left;
+}
+
+#shutdown {
+  float: right;
+  padding-top: 15px;
+  padding-right: 15px;
+}
+
+#summary {
+  width: 200px;
+}
+
+#cluster {
+  font-size: 14px;
+}
+
+#cluster td {
+  padding: 2px 15px;
+}
