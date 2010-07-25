@@ -25,7 +25,7 @@ Rails::Initializer.run do |config|
   config.gem "aws"
   config.gem "compass", :version => "0.10.2"
   config.gem "haml", :version => "3.0.13"
-  config.gem "jcrossley-deltacloud-client", :lib => "deltacloud"
+  config.gem "bbrowning-deltacloud-client", :version => "0.0.6.1", :lib => "deltacloud"
   config.gem "net-ssh", :version => '2.0.22', :lib => "net/ssh"
   config.gem "net-scp", :lib => "net/scp"
   config.gem "paperclip", :version => "2.3.3"
