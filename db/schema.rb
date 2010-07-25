@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100723205200) do
+ActiveRecord::Schema.define(:version => 20100725181030) do
 
   create_table "apps", :force => true do |t|
     t.string   "name",                 :null => false
@@ -17,6 +17,40 @@ ActiveRecord::Schema.define(:version => 20100723205200) do
     t.string   "archive_content_type"
     t.string   "archive_file_size"
     t.string   "archive_updated_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "image_roles", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "images", :force => true do |t|
+    t.string   "name"
+    t.string   "cloud_id"
+    t.integer  "image_role_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "platform_version_images", :force => true do |t|
+    t.integer  "platform_version_id"
+    t.integer  "image_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "platform_versions", :force => true do |t|
+    t.string   "version_number"
+    t.integer  "platform_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "platforms", :force => true do |t|
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

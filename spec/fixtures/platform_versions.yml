@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  version_number: MyString
+  platform: 
+
+two:
+  version_number: MyString
+  platform: 

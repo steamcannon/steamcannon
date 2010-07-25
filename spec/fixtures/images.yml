@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  cloud_id: MyString
+  image_role: 
+
+two:
+  name: MyString
+  cloud_id: MyString
+  image_role: 
