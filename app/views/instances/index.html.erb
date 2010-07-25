@@ -5,9 +5,6 @@
 <%= render :partial => 'instances', :locals => {:type => 'backend'} %>
 <%= render :partial => 'instances', :locals => {:type => 'management'} %>
 
-<h1>App Management</h1>
-<%= render :partial => 'apps/apps', :object => App.all %>
-<%= render :partial => 'apps/upload', :object => App.new %>
 
 <script type="text/javascript">
   $(function() {
