@@ -20,6 +20,10 @@ describe PlatformVersion do
     PlatformVersion.new.should respond_to(:platform)
   end
 
+  it "should have many platform version images" do
+    PlatformVersion.new.should respond_to(:platform_version_images)
+  end
+
   it "should have many images" do
     PlatformVersion.new.should respond_to(:images)
   end
