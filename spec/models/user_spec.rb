@@ -24,4 +24,8 @@ describe User do
   it "should have a cloud object" do
     User.new.should respond_to(:cloud)
   end
+
+  it "should have many environments" do
+    User.new.should respond_to(:environments)
+  end
 end

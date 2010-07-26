@@ -34,4 +34,13 @@ describe Environment do
     environment = Environment.new(:platform_version => version)
     environment.images.size.should be(2)
   end
+
+  it "should belong to a user" do
+    Environment.new.should respond_to(:user)
+  end
+
+  it "should not be able to mass-assign user attribute" do
+    environment = Environment.new(:user => User.new)
+    environment.user.should be_nil
+  end
 end

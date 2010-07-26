@@ -1,7 +1,10 @@
 require 'spec_helper'
 
 describe EnvironmentsController do
-  before(:each) { login }
+  before(:each) do
+    login
+    @current_user.stub!(:environments).and_return(Environment)
+  end
 
   def mock_environment(stubs={})
     @mock_environment ||= mock_model(Environment, stubs)
@@ -12,6 +15,11 @@ describe EnvironmentsController do
       Environment.stub(:find).with(:all).and_return([mock_environment])
       get :index
       assigns[:environments].should == [mock_environment]
+    end
+
+    it "should only show the current user's environments" do
+      @current_user.should_receive(:environments)
+      get :index
     end
   end
 
