@@ -26,7 +26,8 @@
         #container_grey
           #main-contentwrapper
             #menu
-              = render_navigation
+              - if current_user
+                = render_navigation
             .formcontainer
               - if flash[:notice]
                 %p.callout_success= flash[:notice]

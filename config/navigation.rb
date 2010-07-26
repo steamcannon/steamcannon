@@ -49,6 +49,7 @@ SimpleNavigation::Configuration.run do |navigation|
     # works for all levels of the menu
     # primary.dom_id = 'menu-id'
     # primary.dom_class = 'menu-class'
+    primary.dom_class = 'navigation_menu'
 
     # You can turn off auto highlighting for a specific level
     # primary.auto_highlight = false
