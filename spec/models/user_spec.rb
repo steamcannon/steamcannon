@@ -28,4 +28,8 @@ describe User do
   it "should have many environments" do
     User.new.should respond_to(:environments)
   end
+
+  it "should have many apps" do
+    User.new.should respond_to(:apps)
+  end
 end

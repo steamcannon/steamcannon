@@ -3,7 +3,7 @@ require 'spec_helper'
 describe AppsController do
   before(:each) do
     login
-
+    @current_user.stub!(:apps).and_return(App)
     App.stub!(:all).and_return([])
   end
 

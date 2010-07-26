@@ -5,7 +5,7 @@ class AppsController < ApplicationController
   # GET /apps
   # GET /apps.xml
   def index
-    @apps = App.all(:order => 'created_at desc')
+    @apps = current_user.apps.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -16,7 +16,7 @@ class AppsController < ApplicationController
   # GET /apps/new
   # GET /apps/new.xml
   def new
-    @app = App.new
+    @app = current_user.apps.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -27,7 +27,7 @@ class AppsController < ApplicationController
   # POST /apps
   # POST /apps.xml
   def create
-    @app = App.new(params[:app])
+    @app = current_user.apps.new(params[:app])
 
     respond_to do |format|
       if @app.save
@@ -42,11 +42,11 @@ class AppsController < ApplicationController
   end
 
   def edit
-    @app = App.find(params[:id])
+    @app = current_user.apps.find(params[:id])
   end
 
   def update
-    @app = App.find(params[:id])
+    @app = current_user.apps.find(params[:id])
     respond_to do |format|
       if @app.update_attributes(params[:app])
         flash[:notice] = "The #{@app.name} app was successfully updated"
@@ -62,7 +62,7 @@ class AppsController < ApplicationController
   # DELETE /apps/1
   # DELETE /apps/1.xml
   def destroy
-    @app = App.find(params[:id])
+    @app = current_user.apps.find(params[:id])
     @app.destroy
     flash[:notice] = "The #{@app.name} app was successfully deleted"
     respond_to do |format|
