@@ -1,11 +1,9 @@
 Before running the app, first create $RAILS_ROOT/config/cooling-tower.yml
 
 Its contents should look something like this:
-    
-    management_image_id: ami-2741ad4e
-    backend_image_id:    ami-5949a530
-    frontend_image_id:   ami-2749a54e
-    
+    # Required, url of the deltacloud-core server
+    deltacloud_url:  http://localhost:3001/api
+
     # Optional, defaults to 'default'
     key_pair_name: YOUR_KEY_PAIR_NAME
     
@@ -16,8 +14,8 @@ Its contents should look something like this:
     # Optional, unless you're using latest EAP instances
     deploy_dir: /opt/jboss-eap-5.0.1/jboss-as/server/cluster-ec2/farm/
 
-    # Required, url of the deltacloud-core server
-    deltacloud_url:  http://localhost:3001/api
+Then setup the database schema and load seed data:
+  $ rake db:setup
 
 If, upon starting the app, you see errors regarding an "already
 activated net-ssh", try updating your gem:
