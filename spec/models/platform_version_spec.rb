@@ -27,4 +27,11 @@ describe PlatformVersion do
   it "should have many images" do
     PlatformVersion.new.should respond_to(:images)
   end
+
+  it "should return the platform's name and its version as to_s" do
+    platform = Platform.new(:name => "test platform")
+    platform_version = PlatformVersion.new(:version_number => "0.1",
+                                           :platform => platform)
+    platform_version.to_s.should eql("test platform 0.1")
+  end
 end

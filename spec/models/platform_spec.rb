@@ -18,4 +18,8 @@ describe Platform do
   it "should have many platform versions" do
     Platform.new.should respond_to(:platform_versions)
   end
+
+  it "should return its name as to_s" do
+    Platform.new(:name => "test").to_s.should eql("test")
+  end
 end

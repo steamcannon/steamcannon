@@ -1,0 +1,30 @@
+#environments_container {
+  @include column(22, true);
+  @include list_container;
+
+  #environments_header {
+    @include list_header;
+  }
+
+  .environment_row {
+    @include list_row;
+  }
+
+  .environment_name {
+    @include column(7);
+    @include prepend(0.5);
+  }
+
+  .environment_platform {
+    @include column(10);
+  }
+
+  .environment_edit {
+    @include column(2);
+  }
+
+  .environment_delete {
+    @include column(2, true);
+    @include append(0.5);
+  }
+}

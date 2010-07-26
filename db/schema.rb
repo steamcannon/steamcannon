@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100725181030) do
+ActiveRecord::Schema.define(:version => 20100726193413) do
 
   create_table "apps", :force => true do |t|
     t.string   "name",                 :null => false
@@ -17,6 +17,13 @@ ActiveRecord::Schema.define(:version => 20100725181030) do
     t.string   "archive_content_type"
     t.string   "archive_file_size"
     t.string   "archive_updated_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "environments", :force => true do |t|
+    t.string   "name"
+    t.integer  "platform_version_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

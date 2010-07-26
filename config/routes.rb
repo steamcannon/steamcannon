@@ -1,5 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :apps
+  map.resources :environments
 
   map.resources :instances, :collection => {:shutdown => :post}
 
