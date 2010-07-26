@@ -1,0 +1,22 @@
+@mixin list_container {
+  background-color: #FFFFFF;
+  border: 1px solid #EAEAEA;
+  font-size: 12px;
+  text-align: left;
+}
+
+@mixin list_header {
+  @include clearfix;
+  border-bottom: 2px solid #6695AF;
+  color: #01293A;
+  font-size: 14px;
+  font-weight: normal;
+  padding: 10px 0px;
+}
+
+@mixin list_row {
+  @include clearfix;
+  border-bottom: 1px solid #EAEAEA;
+  padding: 6px 0px;
+  color: #678C99;
+}

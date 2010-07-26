@@ -1,16 +1,22 @@
 #apps_container {
-  @include container;
+  @include column(22, true);
+  @include list_container;
 
   #apps_header {
-    font-weight: bold;
+    @include list_header;
+  }
+
+  .app_row {
+    @include list_row;
   }
 
   .app_name {
-    @include column(10);
+    @include column(9);
+    @include prepend(0.5);
   }
 
   .app_archive_file_name {
-    @include column(9);
+    @include column(8);
   }
 
   .app_edit {
@@ -19,5 +25,6 @@
 
   .app_delete {
     @include column(2, true);
+    @include append(0.5);
   }
 }
