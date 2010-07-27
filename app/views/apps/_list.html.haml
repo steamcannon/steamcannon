@@ -10,6 +10,8 @@
         = app.name
       .app_archive_file_name
         = link_to app.archive_file_name, app.archive.url
+      .app_deploy
+        = link_to 'Deploy', new_deployment_path('deployment[app_id]' => app.id)
       .app_edit
         = link_to 'Edit', edit_app_path(app)
       .app_delete

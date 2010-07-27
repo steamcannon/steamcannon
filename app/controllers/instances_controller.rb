@@ -71,7 +71,7 @@ class InstancesController < ApplicationController
     cluster.shutdown
     flash[:notice] = 'All instances are shutting down'
     respond_to do |format|
-      format.html { redirect_to :back }
+      format.html { redirect_back_or_default(instances_url) }
       format.xml  { head :ok }
     end
   end

@@ -1,0 +1,5 @@
+%h2
+  Deployments
+= render :partial => "list", :locals => { :deployments => @deployments, :empty_text => "You have no deployments." }
+%p
+  = link_to 'Create New Deployment', new_deployment_path

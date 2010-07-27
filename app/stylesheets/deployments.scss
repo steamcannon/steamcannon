@@ -1,0 +1,26 @@
+#deployments_container {
+  @include column(22, true);
+  @include list_container;
+
+  #deployments_header {
+    @include list_header;
+  }
+
+  .deployment_row {
+    @include list_row;
+  }
+
+  .deployment_app {
+    @include column(6);
+    @include prepend(0.5);
+  }
+
+  .deployment_environment {
+    @include column(9);
+  }
+
+  .deployment_delete {
+    @include column(5, true);
+    @include append(0.5);
+  }
+}

@@ -83,4 +83,26 @@ class EnvironmentsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  # POST /environments/1/start
+  # POST /environments/1/start.xml
+  def start
+    @environment = current_user.environments.find(params[:id])
+    @environment.start!
+    respond_to do |format|
+      format.html { redirect_back_or_default(environments_url, :notice => 'Environment was successfully started.') }
+      format.xml  { head :ok }
+    end
+  end
+
+  # POST /environments/1/stop
+  # POST /environments/1/stop.xml
+  def stop
+    @environment = current_user.environments.find(params[:id])
+    @environment.stop!
+    respond_to do |format|
+      format.html { redirect_back_or_default(environments_url, :notice => 'Environment was successfully stopped.') }
+      format.xml  { head :ok }
+    end
+  end
 end

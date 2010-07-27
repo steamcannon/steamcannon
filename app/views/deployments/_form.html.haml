@@ -1,0 +1,19 @@
+= form.label :app, "Application"
+%br
+= form.select :app_id, current_user.apps.all.collect { |app| [app.name, app.id ] }
+%br
+%br
+= form.label :environment
+%br
+= form.select :environment_id, current_user.environments.all.collect { |ev| [ev.name, ev.id ] }
+%br
+%br
+= form.label :datasource
+%br
+= form.radio_button :datasource, "local"
+Local
+%br
+= form.radio_button :datasource, "cloud"
+Cloud
+%br
+%br

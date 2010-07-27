@@ -11,12 +11,20 @@
   }
 
   .environment_name {
-    @include column(7);
+    @include column(6);
     @include prepend(0.5);
   }
 
   .environment_platform {
-    @include column(10);
+    @include column(6);
+  }
+
+  .environment_status {
+    @include column(3);
+  }
+
+  .environment_action {
+    @include column(2);
   }
 
   .environment_edit {

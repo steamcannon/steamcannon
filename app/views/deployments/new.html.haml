@@ -1,0 +1,7 @@
+%h2
+  Deploy Application
+- form_for(@deployment) do |f|
+  = f.error_messages
+  = render :partial => "form", :object => f
+  = f.submit 'Deploy'
+  = link_to 'Cancel', :back

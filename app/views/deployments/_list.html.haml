@@ -1,0 +1,18 @@
+#deployments_container
+  #deployments_header
+    .deployment_app
+      Application
+    .deployment_environment
+      Environment
+  - deployments.each do |deployment|
+    .deployment_row
+      .deployment_app
+        = deployment.app.name
+      .deployment_environment
+        = deployment.environment.name
+      .deployment_delete
+        = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this application?"
+  - if deployments.empty?
+    .deployment_row
+      .deployment_app
+        = empty_text

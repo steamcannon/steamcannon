@@ -43,4 +43,28 @@ describe Environment do
     environment = Environment.new(:user => User.new)
     environment.user.should be_nil
   end
+
+  it "should change status to running when started" do
+    env = Environment.new(:status => 'stopped')
+    env.start!
+    env.status.should eql('running')
+  end
+
+  it "should change status to stopped when stopped" do
+    env = Environment.new(:status => 'running')
+    env.stop!
+    env.status.should eql('stopped')
+  end
+
+  it "should default to stopped status" do
+    Environment.new.status.should eql('stopped')
+  end
+
+  it "should destroy all related deployments when stopped" do
+    deployment = mock_model(Deployment)
+    deployment.should_receive(:destroy)
+    env = Environment.new
+    env.deployments << deployment
+    env.stop!
+  end
 end

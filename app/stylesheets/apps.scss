@@ -16,7 +16,11 @@
   }
 
   .app_archive_file_name {
-    @include column(10);
+    @include column(8);
+  }
+
+  .app_deploy {
+    @include column(2);
   }
 
   .app_edit {

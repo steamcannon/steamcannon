@@ -133,7 +133,40 @@ describe EnvironmentsController do
     it "redirects to the environments list" do
       Environment.stub(:find).and_return(mock_environment(:destroy => true))
       delete :destroy, :id => "1"
-      response.should redirect_to(environments_path)
+      response.should redirect_to(environments_url)
+    end
+  end
+
+  describe "POST start" do
+    before(:each) do
+      Environment.stub!(:find).and_return(mock_environment)
+      mock_environment.stub!(:start!)
+    end
+
+    it "starts the requested environment" do
+      Environment.should_receive(:find).with("37").and_return(mock_environment)
+      mock_environment.should_receive(:start!)
+      post :start, :id => "37"
+    end
+
+    it "redirects to the environments list if no http referer" do
+      post :start, :id => "37"
+      response.should redirect_to(environments_url)
+    end
+
+    it "redirects to http referer if given" do
+      request.env["HTTP_REFERER"] = root_url
+      post :start, :id => "37"
+      response.should redirect_to(root_url)
+    end
+
+  end
+
+  describe "POST stop" do
+    it "stops the requested environment" do
+      Environment.should_receive(:find).with("37").and_return(mock_environment)
+      mock_environment.should_receive(:stop!)
+      post :stop, :id => "37"
     end
   end
 

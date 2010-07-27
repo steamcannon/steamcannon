@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
   has_many :apps
   has_many :environments
+  has_many :deployments
 
   acts_as_authentic do |c|
   end

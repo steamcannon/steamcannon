@@ -4,12 +4,21 @@
       Name
     .environment_platform
       Platform
+    .environment_status
+      Status
   - environments.each do |environment|
     .environment_row
       .environment_name
         = environment.name
       .environment_platform
         = environment.platform_version
+      .environment_status
+        = environment.status
+      .environment_action
+        - if environment.running?
+          = link_to 'Stop', stop_environment_path(environment), :method => :post, :confirm => "Are you sure you want to stop #{environment.name}?"
+        - else
+          = link_to 'Start', start_environment_path(environment), :method => :post
       .environment_edit
         = link_to 'Edit', edit_environment_path(environment)
       .environment_delete

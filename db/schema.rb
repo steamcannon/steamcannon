@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100726225821) do
+ActiveRecord::Schema.define(:version => 20100727150359) do
 
   create_table "apps", :force => true do |t|
     t.string   "name",                 :null => false
@@ -22,12 +22,22 @@ ActiveRecord::Schema.define(:version => 20100726225821) do
     t.integer  "user_id"
   end
 
+  create_table "deployments", :force => true do |t|
+    t.integer  "app_id"
+    t.integer  "environment_id"
+    t.integer  "user_id"
+    t.string   "datasource"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "environments", :force => true do |t|
     t.string   "name"
     t.integer  "platform_version_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
+    t.string   "status",              :default => "stopped"
   end
 
   create_table "image_roles", :force => true do |t|
