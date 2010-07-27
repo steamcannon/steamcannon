@@ -141,6 +141,7 @@ body.main-body {
 }
 
 .formcontainer {
+  @include clearfix;
   margin: 10px;
   padding: 20px 30px 30px;
   background-color: #F3F3F3;

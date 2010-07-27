@@ -1,2 +1,9 @@
-.marketing_text
-  This is where we should put some marketing text or a real dashboard.
+%h1
+  Welcome to Cooling Tower
+%br
+%h2
+  Deployed Applications
+= render :partial => "apps/list", :locals => { :apps => [], :empty_text => "You have no active deployments." }
+%h2
+  Running Environments
+= render :partial => "environments/list", :locals => { :environments => [], :empty_text => "You have no running environments." }

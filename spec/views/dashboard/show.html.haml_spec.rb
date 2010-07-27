@@ -6,6 +6,6 @@ describe "/dashboard/show.html.haml" do
   it "renders dashboard" do
     render
 
-    response.should have_tag("div", /marketing text/)
+    response.should have_tag("h1")
   end
 end

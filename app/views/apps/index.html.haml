@@ -1,20 +1,5 @@
 %h2
   Applications
-#apps_container
-  #apps_header
-    .app_name
-      Name
-    .app_archive_file_name
-      Archive File Name
-  - @apps.each do |app|
-    .app_row
-      .app_name
-        = app.name
-      .app_archive_file_name
-        = link_to app.archive_file_name, app.archive.url
-      .app_edit
-        = link_to 'Edit', edit_app_path(app)
-      .app_delete
-        = link_to 'Delete', app, :method => :delete, :confirm => "Are you sure you want to delete #{app.name}?"
+= render :partial => "list", :locals => { :apps => @apps, :empty_text => "You have no applications." }
 %p
   = link_to 'Upload New Application', new_app_path

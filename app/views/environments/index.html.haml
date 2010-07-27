@@ -1,20 +1,5 @@
 %h2
   Environments
-#environments_container
-  #environments_header
-    .environment_name
-      Name
-    .environment_platform
-      Platform
-  - @environments.each do |environment|
-    .environment_row
-      .environment_name
-        = environment.name
-      .environment_platform
-        = environment.platform_version
-      .environment_edit
-        = link_to 'Edit', edit_environment_path(environment)
-      .environment_delete
-        = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?"
+= render :partial => "list", :locals => { :environments => @environments, :empty_text => "You have no environments." }
 %p
   = link_to 'Create New Environment', new_environment_path
