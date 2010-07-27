@@ -18,4 +18,9 @@ describe "/apps/new.html.haml" do
       with_tag("input#app_archive[name=?]", "app[archive]")
     end
   end
+
+  it "should have a cancel link" do
+    render
+    response.should have_tag("a[href=?]", apps_path)
+  end
 end
