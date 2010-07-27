@@ -1,6 +1,6 @@
-= form.label :app, "Application"
+= form.label :app_version, "Application Version"
 %br
-= form.select :app_id, current_user.apps.all.collect { |app| [app.name, app.id ] }
+= form.select :app_version_id, current_user.app_versions.all.collect { |av| [av.to_s, av.id ] }
 %br
 %br
 = form.label :environment

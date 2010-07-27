@@ -1,33 +1,29 @@
-#apps_container {
+#app_versions_container {
   @include column(22, true);
   @include list_container;
 
-  #apps_header {
+  #app_versions_header {
     @include list_header;
   }
 
-  .app_row {
+  .app_version_row {
     @include list_row;
   }
 
-  .app_name {
+  .app_version_number {
     @include column(7);
     @include prepend(0.5);
   }
 
-  .app_latest_version {
+  .app_version_archive {
     @include column(8);
   }
 
-  .app_deploy {
+  .app_version_deploy {
     @include column(2);
   }
 
-  .app_edit {
-    @include column(2);
-  }
-
-  .app_delete {
+  .app_version_delete {
     @include column(2, true);
     @include append(0.5);
   }

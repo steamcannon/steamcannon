@@ -7,7 +7,7 @@
   - deployments.each do |deployment|
     .deployment_row
       .deployment_app
-        = deployment.app.name
+        = deployment.app_version.to_s
       .deployment_environment
         = deployment.environment.name
       .deployment_delete

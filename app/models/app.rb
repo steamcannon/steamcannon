@@ -1,9 +1,14 @@
 class App < ActiveRecord::Base
   belongs_to :user
+  has_many :app_versions
   attr_protected :user
-  has_attached_file(:archive,
-                    :url => "/uploads/:id/:filename",
-                    :path => ":rails_root/public/uploads/:id/:filename")
-  validates_attachment_presence :archive
   validates_presence_of :name
+
+  def latest_version
+    app_versions.first(:order => 'version_number desc')
+  end
+
+  def latest_version_number
+    latest_version ? latest_version.version_number : nil
+  end
 end

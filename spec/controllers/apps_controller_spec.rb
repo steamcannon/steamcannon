@@ -7,10 +7,32 @@ describe AppsController do
     App.stub!(:all).and_return([])
   end
 
+  def mock_app(stubs={})
+    # stubs.merge!({:app_versions => AppVersion})
+    @mock_app ||= mock_model(App, stubs)
+  end
+
   describe "GET /apps" do
     it "should be successful" do
       get :index
       response.should be_success
+    end
+  end
+
+  describe "GET /apps/1" do
+    before(:each) do
+      App.stub!(:find).with("37").and_return(mock_app)
+    end
+
+    it "should be successful" do
+      get :show, :id => "37"
+      response.should be_success
+    end
+
+    it "assigns the request app as @app" do
+      App.should_receive(:find).with("37").and_return(mock_app)
+      get :show, :id => "37"
+      assigns[:app].should equal(mock_app)
     end
   end
 

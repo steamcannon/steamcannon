@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Deployment do
   before(:each) do
     @valid_attributes = {
-      :app_id => 1,
+      :app_version_id => 1,
       :environment_id => 1
     }
   end

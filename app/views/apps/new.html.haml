@@ -1,8 +1,7 @@
-#deploy.striped
-  %h2
-    Upload Your App
-  - form_for(@app, :html => {:multipart => true}) do |f|
-    = f.error_messages
-    = render :partial => "form", :object => f
-    = f.submit 'Upload'
-    = link_to 'Cancel', apps_path
+%h2
+  Create New Application
+- form_for(@app, :html => {:multipart => true}) do |f|
+  = f.error_messages
+  = render :partial => "form", :object => f
+  = f.submit 'Create'
+  = link_to 'Cancel', apps_path

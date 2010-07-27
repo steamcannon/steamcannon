@@ -2,16 +2,19 @@
   #apps_header
     .app_name
       Name
-    .app_archive_file_name
-      Archive File Name
+    .app_latest_version
+      Latest Version
   - apps.each do |app|
     .app_row
       .app_name
-        = app.name
-      .app_archive_file_name
-        = link_to app.archive_file_name, app.archive.url
+        = link_to app.name, app_path(app)
+      .app_latest_version
+        = app.latest_version_number || 'None'
       .app_deploy
-        = link_to 'Deploy', new_deployment_path('deployment[app_id]' => app.id)
+        - if app.latest_version_number
+          = link_to 'Deploy', new_deployment_path('deployment[app_version_id]' => app.latest_version.id)
+        - else
+          &nbsp;
       .app_edit
         = link_to 'Edit', edit_app_path(app)
       .app_delete

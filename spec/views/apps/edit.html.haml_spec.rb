@@ -15,7 +15,7 @@ describe "/apps/edit.html.haml" do
 
     response.should have_tag("form[action=?][method=post]", app_path(assigns[:app])) do
       with_tag("input#app_name[name=?]", "app[name]")
-      with_tag("input#app_archive[name=?]", "app[archive]")
+      with_tag("textarea#app_description[name=?]", "app[description]")
     end
   end
 

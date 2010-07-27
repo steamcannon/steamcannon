@@ -16,4 +16,8 @@ describe App do
     app = App.new(:user => User.new)
     app.user.should be_nil
   end
+
+  it "should have many app versions" do
+    App.new.should respond_to(:app_versions)
+  end
 end

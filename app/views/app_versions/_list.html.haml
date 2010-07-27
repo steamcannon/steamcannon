@@ -1,0 +1,20 @@
+#app_versions_container
+  #app_versions_header
+    .app_version_number
+      Version Number
+    .app_version_archive
+      Archive
+  - app_versions.each do |app_version|
+    .app_version_row
+      .app_version_number
+        = app_version.version_number
+      .app_version_archive
+        = link_to app_version.archive_file_name, app_version.archive.url
+      .app_version_deploy
+        = link_to 'Deploy', new_deployment_path('deployment[app_version_id]' => app_version.id)
+      .app_version_delete
+        = link_to 'Delete', app_version_path(app_version, :app_id => app_version.app.id), :method => :delete, :confirm => "Are you sure you want to delete version #{app_version.version_number}?"
+  - if app_versions.empty?
+    .app_version_row
+      .app_version_number
+        = empty_text

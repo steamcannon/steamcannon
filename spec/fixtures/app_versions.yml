@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  app: 
+  version_number: 1
+  archive_file_name: MyString
+  archive_content_type: MyString
+  archive_file_size: MyString
+  archive_updated_at: MyString
+
+two:
+  app: 
+  version_number: 1
+  archive_file_name: MyString
+  archive_content_type: MyString
+  archive_file_size: MyString
+  archive_updated_at: MyString

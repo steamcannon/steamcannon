@@ -13,6 +13,17 @@ class AppsController < ApplicationController
     end
   end
 
+  # GET /apps/1
+  # GET /apps/1.xml
+  def show
+    @app = current_user.apps.find(params[:id])
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml { render :xml => @app }
+    end
+  end
+
   # GET /apps/new
   # GET /apps/new.xml
   def new
