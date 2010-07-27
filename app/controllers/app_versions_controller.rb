@@ -1,5 +1,6 @@
 class AppVersionsController < ApplicationController
   navigation :applications
+  before_filter :require_user
   before_filter :load_app
 
   # GET /app_versions/new

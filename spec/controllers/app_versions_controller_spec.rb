@@ -22,6 +22,13 @@ describe AppVersionsController do
       get :new, :app_id => "29"
       assigns[:app_version].should equal(mock_app_version)
     end
+
+    it "should redirect to login page if logged out" do
+      logout
+      AppVersion.stub(:new).and_return(mock_app_version)
+      get :new, :app_id => "29"
+      response.should redirect_to(new_user_session_url)
+    end
   end
 
   describe "POST create" do
