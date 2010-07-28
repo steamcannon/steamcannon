@@ -12,3 +12,7 @@
 
 %p
   = link_to 'Create New Version', new_app_version_path(:app_id => @app.id)
+%br
+%h3
+  Deployments
+= render :partial => "deployments/list", :locals => { :deployments => @app.deployments, :empty_text => "This application has no active deployments." }

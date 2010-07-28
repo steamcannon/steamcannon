@@ -1,6 +1,7 @@
 class App < ActiveRecord::Base
   belongs_to :user
   has_many :app_versions
+  has_many :deployments, :through => :app_versions
   attr_protected :user
   validates_presence_of :name
 

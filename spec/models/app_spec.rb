@@ -20,4 +20,8 @@ describe App do
   it "should have many app versions" do
     App.new.should respond_to(:app_versions)
   end
+
+  it "should have many deployments" do
+    App.new.should respond_to(:deployments)
+  end
 end
