@@ -51,7 +51,7 @@ describe DeploymentsController do
 
   describe "POST create" do
     before(:each) do
-      mock_deployment.stub!(:environment).and_return(Environment.new)
+      mock_deployment.stub!(:environment).and_return(Environment.new(:name => "test_env"))
     end
 
     describe "with valid params" do

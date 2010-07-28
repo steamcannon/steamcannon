@@ -28,10 +28,9 @@ describe Environment do
   end
 
   it "should have many images" do
-    version = PlatformVersion.new
-    version.images << Image.new
-    version.images << Image.new
-    environment = Environment.new(:platform_version => version)
+    environment = Environment.new
+    environment.images << Image.new
+    environment.images << Image.new
     environment.images.size.should be(2)
   end
 
@@ -45,13 +44,13 @@ describe Environment do
   end
 
   it "should change status to running when started" do
-    env = Environment.new(:status => 'stopped')
+    env = Environment.new(:name => "test", :status => 'stopped')
     env.start!
     env.status.should eql('running')
   end
 
   it "should change status to stopped when stopped" do
-    env = Environment.new(:status => 'running')
+    env = Environment.new(:name => "test", :status => 'running')
     env.stop!
     env.status.should eql('stopped')
   end
@@ -63,7 +62,7 @@ describe Environment do
   it "should destroy all related deployments when stopped" do
     deployment = mock_model(Deployment)
     deployment.should_receive(:destroy)
-    env = Environment.new
+    env = Environment.new(:name => "test")
     env.deployments << deployment
     env.stop!
   end

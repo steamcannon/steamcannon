@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100727214821) do
+ActiveRecord::Schema.define(:version => 20100728152944) do
 
   create_table "app_versions", :force => true do |t|
     t.integer  "app_id"
@@ -37,6 +37,15 @@ ActiveRecord::Schema.define(:version => 20100727214821) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "app_version_id"
+  end
+
+  create_table "environment_images", :force => true do |t|
+    t.integer  "environment_id"
+    t.integer  "image_id"
+    t.string   "hardware_profile"
+    t.integer  "num_instances"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "environments", :force => true do |t|

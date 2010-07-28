@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  environment: 
+  image: 
+  hardware_profile: MyString
+  num_instances: 1
+
+two:
+  environment: 
+  image: 
+  hardware_profile: MyString
+  num_instances: 1

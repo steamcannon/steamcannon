@@ -36,3 +36,30 @@
     @include append(0.5);
   }
 }
+
+#environment_images_fields {
+  @include column(22, true);
+  @include list_container;
+
+  #environment_images_fields_header {
+    @include list_header;
+  }
+
+  .image_row {
+    @include list_row;
+  }
+
+  .name {
+    @include column(7);
+    @include prepend(0.5);
+  }
+
+  .hardware_profile {
+    @include column(7);
+  }
+
+  .num_instances {
+    @include column(7, true);
+    @include append(0.5);
+  }
+}
