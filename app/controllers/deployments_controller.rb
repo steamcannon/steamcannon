@@ -36,11 +36,6 @@ class DeploymentsController < ApplicationController
     end
   end
 
-  # GET /deployments/1/edit
-  def edit
-    @deployment = current_user.deployments.find(params[:id])
-  end
-
   # POST /deployments
   # POST /deployments.xml
   def create
@@ -51,26 +46,10 @@ class DeploymentsController < ApplicationController
         unless @deployment.environment.running?
           @deployment.environment.start!
         end
-        format.html { redirect_to(deployments_url, :notice => 'Application was successfully deployed.') }
+        format.html { redirect_to(@deployment.app, :notice => 'Application was successfully deployed.') }
         format.xml  { render :xml => @deployment, :status => :created, :location => @deployment }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @deployment.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /deployments/1
-  # PUT /deployments/1.xml
-  def update
-    @deployment = current_user.deployments.find(params[:id])
-
-    respond_to do |format|
-      if @deployment.update_attributes(params[:deployment])
-        format.html { redirect_to(@deployment, :notice => 'Deployment was successfully updated.') }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
         format.xml  { render :xml => @deployment.errors, :status => :unprocessable_entity }
       end
     end
@@ -83,7 +62,7 @@ class DeploymentsController < ApplicationController
     @deployment.destroy
 
     respond_to do |format|
-      format.html { redirect_back_or_default(deployments_url, :notice => 'Application was successfully undeployed.') }
+      format.html { redirect_back_or_default(@deployment.app, :notice => 'Application was successfully undeployed.') }
       format.xml  { head :ok }
     end
   end
