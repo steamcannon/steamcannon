@@ -16,3 +16,8 @@
 %h3
   Deployments
 = render :partial => "deployments/list", :locals => { :deployments => @app.deployments, :empty_text => "This application has no deployments." }
+%p
+  &nbsp;
+%br
+%p
+  = link_to 'View All Applications', apps_path

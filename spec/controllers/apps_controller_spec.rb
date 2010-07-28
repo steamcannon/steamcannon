@@ -47,7 +47,6 @@ describe AppsController do
     before(:each) do
       @app = mock_model(App)
       App.stub!(:new).and_return(@app)
-      @app.stub!(:name).and_return("app name")
     end
 
     describe "with valid params" do
@@ -65,9 +64,9 @@ describe AppsController do
         flash[:notice].should_not be_blank
       end
 
-      it "should redirect to the apps index page" do
+      it "should redirect to the app show page" do
         post :create
-        response.should redirect_to(apps_path)
+        response.should redirect_to(app_path(@app))
       end
     end
 
@@ -104,7 +103,6 @@ describe AppsController do
     before(:each) do
       @app = mock_model(App)
       App.stub!(:find).with("1").and_return(@app)
-      @app.stub!(:name).and_return("app name")
     end
 
     describe "with valid params" do
@@ -127,9 +125,9 @@ describe AppsController do
         flash[:notice].should_not be_blank
       end
 
-      it "should redirect to the apps index page" do
+      it "should redirect to the app show page" do
         put :update, :id => "1"
-        response.should redirect_to(apps_path)
+        response.should redirect_to(app_path(@app))
       end
     end
 

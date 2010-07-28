@@ -43,7 +43,7 @@ class AppsController < ApplicationController
 
     respond_to do |format|
       if @app.save
-        format.html { redirect_to @app, :notice => "The #{@app.name} app was successfully created" }
+        format.html { redirect_to @app, :notice => "The application app was successfully created" }
         format.xml  { render :xml => @app, :status => :created, :location => @app }
       else
         format.html { render :action => :new }
@@ -60,8 +60,7 @@ class AppsController < ApplicationController
     @app = current_user.apps.find(params[:id])
     respond_to do |format|
       if @app.update_attributes(params[:app])
-        flash[:notice] = "The #{@app.name} app was successfully updated"
-        format.html { redirect_to apps_path }
+        format.html { redirect_to @app, :notice => "The application was successfully updated" }
         format.xml  { render :xml => @app, :status => :updated, :location => @app }
       else
         format.html { render :action => :edit }
