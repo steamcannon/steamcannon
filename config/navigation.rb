@@ -57,7 +57,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     primary.item :dashboard, 'dashboard', root_path
     primary.item :applications, 'applications', apps_path
-    primary.item :deployments, 'deployments', deployments_path
+    #primary.item :deployments, 'deployments', deployments_path
     primary.item :environments, 'environments', environments_path
   end
 
