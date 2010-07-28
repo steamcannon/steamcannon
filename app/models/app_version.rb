@@ -5,7 +5,6 @@ class AppVersion < ActiveRecord::Base
                     :url => "/uploads/:id/:filename",
                     :path => ":rails_root/public/uploads/:id/:filename")
   validates_attachment_presence :archive
-  validates_presence_of :app_id
   attr_protected :version_number, :app
   before_create :assign_version_number
 

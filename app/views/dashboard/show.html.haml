@@ -3,7 +3,7 @@
 %br
 %h2
   Deployed Applications
-= render :partial => "deployments/list", :locals => { :deployments => @deployments, :empty_text => "You have no active deployments." }
+= render :partial => "deployments/list", :locals => { :deployments => @deployments, :empty_text => "You have no deployments." }
 %h2
   Running Environments
 = render :partial => "environments/list", :locals => { :environments => @environments, :empty_text => "You have no running environments." }

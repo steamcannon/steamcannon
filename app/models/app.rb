@@ -4,6 +4,7 @@ class App < ActiveRecord::Base
   has_many :deployments, :through => :app_versions
   attr_protected :user
   validates_presence_of :name
+  accepts_nested_attributes_for :app_versions
 
   def latest_version
     app_versions.first(:order => 'version_number desc')

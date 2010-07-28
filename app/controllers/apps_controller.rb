@@ -28,6 +28,7 @@ class AppsController < ApplicationController
   # GET /apps/new.xml
   def new
     @app = current_user.apps.new
+    @app.app_versions << AppVersion.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -42,8 +43,7 @@ class AppsController < ApplicationController
 
     respond_to do |format|
       if @app.save
-        flash[:notice] = "The #{@app.name} app was successfully uploaded"
-        format.html { redirect_to apps_path }
+        format.html { redirect_to @app, :notice => "The #{@app.name} app was successfully created" }
         format.xml  { render :xml => @app, :status => :created, :location => @app }
       else
         format.html { render :action => :new }

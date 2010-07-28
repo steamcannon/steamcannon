@@ -21,7 +21,7 @@ class AppVersionsController < ApplicationController
 
     respond_to do |format|
       if @app_version.save
-        format.html { redirect_to(@app, :notice => 'AppVersion was successfully created.') }
+        format.html { redirect_to(@app, :notice => 'Version was successfully created.') }
         format.xml  { render :xml => @app_version, :status => :created, :location => @app_version }
       else
         format.html { render :action => "new" }

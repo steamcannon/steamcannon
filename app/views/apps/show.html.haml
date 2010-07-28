@@ -1,9 +1,9 @@
 %h2
   &= @app.name
-
-%br
 %p
-  &= @app.description
+  = simple_format @app.description
+= link_to 'Edit Application', edit_app_path(@app)
+%br
 %br
 
 %h3
@@ -15,4 +15,4 @@
 %br
 %h3
   Deployments
-= render :partial => "deployments/list", :locals => { :deployments => @app.deployments, :empty_text => "This application has no active deployments." }
+= render :partial => "deployments/list", :locals => { :deployments => @app.deployments, :empty_text => "This application has no deployments." }
