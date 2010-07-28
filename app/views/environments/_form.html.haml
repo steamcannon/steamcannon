@@ -10,8 +10,8 @@
 %br
 %h3
   Images
-#environment_images_fields
-  #environment_images_fields_header
+#environment_images_container
+  #environment_images_header
     .name
       Name
     .hardware_profile
@@ -33,6 +33,19 @@
 :javascript
   var versionImages = #{platform_version_images_json};
   var environmentImages = #{environment_images_json(@environment.environment_images)};
+
+  function submitEnvironmentForm() {
+    $('#environment_image_template').remove();
+  }
+
+  $(".new_environment").submit(function() {
+    submitEnvironmentForm();
+  });
+
+  $(".edit_environment").submit(function() {
+    submitEnvironmentForm();
+  });
+
   $("#environment_platform_version_id").change(function() {
     populateEnvironmentImages(versionImages, environmentImages);
   });

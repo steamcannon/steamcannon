@@ -62,7 +62,6 @@ function populateEnvironmentImages(versionImages, environmentImages) {
       // For now, always default to one instance
       html = html.replace('{{image_num_instances}}', '1');
     }
-    template.remove();
-    $("#environment_images_fields").append(html);
+    $("#environment_images_container").append(html);
   });
 }

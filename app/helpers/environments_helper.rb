@@ -23,4 +23,15 @@ module EnvironmentsHelper
   def hardware_profile_options
     ["m1-small", "m1-large", "m1-xlarge"]
   end
+
+  def instance_link(instance)
+    case instance.image_role.name
+    when "management"
+      "JBoss Operations Network"
+    when "frontend"
+      "JBoss EWS"
+    when "backend"
+      "JBoss EAP"
+    end
+  end
 end

@@ -9,7 +9,7 @@
   - environments.each do |environment|
     .environment_row
       .environment_name
-        = environment.name
+        = link_to environment.name, environment
       .environment_platform
         = environment.platform_version
       .environment_status

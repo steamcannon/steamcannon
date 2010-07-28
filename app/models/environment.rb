@@ -28,4 +28,17 @@ class Environment < ActiveRecord::Base
     self.status = 'stopped'
     save!
   end
+
+  # temporary hack
+  def instances
+    return [] unless running?
+    environment_images.inject([]) do |array, env_image|
+      env_image.num_instances.times do |i|
+        instance = env_image.image.clone
+        instance.name = "#{instance.name} ##{i + 1}"
+        array << instance
+      end
+      array
+    end
+  end
 end

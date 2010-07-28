@@ -37,11 +37,11 @@
   }
 }
 
-#environment_images_fields {
+#environment_images_container {
   @include column(22, true);
   @include list_container;
 
-  #environment_images_fields_header {
+  #environment_images_header {
     @include list_header;
   }
 
@@ -55,11 +55,19 @@
   }
 
   .hardware_profile {
-    @include column(7);
+    @include column(5);
+  }
+
+  .cloud_url {
+    @include column(10);
   }
 
   .num_instances {
-    @include column(7, true);
+    @include column(5);
+  }
+
+  .image_actions {
+    @include column(4, true);
     @include append(0.5);
   }
 }

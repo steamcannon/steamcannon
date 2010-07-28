@@ -1,0 +1,18 @@
+#environment_images_container
+  #environment_images_header
+    .name
+      Name
+    .hardware_profile
+      Hardware Profile
+    .num_instances
+      Number of Instances
+  - environment_images.each do |env_image|
+    .image_row
+      .name
+        = env_image.image.name
+      .hardware_profile
+        = env_image.hardware_profile
+      .num_instances
+        = env_image.num_instances
+      .image_actions
+        = link_to 'Start Another'
