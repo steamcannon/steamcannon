@@ -5,10 +5,10 @@ SimpleNavigation::Configuration.run do |navigation|
   # The default renderer is SimpleNavigation::Renderer::List which renders HTML lists.
   # The renderer can also be specified as option in the render_navigation call.
   # navigation.renderer = Your::Custom::Renderer
-  navigation.renderer = SimpleNavigation::Renderer::Links
+  navigation.renderer = SimpleNavigation::Renderer::List
 
   # Specify the class that will be applied to active navigation items. Defaults to 'selected'
-  navigation.selected_class = 'current'
+  navigation.selected_class = 'ui-tabs-selected ui-state-active'
 
   # Item keys are normally added to list items as id.
   # This setting turns that off
@@ -48,17 +48,17 @@ SimpleNavigation::Configuration.run do |navigation|
     # you can also specify a css id or class to attach to this particular level
     # works for all levels of the menu
     # primary.dom_id = 'menu-id'
-    # primary.dom_class = 'menu-class'
-    primary.dom_class = 'navigation_menu'
+    # primary.dom_id = 'dashboard-tabs'
+    primary.dom_class = 'ui-tabs ui-widget ui-widget-content ui-corner-all ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header'
 
     # You can turn off auto highlighting for a specific level
     # primary.auto_highlight = false
     primary.auto_highlight = false
 
-    primary.item :dashboard, 'dashboard', root_path
-    primary.item :applications, 'applications', apps_path
-    #primary.item :deployments, 'deployments', deployments_path
-    primary.item :environments, 'environments', environments_path
+    primary.item :dashboard, 'Dashboard', root_path, :class=>'ui-state-default ui-corner-top'
+    primary.item :applications, 'Applications', apps_path, :class=>'ui-state-default ui-corner-top'
+    #primary.item :deployments, 'deployments', deployments_path, :class=>'ui-state-default ui-corner-top'
+    primary.item :environments, 'Environments', environments_path, :class=>'ui-state-default ui-corner-top'
   end
 
 end

@@ -8,26 +8,24 @@
     /[if IE]
       = stylesheet_link_tag 'compiled/ie.css', :media => 'screen, projection'
 
+    = stylesheet_link_tag 'jquery.ui-1.8.1/jquery-ui-1.8.1.custom.css'
+    = stylesheet_link_tag 'jquery.loadmask'
+
     = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js'
     = javascript_include_tag 'jquery.pulse.js'
     = javascript_include_tag 'application'
 
   %body.main-body
-    #container
-      #header
-        %h1
-          %a(href="http://jboss.org/stormgrind/projects/coolingtower.html") CoolingTower
-        #header_nav
-          - if current_user
-            = link_to('My Account', account_path)
-            |
-            = link_to('Logout', user_session_path, :method => :delete)
-      #contentcontainer
+    #header
+      =render :partial=>'/layouts/header'
+    #content
+      #main
         #container_grey
           #main-contentwrapper
             #menu
               - if current_user
-                = render_navigation
+                #dashboard-tabs{:class=>'ui-tabs ui-widget ui-widget-content ui-corner-all'}
+                  = render_navigation
             .formcontainer
               - if flash[:notice]
                 %p.callout_success= flash[:notice]

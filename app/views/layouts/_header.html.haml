@@ -1,0 +1,20 @@
+.header_logo
+  %span CloudEngine PaaS
+  %ul.nav
+    %li 
+      =link_to 'Dashboard'
+    %li
+      =link_to 'Instances'
+    %li
+      =link_to 'Templates'
+    %li.selected
+      =link_to 'PaaS'
+    %li
+      =link_to 'Settings'
+
+.header_info
+  #hi-username
+    = link_to @current_user.email, { :controller => "users", :action => "show"} unless @current_user.nil?
+  = link_to 'Log out' unless @current_user.nil?
+  = link_to 'Log in', login_url if @current_user.nil?
+
