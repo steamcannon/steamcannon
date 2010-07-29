@@ -28,4 +28,8 @@ describe Image do
   it "should have many platform versions" do
     Image.new.should respond_to(:platform_versions)
   end
+
+  it "should have many instances" do
+    Image.new.should respond_to(:instances)
+  end
 end

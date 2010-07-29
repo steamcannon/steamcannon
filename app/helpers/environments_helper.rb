@@ -25,7 +25,7 @@ module EnvironmentsHelper
   end
 
   def instance_link(instance)
-    case instance.image_role.name
+    case instance.image.image_role.name
     when "management"
       "JBoss Operations Network"
     when "frontend"

@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  environment: 
+  image: 
+  cloud_id: MyString
+  hardware_profile: MyString
+  status: MyString
+  public_dns: MyString
+
+two:
+  environment: 
+  image: 
+  cloud_id: MyString
+  hardware_profile: MyString
+  status: MyString
+  public_dns: MyString

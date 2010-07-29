@@ -1,51 +1,11 @@
-class Instance
+class Instance < ActiveRecord::Base
+  belongs_to :environment
+  belongs_to :image
+
   DEPLOY_DIR = "/opt/jboss-as6/server/cluster-ec2/farm/"
-
-  def initialize attrs = {}
-    @attrs = attrs
-    @attrs[:image_id] ||= APP_CONFIG['backend_image_id']
-    @attrs[:key_pair_name] ||= APP_CONFIG['key_pair_name'] || "default"
-  end
-
-  def method_missing attr
-    @attrs[attr]
-  end
-
-  def to_json options = {}
-    @attrs.to_json options
-  end
-
-  def to_xml options = {}
-    options[:root] ||= self.class.name.downcase
-    @attrs.to_xml options
-  end
-
-  def backend?
-    image_id == APP_CONFIG['backend_image_id']
-  end
-
-  def frontend?
-    image_id == APP_CONFIG['frontend_image_id']
-  end
-
-  def management?
-    image_id == APP_CONFIG['management_image_id']
-  end
 
   def running?
     status == 'running'
-  end
-
-  def started?
-    %w{pending running}.include? status
-  end
-
-  def self.backend
-    all.find {|x| x.backend? && x.running? }
-  end
-
-  def self.frontend
-    all.find {|x| x.frontend? && x.running? }
   end
 
   def deploy file
@@ -83,53 +43,8 @@ class Instance
     end
   end
 
-  def self.started
-    all.select {|x| x.started?}
-  end
-
   def deploy_path
     APP_CONFIG['deploy_dir'] || DEPLOY_DIR
-  end
-
-  # Required ActiveRecord interface
-
-  def self.all
-    Thread.current[:instances] ||= CLOUD.instances
-  end
-
-  def self.find id
-    all.find {|x| x.id == id}
-  end
-
-  def id
-    @attrs[:id]
-  end
-
-  # Used by url_for
-  def new_record?
-    id.nil?
-  end
-
-  # Used by url_for
-  def to_s
-    id
-  end
-
-  # This may obviate the to_s def
-  def to_param
-    to_s
-  end
-
-  def save
-    CLOUD.launch(image_id, key_pair_name)
-  end
-
-  def destroy
-    CLOUD.terminate(id)
-  end
-
-  def errors
-    # TODO
   end
 
 end

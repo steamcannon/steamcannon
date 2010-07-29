@@ -66,4 +66,35 @@ describe Environment do
     env.deployments << deployment
     env.stop!
   end
+
+  it "should have many instances" do
+    Environment.new.should respond_to(:instances)
+  end
+
+  it "should destroy all related instances when stopped" do
+    instance = mock_model(Instance)
+    instance.should_receive(:destroy)
+    env = Environment.new(:name => "test")
+    env.instances << instance
+    env.stop!
+  end
+
+  it "should not start more instances if already running" do
+    env = Environment.new(:status => 'running')
+    Instance.should_not_receive(:new)
+    env.start!
+  end
+
+  it "should create instances when environment is started" do
+    instance = mock_model(Instance)
+    instance.should_receive(:save!).and_return(true)
+    Instance.should_receive(:new).and_return(instance)
+    image = Image.new(:name => "test_image")
+    env_image = EnvironmentImage.new(:image => image,
+                                     :hardware_profile => "m1-small",
+                                     :num_instances => 1)
+    env = Environment.new(:name => "test")
+    env.environment_images << env_image
+    env.start!
+  end
 end
