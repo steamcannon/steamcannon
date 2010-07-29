@@ -20,6 +20,7 @@
       Number of Instances
 #environment_image_template(style = "display: none;")
   .image_row
+    %input(type="hidden" name="environment[environment_images_attributes][0][id]" class="id" value="{{id}}")
     %input(type="hidden" name="environment[environment_images_attributes][0][image_id]" class="image_id")
     .name
     .hardware_profile

@@ -58,9 +58,11 @@ function populateEnvironmentImages(versionImages, environmentImages) {
       // for the select and text fields
       html = html.replace('value="'+hardwareProfile+'"', 'value="'+hardwareProfile+'" selected="selected"');
       html = html.replace('{{image_num_instances}}', environmentImage['num_instances']);
+      html = html.replace('{{id}}', environmentImage['id']);
     } else {
       // For now, always default to one instance
       html = html.replace('{{image_num_instances}}', '1');
+      html = html.replace('{{id}}', '');
     }
     $("#environment_images_container").append(html);
   });
