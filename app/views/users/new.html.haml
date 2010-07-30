@@ -1,11 +1,10 @@
-%h1
-  Register
-
-- form_for @user, :url => account_path do |f|
-  = f.error_messages
-  = render :partial => "form", :object => f
-  = f.submit "Register"
-
-%p
-  Already have an account? 
-  = link_to 'Login', new_user_session_path
+.dcloud_form
+  %h2
+    Register
+  - form_for @user, :url => account_path do |f|
+    = f.error_messages
+    = render :partial => "form", :object => f
+    = f.submit "Register"
+  %p
+    Already have an account? 
+    = link_to 'Login', new_user_session_path

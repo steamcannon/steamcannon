@@ -1,7 +1,9 @@
-%h2
-  Edit Environment
-- form_for(@environment) do |f|
-  = f.error_messages
-  = render :partial => "form", :object => f
-  = f.submit 'Save'
-  = link_to 'Cancel', environments_path
+.dcloud_form
+  %h2
+    Edit Environment
+  - form_for(@environment) do |f|
+    = f.error_messages
+    = render :partial => "form", :object => f
+    = f.submit 'Save', :class => "submit"
+  %p
+    = link_to 'Cancel', environments_path, :class => "actionlink"

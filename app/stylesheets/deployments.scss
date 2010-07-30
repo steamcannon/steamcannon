@@ -12,7 +12,6 @@
 
   .deployment_app {
     @include column(6);
-    @include prepend(0.5);
   }
 
   .deployment_environment {
@@ -21,6 +20,5 @@
 
   .deployment_delete {
     @include column(5, true);
-    @include append(0.5);
   }
 }

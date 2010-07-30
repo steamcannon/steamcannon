@@ -1,3 +1,1 @@
-= render :partial => "list", :locals => { :apps => @apps, :header_text => "Applications", :empty_text => "You have no applications." }
-%p
-  = link_to 'Create New Application', new_app_path
+= render :partial => "list", :locals => { :apps => @apps, :header_text => "Applications", :empty_text => "You have no applications.", :action_link => (link_to 'Create New Application', new_app_path, :class => "actionlink") }

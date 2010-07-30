@@ -11,7 +11,7 @@ fieldset
   border-bottom: none
   padding: 18px 0 10px 10px
 
-ul li input
+ul li input, ul li textarea
   border: 2px solid #becfe4
   color: #333
   display: block
@@ -49,15 +49,12 @@ input, select
   font-weight: bold
   color: #867a5e
 
-.dcloud_form
+.dcloud_form, .dcloud_show
   background: #e8e8e8
   border: solid 8px #f5f5f5
-  -moz-border-radius: 10px
-  -webkit-border-radius: 10px
+  @include rounded(10px)
   margin-top: 54px
-  width: 550px
-  margin-left: auto
-  margin-right: auto
+  display: inline-block
   padding: 36px
   h2
     font-size: 1.9em
@@ -65,6 +62,10 @@ input, select
     color: #43728e
     margin: 0 0 24px 0
     padding: 0
+  h3
+    font-size: 1.4em
+    font-weight: normal
+    color: #616161
   ul
     list-style-image: none
     list-style-position: outside
@@ -100,6 +101,9 @@ input, select
     float: right
     display: inline
     clear: both
+
+.dcloud_show
+  margin-top: 6px
 
 /* Styles for table
 
@@ -294,5 +298,12 @@ a.button_link
     padding-bottom: 10px
 
 .formcontainer
+  @include container
   @include clearfix
   padding: 1em 1.4em
+  overflow: visible
+  a
+    color: #0075C0
+    text-decoration: underline
+  .actionlink
+    text-decoration: none

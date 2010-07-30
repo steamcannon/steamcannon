@@ -1,11 +1,15 @@
-%h2
-  Create New Application
-- form_for(@app, :html => {:multipart => true}) do |f|
-  = f.error_messages
-  = render :partial => "form", :object => f
-  Optionally, upload the virst version of this application.
-  %br
-  - f.fields_for :app_versions do |version_form|
-    = render :partial => "app_versions/form", :object => version_form
-  = f.submit 'Create'
-  = link_to 'Cancel', apps_path
+.dcloud_form
+  %h2
+    Create New Application
+  - form_for(@app, :html => {:multipart => true}) do |f|
+    = f.error_messages
+    = render :partial => "form", :object => f
+    %p
+      &nbsp;
+    %p
+      Optionally, upload the virst version of this application.
+    - f.fields_for :app_versions do |version_form|
+      = render :partial => "app_versions/form", :object => version_form
+    = f.submit 'Create', :class => "submit"
+  %p
+    = link_to 'Cancel', apps_path, :class => "actionlink"

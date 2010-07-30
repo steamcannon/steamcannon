@@ -1,18 +1,15 @@
-%h1
-  Login
-- form_for @user_session, :url => user_session_path do |f|
-  = f.error_messages
-  = f.label :email
-  %br
-  = f.text_field :email
-  %br
-  %br
-  = f.label :password
-  %br
-  = f.password_field :password
-  %br
-  %br
-  = f.submit "Login"
-
-%p
-  Don't have an account? #{link_to 'Register', new_account_path}
+.dcloud_form
+  %h2
+    Login
+  - form_for @user_session, :url => user_session_path do |f|
+    = f.error_messages
+    %ul
+      %li
+        = f.label :email
+        = f.text_field :email
+      %li
+        = f.label :password
+        = f.password_field :password
+    = f.submit "Login", :class => "submit"
+  %p
+    Don't have an account? #{link_to 'Register', new_account_path}

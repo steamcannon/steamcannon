@@ -1,11 +1,10 @@
-= form.label :name
-%br
-= form.text_field :name
-%br
-%br
-= form.label :platform_version, "Platform"
-%br
-= form.select :platform_version_id, platform_version_options(PlatformVersion.all)
+%ul
+  %li
+    = form.label :name
+    = form.text_field :name
+  %li
+    = form.label :platform_version, "Platform"
+    = form.select :platform_version_id, platform_version_options(PlatformVersion.all)
 %br
 %br
 %h3

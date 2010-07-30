@@ -1,10 +1,7 @@
-= form.label :name
-%br
-= form.text_field :name
-%br
-%br
-= form.label :description
-%br
-= form.text_area :description, :cols => 45, :rows => 5
-%br
-%br
+%ul
+  %li
+    = form.label :name
+    = form.text_field :name
+  %li
+    = form.label :description
+    = form.text_area :description, :rows => 5

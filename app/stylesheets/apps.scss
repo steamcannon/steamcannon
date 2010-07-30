@@ -12,7 +12,6 @@
 
   .app_name {
     @include column(7);
-    @include prepend(0.5);
   }
 
   .app_latest_version {
@@ -29,6 +28,5 @@
 
   .app_delete {
     @include column(2, true);
-    @include append(0.5);
   }
 }
