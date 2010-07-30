@@ -1,5 +1,3 @@
-%h2
-  Environments
-= render :partial => "list", :locals => { :environments => @environments, :empty_text => "You have no environments." }
+= render :partial => "list", :locals => { :environments => @environments, :header_text => "Environments", :empty_text => "You have no environments." }
 %p
   = link_to 'Create New Environment', new_environment_path

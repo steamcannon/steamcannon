@@ -8,14 +8,10 @@
     = link_to 'Start Environment', start_environment_path(@environment), :method => :post
 %p
   = link_to 'Edit Environment', edit_environment_path(@environment)
-%h3
-  Deployed Applications
-= render :partial => "deployments/list", :locals => { :deployments => @environment.deployments, :empty_text => "This environment has no deployments." }
+= render :partial => "deployments/list", :locals => { :deployments => @environment.deployments, :header_text => "Deployed Applications", :empty_text => "This environment has no deployments." }
 %p
   &nbsp;
-%h3
-  Images
-= render :partial => "environment_images/list", :locals => { :environment_images => @environment.environment_images }
+= render :partial => "environment_images/list", :locals => { :environment_images => @environment.environment_images, :header_text => "Images" }
 %p
   &nbsp;
 %h3

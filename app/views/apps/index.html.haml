@@ -1,5 +1,3 @@
-%h2
-  Applications
-= render :partial => "list", :locals => { :apps => @apps, :empty_text => "You have no applications." }
+= render :partial => "list", :locals => { :apps => @apps, :header_text => "Applications", :empty_text => "You have no applications." }
 %p
   = link_to 'Create New Application', new_app_path

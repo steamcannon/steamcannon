@@ -7,6 +7,14 @@
   text-align: left;
   padding: 15px;
   margin: 5px 15px 15px 0;
+
+  h2 {
+    color: #4B5D63;
+    font-size: 1.5em;
+    letter-spacing: -0.02em;
+    margin: 0 0 15px;
+    padding: 0;
+  }
 }
 
 @mixin list_header {
