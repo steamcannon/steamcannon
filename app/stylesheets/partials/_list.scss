@@ -1,8 +1,12 @@
 @mixin list_container {
+  @include rounded(5px);
+  -moz-box-shadow: 0 1px 3px #CCCCCC;
   background-color: #FFFFFF;
-  border: 1px solid #EAEAEA;
+  border: 1px solid #DDDDDD;
   font-size: 12px;
   text-align: left;
+  padding: 15px;
+  margin: 5px 15px 15px 0;
 }
 
 @mixin list_header {
