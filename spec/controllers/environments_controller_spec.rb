@@ -56,10 +56,10 @@ describe EnvironmentsController do
         assigns[:environment].should equal(mock_environment)
       end
 
-      it "redirects to the environments list" do
+      it "redirects to the environment" do
         Environment.stub(:new).and_return(mock_environment(:save => true))
         post :create, :environment => {}
-        response.should redirect_to(environments_path)
+        response.should redirect_to(environment_path(mock_environment))
       end
     end
 
@@ -94,10 +94,10 @@ describe EnvironmentsController do
         assigns[:environment].should equal(mock_environment)
       end
 
-      it "redirects to the environments list" do
+      it "redirects to the environment" do
         Environment.stub(:find).and_return(mock_environment(:update_attributes => true))
         put :update, :id => "1"
-        response.should redirect_to(environments_path)
+        response.should redirect_to(environment_path(mock_environment))
       end
     end
 
