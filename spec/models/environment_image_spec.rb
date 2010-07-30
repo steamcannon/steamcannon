@@ -13,4 +13,15 @@ describe EnvironmentImage do
   it "should create a new instance given valid attributes" do
     EnvironmentImage.create!(@valid_attributes)
   end
+
+  it "should be able to start an instance" do
+    instance = mock_model(Instance)
+    instance.should_receive(:save!).and_return(true)
+    Instance.should_receive(:new).and_return(instance)
+    image = Image.new(:name => "test_image")
+    env_image = EnvironmentImage.new(:image => image,
+                                     :hardware_profile => "m1-small",
+                                     :num_instances => 1)
+    env_image.start!(1)
+  end
 end

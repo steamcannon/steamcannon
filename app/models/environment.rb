@@ -23,14 +23,7 @@ class Environment < ActiveRecord::Base
     unless self.running?
       environment_images.each do |env_image|
         env_image.num_instances.times do |i|
-          instance = Instance.new(:image_id => env_image.image.id,
-                                  :environment_id => self.id,
-                                  :name => "#{env_image.image.name} ##{i+1}",
-                                  :cloud_id => "I-80297",
-                                  :hardware_profile => env_image.hardware_profile,
-                                  :status => 'running',
-                                  :public_dns => 'ec2-72-44-82-93.z-2.1-compute.amazonaws.com')
-          instance.save!
+          env_image.start!(i+1)
         end
       end
       self.status = 'running'

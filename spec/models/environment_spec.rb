@@ -85,16 +85,12 @@ describe Environment do
     env.start!
   end
 
-  it "should create instances when environment is started" do
-    instance = mock_model(Instance)
-    instance.should_receive(:save!).and_return(true)
-    Instance.should_receive(:new).and_return(instance)
-    image = Image.new(:name => "test_image")
-    env_image = EnvironmentImage.new(:image => image,
-                                     :hardware_profile => "m1-small",
-                                     :num_instances => 1)
+  it "should start environment images when environment is started" do
+    env_image = mock_model(EnvironmentImage, :num_instances => 1)
+    env_image.should_receive(:start!)
     env = Environment.new(:name => "test")
     env.environment_images << env_image
+    env.should_receive(:save!)
     env.start!
   end
 end
