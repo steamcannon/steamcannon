@@ -11,11 +11,11 @@
   }
 
   .app_name {
-    @include column(2);
+    @include column(4);
   }
 
   .app_latest_version {
-    @include column(1);
+    @include column(4);
   }
 
   .app_deploy {
