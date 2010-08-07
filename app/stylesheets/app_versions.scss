@@ -1,5 +1,5 @@
 #app_versions_container {
-  @include column(22, true);
+  @include column(14);
   @include list_container;
 
   #app_versions_header {
@@ -11,11 +11,11 @@
   }
 
   .app_version_number {
-    @include column(6);
+    @include column(3);
   }
 
   .app_version_archive {
-    @include column(9);
+    @include column(7);
   }
 
   .app_version_deploy {

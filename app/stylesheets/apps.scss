@@ -11,11 +11,11 @@
   }
 
   .app_name {
-    @include column(7);
+    @include column(2);
   }
 
   .app_latest_version {
-    @include column(8);
+    @include column(1);
   }
 
   .app_deploy {
@@ -30,3 +30,16 @@
     @include column(2, true);
   }
 }
+
+
+#show_application {
+  .edit {
+    float: right;
+  }
+  h2 {
+    font-size: 180%;
+    font-weight: bold;
+  }
+
+}
+ 

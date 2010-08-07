@@ -1,6 +1,7 @@
 #deployments_container {
-  @include column(22, true);
+  @include column(8, true);
   @include list_container;
+  margin-left: 2em;
 
   #deployments_header {
     @include list_header;
@@ -11,14 +12,14 @@
   }
 
   .deployment_app {
-    @include column(6);
+    @include column(3);
   }
 
   .deployment_environment {
-    @include column(9);
+    @include column(3);
   }
 
   .deployment_delete {
-    @include column(5, true);
+    @include column(1, true);
   }
 }

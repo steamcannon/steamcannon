@@ -1,14 +1,11 @@
-.dcloud_show
+#show_application
   %h2
     &= @app.name
+  .edit
+    = link_to 'Edit Application', edit_app_path(@app)
   %p
     = simple_format @app.description
-    = link_to 'Edit Application', edit_app_path(@app)
-  %br
-  %br
 
-    = render :partial => "app_versions/list", :locals => { :app_versions => @app.app_versions, :header_text => "Versions", :empty_text => "This application has no versions.", :action_link => link_to('Create New Version', new_app_version_path(:app_id => @app.id), :class => "actionlink") }
-    %br
-    = render :partial => "deployments/list", :locals => { :deployments => @app.deployments, :header_text => "Deployments", :empty_text => "This application has no deployments." }
-    %p
-      = link_to 'View All Applications', apps_path, :class => "actionlink"
+  = render :partial => "app_versions/list", :locals => { :app_versions => @app.app_versions, :header_text => "Versions", :empty_text => "This application has no versions.", :action_link => link_to('Create New Version', new_app_version_path(:app_id => @app.id), :class => "actionlink") }
+  
+  = render :partial => "deployments/list", :locals => { :deployments => @app.deployments, :header_text => "Deployments", :empty_text => "This application has no deployments." }
