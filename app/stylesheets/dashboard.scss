@@ -1,0 +1,38 @@
+
+#dashboard {
+  a {
+    text-decoration: none;
+  }
+
+  #applications, #environments {
+    @include list_container;
+  }
+
+  #applications {
+    @include column(14);
+    .application {
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 1em;
+      padding-bottom: 1em;
+      .status {
+        float: right;
+      }
+      h3 {
+        font-size: 130%;
+        font-weight: bold;
+      }
+      ul.deployments {
+        margin-left: 1em;
+        list-style-type: none;
+        li {
+          display: inline;
+        }
+      }
+    }
+  }
+
+  #environments {
+    @include column(7);
+    @include last;
+  }
+}
