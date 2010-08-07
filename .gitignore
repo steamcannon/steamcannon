@@ -7,3 +7,4 @@ Vagrantfile
 config/cooling-tower.yml
 config/*.pem
 coverage/*
+*.swp

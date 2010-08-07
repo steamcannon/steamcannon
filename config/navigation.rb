@@ -8,7 +8,7 @@ SimpleNavigation::Configuration.run do |navigation|
   navigation.renderer = SimpleNavigation::Renderer::List
 
   # Specify the class that will be applied to active navigation items. Defaults to 'selected'
-  navigation.selected_class = 'ui-tabs-selected'
+  navigation.selected_class = 'selected'
 
   # Item keys are normally added to list items as id.
   # This setting turns that off
@@ -49,16 +49,17 @@ SimpleNavigation::Configuration.run do |navigation|
     # works for all levels of the menu
     # primary.dom_id = 'menu-id'
     # primary.dom_id = 'dashboard-tabs'
-    primary.dom_class = 'ui-tabs ui-widget ui-widget-content ui-corner-all ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header'
+    # primary.dom_class = 'ui-tabs ui-widget ui-widget-content ui-corner-all ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header'
+    primary.dom_class = 'nav'
 
     # You can turn off auto highlighting for a specific level
     # primary.auto_highlight = false
     primary.auto_highlight = false
 
-    primary.item :dashboard, 'Dashboard', root_path, :class=>'ui-state-default ui-corner-top'
-    primary.item :applications, 'Applications', apps_path, :class=>'ui-state-default ui-corner-top'
-    #primary.item :deployments, 'deployments', deployments_path, :class=>'ui-state-default ui-corner-top'
-    primary.item :environments, 'Environments', environments_path, :class=>'ui-state-default ui-corner-top'
+    primary.item :dashboard, 'Dashboard', root_path
+    primary.item :applications, 'Applications', apps_path
+    #primary.item :deployments, 'deployments', deployments_path
+    primary.item :environments, 'Environments', environments_path
   end
 
 end
