@@ -95,13 +95,25 @@
       @include column(7);
     }
     .deployment_environment {
-      @include column(10);
+      @include column(5);
+    }
+    .deployment_health {
+      @include column(3);
+    }
+    .deployment_visit {
+      @include column(4);
     }
   }
   #environment_images_container {
     @include column(23);
     .hardware_profile {
-      @include column(10);
+      @include column(5);
+    }
+    .image_health {
+      @include column(3);
+    }
+    .image_logs {
+      @include column(4);
     }
     .box_header {
       @include clearfix;

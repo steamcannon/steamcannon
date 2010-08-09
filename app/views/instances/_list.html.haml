@@ -9,12 +9,18 @@
       Name
     .hardware_profile
       Hardware Profile
+    .image_health
+      Health
   - instances.each do |instance|
     .image_row
       .name
         = link_to instance.name
       .hardware_profile
         = instance.hardware_profile
+      .image_health
+        Healthy
+      .image_logs
+        = link_to "View Logs"
       .image_actions
         = link_to "Stop"
     - if instances.empty?
