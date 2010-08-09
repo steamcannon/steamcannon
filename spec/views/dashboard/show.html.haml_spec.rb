@@ -4,7 +4,7 @@ describe "/dashboard/show.html.haml" do
   include DashboardHelper
 
   before(:each) do
-    assigns[:deployments] = []
+    assigns[:applications] = []
     assigns[:environments] = []
   end
 
