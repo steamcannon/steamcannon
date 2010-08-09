@@ -1,6 +1,6 @@
 .dcloud_form
   %h2
-    Create New Application
+    Add Application
   - form_for(@app, :html => {:multipart => true}) do |f|
     = f.error_messages
     = render :partial => "form", :object => f
