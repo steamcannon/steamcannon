@@ -17,7 +17,7 @@ class RenameImages < ActiveRecord::Migration
 
     mgmt = Image.find_by_cloud_id("ami-2741ad4e")
     unless mgmt.nil?
-      mgmt.name = "JBoss Opeations Network 2.4"
+      mgmt.name = "JBoss Operations Network 2.4"
       mgmt.save!
     end
   end

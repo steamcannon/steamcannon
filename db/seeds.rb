@@ -22,7 +22,7 @@ cirras_backend_1_0_0_beta2 =
 
 cirras_mgmt_1_0_0_beta2 =
   Image.find_or_create_by_cloud_id("ami-2741ad4e",
-                                   :name => "JBoss Opeations Network 2.4",
+                                   :name => "JBoss Operations Network 2.4",
                                    :image_role => mgmt_role)
 
 
