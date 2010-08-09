@@ -1,17 +1,20 @@
 #environment_images_container
-  %h2
-    = header_text
+  .box_header
+    %h2
+      = header_text
+    #start_another
+      = link_to 'Add'
   #environment_images_header
     .name
       Name
-    .cloud_url
-      Instance Link
+    .hardware_profile
+      Hardware Profile
   - instances.each do |instance|
     .image_row
       .name
-        = instance.name
-      .cloud_url
-        = link_to instance_link(instance)
+        = link_to instance.name
+      .hardware_profile
+        = instance.hardware_profile
       .image_actions
         = link_to "Stop"
     - if instances.empty?

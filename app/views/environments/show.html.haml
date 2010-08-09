@@ -12,10 +12,7 @@
       = link_to 'Edit Environment', edit_environment_path(@environment)
 
   #deployments
-    = render :partial => "deployments/list", :locals => { :deployments => @environment.deployments, :header_text => "Deployed Applications", :empty_text => "This environment has no deployments." }
-
-  #images
-    = render :partial => "environment_images/list", :locals => { :environment_images => @environment.environment_images, :header_text => "Images" }
+    = render :partial => "deployments/list_from_environments", :locals => { :deployments => @environment.deployments, :header_text => "Deployed Applications", :empty_text => "This environment has no deployments." }
 
   #instances
     = render :partial => "instances/list", :locals => { :instances => @environment.instances, :header_text => "Running Instances" }
