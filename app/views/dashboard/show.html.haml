@@ -12,7 +12,7 @@
         %ul.deployments
           - for deployment in application.deployments
             %li
-              = link_to deployment.environment.name, deployment
+              = link_to deployment.environment.name, deployment.environment
     .actions
       = link_to 'Add application', new_app_url 
           
