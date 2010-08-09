@@ -1,0 +1,20 @@
+#environment_images_container
+  %h2
+    = header_text
+  #environment_images_header
+    .name
+      Name
+    .cloud_url
+      Instance Link
+  - instances.each do |instance|
+    .image_row
+      .name
+        = instance.name
+      .cloud_url
+        = link_to instance_link(instance)
+      .image_actions
+        = link_to "Stop"
+    - if instances.empty?
+      .image_row
+        .name
+          This environment has no running instances.

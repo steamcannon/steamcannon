@@ -67,3 +67,41 @@
     @include column(4, true);
   }
 }
+
+#show_environment {
+  @include clearfix;
+  h2 {
+    font-size: 180%;
+    font-weight: bold;
+  }
+  #actions {
+    @include clearfix;
+  }
+  #actions .edit {
+    float: right;
+    padding-left: .5em;
+    padding-right: .5em;
+  }
+  #deployments {
+    @include clearfix;
+  }
+  #images {
+    @include clearfix;
+  }
+  #instances {
+    @include clearfix;
+  }
+  #deployments_container {
+    @include column(23);
+    margin-left: 0;
+    .deployment_app {
+      @include column(7);
+    }
+    .deployment_environment {
+      @include column(10);
+    }
+  }
+  #environment_images_container {
+    @include column(23);
+  }
+}
