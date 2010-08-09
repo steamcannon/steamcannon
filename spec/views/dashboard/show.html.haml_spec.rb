@@ -11,7 +11,7 @@ describe "/dashboard/show.html.haml" do
   it "renders dashboard" do
     render
 
-    response.should have_tag("#deployments_container")
-    response.should have_tag("#environments_container")
+    response.should have_tag("#applications")
+    response.should have_tag("#environments")
   end
 end

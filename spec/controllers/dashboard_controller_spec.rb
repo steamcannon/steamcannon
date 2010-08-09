@@ -5,7 +5,7 @@ describe DashboardController do
 
   describe "GET dashboard/show" do
     before(:each) do
-      @current_user.stub!(:deployments).and_return(Deployment)
+      @current_user.stub!(:apps).and_return(App)
       @current_user.stub!(:environments).and_return(Environment)
     end
 
@@ -20,15 +20,15 @@ describe DashboardController do
       response.should redirect_to(new_user_session_url)
     end
 
-    it "assigns all deployments as @deployments" do
-      deployment = mock_model(Deployment)
-      Deployment.stub(:find).with(:all).and_return([deployment])
+    it "assigns all apps as @applications" do
+      app = mock_model(App)
+      App.stub(:find).with(:all).and_return([app])
       get :show
-      assigns[:deployments].should == [deployment]
+      assigns[:applications].should == [app]
     end
 
-    it "should only show the current user's deployments" do
-      @current_user.should_receive(:deployments)
+    it "should only show the current user's apps" do
+      @current_user.should_receive(:apps)
       get :show
     end
   end
