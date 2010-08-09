@@ -9,6 +9,8 @@
       Name
     .hardware_profile
       Hardware Profile
+    .image_status
+      Status
     .image_health
       Health
   - instances.each do |instance|
@@ -17,8 +19,11 @@
         = link_to instance.name
       .hardware_profile
         = instance.hardware_profile
+      .image_status
+        = instance.status
       .image_health
-        Healthy
+        &nbsp;&nbsp;
+        = image_tag 'healthy.png'
       .image_logs
         = link_to "View Logs"
       .image_actions

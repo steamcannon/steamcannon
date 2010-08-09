@@ -95,10 +95,13 @@
       @include column(7);
     }
     .deployment_environment {
-      @include column(5);
+      @include column(4);
+    }
+    .deployment_status {
+      @include column(2);
     }
     .deployment_health {
-      @include column(3);
+      @include column(2);
     }
     .deployment_visit {
       @include column(4);
@@ -107,10 +110,13 @@
   #environment_images_container {
     @include column(23);
     .hardware_profile {
-      @include column(5);
+      @include column(4);
+    }
+    .image_status {
+      @include column(2);
     }
     .image_health {
-      @include column(3);
+      @include column(2);
     }
     .image_logs {
       @include column(4);

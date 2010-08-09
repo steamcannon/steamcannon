@@ -6,6 +6,8 @@
       Application
     .deployment_environment
       Version
+    .deployment_status
+      Status
     .deployment_health
       Health
   - deployments.each do |deployment|
@@ -14,8 +16,11 @@
         = link_to deployment.app.name, app_path(deployment.app_version.app)
       .deployment_environment
         = deployment.app_version.version_number
+      .deployment_status
+        running
       .deployment_health
-        Healthy
+        &nbsp;&nbsp;
+        = image_tag 'healthy.png'
       .deployment_visit
         = link_to 'Go To Application'
       .deployment_delete

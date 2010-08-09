@@ -15,7 +15,7 @@
     = render :partial => "deployments/list_from_environments", :locals => { :deployments => @environment.deployments, :header_text => "Deployed Applications", :empty_text => "This environment has no deployments." }
 
   #instances
-    = render :partial => "instances/list", :locals => { :instances => @environment.instances, :header_text => "Running Instances" }
+    = render :partial => "instances/list", :locals => { :instances => @environment.instances, :header_text => "Instances" }
 
   %br
   %p
