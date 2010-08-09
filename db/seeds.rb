@@ -27,9 +27,9 @@ cirras_mgmt_1_0_0_beta2 =
 
 
 # find_or_create_by syntax was getting horribly verbose at this point
-unless Platform.find_by_name("JBoss Community 2-tier")
-  platform = Platform.create(:name => "JBoss Community 2-tier")
-  platform_version = PlatformVersion.create(:version_number => "1.0.0.Beta2",
+unless Platform.find_by_name("JBoss Enterprise 2-Tier")
+  platform = Platform.create(:name => "JBoss Enterprise 2-Tier")
+  platform_version = PlatformVersion.create(:version_number => "",
                                             :platform => platform)
   frontend = PlatformVersionImage.create(:platform_version => platform_version,
                                          :image => cirras_frontend_1_0_0_beta2)
