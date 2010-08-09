@@ -21,6 +21,6 @@
     - for environment in @environments
       .environment
         = link_to environment.name, environment
-        - unless environment.deployments.empty?
+        - if environment.running?
           [Running]
     

@@ -4,6 +4,6 @@ class DashboardController < ApplicationController
 
   def show
     @applications = current_user.apps.all
-    @environments = current_user.environments.running.all
+    @environments = current_user.environments.all
   end
 end
