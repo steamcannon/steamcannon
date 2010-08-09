@@ -4,6 +4,8 @@
   #deployments_header
     .deployment_app
       Application
+    .deployment_chart
+      Activity
     .deployment_environment
       Version
     .deployment_status
@@ -14,6 +16,9 @@
     .deployment_row
       .deployment_app
         = link_to deployment.app.name, app_path(deployment.app_version.app)
+      .deployment_chart
+        %span.dynamicsparkline
+          Loading...
       .deployment_environment
         = deployment.app_version.version_number
       .deployment_status
@@ -29,3 +34,16 @@
     .deployment_row
       .deployment_app
         = empty_text
+
+:javascript
+  $(function() {
+    var sparkValues = [
+      [10,8,5,7,4,4,1,6,10,11,13,9],
+      [1,2,4,7,10,13,1,2,7,6,3,1,1],
+      [3,3,3,4,1,4,5,6,7,9,3,2,1,5],
+      [1,1,1,1,1,3,4,5,6,4,3,2,6,7]
+    ];
+    $.each($('.dynamicsparkline'), function(index, spark) {
+      $(spark).sparkline(sparkValues[index], { width: '7em', height: '1.5em', spotRadius: 0 });
+    });
+  });
