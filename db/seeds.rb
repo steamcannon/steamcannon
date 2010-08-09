@@ -9,21 +9,29 @@
 frontend_role = ImageRole.find_or_create_by_name("frontend")
 backend_role = ImageRole.find_or_create_by_name("backend")
 mgmt_role = ImageRole.find_or_create_by_name("management")
+db_role = ImageRole.find_or_create_by_name("database")
 
-cirras_frontend_1_0_0_beta2 =
+frontend_image =
   Image.find_or_create_by_cloud_id("ami-2749a54e",
                                    :name => "JBoss EWS (Apache)",
                                    :image_role => frontend_role)
 
-cirras_backend_1_0_0_beta2 =
+backend_image =
   Image.find_or_create_by_cloud_id("ami-5949a530",
                                    :name => "JBoss Enterprise Application Platform 5.1",
                                    :image_role => backend_role)
 
-cirras_mgmt_1_0_0_beta2 =
+mgmt_image =
   Image.find_or_create_by_cloud_id("ami-2741ad4e",
                                    :name => "JBoss Operations Network 2.4",
                                    :image_role => mgmt_role)
+
+db_image =
+  Image.find_or_create_by_image_role_id(db_role.id,
+                                        :cloud_id => "ami-12345",
+                                        :name => "PostgreSQL 8.4")
+
+
 
 
 # find_or_create_by syntax was getting horribly verbose at this point
@@ -32,9 +40,11 @@ unless Platform.find_by_name("JBoss Enterprise 2-Tier")
   platform_version = PlatformVersion.create(:version_number => "",
                                             :platform => platform)
   frontend = PlatformVersionImage.create(:platform_version => platform_version,
-                                         :image => cirras_frontend_1_0_0_beta2)
+                                         :image => frontend_image)
   backend = PlatformVersionImage.create(:platform_version => platform_version,
-                                        :image => cirras_backend_1_0_0_beta2)
+                                        :image => backend_image)
   mgmt = PlatformVersionImage.create(:platform_version => platform_version,
-                                     :image => cirras_mgmt_1_0_0_beta2)
+                                     :image => mgmt_image)
+  db = PlatformVersionImage.create(:platform_version => platform_version,
+                                   :image => db_image)
 end
