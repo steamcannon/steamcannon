@@ -17,10 +17,5 @@ Its contents should look something like this:
 Then setup the database schema and load seed data:
   $ rake db:setup
 
-If, upon starting the app, you see errors regarding an "already
-activated net-ssh", try updating your gem:
-
-  $ sudo gem update net-ssh
-
 Make sure you're running at least version 0.0.3 of deltacloud-core
 (the server to which ctjr connects)
