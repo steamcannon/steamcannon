@@ -12,17 +12,17 @@ mgmt_role = ImageRole.find_or_create_by_name("management")
 
 cirras_frontend_1_0_0_beta2 =
   Image.find_or_create_by_cloud_id("ami-2749a54e",
-                                   :name => "JBoss CirrAS front-end 1.0.0.Beta2",
+                                   :name => "JBoss EWS (Apache)",
                                    :image_role => frontend_role)
 
 cirras_backend_1_0_0_beta2 =
   Image.find_or_create_by_cloud_id("ami-5949a530",
-                                   :name => "JBoss CirrAS back-end 1.0.0.Beta2",
+                                   :name => "JBoss Enterprise Application Platform 5.1",
                                    :image_role => backend_role)
 
 cirras_mgmt_1_0_0_beta2 =
   Image.find_or_create_by_cloud_id("ami-2741ad4e",
-                                   :name => "JBoss CirrAS management 1.0.0.Beta2",
+                                   :name => "JBoss Opeations Network 2.4",
                                    :image_role => mgmt_role)
 
 
