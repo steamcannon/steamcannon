@@ -7,6 +7,8 @@
   #environment_images_header
     .name
       Name
+    .image_id
+      Id
     .hardware_profile
       Hardware Profile
     .image_status
@@ -17,6 +19,8 @@
     .image_row
       .name
         = link_to instance.name
+      .image_id
+        = instance.cloud_id
       .hardware_profile
         = instance.hardware_profile
       .image_status

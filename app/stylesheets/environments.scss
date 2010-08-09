@@ -92,7 +92,7 @@
     @include column(23);
     margin-left: 0;
     .deployment_app {
-      @include column(7);
+      @include column(10);
     }
     .deployment_environment {
       @include column(4);
@@ -104,11 +104,14 @@
       @include column(2);
     }
     .deployment_visit {
-      @include column(4);
+      @include column(3);
     }
   }
   #environment_images_container {
     @include column(23);
+    .image_id {
+      @include column(3);
+    }
     .hardware_profile {
       @include column(4);
     }
@@ -119,7 +122,10 @@
       @include column(2);
     }
     .image_logs {
-      @include column(4);
+      @include column(3);
+    }
+    .image_actions {
+      @include column(2, true);
     }
     .box_header {
       @include clearfix;
