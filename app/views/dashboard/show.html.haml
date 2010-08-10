@@ -5,12 +5,12 @@
     - for application in @applications
       .application
         .status
-          - unless application.deployments.empty? 
+          - unless application.deployments.active.empty? 
             [Running]
         %h3
           = link_to application.name, application
         %ul.deployments
-          - for deployment in application.deployments
+          - for deployment in application.deployments.active
             %li
               = link_to deployment.environment.name, deployment.environment
     .actions

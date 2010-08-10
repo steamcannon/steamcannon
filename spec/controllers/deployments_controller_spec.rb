@@ -93,14 +93,14 @@ describe DeploymentsController do
   end
 
   describe "DELETE destroy" do
-    it "destroys the requested deployment" do
+    it "undeploys the requested deployment" do
       Deployment.should_receive(:find).with("37").and_return(mock_deployment)
-      mock_deployment.should_receive(:destroy)
+      mock_deployment.should_receive(:undeploy!)
       delete :destroy, :id => "37"
     end
 
     it "redirects to the app show page" do
-      Deployment.stub(:find).and_return(mock_deployment(:destroy => true))
+      Deployment.stub(:find).and_return(mock_deployment(:undeploy! => true))
       delete :destroy, :id => "1"
       response.should redirect_to(app_url(mock_deployment.app))
     end

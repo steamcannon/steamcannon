@@ -4,7 +4,8 @@ describe Deployment do
   before(:each) do
     @valid_attributes = {
       :app_version_id => 1,
-      :environment_id => 1
+      :environment_id => 1,
+      :user_id => 1
     }
   end
 
@@ -19,5 +20,18 @@ describe Deployment do
     deployment = Deployment.new
     deployment.app_version = app_version
     deployment.app.should equal(app)
+  end
+
+  it "should be active by default" do
+    deployment = Deployment.create!(@valid_attributes)
+    Deployment.active.first.should eql(deployment)
+    Deployment.inactive.count.should be(0)
+  end
+
+  it "should be inactive after undeploying" do
+    deployment = Deployment.create!(@valid_attributes)
+    deployment.undeploy!
+    Deployment.inactive.first.should eql(deployment)
+    Deployment.active.count.should be(0)
   end
 end

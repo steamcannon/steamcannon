@@ -59,7 +59,7 @@ class DeploymentsController < ApplicationController
   # DELETE /deployments/1.xml
   def destroy
     @deployment = current_user.deployments.find(params[:id])
-    @deployment.destroy
+    @deployment.undeploy!
 
     respond_to do |format|
       format.html { redirect_back_or_default(@deployment.app, :notice => 'Application was successfully undeployed.') }

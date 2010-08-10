@@ -59,11 +59,12 @@ describe Environment do
     Environment.new.status.should eql('stopped')
   end
 
-  it "should destroy all related deployments when stopped" do
-    deployment = mock_model(Deployment)
-    deployment.should_receive(:destroy)
+  it "should undeploy all deployments when stopped" do
+    deployment = Deployment.new
     env = Environment.new(:name => "test")
     env.deployments << deployment
+    env.save!
+    deployment.should_receive(:undeploy!)
     env.stop!
   end
 

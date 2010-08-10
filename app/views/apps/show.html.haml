@@ -8,4 +8,4 @@
 
   = render :partial => "app_versions/list", :locals => { :app_versions => @app.app_versions, :header_text => "Versions", :empty_text => "This application has no versions.", :action_link => link_to('Create New Version', new_app_version_path(:app_id => @app.id), :class => "actionlink") }
   
-  = render :partial => "deployments/list", :locals => { :deployments => @app.deployments, :header_text => "Deployments", :empty_text => "This application has no deployments." }
+  = render :partial => "deployments/list", :locals => { :deployments => @app.deployments.active, :header_text => "Deployments", :empty_text => "This application has no deployments." }
