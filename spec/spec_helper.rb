@@ -59,10 +59,13 @@ Spec::Runner.configure do |config|
       session_stubs = {:record => @current_user}.merge(session_stubs)
       @current_user_session = mock_model(UserSession, session_stubs)
       UserSession.stub!(:find).and_return(@current_user_session)
+      controller = mock(ActionController, :current_user => @current_user)
+      AuditColumns::Base.stub!(:controller).and_return(controller)
     end
     def logout
       @current_user_session = nil
       UserSession.stub!(:find).and_return(nil)
+      AuditColumns::Base.stub!(:controller).and_return(nil)
     end
 
   end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100810202040) do
+ActiveRecord::Schema.define(:version => 20100811175727) do
 
   create_table "app_versions", :force => true do |t|
     t.integer  "app_id"
@@ -38,6 +38,9 @@ ActiveRecord::Schema.define(:version => 20100810202040) do
     t.datetime "updated_at"
     t.integer  "app_version_id"
     t.datetime "undeployed_at",  :default => ""
+    t.datetime "deployed_at"
+    t.integer  "deployed_by"
+    t.integer  "undeployed_by"
   end
 
   create_table "environment_images", :force => true do |t|
