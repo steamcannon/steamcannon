@@ -1,6 +1,13 @@
 class Instance < ActiveRecord::Base
+  include AuditColumns
+
   belongs_to :environment
   belongs_to :image
+
+  named_scope :active, :conditions => 'stopped_at is null'
+  named_scope :inactive, :conditions => 'stopped_at is not null'
+
+  before_create :record_start
 
   DEPLOY_DIR = "/opt/jboss-as6/server/cluster-ec2/farm/"
 
@@ -8,6 +15,19 @@ class Instance < ActiveRecord::Base
     status == 'running'
   end
 
+  def stop!
+    audit_action :stopped
+    save!
+  end
+
+  def record_start
+    audit_action :started
+  end
+
+
+  # Code below here is deprecated and will be removed as soon as Host Manager
+  # is integrated
+  #
   def deploy file
     # `scp -o StrictHostKeyChecking=no #{file} #{public_dns}:#{deploy_path}`
     remote = File.join(deploy_path, File.basename(file))

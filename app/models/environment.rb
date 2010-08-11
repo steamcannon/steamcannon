@@ -33,7 +33,7 @@ class Environment < ActiveRecord::Base
 
   def stop!
     deployments.each(&:undeploy!)
-    instances.destroy_all
+    instances.each(&:stop!)
     self.status = 'stopped'
     save!
   end

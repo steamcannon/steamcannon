@@ -72,11 +72,12 @@ describe Environment do
     Environment.new.should respond_to(:instances)
   end
 
-  it "should destroy all related instances when stopped" do
-    instance = mock_model(Instance)
-    instance.should_receive(:destroy)
+  it "should stop all instances when stopped" do
+    instance = Instance.new
     env = Environment.new(:name => "test")
     env.instances << instance
+    env.save!
+    instance.should_receive(:stop!)
     env.stop!
   end
 

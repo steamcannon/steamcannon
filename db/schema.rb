@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100811175727) do
+ActiveRecord::Schema.define(:version => 20100811193319) do
 
   create_table "app_versions", :force => true do |t|
     t.integer  "app_id"
@@ -85,6 +85,10 @@ ActiveRecord::Schema.define(:version => 20100811175727) do
     t.string   "public_dns"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "started_at"
+    t.integer  "started_by"
+    t.datetime "stopped_at"
+    t.integer  "stopped_by"
   end
 
   create_table "platform_version_images", :force => true do |t|

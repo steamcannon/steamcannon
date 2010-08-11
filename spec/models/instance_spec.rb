@@ -24,4 +24,28 @@ describe Instance do
   it "should belong to an image" do
     Instance.new.should respond_to(:image)
   end
+
+  it "should be active after creation" do
+    instance = Instance.create!(@valid_attributes)
+    Instance.active.first.should eql(instance)
+    Instance.inactive.count.should be(0)
+  end
+
+  it "should populate started_at after creation" do
+    instance = Instance.create!(@valid_attributes)
+    instance.started_at.should_not be_nil
+  end
+
+  it "should populated started_by after creation" do
+    login
+    instance = Instance.create!(@valid_attributes)
+    instance.started_by.should be(@current_user.id)
+  end
+
+  it "should be inactive after stopping" do
+    instance = Instance.create!(@valid_attributes)
+    instance.stop!
+    Instance.inactive.first.should eql(instance)
+    Instance.active.count.should be(0)
+  end
 end
