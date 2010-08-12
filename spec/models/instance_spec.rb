@@ -48,4 +48,12 @@ describe Instance do
     Instance.inactive.first.should eql(instance)
     Instance.active.count.should be(0)
   end
+
+  it "should generate certs on creation" do
+    instance = Instance.create!(@valid_attributes)
+    instance.server_key.should_not be_nil
+    instance.server_cert.should_not be_nil
+    instance.client_key.should_not be_nil
+    instance.client_cert.should_not be_nil
+  end
 end

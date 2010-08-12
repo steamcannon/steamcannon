@@ -7,7 +7,7 @@ class Instance < ActiveRecord::Base
   named_scope :active, :conditions => 'stopped_at is null'
   named_scope :inactive, :conditions => 'stopped_at is not null'
 
-  before_create :record_start
+  before_create :record_start, :generate_certs
 
   DEPLOY_DIR = "/opt/jboss-as6/server/cluster-ec2/farm/"
 
@@ -22,6 +22,11 @@ class Instance < ActiveRecord::Base
 
   def record_start
     audit_action :started
+  end
+
+  def generate_certs
+    self.server_key, self.server_cert = AgentCert.generate("CT Agent", 'serverAuth')
+    self.client_key, self.client_cert = AgentCert.generate("CT", 'clientAuth')
   end
 
 
