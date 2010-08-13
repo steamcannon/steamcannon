@@ -5,9 +5,9 @@ class Environment < ActiveRecord::Base
   has_many :instances
   belongs_to :platform_version
   belongs_to :user
-  attr_protected :user
+  attr_protected :user_id
   accepts_nested_attributes_for :environment_images
-  validates_presence_of :name
+  validates_presence_of :name, :user
 
   named_scope :running, :conditions => { :status => 'running' }
 

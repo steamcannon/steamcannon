@@ -2,16 +2,26 @@ require 'spec_helper'
 
 describe Instance do
   before(:each) do
+    cloud_instance = mock(:id => "i-12345",
+                          :state => 'PENDING',
+                          :public_addresses => [""])
+    cloud = mock(Cloud::Deltacloud)
+    cloud.stub!(:terminate)
+    cloud.stub!(:launch).and_return(cloud_instance)
+
+    @image = mock_model(Image)
+    @image.stub!(:cloud_id).and_return("ami-12345")
+    @environment = mock_model(Environment)
+    @environment.stub_chain(:user, :cloud).and_return(cloud)
+
     @valid_attributes = {
-      :environment_id => 1,
-      :image_id => 1,
+      :environment => @environment,
+      :image => @image,
       :name => "value for name",
       :cloud_id => "value for cloud_id",
       :hardware_profile => "value for hardware_profile",
       :public_dns => "value for public_dns"
     }
-    @image = mock_model(Image)
-    @environment = mock_model(Environment)
   end
 
   it "should create a new instance given valid attributes" do
