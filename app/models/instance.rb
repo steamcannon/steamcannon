@@ -11,13 +11,11 @@ class Instance < ActiveRecord::Base
 
   before_create :generate_certs
 
-  DEPLOY_DIR = "/opt/jboss-as6/server/cluster-ec2/farm/"
-
-  def self.deploy!(image_id, environment_id, name, hardware_profile)
+  def self.deploy!(image, environment, name, hardware_profile)
     # cloud id and public_dns are temporary hacks
     random_cloud_id = "i-#{(1000000000 + rand(3000000000)).to_s(16)}"
-    instance = Instance.new(:image_id => image_id,
-                            :environment_id => environment_id,
+    instance = Instance.new(:image_id => image.id,
+                            :environment_id => environment.id,
                             :name => name,
                             :cloud_id => random_cloud_id,
                             :hardware_profile => hardware_profile,
@@ -51,6 +49,8 @@ class Instance < ActiveRecord::Base
   # Code below here is deprecated and will be removed as soon as Host Manager
   # is integrated
   #
+  DEPLOY_DIR = "/opt/jboss-as6/server/cluster-ec2/farm/"
+
   def deploy file
     # `scp -o StrictHostKeyChecking=no #{file} #{public_dns}:#{deploy_path}`
     remote = File.join(deploy_path, File.basename(file))

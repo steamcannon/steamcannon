@@ -10,6 +10,8 @@ describe Instance do
       :hardware_profile => "value for hardware_profile",
       :public_dns => "value for public_dns"
     }
+    @image = mock_model(Image)
+    @environment = mock_model(Environment)
   end
 
   it "should create a new instance given valid attributes" do
@@ -31,18 +33,18 @@ describe Instance do
   end
 
   it "should populate started_at after deploy!" do
-    instance = Instance.deploy!(1, 1, "test", "small")
+    instance = Instance.deploy!(@image, @environment, "test", "small")
     instance.started_at.should_not be_nil
   end
 
   it "should populate started_by after deploy!" do
     login
-    instance = Instance.deploy!(1, 1, "test", "small")
+    instance = Instance.deploy!(@image, @environment, "test", "small")
     instance.started_by.should be(@current_user.id)
   end
 
   it "should be status pending after deploy!" do
-    instance = Instance.deploy!(1, 1, "test", "small")
+    instance = Instance.deploy!(@image, @environment, "test", "small")
     instance.status.should eql('pending')
   end
 

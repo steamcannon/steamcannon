@@ -4,6 +4,6 @@ class EnvironmentImage < ActiveRecord::Base
 
   def start!(instance_number)
     name = "#{image.name} ##{instance_number}"
-    Instance.deploy!(image.id, environment_id, name, hardware_profile)
+    Instance.deploy!(image, environment, name, hardware_profile)
   end
 end
