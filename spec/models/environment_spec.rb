@@ -60,12 +60,11 @@ describe Environment do
   end
 
   it "should undeploy all deployments when stopped" do
-    deployment = Deployment.new
     env = Environment.new(:name => "test")
-    env.deployments << deployment
+    env.deployments << Deployment.new
     env.save!
-    deployment.should_receive(:undeploy!)
     env.stop!
+    env.deployments.inactive.first.should be_undeployed
   end
 
   it "should have many instances" do
@@ -73,12 +72,11 @@ describe Environment do
   end
 
   it "should stop all instances when stopped" do
-    instance = Instance.new
     env = Environment.new(:name => "test")
-    env.instances << instance
+    env.instances << Instance.new
     env.save!
-    instance.should_receive(:stop!)
     env.stop!
+    env.instances.active.first.should be_stopping
   end
 
   it "should not start more instances if already running" do

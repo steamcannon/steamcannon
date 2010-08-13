@@ -4,24 +4,42 @@ class Instance < ActiveRecord::Base
   belongs_to :environment
   belongs_to :image
 
-  named_scope :active, :conditions => 'stopped_at is null'
-  named_scope :inactive, :conditions => 'stopped_at is not null'
+  named_scope :active, :conditions => "status is null or status <> 'stopped'"
+  named_scope :inactive, :conditions => "status == 'stopped'"
+  named_scope :pending, :conditions => "status == 'pending'"
+  named_scope :stopping, :conditions => "status == 'stopping'"
 
-  before_create :record_start, :generate_certs
+  before_create :generate_certs
 
   DEPLOY_DIR = "/opt/jboss-as6/server/cluster-ec2/farm/"
+
+  def self.deploy!(image_id, environment_id, name, hardware_profile)
+    # cloud id and public_dns are temporary hacks
+    random_cloud_id = "i-#{(1000000000 + rand(3000000000)).to_s(16)}"
+    instance = Instance.new(:image_id => image_id,
+                            :environment_id => environment_id,
+                            :name => name,
+                            :cloud_id => random_cloud_id,
+                            :hardware_profile => hardware_profile,
+                            :status => 'pending',
+                            :public_dns => 'ec2-72-44-82-93.z-2.1-compute.amazonaws.com')
+    instance.audit_action :started
+    instance.save!
+    instance
+  end
 
   def running?
     status == 'running'
   end
 
-  def stop!
-    audit_action :stopped
-    save!
+  def stopping?
+    status == 'stopping'
   end
 
-  def record_start
-    audit_action :started
+  def stop!
+    audit_action :stopped
+    self.status = 'stopping'
+    save!
   end
 
   def generate_certs

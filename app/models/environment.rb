@@ -32,8 +32,8 @@ class Environment < ActiveRecord::Base
   end
 
   def stop!
-    deployments.each(&:undeploy!)
-    instances.each(&:stop!)
+    deployments.active.each(&:undeploy!)
+    instances.active.each(&:stop!)
     self.status = 'stopped'
     save!
   end

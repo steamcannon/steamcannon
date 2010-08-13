@@ -8,7 +8,6 @@ describe Instance do
       :name => "value for name",
       :cloud_id => "value for cloud_id",
       :hardware_profile => "value for hardware_profile",
-      :status => "value for status",
       :public_dns => "value for public_dns"
     }
   end
@@ -31,20 +30,44 @@ describe Instance do
     Instance.inactive.count.should be(0)
   end
 
-  it "should populate started_at after creation" do
-    instance = Instance.create!(@valid_attributes)
+  it "should populate started_at after deploy!" do
+    instance = Instance.deploy!(1, 1, "test", "small")
     instance.started_at.should_not be_nil
   end
 
-  it "should populated started_by after creation" do
+  it "should populate started_by after deploy!" do
     login
-    instance = Instance.create!(@valid_attributes)
+    instance = Instance.deploy!(1, 1, "test", "small")
     instance.started_by.should be(@current_user.id)
   end
 
-  it "should be inactive after stopping" do
+  it "should be status pending after deploy!" do
+    instance = Instance.deploy!(1, 1, "test", "small")
+    instance.status.should eql('pending')
+  end
+
+  it "should be status stopping after stop!" do
     instance = Instance.create!(@valid_attributes)
     instance.stop!
+    instance.status.should eql('stopping')
+  end
+
+  it "should populate stopped_at after stop!" do
+    instance = Instance.create!(@valid_attributes)
+    instance.stop!
+    instance.stopped_at.should_not be_nil
+  end
+
+  it "should populate stopped_by after stop!" do
+    login
+    instance = Instance.create!(@valid_attributes)
+    instance.stop!
+    instance.stopped_by.should be(@current_user.id)
+  end
+
+  it "should be inactive after stopped" do
+    instance = Instance.create!(@valid_attributes)
+    instance.update_attribute('status', 'stopped')
     Instance.inactive.first.should eql(instance)
     Instance.active.count.should be(0)
   end
