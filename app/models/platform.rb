@@ -44,6 +44,10 @@ class Platform < ActiveRecord::Base
           version = PlatformVersion.new(version_yaml)
           unless images.nil?
             images.each do |image_yaml|
+              image_role = image_yaml['image_role']
+              unless image_role.nil?
+                image_yaml['image_role'] = ImageRole.find_or_create_by_name(image_role)
+              end
               version.images << Image.find_or_create_by_cloud_id(image_yaml)
             end
           end
