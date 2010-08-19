@@ -1,0 +1,6 @@
+---
+platforms:
+  - name: Test Platform
+    platform_versions:
+      - version_number: 123
+      - version_number: 234
