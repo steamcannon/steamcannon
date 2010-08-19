@@ -33,26 +33,13 @@ class Platform < ActiveRecord::Base
   # it will be used, otherwise a new Image will be created and any
   # extra Image attributes you pass will get used for the creation.
   #
-  def self.create_from_yaml(file_path)
+  def self.create_from_yaml_file(file_path)
     yaml = YAML::load_file(file_path)
     yaml['platforms'].each do |platform_yaml|
-      platform_versions = platform_yaml.delete('platform_versions')
+      platform_versions = platform_yaml.delete('platform_versions') || []
       platform = Platform.new(platform_yaml)
-      unless platform_versions.nil?
-        platform_versions.each do |version_yaml|
-          images = version_yaml.delete('images')
-          version = PlatformVersion.new(version_yaml)
-          unless images.nil?
-            images.each do |image_yaml|
-              image_role = image_yaml['image_role']
-              unless image_role.nil?
-                image_yaml['image_role'] = ImageRole.find_or_create_by_name(image_role)
-              end
-              version.images << Image.find_or_create_by_cloud_id(image_yaml)
-            end
-          end
-          platform.platform_versions << version
-        end
+      platform_versions.each do |version_yaml|
+        platform.platform_versions << PlatformVersion.new_from_yaml(version_yaml)
       end
       platform.save!
     end

@@ -4,4 +4,13 @@ class Image < ActiveRecord::Base
   has_many :instances
 
   validates_presence_of :image_role
+
+  # See Platform.create_from_yaml_file
+  def self.new_from_yaml(yaml)
+    image_role = yaml['image_role']
+    unless image_role.nil?
+      yaml['image_role'] = ImageRole.find_or_create_by_name(image_role)
+    end
+    Image.find_or_create_by_cloud_id(yaml)
+  end
 end
