@@ -23,7 +23,7 @@
         - else
           = instance.name
       .image_id
-        = instance.cloud_id
+        = instance.cloud_id or '&nbsp;'
       .hardware_profile
         = instance.hardware_profile
       .image_status
