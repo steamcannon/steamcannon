@@ -16,4 +16,4 @@ done
 $JRUBY -S rake gems:install db:setup
 # If you try to run 'spec:rcov' in the same rake command as other tasks, you
 # get the error "Don't know how to build task 'spec:rcov'"
-$JRUBY -S rake spec:rcov
+$JRUBY -S rake
