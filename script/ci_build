@@ -1,6 +1,6 @@
 #!/bin/sh
 
-JRUBY=`which jruby`
+JRUBY=`which jruby 2>/dev/null`
 while getopts j: opt
 do
     case "$opt" in
@@ -11,6 +11,9 @@ do
     esac
 done
 
-$JRUBY -S rake gems:install
-$JRUBY -S rake db:setup
+# For some reason TeamCity complains about not being able to find sqlite3
+# unless I run db:setup in the same command as another rake task
+$JRUBY -S rake gems:install db:setup
+# If you try to run 'spec:rcov' in the same rake command as other tasks, you
+# get the error "Don't know how to build task 'spec:rcov'"
 $JRUBY -S rake spec:rcov
