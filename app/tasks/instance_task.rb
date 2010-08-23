@@ -1,5 +1,3 @@
-require 'torquebox/messaging/task'
-
 class InstanceTask < TorqueBox::Messaging::Task
 
   def launch_instance(payload)
