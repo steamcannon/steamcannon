@@ -1,5 +1,0 @@
-<% if @instance %>
-   $('#<%=@instance.id%>').replaceWith('<%=escape_javascript(render(:partial=>@instance))%>');
-<% else %>
-   $('#<%=@instance.id%>').remove();
-<% end %>

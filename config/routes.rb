@@ -3,13 +3,10 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :app_versions
   map.resources :environments, :member => {:start => :post, :stop => :post}
   map.resources :deployments
-  map.resources :instances, :collection => {:shutdown => :post}
 
   map.resource :user_session
   map.resource :account, :controller => "users"
   map.resource :dashboard, :controller => "dashboard"
-
-  map.admin '/admin', :controller => "instances"
 
   # The priority is based upon order of creation: first created -> highest priority.
 
