@@ -5,6 +5,31 @@ describe Cloud::Deltacloud do
     @deltacloud = Cloud::Deltacloud.new('abc', '123')
   end
 
+  describe "hardware profiles" do
+    before(:each) do
+      @client = mock(Object,
+                     :hardware_profiles => [])
+      @deltacloud.stub!(:client).and_return(@client)
+    end
+
+    it "should fetch from cloud" do
+      @client.should_receive(:hardware_profiles)
+      @deltacloud.hardware_profiles
+    end
+
+    it "should only fetch once" do
+      @client.should_receive(:hardware_profiles).once.and_return([])
+      @deltacloud.hardware_profiles
+      @deltacloud.hardware_profiles
+    end
+
+    it "should only return profile names" do
+      profile = mock(Object, :name => "small")
+      @client.should_receive(:hardware_profiles).and_return([profile])
+      @deltacloud.hardware_profiles.should eql(["small"])
+    end
+  end
+
   describe "client" do
     before(:each) do
       APP_CONFIG ||= {}

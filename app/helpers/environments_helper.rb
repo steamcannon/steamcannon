@@ -21,7 +21,7 @@ module EnvironmentsHelper
   end
 
   def hardware_profile_options
-    ["m1-small", "m1-large", "m1-xlarge"]
+    current_user.cloud.hardware_profiles
   end
 
 end

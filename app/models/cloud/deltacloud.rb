@@ -24,6 +24,10 @@ module Cloud
       i.stop!
     end
 
+    def hardware_profiles
+      @hardware_profiles ||= client.hardware_profiles.map(&:name)
+    end
+
     def client
       @client ||= DeltaCloud.new(@cloud_username, @cloud_password, APP_CONFIG['deltacloud_url'])
     end
