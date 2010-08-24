@@ -91,4 +91,14 @@ describe Instance do
     instance.client_key.should_not be_nil
     instance.client_cert.should_not be_nil
   end
+
+  it "should be running when status is running" do
+    instance = Instance.new(:status => 'running')
+    instance.should be_running
+  end
+
+  it "should be stopping when status is stopping" do
+    instance = Instance.new(:status => 'stopping')
+    instance.should be_stopping
+  end
 end
