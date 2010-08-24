@@ -19,10 +19,7 @@ class Instance < ActiveRecord::Base
                             :status => 'pending')
     instance.audit_action :started
     instance.save!
-    InstanceTask.async(:launch_instance,
-                       :instance_id => instance.id,
-                       :bucket => 'asdf',
-                       :hardware_profile => hardware_profile)
+    InstanceTask.async(:launch_instance, :instance_id => instance.id)
     instance
   end
 
