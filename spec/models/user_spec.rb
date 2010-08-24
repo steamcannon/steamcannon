@@ -32,4 +32,10 @@ describe User do
   it "should have many apps" do
     User.new.should respond_to(:apps)
   end
+
+  it "should pass cloud credentials through to cloud object" do
+    user = User.new(:cloud_username => 'user', :cloud_password => 'pass')
+    Cloud::Deltacloud.should_receive(:new).with('user', 'pass')
+    user.cloud
+  end
 end
