@@ -18,7 +18,11 @@ class InstanceWatcher
   def update_attributes_from_cloud(instance)
     cloud_instance = instance.cloud.instance(instance.cloud_id)
     cloud_state = cloud_instance.state.downcase
-    instance.status = cloud_state == 'terminated' ? 'stopped' : cloud_state
+    instance.status = case cloud_state
+                      when 'terminated' then 'stopped'
+                      when 'shutting-down' then 'stopping'
+                      else cloud_state
+                      end
     instance.public_dns = cloud_instance.public_addresses.first
     instance.save!
   end

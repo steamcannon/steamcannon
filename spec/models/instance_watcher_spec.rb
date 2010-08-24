@@ -65,6 +65,12 @@ describe InstanceWatcher do
       @instance_watcher.update_attributes_from_cloud(@instance)
     end
 
+    it "should leave instance at stopping when shutting-down in cloud" do
+      @cloud_instance.stub!(:state).and_return('shutting-down')
+      @instance.should_receive(:status=).with('stopping')
+      @instance_watcher.update_attributes_from_cloud(@instance)
+    end
+
     it "should set instance to stopped when terminated in cloud" do
       @cloud_instance.stub!(:state).and_return('terminated')
       @instance.should_receive(:status=).with('stopped')
