@@ -1,5 +1,3 @@
-require 'tasks/instance_task'
-
 class Instance < ActiveRecord::Base
   include AuditColumns
 
