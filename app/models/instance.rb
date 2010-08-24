@@ -14,7 +14,8 @@ class Instance < ActiveRecord::Base
   def self.deploy!(image, environment, name, hardware_profile)
     # TODO: This needs to be done via async messaging and not hang
     # the web request
-    cloud_instance = environment.user.cloud.launch(image.cloud_id, 'asdf')
+    cloud_instance = environment.user.cloud.launch(image.cloud_id,
+                                                   hardware_profile)
     # cloud id and public_dns are temporary hacks
     random_cloud_id = "i-#{(1000000000 + rand(3000000000)).to_s(16)}"
     instance = Instance.new(:image_id => image.id,

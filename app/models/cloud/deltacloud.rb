@@ -14,8 +14,10 @@ module Cloud
       client.instances
     end
 
-    def launch(image_id, bucket)
+    def launch(image_id, hardware_profile)
+      bucket = 'asdf' # temporary hack until we support partitioned clusters
       client.create_instance(image_id,
+                             :hardware_profile => hardware_profile,
                              :user_data => Base64.encode64(user_data(bucket)))
     end
 

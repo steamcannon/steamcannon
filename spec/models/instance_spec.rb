@@ -5,14 +5,14 @@ describe Instance do
     cloud_instance = mock(:id => "i-12345",
                           :state => 'PENDING',
                           :public_addresses => [""])
-    cloud = mock(Cloud::Deltacloud)
-    cloud.stub!(:terminate)
-    cloud.stub!(:launch).and_return(cloud_instance)
+    @cloud = mock(Cloud::Deltacloud)
+    @cloud.stub!(:terminate)
+    @cloud.stub!(:launch).and_return(cloud_instance)
 
     @image = mock_model(Image)
     @image.stub!(:cloud_id).and_return("ami-12345")
     @environment = mock_model(Environment)
-    @environment.stub_chain(:user, :cloud).and_return(cloud)
+    @environment.stub_chain(:user, :cloud).and_return(@cloud)
 
     @valid_attributes = {
       :environment => @environment,
@@ -100,5 +100,11 @@ describe Instance do
   it "should be stopping when status is stopping" do
     instance = Instance.new(:status => 'stopping')
     instance.should be_stopping
+  end
+
+  it "should deploy with the correct image_id and hardware_profile" do
+    @image.stub!(:cloud_id).and_return('ami-123')
+    @cloud.should_receive(:launch).with("ami-123", "small")
+    instance = Instance.deploy!(@image, @environment, "test", "small")
   end
 end

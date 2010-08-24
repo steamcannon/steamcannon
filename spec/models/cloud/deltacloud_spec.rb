@@ -5,6 +5,22 @@ describe Cloud::Deltacloud do
     @deltacloud = Cloud::Deltacloud.new('abc', '123')
   end
 
+  describe "launch" do
+    before(:each) do
+      @client = mock(Object)
+      @deltacloud.stub!(:client).and_return(@client)
+      @deltacloud.stub!(:user_data).and_return('')
+    end
+
+    it "should create instance in the cloud" do
+      @client.should_receive(:create_instance).
+        with('ami-123',
+             :hardware_profile => 'm1.small',
+             :user_data => Base64.encode64(''))
+      @deltacloud.launch('ami-123', 'm1.small')
+    end
+  end
+
   describe "hardware profiles" do
     before(:each) do
       @client = mock(Object,
