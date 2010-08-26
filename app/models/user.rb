@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   named_scope :visible_to_user, lambda { |user|
     { :conditions => user.superuser? ? { } : { :id => user.id } }
   }
+
+  attr_protected :superuser
   
   def cloud
     Cloud::Deltacloud.new(cloud_username, cloud_password)

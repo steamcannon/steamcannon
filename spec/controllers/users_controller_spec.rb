@@ -129,6 +129,47 @@ describe UsersController do
     end
 
   end
+
+  describe "edit/update" do
+    before(:each) do
+      @superuser = Factory.build(:superuser)
+      @account_user = Factory.build(:user)
+    end
+
+    context "with a superuser logged in" do
+      before(:each) do
+        login_with_user(@superuser)
+        User.stub!(:find).and_return(@account_user)        
+      end
+    
+      it "should allow a superuser to edit another user" do
+        get :edit, :id => 1
+        response.should render_template(:edit)
+      end
+
+      it "should allow a superuser to update another user" do
+        post :update, :id => 1, :user => Factory.attributes_for(:user)
+        response.should redirect_to(user_path(@account_user))
+      end
+    end
+
+    context "with a non-superuser logged in" do
+      before(:each) do
+        login_with_user(@account_user)
+        User.stub!(:find).and_return(@superuser)
+      end
+      
+      it "should not allow a non-superuser to edit other users" do
+        get :edit, :id => 1
+        response.should redirect_to(new_user_session_path)
+      end
+
+      it "should not allow a non-superuser to update another user" do
+        post :update, :id => 1, :user => Factory.attributes_for(:user)
+        response.should redirect_to(new_user_session_path)
+      end
+    end
+  end
   
   describe "assume user" do
     before(:each) do

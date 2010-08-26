@@ -2,7 +2,8 @@ class UsersController < ResourceController::Base
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :require_superuser, :only => [:assume_user]
-
+  before_filter :require_superuser_to_edit_other_user, :only => [:edit, :update]
+  
   create do 
     flash { "Account registered" }
     wants.html { redirect_stored_or_default root_url }
@@ -35,5 +36,12 @@ class UsersController < ResourceController::Base
 
   def collection
     end_of_association_chain.visible_to_user(current_user)
+  end
+
+  def require_superuser_to_edit_other_user
+    if !current_user.superuser? and current_user != object
+      flash[:error] = "You don't have the proper rights to edit that user."
+      redirect_to new_user_session_path
+    end
   end
 end

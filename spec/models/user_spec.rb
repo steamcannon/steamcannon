@@ -39,6 +39,12 @@ describe User do
     user.cloud
   end
 
+  it "should not allow mass assignment of the superuser column" do
+    user = Factory.build(:user)
+    user.update_attributes(:superuser => true)
+    user.superuser.should == false
+  end
+  
   context "visible_to_user named_scope" do
     before(:each) do
       @superuser = Factory(:superuser)
