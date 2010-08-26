@@ -121,4 +121,43 @@ describe UsersController do
       end
     end
   end
+
+  describe "assume user" do
+    before(:each) do
+      @user = mock_model(User)
+      User.stub!(:find).and_return(@user)
+    end
+    
+    context "functionality" do
+      before(:each) do
+        login({ }, :superuser? => true)
+        UserSession.stub!(:create)
+      end
+
+      it "should switch the current user to the new user" do
+        UserSession.should_receive(:create).with(@user)
+        get :assume_user, :id => 1
+      end
+
+      it "should redirect to the dashboard" do
+        get :assume_user, :id => 1
+        response.should redirect_to(root_path)
+      end
+    end
+    
+    context "permissions" do
+      it "should not allow a regular user access" do
+        login({ }, :superuser? => false)
+        get :assume_user, :id => 1
+        response.should redirect_to(new_user_session_path)
+      end
+      
+      it "should allow a superuser to access" do
+        login({ }, :superuser? => true)
+        UserSession.should_receive(:create).with(@user)
+        get :assume_user, :id => 1
+      end
+
+    end
+  end
 end
