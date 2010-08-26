@@ -18,7 +18,10 @@
   - instances.each do |instance|
     .image_row
       .name
-        = link_to instance.name
+        - unless instance.public_dns.blank?
+          = link_to instance.name, "http://#{instance.public_dns}"
+        - else
+          = instance.name
       .image_id
         = instance.cloud_id
       .hardware_profile

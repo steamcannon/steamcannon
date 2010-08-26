@@ -4,10 +4,11 @@ describe "/environments/new.html.haml" do
   include EnvironmentsHelper
 
   before(:each) do
-    assigns[:environment] = stub_model(Environment,
-      :new_record? => true,
-      :name => "value for name"
-    )
+    assigns[:environment] =
+      stub_model(Environment,
+                 :new_record? => true,
+                 :name => "value for name")
+    @controller.template.stub!(:hardware_profile_options).and_return([])
   end
 
   it "renders new environment form" do

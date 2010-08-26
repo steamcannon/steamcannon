@@ -2,10 +2,11 @@ require 'spec_helper'
 
 describe Image do
   before(:each) do
+    role = ImageRole.create!(:name => "test role")
     @valid_attributes = {
       :name => "value for name",
       :cloud_id => "value for cloud_id",
-      :image_role_id => 1
+      :image_role_id => role.id
     }
   end
 

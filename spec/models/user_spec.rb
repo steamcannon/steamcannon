@@ -33,6 +33,12 @@ describe User do
     User.new.should respond_to(:apps)
   end
 
+  it "should pass cloud credentials through to cloud object" do
+    user = User.new(:cloud_username => 'user', :cloud_password => 'pass')
+    Cloud::Deltacloud.should_receive(:new).with('user', 'pass')
+    user.cloud
+  end
+
   context "visible_to_user named_scope" do
     before(:each) do
       @superuser = Factory(:superuser)
@@ -46,6 +52,5 @@ describe User do
     it "should only include the given user for an account_user" do
       User.visible_to_user(@account_user).should == [@account_user]
     end
-    
   end
 end

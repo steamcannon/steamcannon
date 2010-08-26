@@ -4,7 +4,8 @@ describe Environment do
   before(:each) do
     @valid_attributes = {
       :name => "value for name",
-      :platform_version_id => 1
+      :platform_version_id => 1,
+      :user => mock_model(User)
     }
   end
 
@@ -38,19 +39,19 @@ describe Environment do
     Environment.new.should respond_to(:user)
   end
 
-  it "should not be able to mass-assign user attribute" do
-    environment = Environment.new(:user => User.new)
-    environment.user.should be_nil
+  it "should not be able to mass-assign user_id attribute" do
+    environment = Environment.new(:user_id => 1)
+    environment.user_id.should be_nil
   end
 
   it "should change status to running when started" do
-    env = Environment.new(:name => "test", :status => 'stopped')
+    env = Environment.new(@valid_attributes.merge(:status => 'stopped'))
     env.start!
     env.status.should eql('running')
   end
 
   it "should change status to stopped when stopped" do
-    env = Environment.new(:name => "test", :status => 'running')
+    env = Environment.new(@valid_attributes.merge(:status => 'running'))
     env.stop!
     env.status.should eql('stopped')
   end
@@ -60,12 +61,11 @@ describe Environment do
   end
 
   it "should undeploy all deployments when stopped" do
-    deployment = Deployment.new
-    env = Environment.new(:name => "test")
-    env.deployments << deployment
+    env = Environment.new(@valid_attributes)
+    env.deployments << Deployment.new
     env.save!
-    deployment.should_receive(:undeploy!)
     env.stop!
+    env.deployments.inactive.first.should be_undeployed
   end
 
   it "should have many instances" do
@@ -74,15 +74,16 @@ describe Environment do
 
   it "should stop all instances when stopped" do
     instance = Instance.new
-    env = Environment.new(:name => "test")
+    env = Environment.new(@valid_attributes)
     env.instances << instance
     env.save!
+    env.stub_chain(:instances, :active).and_return([instance])
     instance.should_receive(:stop!)
     env.stop!
   end
 
   it "should not start more instances if already running" do
-    env = Environment.new(:status => 'running')
+    env = Environment.new(@valid_attributes.merge(:status => 'running'))
     Instance.should_not_receive(:new)
     env.start!
   end
@@ -90,7 +91,7 @@ describe Environment do
   it "should start environment images when environment is started" do
     env_image = mock_model(EnvironmentImage, :num_instances => 1)
     env_image.should_receive(:start!)
-    env = Environment.new(:name => "test")
+    env = Environment.new(@valid_attributes)
     env.environment_images << env_image
     env.should_receive(:save!)
     env.start!

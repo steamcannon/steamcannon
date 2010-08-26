@@ -6,31 +6,28 @@ module Cloud
       @cloud_password = cloud_password
     end
 
+    def instance(id)
+      client.instance(id)
+    end
+
     def instances
-      select_instances.map do |i|
-        Instance.new(
-                     :id            => i.id,
-                     :image_id      => i.image.id,
-# TODO: support this -->                     :key_pair_name => i.key_pair,
-                     :public_dns    => i.public_addresses.first,
-                     :status        => i.state.downcase
-                     )
-      end
+      client.instances
     end
 
-    def select_instances
-      client.instances.select{|x| APP_CONFIG['image_ids'].include?(x.image.id)}
-    end
-
-    def launch image_id, key_pair_name
+    def launch(image_id, hardware_profile)
+      bucket = 'asdf' # temporary hack until we support partitioned clusters
       client.create_instance(image_id,
-                             :keyname => key_pair_name,
-                             :user_data => Base64.encode64(user_data))
+                             :hardware_profile => hardware_profile,
+                             :user_data => Base64.encode64(user_data(bucket)))
     end
 
     def terminate instance_id
       i = client.instance(instance_id)
       i.stop!
+    end
+
+    def hardware_profiles
+      @hardware_profiles ||= client.hardware_profiles.map(&:name)
     end
 
     def client

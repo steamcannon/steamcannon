@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(:version => 20100819145847) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "app_version_id"
-    t.datetime "undeployed_at"
+    t.datetime "undeployed_at",  :default => ""
     t.datetime "deployed_at"
     t.integer  "deployed_by"
     t.integer  "undeployed_by"

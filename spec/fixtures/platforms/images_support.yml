@@ -1,0 +1,15 @@
+---
+platforms:
+  - name: Test Platform
+    platform_versions:
+      - version_number: 123
+        images:
+          - name: Test Image 123
+            cloud_id: ami_123
+            image_role: frontend
+          - name: Test Image 234
+            cloud_id: ami_234
+            image_role: backend
+      - version_number: 234
+        images:
+          - cloud_id: ami_123

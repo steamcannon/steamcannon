@@ -19,6 +19,10 @@ class Deployment < ActiveRecord::Base
     save!
   end
 
+  def undeployed?
+    !undeployed_at.nil?
+  end
+
   private
   def record_deploy
     audit_action :deployed

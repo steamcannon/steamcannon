@@ -4,11 +4,12 @@ describe "/environments/edit.html.haml" do
   include EnvironmentsHelper
 
   before(:each) do
-    assigns[:environment] = stub_model(Environment,
-                                       :new_record? => false,
-                                       :id => 1,
-                                       :name => "value for name"
-    )
+    assigns[:environment] =
+      stub_model(Environment,
+                 :new_record? => false,
+                 :id => 1,
+                 :name => "value for name")
+    @controller.template.stub!(:hardware_profile_options).and_return([])
   end
 
   it "renders edit environment form" do
