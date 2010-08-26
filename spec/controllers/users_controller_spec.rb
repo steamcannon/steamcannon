@@ -122,9 +122,17 @@ describe UsersController do
     end
   end
 
+  describe "GET index" do
+    it "should limit to users visible to the current user" do
+      User.should_receive(:visible_to_user).with(@current_user)
+      get :index
+    end
+
+  end
+  
   describe "assume user" do
     before(:each) do
-      @user = mock_model(User)
+      @user = mock_model(User, :email => 'email@example.com')
       User.stub!(:find).and_return(@user)
     end
     

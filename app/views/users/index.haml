@@ -1,0 +1,24 @@
+#users_container
+  %h2
+    Users
+
+  #users_header
+    .user_email
+      Email
+    .user_superuser.account_user_hide
+      Superuser? 
+    .user_lastlogin
+      Last Login
+  - collection.each do |user|
+    .user_row
+      .user_email
+        = mail_to user.email
+      .user_superuser.account_user_hide
+        = user.superuser?
+      .user_lastlogin
+        == #{time_ago_in_words(user.last_login_at)} ago
+      .user_assume.account_user_hide
+        = link_to 'Assume User', assume_user_user_path(user)
+      .user_edit
+        = link_to 'Edit', edit_user_path(user)
+    

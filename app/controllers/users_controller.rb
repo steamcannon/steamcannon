@@ -33,4 +33,7 @@ class UsersController < ResourceController::Base
     super || current_user
   end
 
+  def collection
+    end_of_association_chain.visible_to_user(current_user)
+  end
 end

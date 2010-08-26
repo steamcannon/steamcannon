@@ -15,7 +15,7 @@
     = javascript_include_tag 'jquery.sparkline.min.js'
     = javascript_include_tag 'application'
 
-  %body.main-body
+  %body.main-body{:class => dom_class_for_body}
     #header
       =render :partial=>'/layouts/header'
     #content
