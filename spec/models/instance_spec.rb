@@ -48,15 +48,15 @@ describe Instance do
     instance.started_by.should be(@current_user.id)
   end
 
-  it "should be status pending after deploy!" do
+  it "should be pending after deploy!" do
     instance = Instance.deploy!(@image, @environment, "test", "small")
-    instance.status.should eql('pending')
+    instance.should be_pending
   end
 
-  it "should be status stopping after stop!" do
+  it "should be stopping after stop!" do
     instance = Instance.create!(@valid_attributes)
     instance.stop!
-    instance.status.should eql('stopping')
+    instance.should be_stopping
   end
 
   it "should populate stopped_at after stop!" do
@@ -74,7 +74,11 @@ describe Instance do
 
   it "should be inactive after stopped" do
     instance = Instance.create!(@valid_attributes)
-    instance.update_attribute('status', 'stopped')
+    instance.stub!(:terminate_instance)
+    instance.stub!(:stopped_in_cloud?).and_return(true)
+    instance.stop!
+    instance.terminate!
+    instance.stopped!
     Instance.inactive.first.should eql(instance)
     Instance.active.count.should be(0)
   end
@@ -85,15 +89,5 @@ describe Instance do
     instance.server_cert.should_not be_nil
     instance.client_key.should_not be_nil
     instance.client_cert.should_not be_nil
-  end
-
-  it "should be running when status is running" do
-    instance = Instance.new(:status => 'running')
-    instance.should be_running
-  end
-
-  it "should be stopping when status is stopping" do
-    instance = Instance.new(:status => 'stopping')
-    instance.should be_stopping
   end
 end
