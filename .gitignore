@@ -10,4 +10,5 @@ config/*.pem
 coverage/*
 *.swp
 \#*
+.#*
 .rvmrc
