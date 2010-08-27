@@ -36,6 +36,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_superuser
+    if !current_user.superuser?
+      store_location
+      redirect_to new_user_session_url
+      return false
+    end
+  end
+  
   def store_location
     session[:return_to] = request.request_uri
   end

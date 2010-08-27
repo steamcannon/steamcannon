@@ -1,0 +1,34 @@
+#users_container {
+  @include column(22, true);
+  @include list_container;
+
+  #users_header {
+    @include list_header;
+  }
+
+  .user_row {
+    @include list_row;
+  }
+
+  .user_email, 
+  .user_lastlogin {
+    @include column(4);
+  }
+
+  .user_superuser {
+    @include column(2);
+  }
+
+  .user_assume {
+    @include column(3);
+  }
+
+  .user_edit {
+    @include column(2, true);
+  }
+
+}
+
+
+
+ 

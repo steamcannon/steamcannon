@@ -36,3 +36,7 @@
     @include last;
   }
 }
+
+#superuser_dashboard {
+  @include list_container;
+}

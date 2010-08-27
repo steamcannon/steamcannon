@@ -3,6 +3,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :app_versions
   map.resources :environments, :member => {:start => :post, :stop => :post}
   map.resources :deployments
+  map.resources :users, :member => {:assume_user => :get}
 
   map.resource :user_session
   map.resource :account, :controller => "users"
