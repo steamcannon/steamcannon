@@ -7,6 +7,12 @@ class User < ActiveRecord::Base
   acts_as_authentic do |c|
   end
 
+  named_scope :visible_to_user, lambda { |user|
+    { :conditions => user.superuser? ? { } : { :id => user.id } }
+  }
+
+  attr_protected :superuser
+  
   def cloud
     Cloud::Deltacloud.new(cloud_username, cloud_password)
   end

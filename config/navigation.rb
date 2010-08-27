@@ -60,6 +60,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :applications, 'Applications', apps_path
     #primary.item :deployments, 'deployments', deployments_path
     primary.item :environments, 'Environments', environments_path
+    primary.item :users, 'Users', users_path, :if => lambda { current_user and current_user.superuser? }
   end
 
 end

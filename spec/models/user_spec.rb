@@ -38,4 +38,25 @@ describe User do
     Cloud::Deltacloud.should_receive(:new).with('user', 'pass')
     user.cloud
   end
+
+  it "should not allow mass assignment of the superuser column" do
+    user = Factory.build(:user)
+    user.update_attributes(:superuser => true)
+    user.superuser.should == false
+  end
+  
+  context "visible_to_user named_scope" do
+    before(:each) do
+      @superuser = Factory(:superuser)
+      @account_user = Factory(:user)
+    end
+    
+    it "should include all users for a superuser" do
+      User.visible_to_user(@superuser).should == [@superuser, @account_user]
+    end
+    
+    it "should only include the given user for an account_user" do
+      User.visible_to_user(@account_user).should == [@account_user]
+    end
+  end
 end

@@ -5,6 +5,10 @@ public/uploads/*
 Vagrantfile
 .vagrant
 config/cooling-tower.yml
+config/deltacloud-rack.yml
 config/*.pem
 coverage/*
 *.swp
+\#*
+.#*
+.rvmrc
