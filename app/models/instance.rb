@@ -1,32 +1,52 @@
 class Instance < ActiveRecord::Base
   include AuditColumns
+  include AASM
 
   belongs_to :environment
   belongs_to :image
 
-  named_scope :active, :conditions => "status is null or status <> 'stopped'"
-  named_scope :inactive, :conditions => "status == 'stopped'"
-  named_scope :pending, :conditions => "status == 'pending'"
-  named_scope :stopping, :conditions => "status == 'stopping'"
-
   before_create :generate_certs
 
+  named_scope :active, :conditions => "current_state <> 'stopped'"
+  named_scope :inactive, :conditions => "current_state = 'stopped'"
+
+  aasm_column :current_state
+  aasm_initial_state :pending
+  aasm_state :pending
+  aasm_state :starting, :enter => :start_instance
+  aasm_state :running, :enter => :run_instance
+  aasm_state :stopping, :enter => :stop_instance
+  aasm_state :terminating, :enter => :terminate_instance
+  aasm_state :stopped
+
+  aasm_event :start do
+    transitions :to => :starting, :from => :pending
+  end
+
+  aasm_event :run do
+    transitions :to => :running, :from => :starting, :guard => :running_in_cloud?
+  end
+
+  aasm_event :stop do
+    transitions :to => :stopping, :from => [:running, :starting, :pending]
+  end
+
+  aasm_event :terminate do
+    transitions :to => :terminating, :from => :stopping
+  end
+
+  aasm_event :stopped do
+    transitions :to => :stopped, :from => :terminating, :guard => :stopped_in_cloud?
+  end
+
   def self.deploy!(image, environment, name, hardware_profile)
-    # TODO: This needs to be done via async messaging and not hang
-    # the web request
-    cloud_instance = environment.user.cloud.launch(image.cloud_id,
-                                                   hardware_profile)
-    # cloud id and public_dns are temporary hacks
-    random_cloud_id = "i-#{(1000000000 + rand(3000000000)).to_s(16)}"
     instance = Instance.new(:image_id => image.id,
                             :environment_id => environment.id,
                             :name => name,
-                            :cloud_id => cloud_instance.id,
-                            :hardware_profile => hardware_profile,
-                            :status => cloud_instance.state.downcase,
-                            :public_dns => cloud_instance.public_addresses.first)
+                            :hardware_profile => hardware_profile)
     instance.audit_action :started
     instance.save!
+    InstanceTask.async(:launch_instance, :instance_id => instance.id)
     instance
   end
 
@@ -34,19 +54,39 @@ class Instance < ActiveRecord::Base
     environment.user.cloud
   end
 
-  def running?
-    status == 'running'
+  def cloud_instance
+    @cloud_instance ||= cloud.instance(cloud_id)
   end
 
-  def stopping?
-    status == 'stopping'
+  protected
+
+  def start_instance
+    cloud_instance = cloud.launch(image.cloud_id,
+                                  hardware_profile)
+    self.update_attributes(:cloud_id => cloud_instance.id,
+                           :public_dns => cloud_instance.public_addresses.first)
   end
 
-  def stop!
-    cloud.terminate(cloud_id)
+  def running_in_cloud?
+    cloud_instance.state.downcase == 'running'
+  end
+
+  def run_instance
+    self.public_dns = cloud_instance.public_addresses.first
+  end
+
+  def stop_instance
     audit_action :stopped
-    self.status = 'stopping'
     save!
+    InstanceTask.async(:stop_instance, :instance_id => self.id)
+  end
+
+  def terminate_instance
+    cloud.terminate(cloud_id)
+  end
+
+  def stopped_in_cloud?
+    cloud_instance.nil? or cloud_instance.state.downcase == 'terminated'
   end
 
   def generate_certs

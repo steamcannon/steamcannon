@@ -8,7 +8,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
   config.gem 'activerecord-jdbc-adapter', :lib => 'jdbc_adapter'
-  config.gem 'torquebox-gem'
+  config.gem 'org.torquebox.torquebox-messaging-client'
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -28,6 +28,7 @@ Rails::Initializer.run do |config|
   config.gem "bbrowning-deltacloud-client", :version => "0.0.9.4", :lib => "deltacloud"
   config.gem "paperclip", :version => "2.3.3"
   config.gem "simple-navigation", :version => "2.6.0"
+  config.gem "aasm", :version => "2.1.5"
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named

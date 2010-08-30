@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# This file is auto-generated from the current state of the database. Instead of editing this file,
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100819145847) do
+ActiveRecord::Schema.define(:version => 20100826003329) do
 
   create_table "app_versions", :force => true do |t|
     t.integer  "app_id"
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(:version => 20100819145847) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "app_version_id"
-    t.datetime "undeployed_at",  :default => ""
+    t.datetime "undeployed_at"
     t.datetime "deployed_at"
     t.integer  "deployed_by"
     t.integer  "undeployed_by"
@@ -81,7 +81,7 @@ ActiveRecord::Schema.define(:version => 20100819145847) do
     t.string   "name"
     t.string   "cloud_id"
     t.string   "hardware_profile"
-    t.string   "status"
+    t.string   "current_state"
     t.string   "public_dns"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -94,6 +94,8 @@ ActiveRecord::Schema.define(:version => 20100819145847) do
     t.string   "client_key",       :limit => 1024
     t.string   "client_cert",      :limit => 1024
   end
+
+  add_index "instances", ["current_state"], :name => "index_instances_on_current_state"
 
   create_table "platform_version_images", :force => true do |t|
     t.integer  "platform_version_id"
