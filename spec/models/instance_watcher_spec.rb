@@ -5,17 +5,17 @@ describe InstanceWatcher do
     @instance_watcher = InstanceWatcher.new
   end
 
-  it "should update booting and terminating instances" do
-    @instance_watcher.should_receive(:update_booting)
+  it "should update starting and terminating instances" do
+    @instance_watcher.should_receive(:update_starting)
     @instance_watcher.should_receive(:update_terminating)
     @instance_watcher.run
   end
 
-  it "should transition each booting instance to running" do
+  it "should transition each starting instance to running" do
     instance = mock_model(Instance)
     instance.should_receive(:run!)
-    Instance.stub!(:booting).and_return([instance])
-    @instance_watcher.update_booting
+    Instance.stub!(:starting).and_return([instance])
+    @instance_watcher.update_starting
   end
 
   it "should transition each terminating instance to stopped" do

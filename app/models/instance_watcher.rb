@@ -1,13 +1,13 @@
 class InstanceWatcher
 
   def run
-    update_booting
+    update_starting
     update_terminating
   end
 
-  def update_booting
+  def update_starting
     # TODO: This is a bit inefficient to do one at a time
-    Instance.booting.each { |i| i.run! }
+    Instance.starting.each { |i| i.run! }
   end
 
   def update_terminating

@@ -13,22 +13,22 @@ class Instance < ActiveRecord::Base
   aasm_column :current_state
   aasm_initial_state :pending
   aasm_state :pending
-  aasm_state :booting, :enter => :boot_instance
+  aasm_state :starting, :enter => :start_instance
   aasm_state :running, :enter => :run_instance
   aasm_state :stopping, :enter => :stop_instance
   aasm_state :terminating, :enter => :terminate_instance
   aasm_state :stopped
 
-  aasm_event :boot do
-    transitions :to => :booting, :from => :pending
+  aasm_event :start do
+    transitions :to => :starting, :from => :pending
   end
 
   aasm_event :run do
-    transitions :to => :running, :from => :booting, :guard => :running_in_cloud?
+    transitions :to => :running, :from => :starting, :guard => :running_in_cloud?
   end
 
   aasm_event :stop do
-    transitions :to => :stopping, :from => [:running, :booting, :pending]
+    transitions :to => :stopping, :from => [:running, :starting, :pending]
   end
 
   aasm_event :terminate do
@@ -60,7 +60,7 @@ class Instance < ActiveRecord::Base
 
   protected
 
-  def boot_instance
+  def start_instance
     cloud_instance = cloud.launch(image.cloud_id,
                                   hardware_profile)
     self.update_attributes(:cloud_id => cloud_instance.id,

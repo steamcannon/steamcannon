@@ -79,7 +79,7 @@ describe Instance do
     instance.cloud_instance.should be(cloud_instance)
   end
 
-  describe "boot" do
+  describe "start" do
     before(:each) do
       @cloud_instance = mock(Object, :id => 'i-123',
                              :public_addresses => ['host'])
@@ -94,13 +94,13 @@ describe Instance do
     it "should launch instance in cloud" do
       @instance.stub!(:hardware_profile).and_return('small')
       @cloud.should_receive(:launch).with('ami-123', 'small')
-      @instance.boot!
+      @instance.start!
     end
 
     it "should update cloud_id and public_dns from cloud" do
       @instance.should_receive(:update_attributes).
         with(:cloud_id => 'i-123', :public_dns => 'host')
-      @instance.boot!
+      @instance.start!
     end
   end
 
@@ -118,21 +118,21 @@ describe Instance do
 
     it "should be running if running_in_cloud" do
       @instance.stub!(:running_in_cloud?).and_return(true)
-      @instance.current_state = 'booting'
+      @instance.current_state = 'starting'
       @instance.run!
       @instance.should be_running
     end
 
-    it "should be booting if not running_in_cloud" do
+    it "should be starting if not running_in_cloud" do
       @instance.stub!(:running_in_cloud?).and_return(false)
-      @instance.current_state = 'booting'
+      @instance.current_state = 'starting'
       @instance.run!
-      @instance.should be_booting
+      @instance.should be_starting
     end
 
     it "should update public_dns from cloud" do
       @instance.stub!(:running_in_cloud?).and_return(true)
-      @instance.current_state = 'booting'
+      @instance.current_state = 'starting'
       @instance.should_receive(:public_dns=).with('host')
       @instance.run!
     end
