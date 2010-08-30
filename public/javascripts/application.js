@@ -8,6 +8,7 @@ $.ajaxSetup({
     }
 });
 
+
 function monitor_changing(selector) {
     $(selector).each(function() {
 	var id = this.id;
@@ -38,32 +39,12 @@ jQuery.fn.pulsate = function() {
     this.pulse({opacity: [1,.2]}, 500, 10);
 };
 
-function populateEnvironmentImages(versionImages, environmentImages) {
-  var versionId = $('#environment_platform_version_id').val();
-  $.each(versionImages[versionId], function(index, value) {
-    var image = value['image'];
-    var template = $('#environment_image_template').clone();
-    template.find('.name').text(image['name']);
-    template.find('.image_id').val(image['id']);
-    template.find('.image_num_instances').val('6');
-
-    var html = template.html();
-    // Make sure the field ids and names have the correct index
-    html = html.replace(/(_|\[)0(_|\])/g, '$1'+index+'$2');
-
-    if (typeof(environmentImages[image['id']]) != 'undefined') {
-      var environmentImage = environmentImages[image['id']]['environment_image'];
-      var hardwareProfile = environmentImage['hardware_profile'];
-      // for whatever reason changing the values via the template didn't work
-      // for the select and text fields
-      html = html.replace('value="'+hardwareProfile+'"', 'value="'+hardwareProfile+'" selected="selected"');
-      html = html.replace('{{image_num_instances}}', environmentImage['num_instances']);
-      html = html.replace('{{id}}', environmentImage['id']);
-    } else {
-      // For now, always default to one instance
-      html = html.replace('{{image_num_instances}}', '1');
-      html = html.replace('{{id}}', '');
-    }
-    $("#environment_images_container").append(html);
-  });
-}
+jQuery(document).ready(function($) {
+    $('#environment_form #environment_platform_version_id').change(function() {
+        $('.platform_version_block').hide()
+        $('#platform_version_' + this.value).show()
+    })
+    
+    //show the correct data on load
+    $('#environment_form #environment_platform_version_id').trigger('change')
+})

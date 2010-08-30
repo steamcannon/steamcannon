@@ -8,4 +8,8 @@ module ApplicationHelper
     raise ArgumentError.new("Don't supply both text and a block") if text and block_given?
     concat(text || capture(&block)) if current_user.superuser?
   end
+
+  def style_display_none
+    { :style => 'display: none;' }
+  end
 end

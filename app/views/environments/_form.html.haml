@@ -1,52 +1,36 @@
-%ul
-  %li
-    = form.label :name
-    = form.text_field :name
-  %li
-    = form.label :platform_version, "Platform"
-    = form.select :platform_version_id, platform_version_options(PlatformVersion.all)
-%br
-%br
-%h3
-  Images
-#environment_images_container
-  #environment_images_header
-    .name
-      Name
-    .hardware_profile
-      Hardware Profile
-    .num_instances
-      Number of Instances
-#environment_image_template(style = "display: none;")
-  .image_row
-    %input(type="hidden" name="environment[environment_images_attributes][0][id]" class="id" value="{{id}}")
-    %input(type="hidden" name="environment[environment_images_attributes][0][image_id]" class="image_id")
-    .name
-    .hardware_profile
-      %select(id="environment_environment_images_attributes_0_hardware_profile" name="environment[environment_images_attributes][0][hardware_profile]" class="image_hardware_profile")
-        = options_for_select(hardware_profile_options)
-    .num_instances
-      %input(type="text" id="environment_environment_images_attributes_0_num_instances" name="environment[environment_images_attributes][0][num_instances]" size="2" value="{{image_num_instances}}" class="image_num_instances")
-%p
-  &nbsp;
-
-:javascript
-  var versionImages = #{platform_version_images_json};
-  var environmentImages = #{environment_images_json(@environment.environment_images)};
-
-  function submitEnvironmentForm() {
-    $('#environment_image_template').remove();
-  }
-
-  $(".new_environment").submit(function() {
-    submitEnvironmentForm();
-  });
-
-  $(".edit_environment").submit(function() {
-    submitEnvironmentForm();
-  });
-
-  $("#environment_platform_version_id").change(function() {
-    populateEnvironmentImages(versionImages, environmentImages);
-  });
-  populateEnvironmentImages(versionImages, environmentImages);
+#environment_form
+  %ul
+    %li
+      = form.label :name
+      = form.text_field :name
+    %li
+      = form.label :platform_version, "Platform"
+      = form.select :platform_version_id, platform_version_options(PlatformVersion.all)
+  %br
+  %br
+  %h3
+    Images
+  #environment_images_container
+    #environment_images_header
+      .name
+        Name
+      .hardware_profile
+        Hardware Profile
+      .num_instances
+        Number of Instances
+    - PlatformVersion.all.each do |platform_version|
+      .platform_version_block{style_display_none.merge(:id => "platform_version_#{platform_version.id}")}
+        - platform_version.images.each_with_index do |image, index|
+        - environment_image = @environment.environment_images.find_by_image_id(image.id)
+          .image_row
+            = hidden_field_tag "environment[environment_images_attributes][#{index}][id]", environment_image.try(:id) 
+            = hidden_field_tag "environment[environment_images_attributes][#{index}][image_id]", image.id
+            .name
+              = image.name
+            .hardware_profile
+              = select_tag "environment[environment_images_attributes][#{index}][hardware_profile]", options_for_select(hardware_profile_options, environment_image.try(:hardware_profile))
+            .num_instances
+              = text_field_tag "environment[environment_images_attributes][#{index}][num_instances]", environment_image.try(:num_instances) || 1, :size => "2"
+  
+  
+  
