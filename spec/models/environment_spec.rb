@@ -96,4 +96,50 @@ describe Environment do
     env.should_receive(:save!)
     env.start!
   end
+
+  context "before_update" do
+    context "destroying old environment images" do
+      # these tests are ugly ugly
+      before(:each) do
+        # now this is some setup!
+        @environment = Factory(:environment)
+        @platform_version = @environment.platform_version
+        @image = Factory(:image)
+        @platform_version.images << @image
+        @platform_version.save
+        @environment.images << @image
+        @environment.save
+        
+        @other_platform_version = Factory(:platform_version)
+        @other_image = Factory(:image)
+        @other_platform_version.images << @other_image
+        @other_platform_version.save
+      end
+      
+      context "when the platform_version changes" do
+        it "should remove environment_images from the old platform_version" do
+          @environment.platform_version = @other_platform_version
+          @environment.images << @other_image
+          @environment.save
+          @environment.images.should_not include(@image)
+        end
+
+        it "should not remove images that are exclusive to the new platform version" do
+          @environment.platform_version = @other_platform_version
+          @environment.images << @other_image
+          @environment.save
+          @environment.images.should include(@other_image)
+        end
+        
+        it "should not remove images that are in the new platform version as well" do
+          @other_platform_version.images << @image
+          @other_platform_version.save
+          @environment.platform_version = @other_platform_version
+          @environment.images << @other_image
+          @environment.save
+          @environment.images.should =~ [@image, @other_image]
+        end
+      end
+    end
+  end
 end

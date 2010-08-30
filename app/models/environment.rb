@@ -11,6 +11,8 @@ class Environment < ActiveRecord::Base
 
   named_scope :running, :conditions => { :status => 'running' }
 
+  before_update :remove_images_from_prior_platform_version
+  
   def platform
     platform_version.platform
   end
@@ -36,5 +38,16 @@ class Environment < ActiveRecord::Base
     instances.active.each(&:stop!)
     self.status = 'stopped'
     save!
+  end
+
+  protected
+  def remove_images_from_prior_platform_version
+    if platform_version_id_changed?
+      # remove any images that aren't part of the new platform version
+      new_images = platform_version.images.all
+      environment_images.each do |env_image|
+        env_image.destroy unless new_images.include?(env_image.image)
+      end
+    end
   end
 end
