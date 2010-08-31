@@ -47,4 +47,12 @@ jQuery(document).ready(function($) {
     
     //show the correct data on load
     $('#environment_form #environment_platform_version_id').trigger('change')
+
+    /*
+     * remove other, unused platform versions, since some versions of IE 
+     * will still submit form fields within hidden content.
+     */  
+    $('body.environments_controller form').submit(function() {
+        $('.platform_version_block:hidden').remove()
+    })
 })
