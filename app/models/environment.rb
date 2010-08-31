@@ -1,4 +1,6 @@
 class Environment < ActiveRecord::Base
+  include AASM
+
   has_many :deployments
   has_many :environment_images, :dependent => :destroy
   has_many :images, :through => :environment_images
@@ -9,7 +11,28 @@ class Environment < ActiveRecord::Base
   accepts_nested_attributes_for :environment_images
   validates_presence_of :name, :user
 
-  named_scope :running, :conditions => { :status => 'running' }
+  aasm_column :current_state
+  aasm_initial_state :stopped
+  aasm_state :starting, :enter => :start_environment
+  aasm_state :running
+  aasm_state :stopping, :enter => :stop_environment
+  aasm_state :stopped
+
+  aasm_event :start do
+    transitions :to => :starting, :from => :stopped
+  end
+
+  aasm_event :run do
+    transitions :to => :running, :from => :starting, :guard => :running_all_instances?
+  end
+
+  aasm_event :stop do
+    transitions :to => :stopping, :from => :running
+  end
+
+  aasm_event :stopped do
+    transitions :to => :stopped, :from => :stopping, :guard => :stopped_all_instances?
+  end
 
   before_update :remove_images_from_prior_platform_version
   
@@ -17,27 +40,27 @@ class Environment < ActiveRecord::Base
     platform_version.platform
   end
 
-  def running?
-    status == 'running'
-  end
+  protected
 
-  def start!
-    unless self.running?
-      environment_images.each do |env_image|
-        env_image.num_instances.times do |i|
-          env_image.start!(i+1)
-        end
+  def start_environment
+    environment_images.each do |env_image|
+      env_image.num_instances.times do |i|
+        env_image.start!(i+1)
       end
-      self.status = 'running'
-      save!
     end
   end
 
-  def stop!
+  def stop_environment
     deployments.active.each(&:undeploy!)
     instances.active.each(&:stop!)
-    self.status = 'stopped'
-    save!
+  end
+
+  def running_all_instances?
+    instances.active.all?(&:running?)
+  end
+
+  def stopped_all_instances?
+    instances.active.count == 0
   end
 
   protected

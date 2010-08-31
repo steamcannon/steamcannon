@@ -1,3 +1,7 @@
 instance.watcher:
   job: InstanceWatcher
   cron: '*/30 * * * * ?'
+
+environment.watcher:
+  job: EnvironmentWatcher
+  cron: '*/30 * * * * ?'

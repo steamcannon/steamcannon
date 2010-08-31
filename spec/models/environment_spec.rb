@@ -35,6 +35,10 @@ describe Environment do
     environment.images.size.should be(2)
   end
 
+  it "should have many instances" do
+    Environment.new.should respond_to(:instances)
+  end
+
   it "should belong to a user" do
     Environment.new.should respond_to(:user)
   end
@@ -44,57 +48,116 @@ describe Environment do
     environment.user_id.should be_nil
   end
 
-  it "should change status to running when started" do
-    env = Environment.new(@valid_attributes.merge(:status => 'stopped'))
-    env.start!
-    env.status.should eql('running')
+  describe "start" do
+    it "should be starting" do
+      environment = Environment.new(@valid_attributes)
+      environment.start!
+      environment.should be_starting
+    end
+
+    it "should start environment images" do
+      environment_image = EnvironmentImage.new(:num_instances => 1)
+      environment = Environment.new(@valid_attributes)
+      environment.environment_images << environment_image
+      environment_image.should_receive(:start!)
+      environment.start!
+    end
   end
 
-  it "should change status to stopped when stopped" do
-    env = Environment.new(@valid_attributes.merge(:status => 'running'))
-    env.stop!
-    env.status.should eql('stopped')
+  describe "run" do
+    before(:each) do
+      @environment = Environment.new(@valid_attributes)
+      @environment.current_state = 'starting'
+    end
+
+    it "should be running if running_all_instances" do
+      @environment.stub!(:running_all_instances?).and_return(true)
+      @environment.run!
+      @environment.should be_running
+    end
+
+    it "should be starting if not running_all_instances" do
+      @environment.stub!(:running_all_instances?).and_return(false)
+      @environment.run!
+      @environment.should be_starting
+    end
+
+    it "should be running_all_instances if all instances are running" do
+      instance = Instance.new(:current_state => 'running')
+      @environment.instances << instance
+      @environment.save!
+      @environment.should be_running_all_instances
+    end
+
+    it "should not be running_all_instances if all instances are not running" do
+      instance = Instance.new(:current_state => 'pending')
+      @environment.instances << instance
+      @environment.save!
+      @environment.should_not be_running_all_instances
+    end
   end
 
-  it "should default to stopped status" do
-    Environment.new.status.should eql('stopped')
+  describe "stop" do
+    before(:each) do
+      @environment = Environment.new(@valid_attributes)
+      @environment.current_state = 'running'
+    end
+
+    it "should be stopping" do
+      @environment.stop!
+      @environment.should be_stopping
+    end
+
+    it "should undeploy all deployments" do
+      @environment.deployments << Deployment.new
+      @environment.save!
+      @environment.stop!
+      @environment.deployments.inactive.first.should be_undeployed
+    end
+
+    it "should stop all instances" do
+      instance = Instance.new
+      @environment.stub_chain(:instances, :active).and_return([instance])
+      instance.should_receive(:stop!)
+      @environment.stop!
+    end
   end
 
-  it "should undeploy all deployments when stopped" do
-    env = Environment.new(@valid_attributes)
-    env.deployments << Deployment.new
-    env.save!
-    env.stop!
-    env.deployments.inactive.first.should be_undeployed
-  end
+  describe "stopped" do
+    before(:each) do
+      @environment = Environment.new(@valid_attributes)
+      @environment.current_state = 'stopping'
+    end
 
-  it "should have many instances" do
-    Environment.new.should respond_to(:instances)
-  end
+    it "should be default for new environments" do
+      Environment.new(@valid_attributes).should be_stopped
+    end
 
-  it "should stop all instances when stopped" do
-    instance = Instance.new
-    env = Environment.new(@valid_attributes)
-    env.instances << instance
-    env.save!
-    env.stub_chain(:instances, :active).and_return([instance])
-    instance.should_receive(:stop!)
-    env.stop!
-  end
+    it "should be stopped if stopped_all_instances" do
+      @environment.stub!(:stopped_all_instances?).and_return(true)
+      @environment.stopped!
+      @environment.should be_stopped
+    end
 
-  it "should not start more instances if already running" do
-    env = Environment.new(@valid_attributes.merge(:status => 'running'))
-    Instance.should_not_receive(:new)
-    env.start!
-  end
+    it "should be stopping if not stopped_all_instances" do
+      @environment.stub!(:stopped_all_instances?).and_return(false)
+      @environment.stopped!
+      @environment.should be_stopping
+    end
 
-  it "should start environment images when environment is started" do
-    env_image = mock_model(EnvironmentImage, :num_instances => 1)
-    env_image.should_receive(:start!)
-    env = Environment.new(@valid_attributes)
-    env.environment_images << env_image
-    env.should_receive(:save!)
-    env.start!
+    it "should have stopped_all_instances if all instances are stopped" do
+      instance = Instance.new(:current_state => 'stopped')
+      @environment.instances << instance
+      @environment.save!
+      @environment.should be_stopped_all_instances
+    end
+
+    it "should not have stopped_all_instances if all instances are not stopped" do
+      instance = Instance.new(:current_state => 'stopping')
+      @environment.instances << instance
+      @environment.save!
+      @environment.should_not be_stopped_all_instances
+    end
   end
 
   context "before_update" do

@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'tasks/instance_task'
 
 describe Instance do
   before(:each) do
