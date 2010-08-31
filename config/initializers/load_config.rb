@@ -1,2 +1,2 @@
 
-APP_CONFIG = YAML.load_file("#{RAILS_ROOT}/config/cooling-tower.yml") rescue {}
+APP_CONFIG = YAML.load_file("#{RAILS_ROOT}/config/steamcannon.yml") rescue {}
