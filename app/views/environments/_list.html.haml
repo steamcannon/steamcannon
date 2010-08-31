@@ -15,12 +15,14 @@
       .environment_platform
         = environment.platform_version
       .environment_status
-        = environment.status
+        = environment.current_state
       .environment_action
         - if environment.running?
           = link_to 'Stop', stop_environment_path(environment), :method => :post, :confirm => "Are you sure you want to stop #{environment.name}?"
-        - else
+        - elsif environment.stopped?
           = link_to 'Start', start_environment_path(environment), :method => :post
+        - else
+          &nbsp;
       .environment_edit
         = link_to 'Edit', edit_environment_path(environment)
       .environment_delete

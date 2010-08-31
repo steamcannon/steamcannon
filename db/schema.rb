@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file,
+# This file is auto-generated from the current state of the database. Instead of editing this file, 
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100826003329) do
+ActiveRecord::Schema.define(:version => 20100830233944) do
 
   create_table "app_versions", :force => true do |t|
     t.integer  "app_id"
@@ -58,8 +58,10 @@ ActiveRecord::Schema.define(:version => 20100826003329) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.string   "status",              :default => "stopped"
+    t.string   "current_state",       :default => "stopped"
   end
+
+  add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
 
   create_table "image_roles", :force => true do |t|
     t.string   "name"
