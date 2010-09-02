@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100830233944) do
+ActiveRecord::Schema.define(:version => 20100831213749) do
 
   create_table "app_versions", :force => true do |t|
     t.integer  "app_id"
@@ -28,6 +28,16 @@ ActiveRecord::Schema.define(:version => 20100830233944) do
     t.datetime "updated_at"
     t.integer  "user_id"
     t.text     "description"
+  end
+
+  create_table "certificates", :force => true do |t|
+    t.string   "cert_type"
+    t.text     "certificate"
+    t.text     "keypair"
+    t.integer  "certifiable_id"
+    t.string   "certifiable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "deployments", :force => true do |t|

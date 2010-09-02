@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  type: MyString
+  certificate: MyText
+  keypair: MyText
+  certable_id: 1
+  certable_type: MyString
+
+two:
+  type: MyString
+  certificate: MyText
+  keypair: MyText
+  certable_id: 1
+  certable_type: MyString
