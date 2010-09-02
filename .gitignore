@@ -4,7 +4,7 @@ public/stylesheets/compiled/*
 public/uploads/*
 Vagrantfile
 .vagrant
-config/cooling-tower.yml
+config/steamcannon.yml
 config/deltacloud-rack.yml
 config/*.pem
 coverage/*

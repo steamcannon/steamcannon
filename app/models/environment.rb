@@ -1,3 +1,22 @@
+#
+# Copyright 2010 Red Hat, Inc.
+#
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 3 of
+# the License, or (at your option) any later version.
+#
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
+
 class Environment < ActiveRecord::Base
   include AASM
 
@@ -17,6 +36,7 @@ class Environment < ActiveRecord::Base
   aasm_state :running
   aasm_state :stopping, :enter => :stop_environment
   aasm_state :stopped
+  aasm_state :start_failed
 
   aasm_event :start do
     transitions :to => :starting, :from => :stopped
@@ -27,17 +47,29 @@ class Environment < ActiveRecord::Base
   end
 
   aasm_event :stop do
-    transitions :to => :stopping, :from => :running
+    transitions :to => :stopping, :from => [:running, :start_failed]
   end
 
   aasm_event :stopped do
     transitions :to => :stopped, :from => :stopping, :guard => :stopped_all_instances?
   end
 
+  aasm_event :failed do
+    transitions :to => :start_failed, :from => :starting
+  end
+
   before_update :remove_images_from_prior_platform_version
-  
+
   def platform
     platform_version.platform
+  end
+
+  def can_start?
+    aasm_events_for_current_state.include?(:start)
+  end
+
+  def can_stop?
+    aasm_events_for_current_state.include?(:stop)
   end
 
   protected

@@ -1,3 +1,22 @@
+#
+# Copyright 2010 Red Hat, Inc.
+#
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 3 of
+# the License, or (at your option) any later version.
+#
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
+
 class Instance < ActiveRecord::Base
   include AuditColumns
   include AASM
@@ -14,12 +33,13 @@ class Instance < ActiveRecord::Base
   aasm_initial_state :pending
   aasm_state :pending
   aasm_state :starting, :enter => :start_instance
-  aasm_state :running, :enter => :run_instance
-  aasm_state :stopping, :enter => :stop_instance
+  aasm_state :running, :enter => :run_instance, :after_enter => :after_run_instance
+  aasm_state :stopping, :enter => :stop_instance, :after_enter => :after_stop_instance
   aasm_state :terminating, :enter => :terminate_instance
-  aasm_state :stopped
+  aasm_state :stopped, :after_enter => :after_stopped_instance
+  aasm_state :start_failed, :enter => :state_failed
 
-  aasm_event :start do
+  aasm_event :start, :error => :error_raised do
     transitions :to => :starting, :from => :pending
   end
 
@@ -28,7 +48,7 @@ class Instance < ActiveRecord::Base
   end
 
   aasm_event :stop do
-    transitions :to => :stopping, :from => [:running, :starting, :pending]
+    transitions :to => :stopping, :from => [:running, :starting, :pending, :start_failed]
   end
 
   aasm_event :terminate do
@@ -37,6 +57,10 @@ class Instance < ActiveRecord::Base
 
   aasm_event :stopped do
     transitions :to => :stopped, :from => :terminating, :guard => :stopped_in_cloud?
+  end
+
+  aasm_event :failed do
+    transitions :to => :start_failed, :from => :pending
   end
 
   def self.deploy!(image, environment, name, hardware_profile)
@@ -72,21 +96,41 @@ class Instance < ActiveRecord::Base
   end
 
   def run_instance
-    self.public_dns = cloud_instance.public_addresses.first
+    self.update_attributes(:public_dns => cloud_instance.public_addresses.first)
+  end
+
+  def after_run_instance
+    environment.run!
   end
 
   def stop_instance
     audit_action :stopped
     save!
+  end
+
+  def after_stop_instance
     InstanceTask.async(:stop_instance, :instance_id => self.id)
   end
 
   def terminate_instance
-    cloud.terminate(cloud_id)
+    cloud.terminate(cloud_id) unless cloud_id.nil?
   end
 
   def stopped_in_cloud?
-    cloud_instance.nil? or cloud_instance.state.downcase == 'terminated'
+    cloud_instance.nil? or
+      ['terminated', 'stopped'].include?(cloud_instance.state.downcase)
+  end
+
+  def after_stopped_instance
+    environment.stopped!
+  end
+
+  def error_raised(error)
+    failed!
+  end
+
+  def state_failed
+    environment.failed!
   end
 
   def generate_certs

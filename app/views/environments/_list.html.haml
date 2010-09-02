@@ -17,9 +17,9 @@
       .environment_status
         = environment.current_state
       .environment_action
-        - if environment.running?
+        - if environment.can_stop?
           = link_to 'Stop', stop_environment_path(environment), :method => :post, :confirm => "Are you sure you want to stop #{environment.name}?"
-        - elsif environment.stopped?
+        - elsif environment.can_start?
           = link_to 'Start', start_environment_path(environment), :method => :post
         - else
           &nbsp;

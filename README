@@ -1,18 +1,8 @@
-Before running the app, first create $RAILS_ROOT/config/cooling-tower.yml
+Before running the app, first create $RAILS_ROOT/config/steamcannon.yml
 
 Its contents should look something like this:
     # Required, url of the deltacloud-core server
     deltacloud_url:  http://localhost:3001/api
-
-    # Optional, defaults to 'default'
-    key_pair_name: YOUR_KEY_PAIR_NAME
-    
-    # Optional, as long as you have working ~/.ssh/config
-    ssh_private_key_file: /Users/YOU/.ssh/YOUR_PRIVATE_KEY.pem
-    ssh_username: root
-    
-    # Optional, unless you're using latest EAP instances
-    deploy_dir: /opt/jboss-eap-5.0.1/jboss-as/server/cluster-ec2/farm/
 
 Then setup the database schema and load seed data:
   $ rake db:setup

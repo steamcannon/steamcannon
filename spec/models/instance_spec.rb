@@ -101,6 +101,12 @@ describe Instance do
         with(:cloud_id => 'i-123', :public_dns => 'host')
       @instance.start!
     end
+
+    it "should call failed! event if error" do
+      @cloud.stub!(:launch).and_raise("error")
+      @instance.should_receive(:failed!)
+      @instance.start!
+    end
   end
 
   describe "run" do
@@ -108,6 +114,9 @@ describe Instance do
       @cloud_instance = mock(Object, :public_addresses => ['host'])
       @instance = Instance.new
       @instance.stub!(:cloud_instance).and_return(@cloud_instance)
+      @environment = mock_model(Environment)
+      @instance.stub!(:environment).and_return(@environment)
+      @environment.stub!(:run!)
     end
 
     it "should be running_in_cloud if running in cloud" do
@@ -133,6 +142,13 @@ describe Instance do
       @instance.stub!(:running_in_cloud?).and_return(true)
       @instance.current_state = 'starting'
       @instance.should_receive(:public_dns=).with('host')
+      @instance.run!
+    end
+
+    it "should call run! event on environment" do
+      @instance.stub!(:running_in_cloud?).and_return(true)
+      @instance.current_state = 'starting'
+      @environment.should_receive(:run!)
       @instance.run!
     end
   end
@@ -174,15 +190,24 @@ describe Instance do
       @cloud_instance = mock(Object)
       @instance = Instance.new
       @instance.stub!(:cloud_instance).and_return(@cloud_instance)
+      @environment = mock_model(Environment)
+      @instance.stub!(:environment).and_return(@environment)
+      @environment.stub!(:stopped!)
     end
 
-    it "should be inactive after stopped" do
-      @instance.stub!(:terminate_instance)
+    it "should be inactive" do
       @instance.stub!(:stopped_in_cloud?).and_return(true)
       @instance.current_state = 'terminating'
       @instance.stopped!
       Instance.inactive.first.should eql(@instance)
       Instance.active.count.should be(0)
+    end
+
+    it "should call stopped! event on environment" do
+      @instance.stub!(:stopped_in_cloud?).and_return(true)
+      @instance.current_state = 'terminating'
+      @environment.should_receive(:stopped!)
+      @instance.stopped!
     end
 
     it "should be stopped_in_cloud if terminated in cloud" do
@@ -205,5 +230,15 @@ describe Instance do
     end
   end
 
+  describe "start_failed" do
+    it "should call failed! event on environment" do
+      environment = mock_model(Environment)
+      environment.should_receive(:failed!)
+      instance = Instance.new
+      instance.current_state = 'pending'
+      instance.stub!(:environment).and_return(environment)
+      instance.failed!
+    end
+  end
 
 end
