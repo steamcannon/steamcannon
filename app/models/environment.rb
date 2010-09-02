@@ -36,6 +36,7 @@ class Environment < ActiveRecord::Base
   aasm_state :running
   aasm_state :stopping, :enter => :stop_environment
   aasm_state :stopped
+  aasm_state :start_failed
 
   aasm_event :start do
     transitions :to => :starting, :from => :stopped
@@ -46,17 +47,29 @@ class Environment < ActiveRecord::Base
   end
 
   aasm_event :stop do
-    transitions :to => :stopping, :from => :running
+    transitions :to => :stopping, :from => [:running, :start_failed]
   end
 
   aasm_event :stopped do
     transitions :to => :stopped, :from => :stopping, :guard => :stopped_all_instances?
   end
 
+  aasm_event :failed do
+    transitions :to => :start_failed, :from => :starting
+  end
+
   before_update :remove_images_from_prior_platform_version
-  
+
   def platform
     platform_version.platform
+  end
+
+  def can_start?
+    aasm_events_for_current_state.include?(:start)
+  end
+
+  def can_stop?
+    aasm_events_for_current_state.include?(:stop)
   end
 
   protected

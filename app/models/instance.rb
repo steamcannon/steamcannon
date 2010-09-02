@@ -33,12 +33,13 @@ class Instance < ActiveRecord::Base
   aasm_initial_state :pending
   aasm_state :pending
   aasm_state :starting, :enter => :start_instance
-  aasm_state :running, :enter => :run_instance
+  aasm_state :running, :enter => :run_instance, :after_enter => :after_run_instance
   aasm_state :stopping, :enter => :stop_instance
   aasm_state :terminating, :enter => :terminate_instance
-  aasm_state :stopped
+  aasm_state :stopped, :after_enter => :after_stopped_instance
+  aasm_state :start_failed, :enter => :state_failed
 
-  aasm_event :start do
+  aasm_event :start, :error => :error_raised do
     transitions :to => :starting, :from => :pending
   end
 
@@ -47,7 +48,7 @@ class Instance < ActiveRecord::Base
   end
 
   aasm_event :stop do
-    transitions :to => :stopping, :from => [:running, :starting, :pending]
+    transitions :to => :stopping, :from => [:running, :starting, :pending, :start_failed]
   end
 
   aasm_event :terminate do
@@ -56,6 +57,10 @@ class Instance < ActiveRecord::Base
 
   aasm_event :stopped do
     transitions :to => :stopped, :from => :terminating, :guard => :stopped_in_cloud?
+  end
+
+  aasm_event :failed do
+    transitions :to => :start_failed, :from => :pending
   end
 
   def self.deploy!(image, environment, name, hardware_profile)
@@ -91,7 +96,11 @@ class Instance < ActiveRecord::Base
   end
 
   def run_instance
-    self.public_dns = cloud_instance.public_addresses.first
+    self.update_attributes(:public_dns => cloud_instance.public_addresses.first)
+  end
+
+  def after_run_instance
+    environment.run!
   end
 
   def stop_instance
@@ -101,11 +110,23 @@ class Instance < ActiveRecord::Base
   end
 
   def terminate_instance
-    cloud.terminate(cloud_id)
+    cloud.terminate(cloud_id) unless cloud_id.nil?
   end
 
   def stopped_in_cloud?
     cloud_instance.nil? or cloud_instance.state.downcase == 'terminated'
+  end
+
+  def after_stopped_instance
+    environment.stopped!
+  end
+
+  def error_raised(error)
+    failed!
+  end
+
+  def state_failed
+    environment.failed!
   end
 
   def generate_certs
