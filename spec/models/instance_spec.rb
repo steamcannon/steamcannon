@@ -72,14 +72,8 @@ describe Instance do
     end
   end
 
-  it "should generate certs on creation" do
-    instance = Instance.create!(@valid_attributes)
-    instance.server_key.should_not be_nil
-    instance.server_cert.should_not be_nil
-    instance.client_key.should_not be_nil
-    instance.client_cert.should_not be_nil
-  end
-
+  it "should generate certs on creation"
+  
   it "should find the user's cloud" do
     cloud = Object.new
     instance = Instance.new

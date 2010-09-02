@@ -134,8 +134,7 @@ class Instance < ActiveRecord::Base
   end
 
   def generate_certs
-    self.server_key, self.server_cert = AgentCert.generate("CT Agent", 'serverAuth')
-    self.client_key, self.client_cert = AgentCert.generate("CT", 'clientAuth')
+    #TODO: point this at Certificate
   end
 
 end
