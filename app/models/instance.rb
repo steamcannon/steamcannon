@@ -34,7 +34,7 @@ class Instance < ActiveRecord::Base
   aasm_state :pending
   aasm_state :starting, :enter => :start_instance
   aasm_state :running, :enter => :run_instance, :after_enter => :after_run_instance
-  aasm_state :stopping, :enter => :stop_instance
+  aasm_state :stopping, :enter => :stop_instance, :after_enter => :after_stop_instance
   aasm_state :terminating, :enter => :terminate_instance
   aasm_state :stopped, :after_enter => :after_stopped_instance
   aasm_state :start_failed, :enter => :state_failed
@@ -106,6 +106,9 @@ class Instance < ActiveRecord::Base
   def stop_instance
     audit_action :stopped
     save!
+  end
+
+  def after_stop_instance
     InstanceTask.async(:stop_instance, :instance_id => self.id)
   end
 
@@ -114,7 +117,8 @@ class Instance < ActiveRecord::Base
   end
 
   def stopped_in_cloud?
-    cloud_instance.nil? or cloud_instance.state.downcase == 'terminated'
+    cloud_instance.nil? or
+      ['terminated', 'stopped'].include?(cloud_instance.state.downcase)
   end
 
   def after_stopped_instance
