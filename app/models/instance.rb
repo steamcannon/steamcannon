@@ -86,11 +86,22 @@ class Instance < ActiveRecord::Base
 
   def start_instance
     cloud_instance = cloud.launch(image.cloud_id,
-                                  hardware_profile)
+                                  hardware_profile,
+                                  instance_launch_options)
     self.update_attributes(:cloud_id => cloud_instance.id,
                            :public_dns => cloud_instance.public_addresses.first)
   end
 
+  def instance_launch_options
+    { :user_data => instance_user_data }
+  end
+
+  def instance_user_data
+    user_data = { }
+    user_data[:steamcannon_client_cert] = Certificate.client_certificate.certificate if APP_CONFIG[:use_ssl_with_agents]
+    user_data.to_json
+  end
+  
   def running_in_cloud?
     cloud_instance.state.downcase == 'running'
   end

@@ -90,6 +90,33 @@ describe Instance do
     instance.cloud_instance.should be(cloud_instance)
   end
 
+  
+  describe "instance_launch_options" do
+    it "should include the instance user data" do
+      @instance = Instance.new
+      @instance.should_receive(:instance_user_data).and_return('ud')
+      @instance.send(:instance_launch_options).should == { :user_data => 'ud'}
+    end
+  end
+
+  describe "instance_user_data" do
+    before(:each) do
+      @instance = Instance.new
+      Certificate.stub_chain(:client_certificate, :certificate).and_return('cert pem')
+    end
+    
+    it "should include the client cert if using ssl with agents" do
+      # ssl usage is the default
+      @instance.send(:instance_user_data).should == '{"steamcannon_client_cert":"cert pem"}'
+    end
+
+    it "should not include the cert if not using ssl with agents" do
+      APP_CONFIG[:use_ssl_with_agents] = false
+      @instance.send(:instance_user_data).should == '{}'
+    end
+
+  end
+  
   describe "start" do
     before(:each) do
       @cloud_instance = mock(Object, :id => 'i-123',
@@ -100,14 +127,15 @@ describe Instance do
       @instance.stub_chain(:image, :cloud_id).and_return('ami-123')
       @instance.stub!(:update_attributes)
       @instance.stub!(:cloud).and_return(@cloud)
+      @instance.stub!(:instance_launch_options).and_return({})
     end
 
     it "should launch instance in cloud" do
       @instance.stub!(:hardware_profile).and_return('small')
-      @cloud.should_receive(:launch).with('ami-123', 'small')
+      @cloud.should_receive(:launch).with('ami-123', 'small', {})
       @instance.start!
     end
-
+    
     it "should update cloud_id and public_dns from cloud" do
       @instance.should_receive(:update_attributes).
         with(:cloud_id => 'i-123', :public_dns => 'host')
