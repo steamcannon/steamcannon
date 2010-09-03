@@ -23,7 +23,8 @@ describe Instance do
     @image = mock_model(Image)
     @image.stub!(:cloud_id).and_return("ami-12345")
     @environment = mock_model(Environment)
-
+    Certificate.stub!(:generate_server_certificate)
+      
     @valid_attributes = {
       :environment => @environment,
       :image => @image,
@@ -36,6 +37,8 @@ describe Instance do
     InstanceTask.stub(:async)
   end
 
+  it { should have_one :server_certificate }
+  
   it "should create a new instance given valid attributes" do
     Instance.create!(@valid_attributes)
   end
@@ -72,7 +75,12 @@ describe Instance do
     end
   end
 
-  it "should generate certs on creation"
+  it "should generate certs on creation" do
+    Certificate.should_receive(:generate_server_certificate)
+    Instance.create!(@valid_attributes)
+  end
+
+
   
   it "should find the user's cloud" do
     cloud = Object.new

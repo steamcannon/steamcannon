@@ -24,7 +24,7 @@ class Certificate < ActiveRecord::Base
 
   CA_TYPE = 'ca'
   CLIENT_TYPE = 'client'
-  INSTANCE_TYPE = 'instance'
+  SERVER_TYPE = 'server'
 
 
   # TODO: encrypt/decrypt on read/write attribute?
@@ -52,7 +52,28 @@ class Certificate < ActiveRecord::Base
       @client_certificate ||= Certificate.find_by_cert_type(Certificate::CLIENT_TYPE) || generate_client_certificate
     end
 
-    def generate_ssl_certificate(certable)
+    def generate_server_certificate(certifiable)
+      options = {
+        # use the certifiable id as the serial. According to RFC 2459,
+        # the serial must be unique for the CA, but it doesn't really
+        # matter for our usage, since we both produce and consume all
+        # of the certs.
+        :serial => certifiable.id, 
+        :subject => "O=SteamCannon Instance, CN=SteamCannon Agent",
+        :extensions => [
+                        [ "basicConstraints", "CA:FALSE" ],
+                        [ "keyUsage", "digitalSignature,keyEncipherment" ],
+                        [ "extendedKeyUsage", "serverAuth" ]
+                       ]
+      }
+      
+      cert, keypair = generate_certificate(options)
+
+      Certificate.create(:cert_type => Certificate::SERVER_TYPE,
+                         :certifiable => certifiable,
+                         :certificate => cert.to_pem,
+                         :keypair => keypair.to_pem)
+
     end
 
     protected
@@ -70,7 +91,7 @@ class Certificate < ActiveRecord::Base
       
       cert, keypair = generate_certificate(options)
 
-      Certificate.create(:type => Certificate::CA_TYPE,
+      Certificate.create(:cert_type => Certificate::CA_TYPE,
                          :certificate => cert.to_pem,
                          :keypair => keypair.to_pem)
     end
@@ -88,7 +109,7 @@ class Certificate < ActiveRecord::Base
       
       cert, keypair = generate_certificate(options)
 
-      Certificate.create(:type => Certificate::CLIENT_TYPE,
+      Certificate.create(:cert_type => Certificate::CLIENT_TYPE,
                          :certificate => cert.to_pem,
                          :keypair => keypair.to_pem)
       end

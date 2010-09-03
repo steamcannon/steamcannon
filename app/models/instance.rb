@@ -24,7 +24,9 @@ class Instance < ActiveRecord::Base
   belongs_to :environment
   belongs_to :image
 
-  before_create :generate_certs
+  has_one :server_certificate, :as => :certifiable, :class_name => 'Certificate'
+  
+  after_create :generate_certs
 
   named_scope :active, :conditions => "current_state <> 'stopped'"
   named_scope :inactive, :conditions => "current_state = 'stopped'"
@@ -145,7 +147,7 @@ class Instance < ActiveRecord::Base
   end
 
   def generate_certs
-    #TODO: point this at Certificate
+    Certificate.generate_server_certificate(self)
   end
 
 end

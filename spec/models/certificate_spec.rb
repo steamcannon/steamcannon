@@ -1,3 +1,21 @@
+#
+# Copyright 2010 Red Hat, Inc.
+#
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 3 of
+# the License, or (at your option) any later version.
+#
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
 require 'spec_helper'
 
 
@@ -64,5 +82,36 @@ describe Certificate do
       Certificate.client_certificate
     end
     
+  end
+
+  describe "generate_server_certificate" do
+    before(:each) do
+      @instance = Instance.new
+      @instance.stub!(:id).and_return(777)
+      # go ahead and create the CA so it doesn't trip the expectations
+      Certificate.ca_certificate
+    end
+    
+    it "should generate a cert" do
+      Certificate.should_receive(:create)
+      Certificate.generate_server_certificate(@instance)
+    end
+    
+    it "should associate the cert with the certifiable record" do
+      cert = Certificate.generate_server_certificate(@instance)
+      cert.certifiable_id.should == @instance.id
+      cert.certifiable_type.should == @instance.class.name
+    end
+
+    it "should be server cert type" do
+      cert = Certificate.generate_server_certificate(@instance)
+      cert.cert_type.should == Certificate::SERVER_TYPE
+    end
+    
+    it "should use the certifiable id as the serial" do
+      cert = Certificate.generate_server_certificate(@instance)
+      cert.to_x509_certificate.serial.should == @instance.id
+      
+    end
   end
 end
