@@ -26,23 +26,32 @@ class Certificate < ActiveRecord::Base
   CLIENT_TYPE = 'client'
   SERVER_TYPE = 'server'
 
+  # The keypair accessors encrypt/decrypt the private keys as needed.
+  def keypair=(keypair)
+    if APP_CONFIG[:certificate_password]
+      keypair = OpenSSL::PKey::RSA.new(keypair).
+        export(OpenSSL::Cipher::DES.new(:EDE3, :CBC),
+               APP_CONFIG[:certificate_password])
+    end
+    super(keypair)
+  end
 
-  # TODO: encrypt/decrypt on read/write attribute?
-  # we should probably
-  # export the keypair with a password loaded at runtime, like so
-  # (ganked from quickcert):
-  #          cb = proc do @ca_config[:password] end
-  #     keypair_export = keypair.export OpenSSL::Cipher::DES.new(:EDE3, :CBC),
-  #                                     &cb
-  
+  def keypair
+    keypair = super
+    if APP_CONFIG[:certificate_password]
+      keypair = OpenSSL::PKey::RSA.new(keypair, APP_CONFIG[:certificate_password])
+    end
+    keypair
+  end
+
   def to_rsa_keypair
-    @to_rsa_keypair ||= OpenSSL::PKey::RSA.new(keypair) #TODO: password
+    @to_rsa_keypair ||= OpenSSL::PKey::RSA.new(keypair)
   end
 
   def to_x509_certificate
     @to_x509_certificate ||= OpenSSL::X509::Certificate.new(certificate)
   end
-  
+
   class << self
     def ca_certificate
       @ca_certificate ||= Certificate.find_by_cert_type(Certificate::CA_TYPE) || generate_ca_certificate
@@ -58,7 +67,7 @@ class Certificate < ActiveRecord::Base
         # the serial must be unique for the CA, but it doesn't really
         # matter for our usage, since we both produce and consume all
         # of the certs.
-        :serial => certifiable.id, 
+        :serial => certifiable.id,
         :subject => "O=SteamCannon Instance, CN=SteamCannon Agent",
         :extensions => [
                         [ "basicConstraints", "CA:FALSE" ],
@@ -66,7 +75,7 @@ class Certificate < ActiveRecord::Base
                         [ "extendedKeyUsage", "serverAuth" ]
                        ]
       }
-      
+
       cert, keypair = generate_certificate(options)
 
       Certificate.create(:cert_type => Certificate::SERVER_TYPE,
@@ -77,7 +86,7 @@ class Certificate < ActiveRecord::Base
     end
 
     protected
-    
+
     def generate_ca_certificate
       options = {
         :serial => 0,
@@ -88,7 +97,7 @@ class Certificate < ActiveRecord::Base
                         [ "keyUsage", "cRLSign,keyCertSign", true ]
                        ]
       }
-      
+
       cert, keypair = generate_certificate(options)
 
       Certificate.create(:cert_type => Certificate::CA_TYPE,
@@ -106,13 +115,13 @@ class Certificate < ActiveRecord::Base
                         ["extendedKeyUsage", "clientAuth"]
                        ]
       }
-      
+
       cert, keypair = generate_certificate(options)
 
       Certificate.create(:cert_type => Certificate::CLIENT_TYPE,
                          :certificate => cert.to_pem,
                          :keypair => keypair.to_pem)
-      end
+    end
 
     def generate_certificate(options)
       keypair = OpenSSL::PKey::RSA.new(1024)
@@ -133,11 +142,11 @@ class Certificate < ActiveRecord::Base
       cert.extensions = options[:extensions].collect do |extension|
         ef.create_extension(*extension)
       end
-      
+
       cert.sign(options[:self_signed] ? keypair : ca_certificate.to_rsa_keypair, OpenSSL::Digest::SHA1.new)
 
       [cert, keypair]
     end
-    
+
   end
 end

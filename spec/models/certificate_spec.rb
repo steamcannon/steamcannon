@@ -33,6 +33,7 @@ describe Certificate do
       :certifiable_id => 1,
       :certifiable_type => "Certificate"
     }
+    APP_CONFIG[:certificate_password] = nil
   end
 
   it { should belong_to :certifiable }
@@ -113,5 +114,46 @@ describe Certificate do
       cert.to_x509_certificate.serial.should == @instance.id
       
     end
+  end
+
+  describe "keypair encyption/decryption" do
+    context "when a password is set" do
+      before(:each) do
+        @password = APP_CONFIG[:certificate_password] = 'abcd'
+        @certificate = Certificate.new
+        @keypair = OpenSSL::PKey::RSA.new 1024
+        @pem = @keypair.to_pem
+        @enc_pem = @keypair.export OpenSSL::Cipher::DES.new(:EDE3, :CBC), @password
+      end
+
+      it "should encrypt the keypair on write" do
+        OpenSSL::PKey::RSA.stub_chain(:new, :export).and_return(@enc_pem)
+        @certificate.should_receive(:write_attribute).with("keypair", @enc_pem)
+        @certificate.keypair = @pem
+      end
+
+      it "should decrypt the keypair on read" do
+        @certificate.stub!(:read_attribute).and_return(@enc_pem)
+        OpenSSL::PKey::RSA.should_receive(:new).with(@enc_pem, @password)
+        @certificate.keypair
+      end
+    end
+    
+    context "when a password is not set" do
+      before(:each) do
+        APP_CONFIG[:certificate_password] = nil
+        @certificate = Certificate.new
+        OpenSSL::PKey::RSA.should_not_receive(:new)
+      end
+
+      it "should not encrypt the keypair on write" do
+        @certificate.keypair = 'stuff'
+      end
+
+      it "should not decrypt the keypair on read" do
+        @certificate.keypair
+      end
+    end
+    
   end
 end
