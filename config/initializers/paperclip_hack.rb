@@ -24,3 +24,17 @@ module Paperclip
     end
   end
 end
+
+# Revert paperclip's ugly hack that breaks Tempfile.size on JRuby
+# http://github.com/thoughtbot/paperclip/issues/issue/100
+#
+# Paperclip only patches the size method and we need to revert that
+# to the original JRuby implementation. The size and length methods
+# both point to the same Java method so delegate to length.
+if defined? Tempfile
+  class Tempfile
+    def size
+      length
+    end
+  end
+end
