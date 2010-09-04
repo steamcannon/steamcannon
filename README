@@ -1,8 +1,10 @@
-Before running the app, first create $RAILS_ROOT/config/steamcannon.yml
+Before running the app, first create RAILS_ROOT/config/steamcannon.yml
 
-Its contents should look something like this:
+The only required setting in steamcannon.yml is your deltacloud_url:
     # Required, url of the deltacloud-core server
     deltacloud_url:  http://localhost:3001/api
+
+See RAILS_ROOT/config/steamcannon.yml.example for more options.
 
 Then setup the database schema and load seed data:
   $ rake db:setup

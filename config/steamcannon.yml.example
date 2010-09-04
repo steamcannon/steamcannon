@@ -1,0 +1,12 @@
+# Required, url of the deltacloud-core server
+#deltacloud_url:  http://localhost:8080/deltacloud/api
+
+# Required, used to encrypt private keys stored in the db. If you change this 
+# after launching SteamCannon, your CA and client certificates become unuseable.
+# If never set, then the keys will be stored unecrypted.
+#certificate_password: my-secret
+
+# Optional, defaults to true. Determines whether SteamCannon will use ssl 
+# (and client cert authentication) when talking to the agents. Useful only
+# in development mode.
+#use_ssl_with_agents: false
