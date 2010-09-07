@@ -25,7 +25,7 @@ class Instance < ActiveRecord::Base
   belongs_to :image
 
   has_one :server_certificate, :as => :certifiable, :class_name => 'Certificate'
-  
+
   after_create :generate_certs
 
   named_scope :active, :conditions => "current_state <> 'stopped'"
@@ -103,7 +103,7 @@ class Instance < ActiveRecord::Base
     user_data[:steamcannon_client_cert] = Certificate.client_certificate.certificate if APP_CONFIG[:use_ssl_with_agents]
     user_data.to_json
   end
-  
+
   def running_in_cloud?
     cloud_instance.state.downcase == 'running'
   end
@@ -139,6 +139,8 @@ class Instance < ActiveRecord::Base
   end
 
   def error_raised(error)
+    logger.error error.inspect
+    logger.error error.backtrace
     failed!
   end
 
