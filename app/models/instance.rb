@@ -88,14 +88,16 @@ class Instance < ActiveRecord::Base
 
   def start_instance
     cloud_instance = cloud.launch(image.cloud_id,
-                                  hardware_profile,
                                   instance_launch_options)
     self.update_attributes(:cloud_id => cloud_instance.id,
                            :public_dns => cloud_instance.public_addresses.first)
   end
 
   def instance_launch_options
-    { :user_data => instance_user_data }
+    {
+      :hardware_profile => hardware_profile,
+      :user_data => instance_user_data
+    }
   end
 
   def instance_user_data

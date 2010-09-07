@@ -33,11 +33,8 @@ module Cloud
       client.instances
     end
 
-    def launch(image_id, hardware_profile)
-      bucket = 'asdf' # temporary hack until we support partitioned clusters
-      client.create_instance(image_id,
-                             :hardware_profile => hardware_profile,
-                             :user_data => Base64.encode64(user_data(bucket)))
+    def launch(image_id, opts={})
+      client.create_instance(image_id, opts)
     end
 
     def terminate instance_id
@@ -51,13 +48,6 @@ module Cloud
 
     def client
       @client ||= DeltaCloud.new(@cloud_username, @cloud_password, APP_CONFIG['deltacloud_url'])
-    end
-
-    def user_data(bucket)
-      Base64.encode64(["access_key: #{@cloud_username}",
-                       "secret_access_key: #{@cloud_password}",
-                       "bucket: #{bucket}"
-                      ].join("\n"))
     end
 
   end

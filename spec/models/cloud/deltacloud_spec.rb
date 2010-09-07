@@ -33,9 +33,8 @@ describe Cloud::Deltacloud do
     it "should create instance in the cloud" do
       @client.should_receive(:create_instance).
         with('ami-123',
-             :hardware_profile => 'm1.small',
-             :user_data => Base64.encode64(''))
-      @deltacloud.launch('ami-123', 'm1.small')
+             :hardware_profile => 'm1.small')
+      @deltacloud.launch('ami-123', :hardware_profile => 'm1.small')
     end
   end
 
@@ -80,13 +79,5 @@ describe Cloud::Deltacloud do
       @deltacloud.client
       @deltacloud.client
     end
-  end
-
-  it "should return user data in a specific format" do
-    # Base64-encoded user data taken from old yaml-based code
-    # for a user "abc", password "123", bucket "default"
-    expected_data = "YWNjZXNzX2tleTogYWJjCnNlY3JldF9hY2Nlc3Nfa2V5OiAxMjMKYnVja2V0\nOiBkZWZhdWx0\n"
-    user_data = @deltacloud.user_data("default")
-    user_data.should eql(expected_data)
   end
 end
