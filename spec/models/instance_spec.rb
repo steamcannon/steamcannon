@@ -163,6 +163,41 @@ describe Instance do
     end
   end
 
+  describe "configure" do
+    before(:each) do
+      @cloud_instance = mock(Object, :public_addresses => ['host'])
+      @instance = Instance.new
+      @instance.stub!(:cloud_instance).and_return(@cloud_instance)
+      @environment = mock_model(Environment)
+      @instance.stub!(:environment).and_return(@environment)
+      @instance.current_state = 'starting'
+      @instance.stub!(:running_in_cloud?).and_return(true)
+      @environment.stub!(:run!)
+    end
+
+    it "should be running_in_cloud if running in cloud" do
+      @cloud_instance.stub!(:state).and_return('running')
+      @instance.should be_running_in_cloud
+    end
+
+    it "should be configuring if running_in_cloud" do
+      @instance.configure!
+      @instance.should be_configuring
+    end
+
+    it "should be starting if not running_in_cloud" do
+      @instance.stub!(:running_in_cloud?).and_return(false)
+      @instance.configure!
+      @instance.should be_starting
+    end
+
+    it "should update public_dns from cloud" do
+      @instance.should_receive(:public_dns=).with('host')
+      @instance.configure!
+    end
+
+  end
+  
   describe "run" do
     before(:each) do
       @cloud_instance = mock(Object, :public_addresses => ['host'])
@@ -173,35 +208,9 @@ describe Instance do
       @environment.stub!(:run!)
     end
 
-    it "should be running_in_cloud if running in cloud" do
-      @cloud_instance.stub!(:state).and_return('running')
-      @instance.should be_running_in_cloud
-    end
-
-    it "should be running if running_in_cloud" do
-      @instance.stub!(:running_in_cloud?).and_return(true)
-      @instance.current_state = 'starting'
-      @instance.run!
-      @instance.should be_running
-    end
-
-    it "should be starting if not running_in_cloud" do
-      @instance.stub!(:running_in_cloud?).and_return(false)
-      @instance.current_state = 'starting'
-      @instance.run!
-      @instance.should be_starting
-    end
-
-    it "should update public_dns from cloud" do
-      @instance.stub!(:running_in_cloud?).and_return(true)
-      @instance.current_state = 'starting'
-      @instance.should_receive(:public_dns=).with('host')
-      @instance.run!
-    end
 
     it "should call run! event on environment" do
-      @instance.stub!(:running_in_cloud?).and_return(true)
-      @instance.current_state = 'starting'
+      @instance.current_state = 'configuring'
       @environment.should_receive(:run!)
       @instance.run!
     end

@@ -35,7 +35,8 @@ class Instance < ActiveRecord::Base
   aasm_initial_state :pending
   aasm_state :pending
   aasm_state :starting, :enter => :start_instance
-  aasm_state :running, :enter => :run_instance, :after_enter => :after_run_instance
+  aasm_state :configuring, :enter => :configure_instance
+  aasm_state :running, :after_enter => :after_run_instance
   aasm_state :stopping, :enter => :stop_instance, :after_enter => :after_stop_instance
   aasm_state :terminating, :enter => :terminate_instance
   aasm_state :stopped, :after_enter => :after_stopped_instance
@@ -45,8 +46,12 @@ class Instance < ActiveRecord::Base
     transitions :to => :starting, :from => :pending
   end
 
+  aasm_event :configure do
+    transitions :to => :configuring, :from => :starting, :guard => :running_in_cloud?
+  end
+  
   aasm_event :run do
-    transitions :to => :running, :from => :starting, :guard => :running_in_cloud?
+    transitions :to => :running, :from => :configuring
   end
 
   aasm_event :stop do
@@ -110,8 +115,8 @@ class Instance < ActiveRecord::Base
     cloud_instance.state.downcase == 'running'
   end
 
-  def run_instance
-    self.update_attributes(:public_dns => cloud_instance.public_addresses.first)
+  def configure_instance
+    update_attributes(:public_dns => cloud_instance.public_addresses.first)
   end
 
   def after_run_instance

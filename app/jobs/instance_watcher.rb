@@ -26,7 +26,7 @@ class InstanceWatcher
 
   def update_starting
     # TODO: This is a bit inefficient to do one at a time
-    Instance.starting.each { |i| i.run! }
+    Instance.starting.each { |i| i.configure! }
   end
 
   def update_terminating
