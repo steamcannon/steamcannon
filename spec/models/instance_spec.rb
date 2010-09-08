@@ -119,6 +119,10 @@ describe Instance do
       Certificate.stub_chain(:client_certificate, :certificate).and_return('cert pem')
     end
 
+    after(:each) do
+      APP_CONFIG[:use_ssl_with_agents] = true
+    end
+    
     it "should include the client cert if using ssl with agents" do
       # ssl usage is the default
       @instance.send(:instance_user_data).should == '{"steamcannon_client_cert":"cert pem"}'
@@ -197,7 +201,21 @@ describe Instance do
     end
 
   end
-  
+
+
+    describe "verify" do
+    before(:each) do
+      @instance = Instance.new
+      @instance.current_state = 'configuring'
+    end
+
+    it "should be verifying from configuring" do
+      @instance.verify!
+      @instance.should be_verifying
+    end
+
+  end
+
   describe "run" do
     before(:each) do
       @cloud_instance = mock(Object, :public_addresses => ['host'])
@@ -205,18 +223,34 @@ describe Instance do
       @instance.stub!(:cloud_instance).and_return(@cloud_instance)
       @environment = mock_model(Environment)
       @instance.stub!(:environment).and_return(@environment)
+      @instance.current_state = 'verifying'
       @environment.stub!(:run!)
     end
 
+    %w{ verifying configuring }.each do |from_state|
+      it "should be able to transition to running from #{from_state}" do
+        @instance.current_state = from_state
+        @instance.run!
+        @instance.should be_running
+      end
+    end
 
     it "should call run! event on environment" do
-      @instance.current_state = 'configuring'
       @environment.should_receive(:run!)
       @instance.run!
     end
   end
 
   describe "stop" do
+    %w{ pending starting configuring verifying running start_failed }.each do |from_state|
+      it "should be able to transition to stopping from #{from_state}" do
+        instance = Instance.new
+        instance.current_state = from_state
+        instance.stop!
+        instance.should be_stopping
+      end
+    end
+    
     it "should be stopping" do
       instance = Instance.create!(@valid_attributes)
       instance.stop!
@@ -300,8 +334,32 @@ describe Instance do
       instance = Instance.new
       instance.current_state = 'pending'
       instance.stub!(:environment).and_return(environment)
-      instance.failed!
+      instance.start_failed!
     end
   end
+
+  describe "configure_failed" do
+    before(:each) do
+      @environment = mock_model(Environment)
+      @environment.stub!(:failed!)
+      @instance = Instance.new
+      @instance.current_state = 'verifying'
+      @instance.stub!(:environment).and_return(@environment)
+    end
+    
+    it "should call failed! event on environment" do
+      @environment.should_receive(:failed!)
+      @instance.configure_failed!
+    end
+
+    %w{ verifying configuring }.each do |from_state|
+      it "should be able to transition to configure_failed from #{from_state}" do
+        @instance.current_state = from_state
+        @instance.configure_failed!
+        @instance.should be_configure_failed
+      end
+    end
+  end
+
 
 end

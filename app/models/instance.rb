@@ -36,11 +36,14 @@ class Instance < ActiveRecord::Base
   aasm_state :pending
   aasm_state :starting, :enter => :start_instance
   aasm_state :configuring, :enter => :configure_instance
+  aasm_state :verifying
+  aasm_state :configure_failed, :enter => :state_failed
   aasm_state :running, :after_enter => :after_run_instance
   aasm_state :stopping, :enter => :stop_instance, :after_enter => :after_stop_instance
   aasm_state :terminating, :enter => :terminate_instance
   aasm_state :stopped, :after_enter => :after_stopped_instance
   aasm_state :start_failed, :enter => :state_failed
+
 
   aasm_event :start, :error => :error_raised do
     transitions :to => :starting, :from => :pending
@@ -49,13 +52,21 @@ class Instance < ActiveRecord::Base
   aasm_event :configure do
     transitions :to => :configuring, :from => :starting, :guard => :running_in_cloud?
   end
+
+  aasm_event :verify do
+    transitions :to => :verifying, :from => :configuring
+  end
+
+  aasm_event :configure_failed do
+    transitions :to => :configure_failed, :from => [:configuring, :verifying]
+  end
   
   aasm_event :run do
-    transitions :to => :running, :from => :configuring
+    transitions :to => :running, :from => [:configuring, :verifying]
   end
 
   aasm_event :stop do
-    transitions :to => :stopping, :from => [:running, :starting, :pending, :start_failed]
+    transitions :to => :stopping, :from => [:pending, :starting, :configuring, :verifying, :running, :start_failed]
   end
 
   aasm_event :terminate do
@@ -66,9 +77,10 @@ class Instance < ActiveRecord::Base
     transitions :to => :stopped, :from => :terminating, :guard => :stopped_in_cloud?
   end
 
-  aasm_event :failed do
+  aasm_event :start_failed do
     transitions :to => :start_failed, :from => :pending
   end
+
 
   def self.deploy!(image, environment, name, hardware_profile)
     instance = Instance.new(:image_id => image.id,
