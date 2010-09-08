@@ -156,4 +156,28 @@ describe Certificate do
     end
     
   end
+
+  describe "to_public_pem_file" do
+    before(:each) do
+      @cert = Certificate.ca_certificate
+      @path = Rails.root + "/tmp/cert_#{@cert.id}.pem"
+      FileUtils.rm_f(@path)
+    end
+    
+    it "should create a file with the certificate in pem format" do
+      @cert.to_public_pem_file
+      File.exists?(@path).should be_true
+      File.read(@path).should == @cert.certificate
+    end
+
+    it "should return the pathname" do
+      @cert.to_public_pem_file.should == @path
+    end
+
+    it "should not write the file if it already exists" do
+      File.should_receive(:exists?).with(@path).and_return(true)
+      File.should_not_receive(:open)
+      @cert.to_public_pem_file
+    end
+  end
 end

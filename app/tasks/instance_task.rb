@@ -28,4 +28,5 @@ class InstanceTask < TorqueBox::Messaging::Task
     instance = Instance.find(payload[:instance_id])
     instance.terminate!
   end
+
 end

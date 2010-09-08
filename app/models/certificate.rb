@@ -52,6 +52,12 @@ class Certificate < ActiveRecord::Base
     @to_x509_certificate ||= OpenSSL::X509::Certificate.new(certificate)
   end
 
+  def to_public_pem_file
+    pathname = Rails.root + "/tmp/cert_#{id}.pem"
+    File.open(pathname, 'w') { |file| file.write(certificate) } unless File.exists?(pathname)
+    pathname
+  end
+  
   class << self
     def ca_certificate
       @ca_certificate ||= Certificate.find_by_cert_type(Certificate::CA_TYPE) || generate_ca_certificate
