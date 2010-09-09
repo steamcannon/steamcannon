@@ -118,8 +118,7 @@ class Instance < ActiveRecord::Base
   end
 
   def instance_user_data
-    user_data = { }
-    user_data[:steamcannon_client_cert] = Certificate.client_certificate.certificate if APP_CONFIG[:use_ssl_with_agents]
+    user_data = { :steamcannon_client_cert => Certificate.client_certificate.certificate }
     user_data.to_json
   end
 

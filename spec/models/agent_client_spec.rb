@@ -25,14 +25,12 @@ describe AgentClient do
     @client = AgentClient.new(@instance)
   end
 
-  after(:each) do
-    APP_CONFIG[:use_ssl_with_agents] = true
-  end
   
   describe "agent_url" do
     it "should create the proper url for the agent" do
       @client.send(:agent_url).should == "https://#{@instance.public_dns}:#{AgentClient::AGENT_PORT}"
     end
+
   end
 
   describe "connection" do
@@ -46,14 +44,7 @@ describe AgentClient do
       @client.stub!(:verify_ssl?).and_return(false)
     end
     
-    it "should not include any options if ssl is disabled" do
-      @client.stub!(:agent_url).and_return('url')
-      RestClient::Resource.should_receive(:new).with('url', {})
-      APP_CONFIG[:use_ssl_with_agents] = false
-      @client.send(:connection)
-    end
-
-    it "should include the ssl options if ssl is enabled" do
+    it "should include the ssl options" do
       @client.stub!(:agent_url).and_return('url')
       RestClient::Resource.should_receive(:new).with('url',
                                                      {

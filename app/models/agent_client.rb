@@ -18,7 +18,7 @@
 
 class AgentClient
   AGENT_PORT = 7575
-  
+
   def initialize(instance)
     @instance = instance
   end
@@ -27,6 +27,10 @@ class AgentClient
     response = get '/status'
     response = configure_agent if response and response['status'] == 'ok' and !agent_configured?
     response
+  end
+
+  def services
+    get '/services'
   end
 
   def get(action, options = {})
@@ -45,19 +49,14 @@ class AgentClient
 
   protected
   def connection
-    if APP_CONFIG[:use_ssl_with_agents]
-      options = {
-        :ssl_client_cert => Certificate.client_certificate.to_x509_certificate,
-        :ssl_client_key => Certificate.client_certificate.to_rsa_keypair,
-        :ssl_ca_file => Certificate.ca_certificate.to_public_pem_file,
-        :verify_ssl => verify_ssl? ? OpenSSL::SSL::VERIFY_PEER : false
-      }
-      log "connecting with ssl (verify_ssl: #{options[:verify_ssl]})"
-    else
-      options = {}
-      log "connecting without ssl"
-    end
-    
+    options = {
+      :ssl_client_cert => Certificate.client_certificate.to_x509_certificate,
+      :ssl_client_key => Certificate.client_certificate.to_rsa_keypair,
+      :ssl_ca_file => Certificate.ca_certificate.to_public_pem_file,
+      :verify_ssl => verify_ssl? ? OpenSSL::SSL::VERIFY_PEER : false
+    }
+    log "connecting (verify_ssl: #{options[:verify_ssl]})"
+
     RestClient::Resource.new(agent_url, options)
   end
 
@@ -68,7 +67,7 @@ class AgentClient
   def verify_ssl?
     !@instance.configuring?
   end
-  
+
   def execute_request
     JSON.parse(yield)
   rescue Exception => ex
@@ -78,11 +77,11 @@ class AgentClient
     # TODO: don't swallow *all* exceptions
     log "connection failed: #{ex}"
     log ex.backtrace.join("\n")
-    nil    
+    nil
   end
 
   def configure_agent
-    post("/cert_bundle",
+    post("/configure",
          {
            :certificate => @instance.server_certificate.certificate,
            :keypair => @instance.server_certificate.keypair,

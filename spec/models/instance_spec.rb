@@ -119,18 +119,8 @@ describe Instance do
       Certificate.stub_chain(:client_certificate, :certificate).and_return('cert pem')
     end
 
-    after(:each) do
-      APP_CONFIG[:use_ssl_with_agents] = true
-    end
-    
-    it "should include the client cert if using ssl with agents" do
-      # ssl usage is the default
+    it "should include the client cert" do
       @instance.send(:instance_user_data).should == '{"steamcannon_client_cert":"cert pem"}'
-    end
-
-    it "should not include the cert if not using ssl with agents" do
-      APP_CONFIG[:use_ssl_with_agents] = false
-      @instance.send(:instance_user_data).should == '{}'
     end
 
   end
