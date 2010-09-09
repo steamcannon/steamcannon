@@ -19,32 +19,52 @@
 class AgentClient
   AGENT_PORT = 7575
 
-  def initialize(instance)
+  attr_accessor :last_request
+
+  def initialize(instance, service)
     @instance = instance
+    @service = service
   end
 
-  def status
+  def agent_status
     response = get '/status'
-    response = configure_agent if response and response['status'] == 'ok' and !agent_configured?
+    configure_agent if !agent_configured?
     response
   end
 
-  def services
+  def agent_services
     get '/services'
   end
 
-  def get(action, options = {})
-    execute_request do
-      log "GET #{agent_url}#{action}"
-      connection[action].get(options)
-    end
+  ##
+  # Service methods
+  ##
+  
+  def status
   end
 
-  def post(action, body = '', options = {})
-    execute_request do
-      log "POST #{agent_url}#{action}"
-      connection[action].post(body, options)
-    end
+  def artifacts
+  end
+
+  def start
+  end
+
+  def stop
+  end
+
+  def restart
+  end
+
+  def artifact(artifact_id)
+  end
+
+  def deploy_artifact(artifact)
+  end
+
+  def configure(config)
+  end
+
+  def undeploy_artifact(artifact_id)
   end
 
   protected
@@ -68,16 +88,35 @@ class AgentClient
     !@instance.configuring?
   end
 
+  def get(action, options = {})
+    execute_request do
+      log(self.last_request = "GET #{agent_url}#{action}")
+      connection[action].get(options)
+    end
+  end
+
+  def post(action, body = '', options = {})
+    execute_request do
+      log(self.last_request = "POST #{agent_url}#{action}")
+      connection[action].post(body, options)
+    end
+  end
+
   def execute_request
-    JSON.parse(yield)
-  rescue Exception => ex
-    # if the agent is not up, we'll see Errno::ECONNREFUSED
-    # if the ssl cert isn't what we expect, we'll see
-    # OpenSSL::SSL::SSLError
-    # TODO: don't swallow *all* exceptions
-    log "connection failed: #{ex}"
-    log ex.backtrace.join("\n")
-    nil
+    begin
+      response = JSON.parse(yield)
+    rescue Exception => ex
+      # if the agent is not up, we'll see Errno::ECONNREFUSED
+      # if the ssl cert isn't what we expect, we'll see
+      # OpenSSL::SSL::SSLError
+      log "connection failed: #{ex}"
+      log ex.backtrace.join("\n")
+      raise RequestFailedError.new("#{last_request} failed", nil, ex)
+    end
+
+    raise RequestFailedError.new("#{last_request} failed", response) if response['status'] != 'ok'
+    
+    response
   end
 
   def configure_agent
@@ -87,6 +126,9 @@ class AgentClient
            :keypair => @instance.server_certificate.keypair,
            :ca => Certificate.ca_certificate.certificate
          })
+    # move the instance ahead one state, so the job knows to try to
+    # verify the agent configuration
+    @instance.verify! 
   end
 
   def agent_configured?
@@ -95,5 +137,14 @@ class AgentClient
 
   def log(msg)
     Rails.logger.info("AgentClient: #{msg}")
+  end
+
+  class RequestFailedError < StandardError
+    attr_reader :response, :wrapped_exception
+    def initialize(msg, response = nil, wrapped_exception = nil)
+      super(msg)
+      @response = response
+      @wrapped_exception = wrapped_exception
+    end
   end
 end
