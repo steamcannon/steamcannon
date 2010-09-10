@@ -66,7 +66,8 @@ describe AgentClient do
     end
 
   end
-  
+
+
   describe "execute_request" do
     context "when the returned status != 'ok'" do
       before(:all) do

@@ -89,19 +89,20 @@ class AgentClient
   end
 
   def get(action, options = {})
-    execute_request do
-      log(self.last_request = "GET #{agent_url}#{action}")
-      connection[action].get(options)
-    end
+    call(:get, action, options)
   end
 
   def post(action, body = '', options = {})
-    execute_request do
-      log(self.last_request = "POST #{agent_url}#{action}")
-      connection[action].post(body, options)
-    end
+    call(:post, action, body, options)
   end
 
+  def call(method, action, *args)
+    execute_request do
+      log(self.last_request = "#{method.to_s.upcase} #{agent_url}#{action}")
+      connection[action].send(method, *args)
+    end
+  end
+  
   def execute_request
     begin
       response = JSON.parse(yield)
