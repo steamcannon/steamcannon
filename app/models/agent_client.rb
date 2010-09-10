@@ -126,9 +126,6 @@ class AgentClient
            :keypair => @instance.server_certificate.keypair,
            :ca => Certificate.ca_certificate.certificate
          })
-    # move the instance ahead one state, so the job knows to try to
-    # verify the agent configuration
-    @instance.verify! 
   end
 
   def agent_configured?
@@ -136,7 +133,7 @@ class AgentClient
   end
 
   def log(msg)
-    Rails.logger.info("AgentClient: #{msg}")
+    Rails.logger.info("AgentClient[Instance:#{@instance.id}]: #{msg}")
   end
 
   class RequestFailedError < StandardError

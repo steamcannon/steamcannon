@@ -101,6 +101,25 @@ class Instance < ActiveRecord::Base
     @cloud_instance ||= cloud.instance(cloud_id)
   end
 
+  def agent_client(service = nil)
+    service ||= :mock # TODO: determine default service from instance role
+    AgentClient.new(self, service)
+  end
+
+  def configure_agent
+    verify! if agent_running?
+  end
+
+  def verify_agent
+    run! if agent_running? #TODO: handle configure_failed
+  end
+  
+  def agent_running?
+    !agent_client.status.nil?
+  rescue AgentClient::RequestFailedError => ex
+    false
+  end
+  
   protected
 
   def start_instance

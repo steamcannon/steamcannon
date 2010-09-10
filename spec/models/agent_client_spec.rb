@@ -66,16 +66,6 @@ describe AgentClient do
     end
 
   end
-
-  describe "configure_agent" do
-    it "should move the instance to verifying" do
-      instance = mock(Instance, :server_certificate => Certificate.client_certificate)
-      instance.should_receive(:verify!)
-      client = AgentClient.new(instance, :mock)
-      client.stub!(:post)
-      client.send(:configure_agent)
-    end
-  end
   
   describe "execute_request" do
     context "when the returned status != 'ok'" do

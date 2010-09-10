@@ -351,5 +351,44 @@ describe Instance do
     end
   end
 
+  describe "agent_client" do
+    before(:all) do
+      @instance = Instance.new
+    end
+    
+    it "should return an agent client" do
+      @instance.agent_client.class.should == AgentClient
+    end
+  end
 
+  describe "agent_running?" do
+    before(:each) do
+      @agent = mock(AgentClient)
+      @instance = Instance.new
+      @instance.stub!(:agent_client).and_return(@agent)
+    end
+
+    it "should delegate to agent_client#status" do
+      @agent.should_receive(:status).and_return('')
+      @instance.agent_running?
+    end
+    
+    it "should return true if the agent responds to a status call" do
+      @agent.stub!(:status).and_return('')
+      @instance.agent_running?.should be_true
+    end
+
+    it "should return false if status raises an AgentClient::RequestFailedError" do
+      @agent.stub!(:status).and_raise(AgentClient::RequestFailedError.new(nil))
+      @instance.agent_running?.should_not be_true
+    end
+
+    it "should not swallow any other exceptions" do
+      @agent.stub!(:status).and_raise(StandardError.new)
+      lambda do
+        @instance.agent_running?
+      end.should raise_error
+    end
+
+  end
 end
