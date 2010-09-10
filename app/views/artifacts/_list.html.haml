@@ -1,0 +1,29 @@
+#artifacts_container
+  %h2
+    = header_text
+  #artifacts_header
+    .artifact_name
+      Name
+    .artifact_latest_version
+      Latest Version
+  - artifacts.each do |artifact|
+    .artifact_row
+      .artifact_name
+        = link_to artifact.name, artifact_path(artifact)
+      .artifact_latest_version
+        = artifact.latest_version_number || 'None'
+      .artifact_deploy
+        - if artifact.latest_version_number
+          = link_to 'Deploy', new_deployment_path('deployment[app_version_id]' => artifact.latest_version.id)
+        - else
+          &nbsp;
+      .artifact_edit
+        = link_to 'Edit', edit_artifact_path(artifact)
+      .artifact_delete
+        = link_to 'Delete', artifact, :method => :delete, :confirm => "Are you sure you want to delete #{artifact.name}?"
+  - if artifacts.empty?
+    .artifact_row
+      .artifact_name
+        = empty_text
+  - if defined?(action_link)
+    = action_link

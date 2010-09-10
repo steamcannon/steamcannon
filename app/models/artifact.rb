@@ -16,29 +16,20 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'spec_helper'
 
-describe "/apps/new.html.haml" do
-  include AppsHelper
+class Artifact < ActiveRecord::Base
+  belongs_to :user
+  has_many :app_versions
+  has_many :deployments, :through => :app_versions
+  attr_protected :user
+  validates_presence_of :name
+  accepts_nested_attributes_for :app_versions
 
-  before(:each) do
-    assigns[:app] = stub_model(App,
-      :new_record? => true,
-      :name => "value for name"
-    )
+  def latest_version
+    app_versions.first(:order => 'version_number desc')
   end
 
-  it "renders new app form" do
-    render
-
-    response.should have_tag("form[action=?][method=post]", apps_path) do
-      with_tag("input#app_name[name=?]", "app[name]")
-      with_tag("textarea#app_description[name=?]", "app[description]")
-    end
-  end
-
-  it "should have a cancel link" do
-    render
-    response.should have_tag("a[href=?]", apps_path)
+  def latest_version_number
+    latest_version ? latest_version.version_number : nil
   end
 end

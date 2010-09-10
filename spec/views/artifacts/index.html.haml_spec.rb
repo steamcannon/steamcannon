@@ -18,29 +18,29 @@
 
 require 'spec_helper'
 
-describe "/apps/index.html.haml" do
-  include AppsHelper
+describe "/artifacts/index.html.haml" do
+  include ArtifactsHelper
 
   before(:each) do
-    assigns[:apps] = [
-      stub_model(App,
-                 :name => "value for name",
-                 :description => "value for description"
-      ),
-      stub_model(App,
-                 :name => "value for name",
-                 :description => "value for description"
-      )
-    ]
+    assigns[:artifacts] = [
+                           stub_model(Artifact,
+                                      :name => "value for name",
+                                      :description => "value for description"
+                                      ),
+                           stub_model(Artifact,
+                                      :name => "value for name",
+                                      :description => "value for description"
+                                      )
+                          ]
   end
 
-  it "renders a list of apps" do
+  it "renders a list of artifacts" do
     render
-    response.should have_tag("div.app_name", "value for name".to_s, 2)
+    response.should have_tag("div.artifact_name", "value for name".to_s, 2)
   end
 
-  it "renders a link to upload a new app" do
+  it "renders a link to upload a new artifact" do
     render
-    response.should have_tag("a[href=?]", new_app_path)
+    response.should have_tag("a[href=?]", new_artifact_path)
   end
 end

@@ -29,8 +29,8 @@ class Deployment < ActiveRecord::Base
 
   before_create :record_deploy
 
-  def app
-    app_version.app
+  def artifact
+    app_version.artifact
   end
 
   def undeploy!

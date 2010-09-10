@@ -1,0 +1,9 @@
+.dcloud_form
+  %h2
+    Edit Artifact
+  - form_for(@artifact, :html => {:multipart => true}) do |f|
+    = f.error_messages
+    = render :partial => "form", :object => f
+    = f.submit 'Save', :class => "submit"
+  %p
+    = link_to 'Cancel', artifacts_path, :class => "actionlink"

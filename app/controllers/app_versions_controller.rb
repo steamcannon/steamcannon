@@ -18,14 +18,14 @@
 
 
 class AppVersionsController < ApplicationController
-  navigation :applications
+  navigation :artifacts
   before_filter :require_user
-  before_filter :load_app
+  before_filter :load_artifact
 
   # GET /app_versions/new
   # GET /app_versions/new.xml
   def new
-    @app_version = @app.app_versions.new(params[:app_version])
+    @app_version = @artifact.app_versions.new(params[:app_version])
 
     respond_to do |format|
       format.html # new.html.erb
@@ -36,11 +36,11 @@ class AppVersionsController < ApplicationController
   # POST /app_versions
   # POST /app_versions.xml
   def create
-    @app_version = @app.app_versions.new(params[:app_version])
+    @app_version = @artifact.app_versions.new(params[:app_version])
 
     respond_to do |format|
       if @app_version.save
-        format.html { redirect_to(@app, :notice => 'Version was successfully created.') }
+        format.html { redirect_to(@artifact, :notice => 'Version was successfully created.') }
         format.xml  { render :xml => @app_version, :status => :created, :location => @app_version }
       else
         format.html { render :action => "new" }
@@ -52,18 +52,18 @@ class AppVersionsController < ApplicationController
   # DELETE /app_versions/1
   # DELETE /app_versions/1.xml
   def destroy
-    @app_version = @app.app_versions.find(params[:id])
+    @app_version = @artifact.app_versions.find(params[:id])
     @app_version.destroy
 
     respond_to do |format|
-      format.html { redirect_to(@app) }
+      format.html { redirect_to(@artifact) }
       format.xml  { head :ok }
     end
   end
 
   private
 
-  def load_app
-    @app = current_user.apps.find(params[:app_id])
+  def load_artifact
+    @artifact = current_user.artifacts.find(params[:artifact_id])
   end
 end

@@ -2,14 +2,14 @@
   %h2
     = header_text
   #deployments_header
-    .deployment_app
-      Application
+    .deployment_artifact
+      Artifact
     .deployment_environment
       Environment
   - deployments.each do |deployment|
     .deployment_row
-      .deployment_app
-        = link_to deployment.app_version.to_s, app_path(deployment.app_version.app)
+      .deployment_artifact
+        = link_to deployment.app_version.to_s, artifact_path(deployment.app_version.artifact)
       .deployment_environment
         = link_to deployment.environment.name, environment_path(deployment.environment)
       .deployment_delete

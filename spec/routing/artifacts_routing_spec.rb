@@ -18,34 +18,34 @@
 
 require 'spec_helper'
 
-describe AppsController do
+describe ArtifactsController do
   describe "routing" do
     it "recognizes and generates #index" do
-      { :get => "/apps" }.should route_to(:controller => "apps", :action => "index")
+      { :get => "/artifacts" }.should route_to(:controller => "artifacts", :action => "index")
     end
 
     it "recognizes and generates #new" do
-      { :get => "/apps/new" }.should route_to(:controller => "apps", :action => "new")
+      { :get => "/artifacts/new" }.should route_to(:controller => "artifacts", :action => "new")
     end
 
     it "recognizes and generates #show" do
-      { :get => "/apps/1" }.should route_to(:controller => "apps", :action => "show", :id => "1")
+      { :get => "/artifacts/1" }.should route_to(:controller => "artifacts", :action => "show", :id => "1")
     end
 
     it "recognizes and generates #edit" do
-      { :get => "/apps/1/edit" }.should route_to(:controller => "apps", :action => "edit", :id => "1")
+      { :get => "/artifacts/1/edit" }.should route_to(:controller => "artifacts", :action => "edit", :id => "1")
     end
 
     it "recognizes and generates #create" do
-      { :post => "/apps" }.should route_to(:controller => "apps", :action => "create") 
+      { :post => "/artifacts" }.should route_to(:controller => "artifacts", :action => "create")
     end
 
     it "recognizes and generates #update" do
-      { :put => "/apps/1" }.should route_to(:controller => "apps", :action => "update", :id => "1") 
+      { :put => "/artifacts/1" }.should route_to(:controller => "artifacts", :action => "update", :id => "1")
     end
 
     it "recognizes and generates #destroy" do
-      { :delete => "/apps/1" }.should route_to(:controller => "apps", :action => "destroy", :id => "1") 
+      { :delete => "/artifacts/1" }.should route_to(:controller => "artifacts", :action => "destroy", :id => "1")
     end
   end
 end

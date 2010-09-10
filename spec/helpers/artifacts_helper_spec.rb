@@ -16,7 +16,14 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'spec_helper'
 
-module AppsHelper
+describe ArtifactsHelper do
+
+  #Delete this example and add some real ones or delete this file
+  it "should be included in the object returned by #helper" do
+    included_modules = (class << helper; self; end).send :included_modules
+    included_modules.should include(ArtifactsHelper)
+  end
 
 end

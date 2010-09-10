@@ -21,7 +21,7 @@ require 'spec_helper'
 describe AppVersion do
   before(:each) do
     @valid_attributes = {
-      :app_id => 1,
+      :artifact_id => 1,
       :version_number => 1,
       :archive_file_name => "value for archive_file_name",
       :archive_content_type => "value for archive_content_type",
@@ -36,8 +36,8 @@ describe AppVersion do
     app_version.save!
   end
 
-  it "should belong to an app" do
-    AppVersion.new.should respond_to(:app)
+  it "should belong to an artifact" do
+    AppVersion.new.should respond_to(:artifact)
   end
 
   it "should assign a version number before creating" do
@@ -47,18 +47,18 @@ describe AppVersion do
   end
 
   it "should assign 1 as the first version number" do
-    app = mock_model(App, :latest_version_number => nil)
+    artifact = mock_model(Artifact, :latest_version_number => nil)
     app_version = AppVersion.new(@valid_attributes)
-    app_version.stub!(:app).and_return(app)
+    app_version.stub!(:artifact).and_return(artifact)
     app_version.save!
     app_version.version_number.should be(1)
   end
 
-  it "should return app's name and version as to_s" do
-    app = App.new(:name => "test app")
+  it "should return artifact's name and version as to_s" do
+    artifact = Artifact.new(:name => "test artifact")
     app_version = AppVersion.new
-    app_version.app = app
+    app_version.artifact = artifact
     app_version.version_number = 2
-    app_version.to_s.should eql("test app version 2")
+    app_version.to_s.should eql("test artifact version 2")
   end
 end

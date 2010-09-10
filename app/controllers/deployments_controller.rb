@@ -65,7 +65,7 @@ class DeploymentsController < ApplicationController
         unless @deployment.environment.running?
           @deployment.environment.start!
         end
-        format.html { redirect_to(@deployment.app, :notice => 'Application was successfully deployed.') }
+        format.html { redirect_to(@deployment.artifact, :notice => 'Artifact was successfully deployed.') }
         format.xml  { render :xml => @deployment, :status => :created, :location => @deployment }
       else
         format.html { render :action => "new" }
@@ -81,7 +81,7 @@ class DeploymentsController < ApplicationController
     @deployment.undeploy!
 
     respond_to do |format|
-      format.html { redirect_back_or_default(@deployment.app, :notice => 'Application was successfully undeployed.') }
+      format.html { redirect_back_or_default(@deployment.artifact, :notice => 'Artifact was successfully undeployed.') }
       format.xml  { head :ok }
     end
   end

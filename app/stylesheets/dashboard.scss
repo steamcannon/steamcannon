@@ -4,13 +4,13 @@
     text-decoration: none;
   }
 
-  #applications, #environments {
+  #artifacts, #environments {
     @include list_container;
   }
 
-  #applications {
+  #artifacts {
     @include column(14);
-    .application {
+    .artifact {
       border-bottom: 1px solid #ccc;
       margin-bottom: 1em;
       padding-bottom: 1em;

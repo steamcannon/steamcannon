@@ -11,7 +11,7 @@
     @include list_row;
   }
 
-  .deployment_app {
+  .deployment_artifact {
     @include column(3);
   }
 

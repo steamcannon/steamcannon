@@ -9,10 +9,10 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100902150345) do
+ActiveRecord::Schema.define(:version => 20100910133133) do
 
   create_table "app_versions", :force => true do |t|
-    t.integer  "app_id"
+    t.integer  "artifact_id"
     t.integer  "version_number"
     t.string   "archive_file_name"
     t.string   "archive_content_type"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(:version => 20100902150345) do
     t.datetime "updated_at"
   end
 
-  create_table "apps", :force => true do |t|
+  create_table "artifacts", :force => true do |t|
     t.string   "name",        :null => false
     t.datetime "created_at"
     t.datetime "updated_at"

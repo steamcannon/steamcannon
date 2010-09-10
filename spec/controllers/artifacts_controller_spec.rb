@@ -18,28 +18,28 @@
 
 require 'spec_helper'
 
-describe AppsController do
+describe ArtifactsController do
   before(:each) do
     login
-    @current_user.stub!(:apps).and_return(App)
-    App.stub!(:all).and_return([])
+    @current_user.stub!(:artifacts).and_return(Artifact)
+    Artifact.stub!(:all).and_return([])
   end
 
-  def mock_app(stubs={})
+  def mock_artifact(stubs={})
     # stubs.merge!({:app_versions => AppVersion})
-    @mock_app ||= mock_model(App, stubs)
+    @mock_artifact ||= mock_model(Artifact, stubs)
   end
 
-  describe "GET /apps" do
+  describe "GET /artifacts" do
     it "should be successful" do
       get :index
       response.should be_success
     end
   end
 
-  describe "GET /apps/1" do
+  describe "GET /artifacts/1" do
     before(:each) do
-      App.stub!(:find).with("37").and_return(mock_app)
+      Artifact.stub!(:find).with("37").and_return(mock_artifact)
     end
 
     it "should be successful" do
@@ -47,33 +47,33 @@ describe AppsController do
       response.should be_success
     end
 
-    it "assigns the request app as @app" do
-      App.should_receive(:find).with("37").and_return(mock_app)
+    it "assigns the request artifact as @artifact" do
+      Artifact.should_receive(:find).with("37").and_return(mock_artifact)
       get :show, :id => "37"
-      assigns[:app].should equal(mock_app)
+      assigns[:artifact].should equal(mock_artifact)
     end
   end
 
-  describe "GET /apps/new" do
+  describe "GET /artifacts/new" do
     it "should be successful" do
       get :new
       response.should be_success
     end
   end
 
-  describe "POST /apps" do
+  describe "POST /artifacts" do
     before(:each) do
-      @app = mock_model(App)
-      App.stub!(:new).and_return(@app)
+      @artifact = mock_model(Artifact)
+      Artifact.stub!(:new).and_return(@artifact)
     end
 
     describe "with valid params" do
       before(:each) do
-        @app.stub!(:save).and_return(true)
+        @artifact.stub!(:save).and_return(true)
       end
 
-      it "should create new app" do
-        App.should_receive(:new).and_return(@app)
+      it "should create new artifact" do
+        Artifact.should_receive(:new).and_return(@artifact)
         post :create
       end
 
@@ -84,13 +84,13 @@ describe AppsController do
 
       it "should redirect to the app show page" do
         post :create
-        response.should redirect_to(app_path(@app))
+        response.should redirect_to(artifact_path(@artifact))
       end
     end
 
     describe "with invalid params" do
       before(:each) do
-        @app.stub!(:save).and_return(false);
+        @artifact.stub!(:save).and_return(false);
       end
 
       it "should display new form" do
@@ -100,10 +100,10 @@ describe AppsController do
     end
   end
 
-  describe "GET /apps/:id/edit" do
+  describe "GET /artifacts/:id/edit" do
     before(:each) do
-      @app = mock_model(App)
-      App.stub!(:find).and_return(@app)
+      @artifact = mock_model(Artifact)
+      Artifact.stub!(:find).and_return(@artifact)
     end
 
     it "should be successful" do
@@ -111,30 +111,30 @@ describe AppsController do
       response.should be_success
     end
 
-    it "should find and return app object" do
-      App.should_receive(:find).with("1").and_return(@app)
+    it "should find and return artifact object" do
+      Artifact.should_receive(:find).with("1").and_return(@artifact)
       get :edit, :id => "1"
     end
   end
 
-  describe "PUT /apps/:id" do
+  describe "PUT /artifacts/:id" do
     before(:each) do
-      @app = mock_model(App)
-      App.stub!(:find).with("1").and_return(@app)
+      @artifact = mock_model(Artifact)
+      Artifact.stub!(:find).with("1").and_return(@artifact)
     end
 
     describe "with valid params" do
       before(:each) do
-        @app.stub!(:update_attributes).and_return(true)
+        @artifact.stub!(:update_attributes).and_return(true)
       end
 
-      it "should find and return app object" do
-        App.should_receive(:find).with("1").and_return(@app)
+      it "should find and return artifact object" do
+        Artifact.should_receive(:find).with("1").and_return(@artifact)
         put :update, :id => "1"
       end
 
-      it "should update the app object's attributes" do
-        @app.should_receive(:update_attributes).and_return(true)
+      it "should update the artifact object's attributes" do
+        @artifact.should_receive(:update_attributes).and_return(true)
         put :update, :id => "1"
       end
 
@@ -143,24 +143,24 @@ describe AppsController do
         flash[:notice].should_not be_blank
       end
 
-      it "should redirect to the app show page" do
+      it "should redirect to the artifact show page" do
         put :update, :id => "1"
-        response.should redirect_to(app_path(@app))
+        response.should redirect_to(artifact_path(@artifact))
       end
     end
 
     describe "with invalid params" do
       before(:each) do
-        @app.stub!(:update_attributes).and_return(false)
+        @artifact.stub!(:update_attributes).and_return(false)
       end
 
-      it "should find and return app object" do
-        App.should_receive(:find).with("1").and_return(@app)
+      it "should find and return artifact object" do
+        Artifact.should_receive(:find).with("1").and_return(@artifact)
         put :update, :id => "1"
       end
 
-      it "should update the app object's attributes" do
-        @app.should_receive(:update_attributes).and_return(false)
+      it "should update the artifact object's attributes" do
+        @artifact.should_receive(:update_attributes).and_return(false)
         put :update, :id => "1"
       end
 
@@ -171,17 +171,17 @@ describe AppsController do
     end
   end
 
-  describe "DELETE /apps/:id" do
+  describe "DELETE /artifacts/:id" do
     before(:each) do
-      @app = mock_model(App)
-      App.stub!(:find).and_return(@app)
-      @app.stub!(:destroy)
-      @app.stub!(:name).and_return("my app")
+      @artifact = mock_model(Artifact)
+      Artifact.stub!(:find).and_return(@artifact)
+      @artifact.stub!(:destroy)
+      @artifact.stub!(:name).and_return("my artifact")
     end
 
-    it "should redirect to apps index page" do
+    it "should redirect to artifacts index page" do
       delete :destroy, :id => "1"
-      response.should redirect_to(apps_path)
+      response.should redirect_to(artifacts_path)
     end
 
     it "should have a flash notice" do

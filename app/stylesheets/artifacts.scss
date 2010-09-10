@@ -1,38 +1,38 @@
-#apps_container {
+#artifacts_container {
   @include column(22, true);
   @include list_container;
 
-  #apps_header {
+  #artifacts_header {
     @include list_header;
   }
 
-  .app_row {
+  .artifact_row {
     @include list_row;
   }
 
-  .app_name {
+  .artifact_name {
     @include column(4);
   }
 
-  .app_latest_version {
+  .artifact_latest_version {
     @include column(4);
   }
 
-  .app_deploy {
+  .artifact_deploy {
     @include column(2);
   }
 
-  .app_edit {
+  .artifact_edit {
     @include column(2);
   }
 
-  .app_delete {
+  .artifact_delete {
     @include column(2, true);
   }
 }
 
 
-#show_application {
+#show_artifact {
   .edit {
     float: right;
   }

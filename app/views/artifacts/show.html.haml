@@ -1,0 +1,11 @@
+#show_artifact
+  %h2
+    &= @artifact.name
+  .edit
+    = link_to 'Edit Artifact', edit_artifact_path(@artifact)
+  %p
+    = simple_format @artifact.description
+
+  = render :partial => "app_versions/list", :locals => { :app_versions => @artifact.app_versions, :header_text => "Versions", :empty_text => "This artifact has no versions.", :action_link => link_to('Create New Version', new_app_version_path(:artifact_id => @artifact.id), :class => "actionlink") }
+  
+  = render :partial => "deployments/list", :locals => { :deployments => @artifact.deployments.active, :header_text => "Deployments", :empty_text => "This artifact has no deployments." }

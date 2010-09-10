@@ -18,12 +18,27 @@
 
 require 'spec_helper'
 
-describe AppsHelper do
+describe "/artifacts/new.html.haml" do
+  include ArtifactsHelper
 
-  #Delete this example and add some real ones or delete this file
-  it "should be included in the object returned by #helper" do
-    included_modules = (class << helper; self; end).send :included_modules
-    included_modules.should include(AppsHelper)
+  before(:each) do
+    assigns[:artifact] = stub_model(Artifact,
+                                    :new_record? => true,
+                                    :name => "value for name"
+                                    )
   end
 
+  it "renders new artifact form" do
+    render
+
+    response.should have_tag("form[action=?][method=post]", artifacts_path) do
+      with_tag("input#artifact_name[name=?]", "artifact[name]")
+      with_tag("textarea#artifact_description[name=?]", "artifact[description]")
+    end
+  end
+
+  it "should have a cancel link" do
+    render
+    response.should have_tag("a[href=?]", artifacts_path)
+  end
 end

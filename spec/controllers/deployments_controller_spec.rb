@@ -25,12 +25,12 @@ describe DeploymentsController do
   end
 
   def mock_deployment(stubs={})
-    stubs.merge!(:app => mock_app)
+    stubs.merge!(:artifact => mock_artifact)
     @mock_deployment ||= mock_model(Deployment, stubs)
   end
 
-  def mock_app(stubs={})
-    @mock_app ||= mock_model(App, stubs)
+  def mock_artifact(stubs={})
+    @mock_artifact ||= mock_model(Artifact, stubs)
   end
 
   describe "GET index" do
@@ -84,10 +84,10 @@ describe DeploymentsController do
         assigns[:deployment].should equal(mock_deployment)
       end
 
-      it "redirects to the app show page" do
+      it "redirects to the artifact show page" do
         Deployment.stub(:new).and_return(mock_deployment)
         post :create, :deployment => {}
-        response.should redirect_to(app_url(mock_deployment.app))
+        response.should redirect_to(artifact_url(mock_deployment.artifact))
       end
     end
 
@@ -118,10 +118,10 @@ describe DeploymentsController do
       delete :destroy, :id => "37"
     end
 
-    it "redirects to the app show page" do
+    it "redirects to the artifact show page" do
       Deployment.stub(:find).and_return(mock_deployment(:undeploy! => true))
       delete :destroy, :id => "1"
-      response.should redirect_to(app_url(mock_deployment.app))
+      response.should redirect_to(artifact_url(mock_deployment.artifact))
     end
   end
 

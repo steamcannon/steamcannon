@@ -16,20 +16,29 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'spec_helper'
 
-class App < ActiveRecord::Base
-  belongs_to :user
-  has_many :app_versions
-  has_many :deployments, :through => :app_versions
-  attr_protected :user
-  validates_presence_of :name
-  accepts_nested_attributes_for :app_versions
+describe "/artifacts/edit.html.haml" do
+  include ArtifactsHelper
 
-  def latest_version
-    app_versions.first(:order => 'version_number desc')
+  before(:each) do
+    assigns[:artifact] = stub_model(Artifact,
+                                    :new_record? => false,
+                                    :id => 1,
+                                    :name => "value for name")
   end
 
-  def latest_version_number
-    latest_version ? latest_version.version_number : nil
+  it "renders edit artifact form" do
+    render
+
+    response.should have_tag("form[action=?][method=post]", artifact_path(assigns[:artifact])) do
+      with_tag("input#artifact_name[name=?]", "artifact[name]")
+      with_tag("textarea#artifact_description[name=?]", "artifact[description]")
+    end
+  end
+
+  it "should have a cancel link" do
+    render
+    response.should have_tag("a[href=?]", artifacts_path)
   end
 end

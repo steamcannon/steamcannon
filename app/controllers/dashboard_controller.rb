@@ -25,7 +25,7 @@ class DashboardController < ApplicationController
     if current_user.superuser?
       render :action => 'dashboard/superuser_show'
     else
-      @applications = current_user.apps.all
+      @artifacts = current_user.artifacts.all
       @environments = current_user.environments.all
     end
   end

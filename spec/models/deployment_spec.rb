@@ -31,13 +31,13 @@ describe Deployment do
     Deployment.create!(@valid_attributes)
   end
 
-  it "should belong to an application" do
-    app = App.new
+  it "should belong to an artifact" do
+    artifact = Artifact.new
     app_version = AppVersion.new
-    app_version.app = app
+    app_version.artifact = artifact
     deployment = Deployment.new
     deployment.app_version = app_version
-    deployment.app.should equal(app)
+    deployment.artifact.should equal(artifact)
   end
 
   it "should be active after creation" do

@@ -18,10 +18,10 @@
 
 
 class User < ActiveRecord::Base
-  has_many :apps
+  has_many :artifacts
   has_many :environments
   has_many :deployments
-  has_many :app_versions, :through => :apps
+  has_many :app_versions, :through => :artifacts
 
   acts_as_authentic do |c|
   end
@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
   }
 
   attr_protected :superuser
-  
+
   def cloud
     Cloud::Deltacloud.new(cloud_username, cloud_password)
   end

@@ -26,7 +26,7 @@ describe DashboardController do
     context 'as an account user' do
       before(:each) do
         login
-        @current_user.stub!(:apps).and_return(App)
+        @current_user.stub!(:artifacts).and_return(Artifact)
         @current_user.stub!(:environments).and_return(Environment)
       end
 
@@ -34,22 +34,22 @@ describe DashboardController do
         get :show
         response.should be_success
       end
-      
+
       it "should require logging in" do
         logout
         get :show
         response.should redirect_to(new_user_session_url)
       end
-      
-      it "assigns all apps as @applications" do
-        app = mock_model(App)
-        App.stub(:find).with(:all).and_return([app])
+
+      it "assigns all artifacts as @artifacts" do
+        artifact = mock_model(Artifact)
+        Artifact.stub(:find).with(:all).and_return([artifact])
         get :show
-        assigns[:applications].should == [app]
+        assigns[:artifacts].should == [artifact]
       end
-      
-      it "should only show the current user's apps" do
-        @current_user.should_receive(:apps)
+
+      it "should only show the current user's artifacts" do
+        @current_user.should_receive(:artifacts)
         get :show
       end
 

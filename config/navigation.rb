@@ -57,7 +57,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.auto_highlight = false
 
     primary.item :dashboard, 'Dashboard', root_path
-    primary.item :applications, 'Applications', apps_path
+    primary.item :artifacts, 'Artifacts', artifacts_path
     #primary.item :deployments, 'deployments', deployments_path
     primary.item :environments, 'Environments', environments_path
     primary.item :users, 'Users', users_path, :if => lambda { current_user and current_user.superuser? }

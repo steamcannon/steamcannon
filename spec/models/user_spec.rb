@@ -47,8 +47,8 @@ describe User do
     User.new.should respond_to(:environments)
   end
 
-  it "should have many apps" do
-    User.new.should respond_to(:apps)
+  it "should have many artifacts" do
+    User.new.should respond_to(:artifacts)
   end
 
   it "should pass cloud credentials through to cloud object" do
@@ -62,17 +62,17 @@ describe User do
     user.update_attributes(:superuser => true)
     user.superuser.should == false
   end
-  
+
   context "visible_to_user named_scope" do
     before(:each) do
       @superuser = Factory(:superuser)
       @account_user = Factory(:user)
     end
-    
+
     it "should include all users for a superuser" do
       User.visible_to_user(@superuser).should == [@superuser, @account_user]
     end
-    
+
     it "should only include the given user for an account_user" do
       User.visible_to_user(@account_user).should == [@account_user]
     end

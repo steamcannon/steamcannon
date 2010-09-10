@@ -1,15 +1,15 @@
 .dcloud_form
   %h2
-    Add Application
-  - form_for(@app, :html => {:multipart => true}) do |f|
+    Add Artifact
+  - form_for(@artifact, :html => {:multipart => true}) do |f|
     = f.error_messages
     = render :partial => "form", :object => f
     %p
       &nbsp;
     %p
-      Optionally, upload the first version of this application.
+      Optionally, upload the first version of this artifact.
     - f.fields_for :app_versions do |version_form|
       = render :partial => "app_versions/form", :object => version_form
     = f.submit 'Create', :class => "submit"
   %p
-    = link_to 'Cancel', apps_path, :class => "actionlink"
+    = link_to 'Cancel', artifacts_path, :class => "actionlink"
