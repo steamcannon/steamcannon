@@ -26,45 +26,49 @@ class AgentClient
     @service = service
   end
 
+  ##
+  # Global agent methods
+  ##
+  
   def agent_status
-    response = get '/status'
+    response = get 'status'
     configure_agent if !agent_configured?
     response
   end
 
   def agent_services
-    get '/services'
+    get 'services'
   end
 
   ##
   # Service methods
   ##
+
+  %w{ status start stop restart artifacts }.each do |action|
+    define_method action do
+      service_get action
+    end
+  end
   
-  def status
-  end
-
-  def artifacts
-  end
-
-  def start
-  end
-
-  def stop
-  end
-
-  def restart
-  end
-
+  #TODO: store the artifact_id on the artifact_version locally, and pass the
+  #artifact_version AR here
   def artifact(artifact_id)
+    service_get "artifacts/#{artifact_id}"
+    #service_get "artifacts/#{artifact_version.agent_artifact_id}"
   end
 
-  def deploy_artifact(artifact)
+  def deploy_artifact(artifact_version)
+    service_post 'artifacts', :artifact => File.new(artifact_version.archive.path, 'r')
   end
 
   def configure(config)
+    service_post 'configure', :config => config
   end
 
+  #TODO: store the artifact_id on the artifact_version locally, and pass the
+  #artifact_version AR here
   def undeploy_artifact(artifact_id)
+    service_delete "artifacts/#{artifact_id}"
   end
 
   protected
@@ -92,15 +96,35 @@ class AgentClient
     call(:get, action, options)
   end
 
+  def service_get(action, options = {})
+    service_call(:get, action, options)
+  end
+  
   def post(action, body = '', options = {})
     call(:post, action, body, options)
   end
 
+  def service_post(action, body = '', options = {})
+    service_call(:post, action, body, options)
+  end
+
+  def delete(action, options = {})
+    call(:delete, action, options)
+  end
+
+  def service_delete(action, options = {})
+    service_call(:delete, action, options)
+  end
+
   def call(method, action, *args)
     execute_request do
-      log(self.last_request = "#{method.to_s.upcase} #{agent_url}#{action}")
-      connection[action].send(method, *args)
+      log(self.last_request = "#{method.to_s.upcase} #{agent_url}/#{action}")
+      connection["/#{action}"].send(method, *args)
     end
+  end
+
+  def service_call(method, action, *args)
+    call(method, "services/#{@service}/#{action}", *args)
   end
   
   def execute_request
@@ -121,7 +145,7 @@ class AgentClient
   end
 
   def configure_agent
-    post("/configure",
+    post("configure",
          {
            :certificate => @instance.server_certificate.certificate,
            :keypair => @instance.server_certificate.keypair,

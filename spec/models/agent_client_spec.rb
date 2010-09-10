@@ -111,4 +111,48 @@ describe AgentClient do
       end
     end
   end
+
+  describe "service actions" do
+    before(:each) do
+      @connection = mock("connection")
+      @resource = mock("resource")
+      @client.stub!(:connection).and_return(@connection)
+    end
+
+    %w{ status start stop restart artifacts }.each do |action|
+      it "the local #{action} action should :get the remote #{action} action" do
+        @resource.should_receive(:get).with({}).and_return('{"status" : "ok"}')
+        @connection.should_receive(:[]).with("/services/mock/#{action}").and_return(@resource)
+        @client.send(action)
+      end
+    end
+
+    it "the local artifact action should :get the remote artifact action" do
+      @resource.should_receive(:get).with({}).and_return('{"status" : "ok"}')
+      @connection.should_receive(:[]).with("/services/mock/artifacts/1").and_return(@resource)
+      @client.artifact(1)
+    end
+
+    it "the local deploy_artifact action should :post to the remote deploy_artifact action" do
+      @resource.should_receive(:post).with({:artifact => 'the_file'}, {}).and_return('{"status" : "ok"}')
+      @connection.should_receive(:[]).with("/services/mock/artifacts").and_return(@resource)
+      artifact = mock('artifact')
+      artifact.stub_chain(:archive, :path).and_return("path")
+      File.should_receive(:new).with("path", "r").and_return('the_file')
+      @client.deploy_artifact(artifact)
+    end
+
+    it "the local undeploy_artifact action should :delete to the remote undeploy_artifact action" do
+      @resource.should_receive(:delete).with({}).and_return('{"status" : "ok"}')
+      @connection.should_receive(:[]).with("/services/mock/artifacts/1").and_return(@resource)
+      @client.undeploy_artifact(1)
+    end
+    
+    it "the local configure action should :post to the remote configure action" do
+      @resource.should_receive(:post).with({:config => {}}, {}).and_return('{"status" : "ok"}')
+      @connection.should_receive(:[]).with("/services/mock/configure").and_return(@resource)
+      @client.configure({})
+    end
+    
+  end
 end
