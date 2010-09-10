@@ -111,11 +111,14 @@ class Instance < ActiveRecord::Base
   end
 
   def verify_agent
-    run! if agent_running? #TODO: handle configure_failed
+    #TODO: handle configure_failed, maybe by looking at the last state
+    #change timestamp? (once implemented)
+    run! if agent_running? 
+
   end
   
   def agent_running?
-    !agent_client.status.nil?
+    !agent_client.agent_status.nil?
   rescue AgentClient::RequestFailedError => ex
     false
   end

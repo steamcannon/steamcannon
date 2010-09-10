@@ -369,22 +369,22 @@ describe Instance do
     end
 
     it "should delegate to agent_client#status" do
-      @agent.should_receive(:status).and_return('')
+      @agent.should_receive(:agent_status).and_return('')
       @instance.agent_running?
     end
     
     it "should return true if the agent responds to a status call" do
-      @agent.stub!(:status).and_return('')
+      @agent.stub!(:agent_status).and_return('')
       @instance.agent_running?.should be_true
     end
 
     it "should return false if status raises an AgentClient::RequestFailedError" do
-      @agent.stub!(:status).and_raise(AgentClient::RequestFailedError.new(nil))
+      @agent.stub!(:agent_status).and_raise(AgentClient::RequestFailedError.new(nil))
       @instance.agent_running?.should_not be_true
     end
 
     it "should not swallow any other exceptions" do
-      @agent.stub!(:status).and_raise(StandardError.new)
+      @agent.stub!(:agent_status).and_raise(StandardError.new)
       lambda do
         @instance.agent_running?
       end.should raise_error
