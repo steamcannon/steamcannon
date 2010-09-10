@@ -134,14 +134,17 @@ class Instance < ActiveRecord::Base
 
   def instance_launch_options
     {
-      :hardware_profile => hardware_profile,
+      # FIXME: check this, according to docs it should be hwp_id
+      # (http://localhost:8080/deltacloud/api/docs/instances/create)
+      :hardware_profile => hardware_profile, 
+      :keyname => 'default', # TODO: this should come from the user
       :user_data => instance_user_data
     }
   end
 
   def instance_user_data
     user_data = { :steamcannon_client_cert => Certificate.client_certificate.certificate }
-    user_data.to_json
+    Base64.encode64(user_data.to_json)
   end
 
   def running_in_cloud?
@@ -181,7 +184,7 @@ class Instance < ActiveRecord::Base
   def error_raised(error)
     logger.error error.inspect
     logger.error error.backtrace
-    failed!
+    start_failed!
   end
 
   def state_failed

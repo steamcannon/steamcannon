@@ -120,7 +120,7 @@ describe Instance do
     end
 
     it "should include the client cert" do
-      @instance.send(:instance_user_data).should == '{"steamcannon_client_cert":"cert pem"}'
+      Base64.decode64(@instance.send(:instance_user_data)).should == '{"steamcannon_client_cert":"cert pem"}'
     end
 
   end
@@ -150,9 +150,9 @@ describe Instance do
       @instance.start!
     end
 
-    it "should call failed! event if error" do
+    it "should call start_failed! event if error" do
       @cloud.stub!(:launch).and_raise("error")
-      @instance.should_receive(:failed!)
+      @instance.should_receive(:start_failed!)
       @instance.start!
     end
   end
