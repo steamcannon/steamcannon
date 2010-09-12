@@ -47,7 +47,7 @@ class ArtifactsController < ApplicationController
   # GET /artifacts/new.xml
   def new
     @artifact = current_user.artifacts.new
-    @artifact.app_versions << AppVersion.new
+    @artifact.artifact_versions << ArtifactVersion.new
 
     respond_to do |format|
       format.html # new.html.erb

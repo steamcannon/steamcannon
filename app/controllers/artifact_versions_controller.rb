@@ -17,43 +17,43 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 
-class AppVersionsController < ApplicationController
+class ArtifactVersionsController < ApplicationController
   navigation :artifacts
   before_filter :require_user
   before_filter :load_artifact
 
-  # GET /app_versions/new
-  # GET /app_versions/new.xml
+  # GET /artifact_versions/new
+  # GET /artifact_versions/new.xml
   def new
-    @app_version = @artifact.app_versions.new(params[:app_version])
+    @artifact_version = @artifact.artifact_versions.new(params[:artifact_version])
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @app_version }
+      format.xml  { render :xml => @artifact_version }
     end
   end
 
-  # POST /app_versions
-  # POST /app_versions.xml
+  # POST /artifact_versions
+  # POST /artifact_versions.xml
   def create
-    @app_version = @artifact.app_versions.new(params[:app_version])
+    @artifact_version = @artifact.artifact_versions.new(params[:artifact_version])
 
     respond_to do |format|
-      if @app_version.save
+      if @artifact_version.save
         format.html { redirect_to(@artifact, :notice => 'Version was successfully created.') }
-        format.xml  { render :xml => @app_version, :status => :created, :location => @app_version }
+        format.xml  { render :xml => @artifact_version, :status => :created, :location => @artifact_version }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @app_version.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @artifact_version.errors, :status => :unprocessable_entity }
       end
     end
   end
 
-  # DELETE /app_versions/1
-  # DELETE /app_versions/1.xml
+  # DELETE /artifact_versions/1
+  # DELETE /artifact_versions/1.xml
   def destroy
-    @app_version = @artifact.app_versions.find(params[:id])
-    @app_version.destroy
+    @artifact_version = @artifact.artifact_versions.find(params[:id])
+    @artifact_version.destroy
 
     respond_to do |format|
       format.html { redirect_to(@artifact) }

@@ -1,28 +1,28 @@
-#app_versions_container {
+#artifact_versions_container {
   @include column(14);
   @include list_container;
 
-  #app_versions_header {
+  #artifact_versions_header {
     @include list_header;
   }
 
-  .app_version_row {
+  .artifact_version_row {
     @include list_row;
   }
 
-  .app_version_number {
+  .artifact_version_number {
     @include column(3);
   }
 
-  .app_version_archive {
+  .artifact_version_archive {
     @include column(7);
   }
 
-  .app_version_deploy {
+  .artifact_version_deploy {
     @include column(2);
   }
 
-  .app_version_delete {
+  .artifact_version_delete {
     @include column(2, true);
   }
 }

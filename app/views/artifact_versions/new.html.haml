@@ -1,7 +1,7 @@
 .dcloud_form
   %h2
     Create New Version of #{h @artifact.name}
-  - form_for(:app_version, :url => app_versions_path(:artifact_id => @artifact.id), :html => {:multipart => true}) do |f|
+  - form_for(:artifact_version, :url => artifact_versions_path(:artifact_id => @artifact.id), :html => {:multipart => true}) do |f|
     = f.error_messages
     = render :partial => "form", :object => f
     = f.submit 'Create', :class => "submit"

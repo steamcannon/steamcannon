@@ -26,7 +26,7 @@ describe ArtifactsController do
   end
 
   def mock_artifact(stubs={})
-    # stubs.merge!({:app_versions => AppVersion})
+    # stubs.merge!({:artifact_versions => ArtifactVersion})
     @mock_artifact ||= mock_model(Artifact, stubs)
   end
 
@@ -82,7 +82,7 @@ describe ArtifactsController do
         flash[:notice].should_not be_blank
       end
 
-      it "should redirect to the app show page" do
+      it "should redirect to the artifact show page" do
         post :create
         response.should redirect_to(artifact_path(@artifact))
       end

@@ -17,5 +17,21 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 
-module AppVersionsHelper
+class ArtifactVersion < ActiveRecord::Base
+  belongs_to :artifact
+  has_many :deployments
+  has_attached_file(:archive,
+                    :url => "/uploads/:id/:filename",
+                    :path => ":rails_root/public/uploads/:id/:filename")
+  validates_attachment_presence :archive
+  attr_protected :version_number, :artifact
+  before_create :assign_version_number
+
+  def assign_version_number
+    self.version_number = (self.artifact.latest_version_number || 0) + 1
+  end
+
+  def to_s
+    "#{artifact.name} version #{version_number}"
+  end
 end

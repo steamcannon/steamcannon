@@ -8,8 +8,8 @@
       &nbsp;
     %p
       Optionally, upload the first version of this artifact.
-    - f.fields_for :app_versions do |version_form|
-      = render :partial => "app_versions/form", :object => version_form
+    - f.fields_for :artifact_versions do |version_form|
+      = render :partial => "artifact_versions/form", :object => version_form
     = f.submit 'Create', :class => "submit"
   %p
     = link_to 'Cancel', artifacts_path, :class => "actionlink"

@@ -18,5 +18,5 @@
 
 require 'spec_helper'
 
-describe "AppVersions" do
+describe "Artifacts" do
 end

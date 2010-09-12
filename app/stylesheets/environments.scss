@@ -91,7 +91,7 @@
   #deployments_container {
     @include column(23);
     margin-left: 0;
-    .deployment_app {
+    .deployment_artifact {
       @include column(7);
     }
     .deployment_chart {

@@ -1,6 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :artifacts
-  map.resources :app_versions
+  map.resources :artifact_versions
   map.resources :environments, :member => {:start => :post, :stop => :post}
   map.resources :deployments
   map.resources :users, :member => {:assume_user => :get}

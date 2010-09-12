@@ -20,7 +20,7 @@
 class Deployment < ActiveRecord::Base
   include AuditColumns
 
-  belongs_to :app_version
+  belongs_to :artifact_version
   belongs_to :environment
   belongs_to :user
 
@@ -30,7 +30,7 @@ class Deployment < ActiveRecord::Base
   before_create :record_deploy
 
   def artifact
-    app_version.artifact
+    artifact_version.artifact
   end
 
   def undeploy!

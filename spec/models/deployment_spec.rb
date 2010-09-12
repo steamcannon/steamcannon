@@ -21,7 +21,7 @@ require 'spec_helper'
 describe Deployment do
   before(:each) do
     @valid_attributes = {
-      :app_version_id => 1,
+      :artifact_version_id => 1,
       :environment_id => 1,
       :user_id => 1
     }
@@ -33,10 +33,10 @@ describe Deployment do
 
   it "should belong to an artifact" do
     artifact = Artifact.new
-    app_version = AppVersion.new
-    app_version.artifact = artifact
+    artifact_version = ArtifactVersion.new
+    artifact_version.artifact = artifact
     deployment = Deployment.new
-    deployment.app_version = app_version
+    deployment.artifact_version = artifact_version
     deployment.artifact.should equal(artifact)
   end
 

@@ -14,7 +14,7 @@
         = artifact.latest_version_number || 'None'
       .artifact_deploy
         - if artifact.latest_version_number
-          = link_to 'Deploy', new_deployment_path('deployment[app_version_id]' => artifact.latest_version.id)
+          = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact.latest_version.id)
         - else
           &nbsp;
       .artifact_edit

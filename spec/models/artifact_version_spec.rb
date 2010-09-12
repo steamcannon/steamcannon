@@ -18,7 +18,7 @@
 
 require 'spec_helper'
 
-describe AppVersion do
+describe ArtifactVersion do
   before(:each) do
     @valid_attributes = {
       :artifact_id => 1,
@@ -31,34 +31,34 @@ describe AppVersion do
   end
 
   it "should create a new instance given valid attributes" do
-    app_version = AppVersion.new(@valid_attributes)
-    app_version.stub!(:assign_version_number)
-    app_version.save!
+    artifact_version = ArtifactVersion.new(@valid_attributes)
+    artifact_version.stub!(:assign_version_number)
+    artifact_version.save!
   end
 
   it "should belong to an artifact" do
-    AppVersion.new.should respond_to(:artifact)
+    ArtifactVersion.new.should respond_to(:artifact)
   end
 
   it "should assign a version number before creating" do
-    app_version = AppVersion.new(@valid_attributes)
-    app_version.should_receive(:assign_version_number)
-    app_version.save!
+    artifact_version = ArtifactVersion.new(@valid_attributes)
+    artifact_version.should_receive(:assign_version_number)
+    artifact_version.save!
   end
 
   it "should assign 1 as the first version number" do
     artifact = mock_model(Artifact, :latest_version_number => nil)
-    app_version = AppVersion.new(@valid_attributes)
-    app_version.stub!(:artifact).and_return(artifact)
-    app_version.save!
-    app_version.version_number.should be(1)
+    artifact_version = ArtifactVersion.new(@valid_attributes)
+    artifact_version.stub!(:artifact).and_return(artifact)
+    artifact_version.save!
+    artifact_version.version_number.should be(1)
   end
 
   it "should return artifact's name and version as to_s" do
     artifact = Artifact.new(:name => "test artifact")
-    app_version = AppVersion.new
-    app_version.artifact = artifact
-    app_version.version_number = 2
-    app_version.to_s.should eql("test artifact version 2")
+    artifact_version = ArtifactVersion.new
+    artifact_version.artifact = artifact
+    artifact_version.version_number = 2
+    artifact_version.to_s.should eql("test artifact version 2")
   end
 end

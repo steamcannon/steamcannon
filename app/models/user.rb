@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   has_many :artifacts
   has_many :environments
   has_many :deployments
-  has_many :app_versions, :through => :artifacts
+  has_many :artifact_versions, :through => :artifacts
 
   acts_as_authentic do |c|
   end

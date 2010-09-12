@@ -35,8 +35,8 @@ describe Artifact do
     artifact.user.should be_nil
   end
 
-  it "should have many app versions" do
-    Artifact.new.should respond_to(:app_versions)
+  it "should have many artifact versions" do
+    Artifact.new.should respond_to(:artifact_versions)
   end
 
   it "should have many deployments" do

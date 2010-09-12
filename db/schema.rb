@@ -9,9 +9,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100910133133) do
+ActiveRecord::Schema.define(:version => 20100912223310) do
 
-  create_table "app_versions", :force => true do |t|
+  create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
     t.integer  "version_number"
     t.string   "archive_file_name"
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(:version => 20100910133133) do
     t.string   "datasource"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "app_version_id"
+    t.integer  "artifact_version_id"
     t.datetime "undeployed_at"
     t.datetime "deployed_at"
     t.integer  "deployed_by"
