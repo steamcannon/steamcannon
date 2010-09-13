@@ -27,7 +27,8 @@ class Instance < ActiveRecord::Base
   has_one :server_certificate, :as => :certifiable, :class_name => 'Certificate'
 
   after_create :generate_certs
-
+  before_save :set_state_change_timestamp
+    
   named_scope :active, :conditions => "current_state <> 'stopped'"
   named_scope :inactive, :conditions => "current_state = 'stopped'"
 
@@ -195,4 +196,7 @@ class Instance < ActiveRecord::Base
     Certificate.generate_server_certificate(self)
   end
 
+  def set_state_change_timestamp
+    self.state_change_timestamp = Time.now if current_state_changed?
+  end
 end

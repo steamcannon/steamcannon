@@ -125,237 +125,259 @@ describe Instance do
 
   end
 
-  describe "start" do
+  context "state transitions" do
     before(:each) do
-      @cloud_instance = mock(Object, :id => 'i-123',
-                             :public_addresses => ['host'])
-      @cloud = mock(Object)
-      @cloud.stub!(:launch).and_return(@cloud_instance)
-      @instance = Instance.new
-      @instance.stub_chain(:image, :cloud_id).and_return('ami-123')
-      @instance.stub!(:update_attributes)
-      @instance.stub!(:cloud).and_return(@cloud)
-      @instance.stub!(:instance_launch_options).and_return({})
+      @instance = Factory.build(:instance)
+    end
+    
+    describe "setting state_change_timestamp" do
+      before(:each) do
+        @now = Time.now
+        Time.stub!(:now).and_return(@now)
+      end
+      
+      it "should be set if current_state changes on save" do
+
+        @instance.should_receive(:state_change_timestamp=).with(@now)
+        @instance.current_state = 'running'
+        @instance.save
+      end
+
+      it "should get set on initial save to handle the default state" do
+        @instance.should_receive(:state_change_timestamp=).with(@now)
+        @instance.save
+      end
+
+      it "should not get set if the state does not change" do
+        @instance.save
+        @instance.should_not_receive(:state_change_timestamp=)
+        @instance.public_dns = 'something to trigger save'
+        @instance.save
+      end
+    end
+    
+    describe "start" do
+      before(:each) do
+        @cloud_instance = mock(Object, :id => 'i-123',
+                               :public_addresses => ['host'])
+        @cloud = mock(Object)
+        @cloud.stub!(:launch).and_return(@cloud_instance)
+        @instance.stub_chain(:image, :cloud_id).and_return('ami-123')
+        @instance.stub!(:update_attributes)
+        @instance.stub!(:cloud).and_return(@cloud)
+        @instance.stub!(:instance_launch_options).and_return({})
+      end
+
+      it "should launch instance in cloud" do
+        @instance.stub!(:hardware_profile).and_return('small')
+        @cloud.should_receive(:launch).with('ami-123', {})
+        @instance.start!
+      end
+
+      it "should update cloud_id and public_dns from cloud" do
+        @instance.should_receive(:update_attributes).
+          with(:cloud_id => 'i-123', :public_dns => 'host')
+        @instance.start!
+      end
+
+      it "should call start_failed! event if error" do
+        @cloud.stub!(:launch).and_raise("error")
+        @instance.should_receive(:start_failed!)
+        @instance.start!
+      end
     end
 
-    it "should launch instance in cloud" do
-      @instance.stub!(:hardware_profile).and_return('small')
-      @cloud.should_receive(:launch).with('ami-123', {})
-      @instance.start!
-    end
+    describe "configure" do
+      before(:each) do
+        @cloud_instance = mock(Object, :public_addresses => ['host'])
+        @instance.stub!(:cloud_instance).and_return(@cloud_instance)
+        @environment = mock_model(Environment)
+        @instance.stub!(:environment).and_return(@environment)
+        @instance.current_state = 'starting'
+        @instance.stub!(:running_in_cloud?).and_return(true)
+        @environment.stub!(:run!)
+      end
 
-    it "should update cloud_id and public_dns from cloud" do
-      @instance.should_receive(:update_attributes).
-        with(:cloud_id => 'i-123', :public_dns => 'host')
-      @instance.start!
-    end
+      it "should be running_in_cloud if running in cloud" do
+        @cloud_instance.stub!(:state).and_return('running')
+        @instance.should be_running_in_cloud
+      end
 
-    it "should call start_failed! event if error" do
-      @cloud.stub!(:launch).and_raise("error")
-      @instance.should_receive(:start_failed!)
-      @instance.start!
-    end
-  end
+      it "should be configuring if running_in_cloud" do
+        @instance.configure!
+        @instance.should be_configuring
+      end
 
-  describe "configure" do
-    before(:each) do
-      @cloud_instance = mock(Object, :public_addresses => ['host'])
-      @instance = Instance.new
-      @instance.stub!(:cloud_instance).and_return(@cloud_instance)
-      @environment = mock_model(Environment)
-      @instance.stub!(:environment).and_return(@environment)
-      @instance.current_state = 'starting'
-      @instance.stub!(:running_in_cloud?).and_return(true)
-      @environment.stub!(:run!)
-    end
+      it "should be starting if not running_in_cloud" do
+        @instance.stub!(:running_in_cloud?).and_return(false)
+        @instance.configure!
+        @instance.should be_starting
+      end
 
-    it "should be running_in_cloud if running in cloud" do
-      @cloud_instance.stub!(:state).and_return('running')
-      @instance.should be_running_in_cloud
-    end
+      it "should update public_dns from cloud" do
+        @instance.should_receive(:public_dns=).with('host')
+        @instance.configure!
+      end
 
-    it "should be configuring if running_in_cloud" do
-      @instance.configure!
-      @instance.should be_configuring
     end
-
-    it "should be starting if not running_in_cloud" do
-      @instance.stub!(:running_in_cloud?).and_return(false)
-      @instance.configure!
-      @instance.should be_starting
-    end
-
-    it "should update public_dns from cloud" do
-      @instance.should_receive(:public_dns=).with('host')
-      @instance.configure!
-    end
-
-  end
 
 
     describe "verify" do
-    before(:each) do
-      @instance = Instance.new
-      @instance.current_state = 'configuring'
-    end
-
-    it "should be verifying from configuring" do
-      @instance.verify!
-      @instance.should be_verifying
-    end
-
-  end
-
-  describe "run" do
-    before(:each) do
-      @cloud_instance = mock(Object, :public_addresses => ['host'])
-      @instance = Instance.new
-      @instance.stub!(:cloud_instance).and_return(@cloud_instance)
-      @environment = mock_model(Environment)
-      @instance.stub!(:environment).and_return(@environment)
-      @instance.current_state = 'verifying'
-      @environment.stub!(:run!)
-    end
-
-    %w{ verifying configuring }.each do |from_state|
-      it "should be able to transition to running from #{from_state}" do
-        @instance.current_state = from_state
-        @instance.run!
-        @instance.should be_running
+      before(:each) do
+        @instance.current_state = 'configuring'
       end
-    end
 
-    it "should call run! event on environment" do
-      @environment.should_receive(:run!)
-      @instance.run!
-    end
-  end
-
-  describe "stop" do
-    %w{ pending starting configuring verifying running start_failed }.each do |from_state|
-      it "should be able to transition to stopping from #{from_state}" do
-        instance = Instance.new
-        instance.current_state = from_state
-        instance.stop!
-        instance.should be_stopping
+      it "should be verifying from configuring" do
+        @instance.verify!
+        @instance.should be_verifying
       end
-    end
-    
-    it "should be stopping" do
-      instance = Instance.create!(@valid_attributes)
-      instance.stop!
-      instance.should be_stopping
+
     end
 
-    it "should populate stopped_at" do
-      instance = Instance.create!(@valid_attributes)
-      instance.stop!
-      instance.stopped_at.should_not be_nil
-    end
+    describe "configure_failed" do
+      before(:each) do
+        @environment = mock_model(Environment)
+        @environment.stub!(:failed!)
+        @instance.current_state = 'verifying'
+        @instance.stub!(:environment).and_return(@environment)
+      end
 
-    it "should populate stopped_by" do
-      login
-      instance = Instance.create!(@valid_attributes)
-      instance.stop!
-      instance.stopped_by.should be(@current_user.id)
-    end
-  end
-
-  describe "terminate" do
-    it "should terminate instance in cloud" do
-      cloud = mock(Object)
-      cloud.should_receive(:terminate).with('i-123')
-      instance = Instance.new(:cloud_id => 'i-123')
-      instance.stub!(:cloud).and_return(cloud)
-      instance.current_state = 'stopping'
-      instance.terminate!
-    end
-  end
-
-  describe "stopped" do
-    before(:each) do
-      @cloud_instance = mock(Object)
-      @instance = Instance.new
-      @instance.stub!(:cloud_instance).and_return(@cloud_instance)
-      @environment = mock_model(Environment)
-      @instance.stub!(:environment).and_return(@environment)
-      @environment.stub!(:stopped!)
-    end
-
-    it "should be inactive" do
-      @instance.stub!(:stopped_in_cloud?).and_return(true)
-      @instance.current_state = 'terminating'
-      @instance.stopped!
-      Instance.inactive.first.should eql(@instance)
-      Instance.active.count.should be(0)
-    end
-
-    it "should call stopped! event on environment" do
-      @instance.stub!(:stopped_in_cloud?).and_return(true)
-      @instance.current_state = 'terminating'
-      @environment.should_receive(:stopped!)
-      @instance.stopped!
-    end
-
-    it "should be stopped_in_cloud if terminated in cloud" do
-      @cloud_instance.stub!(:state).and_return('terminated')
-      @instance.should be_stopped_in_cloud
-    end
-
-    it "should be stopped if stopped_in_cloud" do
-      @instance.stub!(:stopped_in_cloud?).and_return(true)
-      @instance.current_state = 'terminating'
-      @instance.stopped!
-      @instance.should be_stopped
-    end
-
-    it "should be terminating if not stopped_in_cloud" do
-      @instance.stub!(:stopped_in_cloud?).and_return(false)
-      @instance.current_state = 'terminating'
-      @instance.stopped!
-      @instance.should be_terminating
-    end
-  end
-
-  describe "start_failed" do
-    it "should call failed! event on environment" do
-      environment = mock_model(Environment)
-      environment.should_receive(:failed!)
-      instance = Instance.new
-      instance.current_state = 'pending'
-      instance.stub!(:environment).and_return(environment)
-      instance.start_failed!
-    end
-  end
-
-  describe "configure_failed" do
-    before(:each) do
-      @environment = mock_model(Environment)
-      @environment.stub!(:failed!)
-      @instance = Instance.new
-      @instance.current_state = 'verifying'
-      @instance.stub!(:environment).and_return(@environment)
-    end
-    
-    it "should call failed! event on environment" do
-      @environment.should_receive(:failed!)
-      @instance.configure_failed!
-    end
-
-    %w{ verifying configuring }.each do |from_state|
-      it "should be able to transition to configure_failed from #{from_state}" do
-        @instance.current_state = from_state
+      it "should call failed! event on environment" do
+        @environment.should_receive(:failed!)
         @instance.configure_failed!
-        @instance.should be_configure_failed
+      end
+
+      %w{ verifying configuring }.each do |from_state|
+        it "should be able to transition to configure_failed from #{from_state}" do
+          @instance.current_state = from_state
+          @instance.configure_failed!
+          @instance.should be_configure_failed
+        end
       end
     end
-  end
+    
+    describe "run" do
+      before(:each) do
+        @cloud_instance = mock(Object, :public_addresses => ['host'])
+        @instance.stub!(:cloud_instance).and_return(@cloud_instance)
+        @environment = mock_model(Environment)
+        @instance.stub!(:environment).and_return(@environment)
+        @instance.current_state = 'verifying'
+        @environment.stub!(:run!)
+      end
 
+      %w{ verifying configuring }.each do |from_state|
+        it "should be able to transition to running from #{from_state}" do
+          @instance.current_state = from_state
+          @instance.run!
+          @instance.should be_running
+        end
+      end
+
+      it "should call run! event on environment" do
+        @environment.should_receive(:run!)
+        @instance.run!
+      end
+    end
+
+    describe "stop" do
+      %w{ pending starting configuring verifying running start_failed }.each do |from_state|
+        it "should be able to transition to stopping from #{from_state}" do
+          @instance.current_state = from_state
+          @instance.stop!
+          @instance.should be_stopping
+        end
+      end
+
+      it "should be stopping" do
+        @instance.stop!
+        @instance.should be_stopping
+      end
+
+      it "should populate stopped_at" do
+        @instance.stop!
+        @instance.stopped_at.should_not be_nil
+      end
+
+      it "should populate stopped_by" do
+        login
+        @instance.stop!
+        @instance.stopped_by.should be(@current_user.id)
+      end
+    end
+
+    describe "terminate" do
+      it "should terminate instance in cloud" do
+        cloud = mock(Object)
+        cloud.should_receive(:terminate).with('i-123')
+        @instance.cloud_id = 'i-123'
+        @instance.stub!(:cloud).and_return(cloud)
+        @instance.current_state = 'stopping'
+        @instance.terminate!
+      end
+    end
+
+    describe "stopped" do
+      before(:each) do
+        @cloud_instance = mock(Object)
+        @instance.stub!(:cloud_instance).and_return(@cloud_instance)
+        @environment = mock_model(Environment)
+        @instance.stub!(:environment).and_return(@environment)
+        @environment.stub!(:stopped!)
+      end
+
+      it "should be inactive" do
+        @instance.stub!(:stopped_in_cloud?).and_return(true)
+        @instance.current_state = 'terminating'
+        @instance.stopped!
+        Instance.inactive.first.should eql(@instance)
+        Instance.active.count.should be(0)
+      end
+
+      it "should call stopped! event on environment" do
+        @instance.stub!(:stopped_in_cloud?).and_return(true)
+        @instance.current_state = 'terminating'
+        @environment.should_receive(:stopped!)
+        @instance.stopped!
+      end
+
+      it "should be stopped_in_cloud if terminated in cloud" do
+        @cloud_instance.stub!(:state).and_return('terminated')
+        @instance.should be_stopped_in_cloud
+      end
+
+      it "should be stopped if stopped_in_cloud" do
+        @instance.stub!(:stopped_in_cloud?).and_return(true)
+        @instance.current_state = 'terminating'
+        @instance.stopped!
+        @instance.should be_stopped
+      end
+
+      it "should be terminating if not stopped_in_cloud" do
+        @instance.stub!(:stopped_in_cloud?).and_return(false)
+        @instance.current_state = 'terminating'
+        @instance.stopped!
+        @instance.should be_terminating
+      end
+    end
+
+    describe "start_failed" do
+      it "should call failed! event on environment" do
+        environment = mock_model(Environment)
+        environment.should_receive(:failed!)
+        @instance.current_state = 'pending'
+        @instance.stub!(:environment).and_return(environment)
+        @instance.start_failed!
+      end
+    end
+
+  end
+  
   describe "agent_client" do
     before(:all) do
       @instance = Instance.new
     end
-    
+
     it "should return an agent client" do
       @instance.agent_client.class.should == AgentClient
     end
@@ -372,7 +394,7 @@ describe Instance do
       @agent.should_receive(:agent_status).and_return('')
       @instance.agent_running?
     end
-    
+
     it "should return true if the agent responds to a status call" do
       @agent.stub!(:agent_status).and_return('')
       @instance.agent_running?.should be_true

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100912223310) do
+ActiveRecord::Schema.define(:version => 20100913151336) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(:version => 20100912223310) do
     t.integer  "started_by"
     t.datetime "stopped_at"
     t.integer  "stopped_by"
+    t.datetime "state_change_timestamp"
   end
 
   add_index "instances", ["current_state"], :name => "index_instances_on_current_state"
