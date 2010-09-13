@@ -413,4 +413,51 @@ describe Instance do
     end
 
   end
+
+  describe "configure_agent" do
+    before(:each) do 
+      @instance = Factory.build(:instance, :current_state => 'configuring')
+    end
+    
+    it "should move to verifying state if agent is running" do
+      @instance.stub!(:agent_running?).and_return(true)
+      @instance.should_receive(:verify!)
+      @instance.configure_agent
+    end
+
+    it "should not move to verifying state if agent is not running" do
+      @instance.stub!(:agent_running?).and_return(false)
+      @instance.should_not_receive(:verify!)
+      @instance.configure_agent
+    end
+    
+  end
+
+  describe "verify_agent" do
+    before(:each) do 
+      @instance = Factory(:instance, :current_state => 'verifying')
+    end
+    
+    it "should move to running state if agent is running" do
+      @instance.stub!(:agent_running?).and_return(true)
+      @instance.should_receive(:run!)
+      @instance.verify_agent
+    end
+
+    it "should not move to running state if agent is not running" do
+      @instance.stub!(:agent_running?).and_return(false)
+      @instance.should_not_receive(:run!)
+      @instance.verify_agent
+    end
+
+    it "should move to configure_failed state if the last state change was two or more minutes ago" do
+      @instance.state_change_timestamp = Time.now - 121.seconds
+      @instance.stub!(:agent_running?).and_return(false)
+      @instance.should_receive(:configure_failed!)
+      @instance.verify_agent
+    end
+  end
+
+  
+  
 end
