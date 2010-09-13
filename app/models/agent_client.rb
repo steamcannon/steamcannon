@@ -29,7 +29,7 @@ class AgentClient
   ##
   # Global agent methods
   ##
-  
+
   def agent_status
     response = get 'status'
     configure_agent if !agent_configured?
@@ -49,7 +49,7 @@ class AgentClient
       service_get action
     end
   end
-  
+
   #TODO: store the artifact_id on the artifact_version locally, and pass the
   #artifact_version AR here
   def artifact(artifact_id)
@@ -73,13 +73,18 @@ class AgentClient
 
   protected
   def connection
-    options = {
-      :ssl_client_cert => Certificate.client_certificate.to_x509_certificate,
-      :ssl_client_key => Certificate.client_certificate.to_rsa_keypair,
-      :ssl_ca_file => Certificate.ca_certificate.to_public_pem_file,
-      :verify_ssl => false #FIXME: once agent reconfigures: verify_ssl? ? OpenSSL::SSL::VERIFY_PEER : false
-    }
-    log "connecting (verify_ssl: #{options[:verify_ssl]})"
+    if APP_CONFIG[:use_ssl_with_agents]
+      options = {
+        :ssl_client_cert => Certificate.client_certificate.to_x509_certificate,
+        :ssl_client_key => Certificate.client_certificate.to_rsa_keypair,
+        :ssl_ca_file => Certificate.ca_certificate.to_public_pem_file,
+        :verify_ssl => false #FIXME: once agent reconfigures: verify_ssl? ? OpenSSL::SSL::VERIFY_PEER : false
+      }
+      log "connecting with ssl (verify_ssl: #{options[:verify_ssl]})"
+    else
+      options = { }
+      log "connecting *without* ssl"
+    end
 
     RestClient::Resource.new(agent_url, options)
   end
@@ -99,7 +104,7 @@ class AgentClient
   def service_get(action, options = {})
     service_call(:get, action, options)
   end
-  
+
   def post(action, body = '', options = {})
     call(:post, action, body, options)
   end
@@ -126,7 +131,7 @@ class AgentClient
   def service_call(method, action, *args)
     call(method, "services/#{@service}/#{action}", *args)
   end
-  
+
   def execute_request
     begin
       response = JSON.parse(yield)
@@ -140,7 +145,7 @@ class AgentClient
     end
 
     raise RequestFailedError.new("#{last_request} failed", response) if response['status'] != 'ok'
-    
+
     response
   end
 

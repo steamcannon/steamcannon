@@ -43,8 +43,12 @@ describe AgentClient do
       Certificate.stub!(:ca_certificate).and_return(cert)
       @client.stub!(:verify_ssl?).and_return(false)
     end
+
+    after(:each) do
+      APP_CONFIG[:use_ssl_with_agents] = true
+    end
     
-    it "should include the ssl options" do
+    it "should include the ssl options if ssl enabled" do
       @client.stub!(:agent_url).and_return('url')
       RestClient::Resource.should_receive(:new).with('url',
                                                      {
@@ -55,6 +59,15 @@ describe AgentClient do
                                                      })
       @client.send(:connection)
     end
+
+
+    it "should not include the ssl options if ssl disabled" do
+      APP_CONFIG[:use_ssl_with_agents] = false      
+      @client.stub!(:agent_url).and_return('url')
+      RestClient::Resource.should_receive(:new).with('url', {})
+      @client.send(:connection)
+    end
+
   end
 
   describe "agent_status" do
