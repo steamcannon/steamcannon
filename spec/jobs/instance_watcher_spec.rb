@@ -45,12 +45,9 @@ describe InstanceWatcher do
     @instance_watcher.update_configuring
   end
   
-  it "should attempt to verify any verifying instances (PENDING: agent needs to be able to configure itself)"
-    
-  it "should transition each configuring instance to running (until agent can configure itself)" do
+  it "should attempt to verify any verifying instances" do
     instance = mock_model(Instance)
-    #instance.should_receive(:verify_agent)
-    instance.should_receive(:run!)
+    instance.should_receive(:verify_agent)
     Instance.stub!(:verifying).and_return([instance])
     @instance_watcher.update_verifying
   end

@@ -78,7 +78,7 @@ class AgentClient
         :ssl_client_cert => Certificate.client_certificate.to_x509_certificate,
         :ssl_client_key => Certificate.client_certificate.to_rsa_keypair,
         :ssl_ca_file => Certificate.ca_certificate.to_public_pem_file,
-        :verify_ssl => false #FIXME: once agent reconfigures: verify_ssl? ? OpenSSL::SSL::VERIFY_PEER : false
+        :verify_ssl => verify_ssl? ? OpenSSL::SSL::VERIFY_PEER : false
       }
       log "connecting with ssl (verify_ssl: #{options[:verify_ssl]})"
     else

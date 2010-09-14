@@ -38,10 +38,7 @@ class InstanceWatcher
 
   def update_verifying
     # TODO: This is a bit inefficient to do one at a time
-    # FIXME: verify again when the agent can reconfigure itself
-    #Instance.verifying.each { |i| i.verify_agent }
-    Instance.verifying.each { |i| i.run! }
-    
+    Instance.verifying.each { |i| i.verify_agent }
   end
 
 
