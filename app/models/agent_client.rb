@@ -134,7 +134,8 @@ class AgentClient
 
   def execute_request
     begin
-      response = JSON.parse(yield)
+      response = yield
+      response = JSON.parse(response) unless response.blank?
     rescue Exception => ex
       # if the agent is not up, we'll see Errno::ECONNREFUSED
       # if the ssl cert isn't what we expect, we'll see

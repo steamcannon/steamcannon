@@ -25,7 +25,7 @@ describe AgentClient do
     @client = AgentClient.new(@instance, :mock)
   end
 
-  
+
   describe "agent_url" do
     it "should create the proper url for the agent" do
       @client.send(:agent_url).should == "https://#{@instance.public_dns}:#{AgentClient::AGENT_PORT}"
@@ -47,7 +47,7 @@ describe AgentClient do
     after(:each) do
       APP_CONFIG[:use_ssl_with_agents] = true
     end
-    
+
     it "should include the ssl options if ssl enabled" do
       @client.stub!(:agent_url).and_return('url')
       RestClient::Resource.should_receive(:new).with('url',
@@ -62,7 +62,7 @@ describe AgentClient do
 
 
     it "should not include the ssl options if ssl disabled" do
-      APP_CONFIG[:use_ssl_with_agents] = false      
+      APP_CONFIG[:use_ssl_with_agents] = false
       @client.stub!(:agent_url).and_return('url')
       RestClient::Resource.should_receive(:new).with('url', {})
       @client.send(:connection)
@@ -81,18 +81,18 @@ describe AgentClient do
   end
 
   describe "execute_request" do
-    
+
     context "when the request raises an exception" do
       before(:all) do
         @raising_proc = lambda { raise Errno::ECONNREFUSED }
       end
-      
+
       it "should raise an exception" do
         lambda do
           @client.send(:execute_request, &@raising_proc)
         end.should raise_error(AgentClient::RequestFailedError)
       end
-      
+
       it "should include the original exception in the new exception" do
         begin
           @client.send(:execute_request, &@raising_proc)
@@ -100,6 +100,12 @@ describe AgentClient do
           ex.wrapped_exception.class.should == Errno::ECONNREFUSED
         end
       end
+    end
+
+    it "should allow blank responses" do
+      lambda do
+        @client.send(:execute_request, &lambda { "" })
+      end.should_not raise_error
     end
   end
 
@@ -138,12 +144,12 @@ describe AgentClient do
       @connection.should_receive(:[]).with("/services/mock/artifacts/1").and_return(@resource)
       @client.undeploy_artifact(1)
     end
-    
+
     it "the local configure action should :post to the remote configure action" do
       @resource.should_receive(:post).with({:config => {}}, {}).and_return('{}')
       @connection.should_receive(:[]).with("/services/mock/configure").and_return(@resource)
       @client.configure({})
     end
-    
+
   end
 end
