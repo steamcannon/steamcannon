@@ -66,7 +66,9 @@ class Instance < ActiveRecord::Base
   end
 
   aasm_event :stop do
-    transitions :to => :stopping, :from => [:pending, :starting, :configuring, :verifying, :running, :start_failed]
+    transitions :to => :stopping, :from => [:pending, :starting, :configuring,
+                                            :verifying, :running, :start_failed,
+                                            :configure_failed]
   end
 
   aasm_event :terminate do
