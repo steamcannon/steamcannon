@@ -28,7 +28,7 @@ class Instance < ActiveRecord::Base
 
   after_create :generate_certs
   before_save :set_state_change_timestamp
-    
+
   named_scope :active, :conditions => "current_state <> 'stopped'"
   named_scope :inactive, :conditions => "current_state = 'stopped'"
 
@@ -61,7 +61,7 @@ class Instance < ActiveRecord::Base
   aasm_event :configure_failed do
     transitions :to => :configure_failed, :from => [:configuring, :verifying]
   end
-  
+
   aasm_event :run do
     transitions :to => :running, :from => [:configuring, :verifying]
   end
@@ -116,13 +116,13 @@ class Instance < ActiveRecord::Base
     configure_failed! if state_change_timestamp <= Time.now - 120.seconds
 
   end
-  
+
   def agent_running?
     !agent_client.agent_status.nil?
   rescue AgentClient::RequestFailedError => ex
     false
   end
-  
+
   protected
 
   def start_instance
@@ -136,7 +136,7 @@ class Instance < ActiveRecord::Base
     {
       # FIXME: check this, according to docs it should be hwp_id
       # (http://localhost:8080/deltacloud/api/docs/instances/create)
-      :hardware_profile => hardware_profile, 
+      :hardware_profile => hardware_profile,
       :keyname => 'default', # TODO: this should come from the user
       :user_data => instance_user_data
     }
@@ -148,7 +148,8 @@ class Instance < ActiveRecord::Base
   end
 
   def running_in_cloud?
-    cloud_instance.state.downcase == 'running'
+    update_attributes(:public_dns => cloud_instance.public_addresses.first)
+    cloud_instance.state.downcase == 'running' and !public_dns.blank?
   end
 
   def configure_instance
