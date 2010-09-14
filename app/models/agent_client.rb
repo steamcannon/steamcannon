@@ -141,10 +141,8 @@ class AgentClient
       # OpenSSL::SSL::SSLError
       log "connection failed: #{ex}"
       log ex.backtrace.join("\n")
-      raise RequestFailedError.new("#{last_request} failed", nil, ex)
+      raise RequestFailedError.new("#{last_request} failed", ex.respond_to?(:response) ? ex.response : nil, ex)
     end
-
-    raise RequestFailedError.new("#{last_request} failed", response) if response['status'] != 'ok'
 
     response
   end
