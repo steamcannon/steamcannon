@@ -26,7 +26,6 @@ class Instance < ActiveRecord::Base
 
   has_one :server_certificate, :as => :certifiable, :class_name => 'Certificate'
 
-  after_create :generate_certs
   before_save :set_state_change_timestamp
 
   named_scope :active, :conditions => "current_state <> 'stopped'"
@@ -108,6 +107,7 @@ class Instance < ActiveRecord::Base
   end
 
   def configure_agent
+    generate_cert
     verify! if agent_running?
     configure_failed! if state_change_timestamp <= Time.now - 120.seconds
   end
@@ -193,8 +193,8 @@ class Instance < ActiveRecord::Base
     environment.failed!
   end
 
-  def generate_certs
-    Certificate.generate_server_certificate(self)
+  def generate_cert
+    Certificate.generate_server_certificate(self) unless public_dns.blank?
   end
 
   def set_state_change_timestamp

@@ -23,7 +23,6 @@ describe Instance do
     @image = mock_model(Image)
     @image.stub!(:cloud_id).and_return("ami-12345")
     @environment = mock_model(Environment)
-    Certificate.stub!(:generate_server_certificate)
 
     @valid_attributes = {
       :environment => @environment,
@@ -74,12 +73,6 @@ describe Instance do
       instance.should be_pending
     end
   end
-
-  it "should generate certs on creation" do
-    Certificate.should_receive(:generate_server_certificate)
-    Instance.create!(@valid_attributes)
-  end
-
 
 
   it "should find the user's cloud" do
@@ -416,7 +409,7 @@ describe Instance do
 
   describe "configure_agent" do
     before(:each) do 
-      @instance = Factory(:instance, :current_state => 'configuring')
+      @instance = Factory(:instance, :current_state => 'configuring', :public_dns => 'hostname')
     end
     
     it "should move to verifying state if agent is running" do
@@ -435,6 +428,11 @@ describe Instance do
       @instance.state_change_timestamp = Time.now - 120.seconds
       @instance.stub!(:agent_running?).and_return(false)
       @instance.should_receive(:configure_failed!)
+      @instance.configure_agent
+    end
+
+    it "should generate the client cert" do
+      Certificate.should_receive(:generate_server_certificate).with(@instance)
       @instance.configure_agent
     end
   end
