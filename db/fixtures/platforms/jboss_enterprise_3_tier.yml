@@ -6,13 +6,9 @@ platforms:
         images:
           - name: JBoss EWS (Apache)
             cloud_id: ami-2749a54e
-            image_role: frontend
           - name: JBoss Enterprise Application Platform 5.1
             cloud_id: ami-5949a530
-            image_role: backend
           - name: JBoss Operations Network 2.4
             cloud_id: ami-2741ad4e
-            image_role: management
           - name: PostgreSQL 8.4
             cloud_id: ami-12345
-            image_role: database

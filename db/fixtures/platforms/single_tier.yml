@@ -6,5 +6,5 @@ platforms:
         images:
           - name: Agent
             cloud_id: ami-f8b24791
-            image_role: frontend
+
 

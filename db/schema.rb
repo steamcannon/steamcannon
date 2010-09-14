@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100913151336) do
+ActiveRecord::Schema.define(:version => 20100914153140) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(:version => 20100913151336) do
     t.datetime "deployed_at"
     t.integer  "deployed_by"
     t.integer  "undeployed_by"
+    t.integer  "agent_artifact_identifier"
   end
 
   create_table "environment_images", :force => true do |t|
@@ -73,16 +74,17 @@ ActiveRecord::Schema.define(:version => 20100913151336) do
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
 
-  create_table "image_roles", :force => true do |t|
+  create_table "images", :force => true do |t|
     t.string   "name"
+    t.string   "cloud_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "images", :force => true do |t|
+  create_table "instance_services", :force => true do |t|
     t.string   "name"
-    t.string   "cloud_id"
-    t.integer  "image_role_id"
+    t.string   "full_name"
+    t.integer  "instance_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

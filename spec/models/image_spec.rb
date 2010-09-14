@@ -20,11 +20,9 @@ require 'spec_helper'
 
 describe Image do
   before(:each) do
-    role = ImageRole.create!(:name => "test role")
     @valid_attributes = {
       :name => "value for name",
       :cloud_id => "value for cloud_id",
-      :image_role_id => role.id
     }
   end
 
@@ -38,10 +36,6 @@ describe Image do
 
   it "should have a cloud_id attribute" do
     Image.new.should respond_to(:cloud_id)
-  end
-
-  it "should belong to an image role" do
-    Image.new.should respond_to(:image_role)
   end
 
   it "should have many platform versions" do

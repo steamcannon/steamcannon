@@ -17,5 +17,5 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 Factory.define :image do |image|
-  image.association :image_role
+
 end
