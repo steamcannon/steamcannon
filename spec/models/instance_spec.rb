@@ -116,11 +116,11 @@ describe Instance do
   describe "instance_user_data" do
     before(:each) do
       @instance = Instance.new
-      Certificate.stub_chain(:client_certificate, :certificate).and_return('cert pem')
+      Certificate.stub_chain(:ca_certificate, :certificate).and_return('cert pem')
     end
 
     it "should include the client cert" do
-      Base64.decode64(@instance.send(:instance_user_data)).should == '{"steamcannon_client_cert":"cert pem"}'
+      Base64.decode64(@instance.send(:instance_user_data)).should == '{"steamcannon_ca_cert":"cert pem"}'
     end
 
   end
