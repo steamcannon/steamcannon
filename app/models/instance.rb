@@ -109,6 +109,7 @@ class Instance < ActiveRecord::Base
 
   def configure_agent
     verify! if agent_running?
+    configure_failed! if state_change_timestamp <= Time.now - 120.seconds
   end
 
   def verify_agent
