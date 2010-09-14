@@ -40,6 +40,7 @@ describe AgentClient do
                   :to_rsa_keypair => 'rsa',
                   :to_public_pem_file => 'pem')
       Certificate.stub!(:client_certificate).and_return(cert)
+      Certificate.stub!(:ca_certificate).and_return(cert)
       @client.stub!(:verify_ssl?).and_return(false)
     end
 
@@ -53,6 +54,7 @@ describe AgentClient do
                                                      {
                                                        :ssl_client_cert => 'x509',
                                                        :ssl_client_key => 'rsa',
+                                                       :ssl_ca_file => 'pem',
                                                        :verify_ssl => false
                                                      })
       @client.send(:connection)
