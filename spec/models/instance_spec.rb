@@ -37,6 +37,8 @@ describe Instance do
   end
 
   it { should have_one :server_certificate }
+  it { should have_many :instance_services }
+  it { should have_many :services }
 
   it "should create a new instance given valid attributes" do
     Instance.create!(@valid_attributes)
@@ -439,7 +441,9 @@ describe Instance do
 
   describe "verify_agent" do
     before(:each) do 
-      @instance = Factory(:instance, :current_state => 'verifying')
+      @instance = Factory(:instance)
+      @instance.stub!(:run!)
+      @instance.stub!(:discover_services)
     end
     
     it "should move to running state if agent is running" do
@@ -460,8 +464,42 @@ describe Instance do
       @instance.should_receive(:configure_failed!)
       @instance.verify_agent
     end
+
+    it "should discover agent services" do
+      @instance.stub!(:agent_running?).and_return(true)
+      @instance.should_receive(:discover_services)
+      @instance.verify_agent
+    end
   end
 
-  
+
+  describe "discover_services" do
+    before(:each) do
+      @instance = Factory(:instance)
+      @client = @instance.agent_client
+      @instance.stub!(:agent_client).and_return(@client)
+      @service = Factory(:service)
+    end
+
+    it "should pull the services from the agent" do
+      @client.should_receive(:agent_services).and_return([])
+      @instance.discover_services
+    end
+
+    it "should find_or_create for the service" do
+      @client.stub!(:agent_services).and_return([{ 'name' => 'a name', 'full_name' => 'full name'}])
+      Service.should_receive(:find_or_create_by_name).with({ 'name' => 'a name', 'full_name' => 'full name' }).and_return(@service)
+      @instance.discover_services
+    end
+
+    it "should add the service to the instance services relationship" do
+      @client.stub!(:agent_services).and_return([{ 'name' => 'a name', 'full_name' => 'full name'}])
+      @instance.discover_services
+      service = @instance.reload.services.first
+      service.should_not be_nil
+      service.name.should == 'a name'
+    end
+    
+  end
   
 end

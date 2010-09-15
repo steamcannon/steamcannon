@@ -11,6 +11,8 @@
       Id
     .hardware_profile
       Hardware Profile
+    .services
+      Services
     .image_status
       Status
     .image_health
@@ -26,6 +28,14 @@
         = instance.cloud_id or '&nbsp;'
       .hardware_profile
         = instance.hardware_profile
+      .services
+        - if instance.services.blank?
+          None
+        - else
+          %ul
+            - instance.services.each do |service|
+              %li
+                = service.full_name
       .image_status
         = instance.current_state
       .image_health

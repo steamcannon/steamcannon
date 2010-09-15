@@ -48,7 +48,7 @@
   }
 
   .name {
-    @include column(7);
+    @include column(5);
   }
 
   .hardware_profile {
@@ -113,11 +113,16 @@
   #environment_images_container {
     @include column(23);
     .image_id {
-      @include column(3);
+      @include column(2);
     }
     .hardware_profile {
       @include column(4);
     }
+
+    .services {
+      @include column(4);
+    }              
+
     .image_status {
       @include column(2);
     }

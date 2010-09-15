@@ -25,6 +25,8 @@ class Instance < ActiveRecord::Base
   belongs_to :image
 
   has_one :server_certificate, :as => :certifiable, :class_name => 'Certificate'
+  has_many :instance_services, :dependent => :destroy
+  has_many :services, :through => :instance_services
 
   before_save :set_state_change_timestamp
 
@@ -110,14 +112,29 @@ class Instance < ActiveRecord::Base
 
   def configure_agent
     generate_cert
-    verify! if agent_running?
-    configure_failed! if state_change_timestamp <= Time.now - 120.seconds
+    if agent_running?
+      verify!
+    elsif state_change_timestamp <= Time.now - 120.seconds
+      configure_failed!
+    end
   end
 
   def verify_agent
-    run! if agent_running?
-    configure_failed! if state_change_timestamp <= Time.now - 120.seconds
+    if agent_running?
+      discover_services
+      run!
+    elsif state_change_timestamp <= Time.now - 120.seconds
+      configure_failed!
+    end
 
+  end
+
+  def discover_services
+    agent_client.agent_services.each do |service|
+      service = Service.find_or_create_by_name(service)
+      services << service
+    end
+    save
   end
 
   def agent_running?
