@@ -376,6 +376,16 @@ describe Instance do
     it "should return an agent client" do
       @instance.agent_client.class.should == AgentClient
     end
+
+    it "should set the service in the agent" do
+      @instance.agent_client(:blah).service.should == :blah
+    end
+
+    it "should default to the first service for the instance if none provided" do
+      service = Factory.build(:service)
+      @instance.stub!(:services).and_return([service])
+      @instance.agent_client.service.should == service.name
+    end
   end
 
   describe "agent_running?" do

@@ -20,7 +20,8 @@ class AgentClient
   AGENT_PORT = 7575
 
   attr_accessor :last_request
-
+  attr_accessor :service
+  
   def initialize(instance, service)
     @instance = instance
     @service = service

@@ -106,7 +106,7 @@ class Instance < ActiveRecord::Base
   end
 
   def agent_client(service = nil)
-    service ||= :mock # TODO: determine default service from instance role
+    service ||= services.first.try(:name) || :mock
     AgentClient.new(self, service)
   end
 
