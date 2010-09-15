@@ -35,5 +35,9 @@ class Artifact < ActiveRecord::Base
   def latest_version_number
     latest_version ? latest_version.version_number : nil
   end
+
+  def service_name
+    service.try(:full_name) || 'None'
+  end
 end
 

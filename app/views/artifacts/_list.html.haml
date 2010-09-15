@@ -4,14 +4,19 @@
   #artifacts_header
     .artifact_name
       Name
+    .artifact_service
+      Service
     .artifact_latest_version
       Latest Version
   - artifacts.each do |artifact|
     .artifact_row
       .artifact_name
         = link_to artifact.name, artifact_path(artifact)
+      .artifact_service
+        = artifact.service_name
       .artifact_latest_version
         = artifact.latest_version_number || 'None'
+
       .artifact_deploy
         - if artifact.latest_version_number
           = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact.latest_version.id)

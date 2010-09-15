@@ -14,6 +14,10 @@
     @include column(4);
   }
 
+  .artifact_service {
+    @include column(4);
+  }
+
   .artifact_latest_version {
     @include column(4);
   }

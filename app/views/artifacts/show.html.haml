@@ -1,6 +1,8 @@
 #show_artifact
   %h2
     &= @artifact.name
+  .artifact_service_header
+    &== Service: #{@artifact.service_name} 
   .edit
     = link_to 'Edit Artifact', edit_artifact_path(@artifact)
   %p
