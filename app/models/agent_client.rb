@@ -45,12 +45,18 @@ class AgentClient
   # Service methods
   ##
 
-  %w{ status start stop restart artifacts }.each do |action|
+  %w{ status artifacts }.each do |action|
     define_method action do
       service_get action
     end
   end
 
+  %w{ start stop restart }.each do |action|
+    define_method action do
+      service_post action
+    end
+  end
+  
   #TODO: store the artifact_id on the artifact_version locally, and pass the
   #artifact_version AR here
   def artifact(artifact_id)

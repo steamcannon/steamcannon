@@ -135,7 +135,7 @@ describe AgentClient do
       @client.stub!(:connection).and_return(@connection)
     end
 
-    %w{ status start stop restart artifacts }.each do |action|
+    %w{ status artifacts }.each do |action|
       it "the local #{action} action should :get the remote #{action} action" do
         @resource.should_receive(:get).with({}).and_return('{}')
         @connection.should_receive(:[]).with("/services/mock/#{action}").and_return(@resource)
@@ -143,6 +143,14 @@ describe AgentClient do
       end
     end
 
+    %w{ start stop restart }.each do |action|
+      it "the local #{action} action should :post to the remote #{action} action" do
+        @resource.should_receive(:post).with('', {}).and_return('{}')
+        @connection.should_receive(:[]).with("/services/mock/#{action}").and_return(@resource)
+        @client.send(action)
+      end
+  end
+  
     it "the local artifact action should :get the remote artifact action" do
       @resource.should_receive(:get).with({}).and_return('{}')
       @connection.should_receive(:[]).with("/services/mock/artifacts/1").and_return(@resource)
