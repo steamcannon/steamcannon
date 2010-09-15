@@ -431,12 +431,36 @@ describe Instance do
       @instance.configure_agent
     end
 
-    it "should generate the client cert" do
-      Certificate.should_receive(:generate_server_certificate).with(@instance)
+    it "should try to generate the server cert" do
+      @instance.should_receive(:generate_server_cert)
       @instance.configure_agent
     end
   end
 
+  describe "generate_server_cert" do
+    before(:each) do
+      @instance = Factory(:instance, :current_state => 'configuring', :public_dns => 'hostname')
+    end
+
+    it "should generate a cert" do
+      Certificate.should_receive(:generate_server_certificate).with(@instance)
+      @instance.send(:generate_server_cert)
+    end
+
+    it "should not generate a cert if the public_dns is not set on the instance" do
+      @instance.public_dns = nil
+      Certificate.should_not_receive(:generate_server_certificate)
+      @instance.send(:generate_server_cert)
+    end
+
+    it "should not generate a cert if one already exists" do
+      @instance.send(:generate_server_cert)
+      @instance.reload
+      Certificate.should_not_receive(:generate_server_certificate)
+      @instance.send(:generate_server_cert)
+    end
+  end
+  
   describe "verify_agent" do
     before(:each) do 
       @instance = Factory(:instance, :current_state => 'verifying')

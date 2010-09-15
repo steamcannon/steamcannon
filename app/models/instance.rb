@@ -109,7 +109,7 @@ class Instance < ActiveRecord::Base
   end
 
   def configure_agent
-    generate_cert
+    generate_server_cert
     verify! if agent_running?
     configure_failed! if state_change_timestamp <= Time.now - 120.seconds
   end
@@ -195,8 +195,8 @@ class Instance < ActiveRecord::Base
     environment.failed!
   end
 
-  def generate_cert
-    Certificate.generate_server_certificate(self) unless public_dns.blank?
+  def generate_server_cert
+    Certificate.generate_server_certificate(self) if !public_dns.blank? and !server_certificate
   end
 
   def set_state_change_timestamp
