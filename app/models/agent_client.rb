@@ -97,20 +97,26 @@ class AgentClient
     !@instance.configuring?
   end
 
+  def extract_named_response(action, result)
+    # see if result is a hash, and contains a response under the
+    # action key
+    result.respond_to?(:fetch) ? result.fetch(action, result) : result
+  end
+
   def get(action, options = {})
-    call(:get, action, options)
+    extract_named_response(action, call(:get, action, options))
   end
 
   def service_get(action, options = {})
-    service_call(:get, action, options)
+    extract_named_response(action, service_call(:get, action, options))
   end
 
   def post(action, body = '', options = {})
-    call(:post, action, body, options)
+    extract_named_response(action, call(:post, action, body, options))
   end
 
   def service_post(action, body = '', options = {})
-    service_call(:post, action, body, options)
+    extract_named_response(action, service_call(:post, action, body, options))
   end
 
   def delete(action, options = {})

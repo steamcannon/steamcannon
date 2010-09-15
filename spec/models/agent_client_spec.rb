@@ -89,9 +89,16 @@ describe AgentClient do
       @client.should_receive(:configure_agent)
       @client.agent_status
     end
-
   end
 
+  describe "agent_services" do
+    it "should extract the services from the result" do
+      services = [{'name' => 'name', 'full_name' => 'full_name' }]
+      @client.stub!(:call).and_return({ "services" => [{'name' => 'name', 'full_name' => 'full_name' }] })
+      @client.agent_services.should == services
+    end
+  end
+  
   describe "execute_request" do
 
     context "when the request raises an exception" do
