@@ -175,7 +175,7 @@ describe Certificate do
     end
 
     it "should not write the file if it already exists" do
-      File.should_receive(:exists?).with(@path).and_return(true)
+      File.should_receive(:exists?).with(@path.to_s).and_return(true)
       File.should_not_receive(:open)
       @cert.to_public_pem_file
     end
