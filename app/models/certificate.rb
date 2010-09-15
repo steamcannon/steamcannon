@@ -74,7 +74,7 @@ class Certificate < ActiveRecord::Base
         # matter for our usage, since we both produce and consume all
         # of the certs.
         :serial => certifiable.id,
-        :subject => "O=SteamCannon Instance, CN=SteamCannon Agent",
+        :subject => "CN=#{certifiable.public_dns}, O=SteamCannon Instance, CN=SteamCannon Agent",
         :extensions => [
                         [ "basicConstraints", "CA:FALSE" ],
                         [ "keyUsage", "digitalSignature,keyEncipherment" ],

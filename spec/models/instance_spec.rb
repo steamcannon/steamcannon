@@ -23,7 +23,6 @@ describe Instance do
     @image = mock_model(Image)
     @image.stub!(:cloud_id).and_return("ami-12345")
     @environment = mock_model(Environment)
-    Certificate.stub!(:generate_server_certificate)
 
     @valid_attributes = {
       :environment => @environment,
@@ -75,12 +74,6 @@ describe Instance do
     end
   end
 
-  it "should generate certs on creation" do
-    Certificate.should_receive(:generate_server_certificate)
-    Instance.create!(@valid_attributes)
-  end
-
-
 
   it "should find the user's cloud" do
     cloud = Object.new
@@ -116,11 +109,11 @@ describe Instance do
   describe "instance_user_data" do
     before(:each) do
       @instance = Instance.new
-      Certificate.stub_chain(:client_certificate, :certificate).and_return('cert pem')
+      Certificate.stub_chain(:ca_certificate, :certificate).and_return('cert pem')
     end
 
     it "should include the client cert" do
-      Base64.decode64(@instance.send(:instance_user_data)).should == '{"steamcannon_client_cert":"cert pem"}'
+      Base64.decode64(@instance.send(:instance_user_data)).should == '{"steamcannon_ca_cert":"cert pem"}'
     end
 
   end
@@ -416,7 +409,7 @@ describe Instance do
 
   describe "configure_agent" do
     before(:each) do 
-      @instance = Factory.build(:instance, :current_state => 'configuring')
+      @instance = Factory(:instance, :current_state => 'configuring', :public_dns => 'hostname')
     end
     
     it "should move to verifying state if agent is running" do
@@ -430,7 +423,18 @@ describe Instance do
       @instance.should_not_receive(:verify!)
       @instance.configure_agent
     end
-    
+
+    it "should move to configure_failed state if moved to :configuring two or more minutes ago" do
+      @instance.state_change_timestamp = Time.now - 120.seconds
+      @instance.stub!(:agent_running?).and_return(false)
+      @instance.should_receive(:configure_failed!)
+      @instance.configure_agent
+    end
+
+    it "should generate the client cert" do
+      Certificate.should_receive(:generate_server_certificate).with(@instance)
+      @instance.configure_agent
+    end
   end
 
   describe "verify_agent" do
@@ -450,8 +454,8 @@ describe Instance do
       @instance.verify_agent
     end
 
-    it "should move to configure_failed state if the last state change was two or more minutes ago" do
-      @instance.state_change_timestamp = Time.now - 121.seconds
+    it "should move to configure_failed state if moved to :verifying two or more minutes ago" do
+      @instance.state_change_timestamp = Time.now - 120.seconds
       @instance.stub!(:agent_running?).and_return(false)
       @instance.should_receive(:configure_failed!)
       @instance.verify_agent

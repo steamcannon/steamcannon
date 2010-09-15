@@ -78,7 +78,7 @@ class AgentClient
         :ssl_client_cert => Certificate.client_certificate.to_x509_certificate,
         :ssl_client_key => Certificate.client_certificate.to_rsa_keypair,
         :ssl_ca_file => Certificate.ca_certificate.to_public_pem_file,
-        :verify_ssl => false #FIXME: once agent reconfigures: verify_ssl? ? OpenSSL::SSL::VERIFY_PEER : false
+        :verify_ssl => verify_ssl? ? OpenSSL::SSL::VERIFY_PEER : false
       }
       log "connecting with ssl (verify_ssl: #{options[:verify_ssl]})"
     else
@@ -134,17 +134,16 @@ class AgentClient
 
   def execute_request
     begin
-      response = JSON.parse(yield)
+      response = yield
+      response = JSON.parse(response) unless response.blank?
     rescue Exception => ex
       # if the agent is not up, we'll see Errno::ECONNREFUSED
       # if the ssl cert isn't what we expect, we'll see
       # OpenSSL::SSL::SSLError
       log "connection failed: #{ex}"
       log ex.backtrace.join("\n")
-      raise RequestFailedError.new("#{last_request} failed", nil, ex)
+      raise RequestFailedError.new("#{last_request} failed", ex.respond_to?(:response) ? ex.response : nil, ex)
     end
-
-    raise RequestFailedError.new("#{last_request} failed", response) if response['status'] != 'ok'
 
     response
   end
