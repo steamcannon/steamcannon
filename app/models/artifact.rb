@@ -19,8 +19,11 @@
 
 class Artifact < ActiveRecord::Base
   belongs_to :user
+  belongs_to :service
+  
   has_many :artifact_versions
   has_many :deployments, :through => :artifact_versions
+
   attr_protected :user
   validates_presence_of :name
   accepts_nested_attributes_for :artifact_versions
@@ -33,3 +36,4 @@ class Artifact < ActiveRecord::Base
     latest_version ? latest_version.version_number : nil
   end
 end
+

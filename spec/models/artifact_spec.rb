@@ -20,6 +20,8 @@ require 'spec_helper'
 
 describe Artifact do
 
+  it { should belong_to :service }
+  
   it "should require a name attribute" do
     artifact = Artifact.new
     artifact.save
