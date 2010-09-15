@@ -25,10 +25,22 @@ describe AgentClient do
     @client = AgentClient.new(@instance, :mock)
   end
 
+  after(:each) do
+    APP_CONFIG[:use_ssl_with_agents] = true
+  end
 
   describe "agent_url" do
     it "should create the proper url for the agent" do
       @client.send(:agent_url).should == "https://#{@instance.public_dns}:#{AgentClient::AGENT_PORT}"
+    end
+
+    it "should create a secure url when ssl is enabled" do
+      @client.send(:agent_url).should =~ %r{https://}
+    end
+
+    it "should create a non-secure url when ssl is disabled" do
+      APP_CONFIG[:use_ssl_with_agents] = false
+      @client.send(:agent_url).should =~ %r{http://}
     end
 
   end

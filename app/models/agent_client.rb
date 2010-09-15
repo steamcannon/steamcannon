@@ -90,7 +90,7 @@ class AgentClient
   end
 
   def agent_url
-    "https://#{@instance.public_dns}:#{AGENT_PORT}"
+    'http' + (APP_CONFIG[:use_ssl_with_agents] ? 's' : '') +  "://#{@instance.public_dns}:#{AGENT_PORT}"
   end
 
   def verify_ssl?
