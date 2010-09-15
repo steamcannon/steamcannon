@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100914153140) do
+ActiveRecord::Schema.define(:version => 20100915164325) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(:version => 20100914153140) do
     t.datetime "updated_at"
     t.integer  "user_id"
     t.text     "description"
+    t.integer  "service_id"
   end
 
   create_table "certificates", :force => true do |t|
@@ -51,7 +52,6 @@ ActiveRecord::Schema.define(:version => 20100914153140) do
     t.datetime "deployed_at"
     t.integer  "deployed_by"
     t.integer  "undeployed_by"
-    t.integer  "agent_artifact_identifier"
   end
 
   create_table "environment_images", :force => true do |t|
@@ -82,9 +82,8 @@ ActiveRecord::Schema.define(:version => 20100914153140) do
   end
 
   create_table "instance_services", :force => true do |t|
-    t.string   "name"
-    t.string   "full_name"
     t.integer  "instance_id"
+    t.integer  "service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -124,6 +123,13 @@ ActiveRecord::Schema.define(:version => 20100914153140) do
 
   create_table "platforms", :force => true do |t|
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "services", :force => true do |t|
+    t.string   "name"
+    t.string   "full_name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
