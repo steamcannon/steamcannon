@@ -10,4 +10,4 @@ Then setup the database schema and load seed data:
   $ rake db:setup
 
 Make sure you're running at least version 0.0.3 of deltacloud-core
-(the server to which ctjr connects)
+(the server to which steamcannon connects)
