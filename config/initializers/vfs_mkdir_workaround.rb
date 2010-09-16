@@ -2,4 +2,4 @@
 # with vfs errors. Until that problem is resolved, this is our work around.
 
 f = File.join("#{RAILS_ROOT}", "tmp", "sass-cache")
-FileUtils.mkdir_p(File.join("#{RAILS_ROOT}", "tmp", "sass-cache")) unless File.exists?(f)
+FileUtils.mkdir_p(f) unless File.exists?(f)
