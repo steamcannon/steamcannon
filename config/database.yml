@@ -1,5 +1,5 @@
 login: &login
-  adapter: jdbcpostgresql
+  adapter: postgresql
   username: steamcannon
   password: steamcannon
 
