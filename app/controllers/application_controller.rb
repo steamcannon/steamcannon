@@ -21,6 +21,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  before_filter :require_complete_profile
+  
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
@@ -38,6 +40,11 @@ class ApplicationController < ActionController::Base
   def current_user
     return @current_user if defined?(@current_user)
     @current_user = current_user_session && current_user_session.record
+  end
+  
+  def require_complete_profile
+    return false unless current_user
+    store_location and redirect_to edit_account_path unless current_user.profile_complete?
   end
 
   def require_user

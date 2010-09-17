@@ -11,15 +11,19 @@
 = form.label :password_confirmation
 %br
 = form.password_field :password_confirmation
-%br
-%br
+
 - unless form.object.new_record?
-  = form.label :cloud_username
+  %br
+  %br
+  - unless form.object.profile_complete?
+    #amazon-keys-instructions
+      DUDE - YOU NEED TO DO THIS!  HERE IS WHERE THE WALKTHROUGH GOES
+  = form.label :cloud_username, "Amazon Access Key"
   %br
   = form.text_field :cloud_username
   %br
   %br
-  = form.label :cloud_password
+  = form.label :cloud_password, "Amazon Secret Access Key"
   %br
   = form.password_field :cloud_password
   %br

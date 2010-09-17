@@ -76,7 +76,7 @@ Spec::Runner.configure do |config|
   config.before(:each) do
     # AuthLogic test helpers
     def login(session_stubs = {}, user_stubs = {})
-      login_with_user(mock_model(User, { :superuser? => false}.merge(user_stubs)),
+      login_with_user(mock_model(User, { :superuser? => false, :profile_complete? => true }.merge(user_stubs)),
                       session_stubs)
     end
 

@@ -24,6 +24,11 @@ class UsersController < ResourceController::Base
   before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :require_superuser, :only => [:assume_user]
   before_filter :require_superuser_to_edit_other_user, :only => [:edit, :update]
+  before_filter :require_complete_profile, :only => [:show]
+  
+  edit.before do
+    flash[:error] = "Please complete your profile before continuing." unless current_user.profile_complete?
+  end
   
   create do 
     flash { "Account registered" }

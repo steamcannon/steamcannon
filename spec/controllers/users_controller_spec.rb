@@ -102,6 +102,18 @@ describe UsersController do
       get :edit
       response.should be_success
     end
+    
+    it "should set an error message in the flash if the user's profile is not complete'" do
+      @current_user.stub!(:profile_complete?).and_return(false)
+      get :edit
+      flash[:error].should_not be_blank
+    end
+
+    it "should NOT set an error message in the flash if the user's profile is not complete'" do
+      @current_user.stub!(:profile_complete?).and_return(true)
+      get :edit
+      flash[:error].should be_blank
+    end
   end
 
   describe "PUT account" do

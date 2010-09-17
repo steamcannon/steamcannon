@@ -19,7 +19,7 @@
 require 'spec_helper'
 
 describe UserSessionsController do
-
+  
   describe "GET user_session/new" do
 
     describe "when not logged in" do
