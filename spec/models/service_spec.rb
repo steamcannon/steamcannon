@@ -23,6 +23,10 @@ describe Service do
     @service = Factory(:service)
   end
 
+  it { should have_many :artifacts }
+  it { should have_many :instance_services}
+  it { should have_many :instances }
+  
   it { should validate_presence_of :name }
   it { should validate_uniqueness_of :name }
 end

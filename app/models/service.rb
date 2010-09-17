@@ -17,6 +17,12 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class Service < ActiveRecord::Base
+  has_many :artifacts
+  has_many :instance_services
+  has_many :instances, :through => :instance_services
+  
   validates_presence_of :name
   validates_uniqueness_of :name
+
+  
 end
