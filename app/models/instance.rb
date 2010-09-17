@@ -32,7 +32,8 @@ class Instance < ActiveRecord::Base
 
   named_scope :active, :conditions => "current_state <> 'stopped'"
   named_scope :inactive, :conditions => "current_state = 'stopped'"
-
+  named_scope :in_environment, lambda { |env| { :conditions => { :environment_id => env.id } } }
+  
   aasm_column :current_state
   aasm_initial_state :pending
   aasm_state :pending
@@ -105,9 +106,10 @@ class Instance < ActiveRecord::Base
     @cloud_instance ||= cloud.instance(cloud_id)
   end
 
-  def agent_client(service = nil)
-    service ||= services.first.try(:name) || :mock
-    AgentClient.new(self, service)
+  def agent_client(service_or_service_name = nil)
+    service_or_service_name ||= services.first || :mock
+    AgentClient.new(self, service_or_service_name.respond_to?(:name) ?
+                    service_or_service_name.name : service_or_service_name)
   end
 
   def configure_agent
