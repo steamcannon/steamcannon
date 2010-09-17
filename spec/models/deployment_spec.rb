@@ -78,7 +78,7 @@ describe Deployment do
       @deployment = Factory.build(:deployment)
       @environment = Factory.build(:environment)
       @agent_client = mock(AgentClient)
-      @agent_client.stub!(:deploy_artifact).and_return({ :artifact_id => 1 })
+      @agent_client.stub!(:deploy_artifact).and_return({ 'artifact_id' => 1 })
       @deployment.stub!(:artifact).and_return(@artifact)
       @deployment.stub!(:artifact_version).and_return(@artifact_version)
       @deployment.stub!(:environment).and_return(@environment)

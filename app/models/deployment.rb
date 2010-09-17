@@ -63,8 +63,8 @@ class Deployment < ActiveRecord::Base
     instances_for_deploy.each do |instance|
       begin
         response = instance.agent_client(service).deploy_artifact(artifact_version)
-        if response.respond_to?(:[]) and response[:artifact_id]
-          self.agent_artifact_identifier = response[:artifact_id]
+        if response.respond_to?(:[]) and response['artifact_id']
+          self.agent_artifact_identifier = response['artifact_id']
           deployed!
         else
           logger.info "deploying artifact failed. response from agent: #{response}"
