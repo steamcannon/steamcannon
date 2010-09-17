@@ -35,4 +35,9 @@ class User < ActiveRecord::Base
   def cloud
     Cloud::Deltacloud.new(cloud_username, cloud_password)
   end
+  
+  def profile_complete?
+    self.superuser? || (!self.cloud_username.blank? && !self.cloud_password.blank?)
+  end
+  
 end
