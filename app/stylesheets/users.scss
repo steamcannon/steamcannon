@@ -29,6 +29,13 @@
 
 }
 
-
+#amazon_keys_instructions {
+  width: 300px;
+  padding: 20px 10px;
+  margin-bottom: 10px;
+  @include rounded;
+  background-color: #ccc;
+  h3 { margin-bottom: 10px; }
+}
 
  

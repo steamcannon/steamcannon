@@ -1,3 +1,4 @@
+
 = form.label :email
 %br
 = form.text_field :email
@@ -15,16 +16,27 @@
 - unless form.object.new_record?
   %br
   %br
-  - unless form.object.profile_complete?
-    #amazon-keys-instructions
-      DUDE - YOU NEED TO DO THIS!  HERE IS WHERE THE WALKTHROUGH GOES
+  #amazon_keys_instructions
+    %h3 Amazon Credentials
+    - unless form.object.profile_complete?
+      Before you can do anything else, you need to provide us with your Amazon credentials. If you're not sure what that means, login 
+      to your Amazon AWS account and read
+      = link_to 'this page', 'https://aws-portal.amazon.com/gp/aws/developer/account/index.html?ie=UTF8&action=access-key'
+      before continuing.
+    - else
+      Your Amazon Secret Access Key is not shown, although it has already been set.  
+      #cloud_password_prompt
+        %br
+        = link_to 'Change Secret Access Key', '#', :class=>'js-cloud_password_toggle'
   = form.label :cloud_username, "Amazon Access Key"
   %br
   = form.text_field :cloud_username
   %br
-  %br
-  = form.label :cloud_password, "Amazon Secret Access Key"
-  %br
-  = form.password_field :cloud_password
-  %br
+  #cloud_password_field{:style=>form.object.profile_complete? ? 'display:none' : ''}
+    %br
+    = form.label :cloud_password, "Amazon Secret Access Key"
+    %br
+    = form.text_field :cloud_password
+    %br
+    = link_to 'Hide', '#', :class=>'js-cloud_password_toggle' if form.object.profile_complete?
   %br

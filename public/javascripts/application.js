@@ -56,3 +56,10 @@ jQuery(document).ready(function($) {
         $('.platform_version_block:hidden').remove()
     })
 })
+
+jQuery(document).ready(function($) {
+    $('body.users_controller form .js-cloud_password_toggle').click(function() {
+        $("#cloud_password_field").slideToggle();
+        $("#cloud_password_prompt").slideToggle();
+    })
+})
