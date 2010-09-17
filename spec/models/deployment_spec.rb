@@ -84,21 +84,16 @@ describe Deployment do
       @deployment.stub!(:environment).and_return(@environment)
       @instance.stub!(:agent_client).and_return(@agent_client)
       @artifact.stub!(:service).and_return(@service)
-      @service.stub_chain(:instances, :in_environment).and_return([@instance])
+      @deployment.stub!(:instances_for_deploy).and_return([@instance])
+      @environment.stub!(:ready_for_deployments?).and_return(true)
     end
 
-    it "should use a client from the instances with the same service as the artifact" do
-      @instance.should_receive(:agent_client).and_return(@agent_client)
+    it "should not deploy if the environment is not ready" do
+      @environment.stub!(:ready_for_deployments?).and_return(false)
+      @deployment.should_not_receive(:instances_for_deploy)
       @deployment.deploy_artifact
     end
-
-    it "should limit to instances in the same environment" do
-      instances_mock = mock('instances')
-      instances_mock.should_receive(:in_environment).with(@environment).and_return([@instance])
-      @service.should_receive(:instances).and_return(instances_mock)
-      @deployment.deploy_artifact
-    end
-
+    
     it "should attempt to deploy the artifact_version" do
       @agent_client.should_receive(:deploy_artifact).with(@artifact_version)
       @deployment.deploy_artifact
@@ -126,4 +121,5 @@ describe Deployment do
       @deployment.deploy_artifact
     end
   end
+
 end

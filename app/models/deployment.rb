@@ -20,7 +20,7 @@
 class Deployment < ActiveRecord::Base
   include AuditColumns
   include AASM
-  
+
   belongs_to :artifact_version
   belongs_to :environment
   belongs_to :user
@@ -48,7 +48,7 @@ class Deployment < ActiveRecord::Base
   aasm_event :undeploy do
     transitions :to => :undeployed, :from => :deployed
   end
-  
+
   def artifact
     artifact_version.artifact
   end
@@ -56,9 +56,11 @@ class Deployment < ActiveRecord::Base
   def service
     artifact.service
   end
-  
+
   def deploy_artifact
-    service.instances.in_environment(environment).each do |instance|
+    return unless environment.ready_for_deployments?
+    
+    instances_for_deploy.each do |instance|
       begin
         response = instance.agent_client(service).deploy_artifact(artifact_version)
         if response.respond_to?(:[]) and response[:artifact_id]
@@ -76,8 +78,13 @@ class Deployment < ActiveRecord::Base
       end
     end
   end
-  
-  private  
+
+  private
+
+  def instances_for_deploy
+    chain = service.instances.running.in_environment(environment)
+  end
+
   def record_deploy
     audit_action :deployed
   end

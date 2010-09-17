@@ -223,4 +223,27 @@ describe Environment do
       end
     end
   end
+
+  describe "ready_for_deployments?" do
+    before(:each) do
+      @environment = Factory.build(:environment)
+    end
+
+    it "should be false if the environment is not running" do
+      @environment.should_receive(:running?).and_return(false)
+      @environment.should_not be_ready_for_deployments
+    end
+
+    it "should be false if the environment is running, but all instances are not" do
+      @environment.should_receive(:running?).and_return(true)
+      @environment.should_receive(:running_all_instances?).and_return(false)
+      @environment.should_not be_ready_for_deployments
+    end
+
+    it "should be true if the environment and instances are all running" do
+      @environment.should_receive(:running?).and_return(true)
+      @environment.should_receive(:running_all_instances?).and_return(true)
+      @environment.should be_ready_for_deployments
+    end
+  end
 end
