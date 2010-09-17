@@ -5,6 +5,6 @@ platforms:
       - version_number:
         images:
           - name: Agent
-            cloud_id: ami-f8b24791
+            cloud_id: ami-36d3265f
 
 

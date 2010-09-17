@@ -378,13 +378,18 @@ describe Instance do
     end
 
     it "should set the service in the agent" do
-      @instance.agent_client(:blah).service.should == :blah
+      @instance.agent_client(:blah).service_name.should == :blah
     end
 
     it "should default to the first service for the instance if none provided" do
       service = Factory.build(:service)
       @instance.stub!(:services).and_return([service])
-      @instance.agent_client.service.should == service.name
+      @instance.agent_client.service_name.should == service.name
+    end
+
+    it "should accept a service object in addition to a string/symbol" do
+      service = Factory.build(:service)
+      @instance.agent_client(service).service_name.should == service.name
     end
   end
 

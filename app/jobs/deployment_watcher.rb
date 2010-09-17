@@ -16,13 +16,16 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-class Service < ActiveRecord::Base
-  has_many :artifacts
-  has_many :instance_services
-  has_many :instances, :through => :instance_services
-  
-  validates_presence_of :name
-  validates_uniqueness_of :name
 
-  
+class DeploymentWatcher
+
+  def run
+    deploy_deploying_deployments
+  end
+
+  def deploy_deploying_deployments
+    # TODO: This is a bit inefficient to do one at a time
+    Deployment.deploying.each { |d| d.deploy_artifact }
+  end
+
 end
