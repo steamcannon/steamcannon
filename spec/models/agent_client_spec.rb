@@ -98,7 +98,7 @@ describe AgentClient do
       @client.agent_services.should == services
     end
   end
-  
+
   describe "execute_request" do
 
     context "when the request raises an exception" do
@@ -149,8 +149,8 @@ describe AgentClient do
         @connection.should_receive(:[]).with("/services/mock/#{action}").and_return(@resource)
         @client.send(action)
       end
-  end
-  
+    end
+
     it "the local artifact action should :get the remote artifact action" do
       @resource.should_receive(:get).with({}).and_return('{}')
       @connection.should_receive(:[]).with("/services/mock/artifacts/1").and_return(@resource)

@@ -20,11 +20,11 @@ class AgentClient
   AGENT_PORT = 7575
 
   attr_accessor :last_request
-  attr_accessor :service
+  attr_accessor :service_name
   
-  def initialize(instance, service)
+  def initialize(instance, service_name)
     @instance = instance
-    @service = service
+    @service_name = service_name
   end
 
   ##
@@ -142,7 +142,7 @@ class AgentClient
   end
 
   def service_call(method, action, *args)
-    call(method, "services/#{@service}/#{action}", *args)
+    call(method, "services/#{@service_name}/#{action}", *args)
   end
 
   def execute_request

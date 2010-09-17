@@ -16,8 +16,23 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module ServicesHelper
-  def options_for_service_select(selected = nil)
-    options_from_collection_for_select(Service.all, :id, :full_name, selected)
+require 'spec_helper'
+
+describe DeploymentWatcher do
+  before(:each) do
+    @deployment_watcher = DeploymentWatcher.new
   end
+
+  it "should deploy deploying deployments" do
+    @deployment_watcher.should_receive(:deploy_deploying_deployments)
+    @deployment_watcher.run
+  end
+
+  it "should attempt to deploy the artifact for a deployment in the deploying state" do
+    deployment = mock_model(Deployment)
+    deployment.should_receive(:deploy_artifact)
+    Deployment.stub!(:deploying).and_return([deployment])
+    @deployment_watcher.deploy_deploying_deployments
+  end
+
 end

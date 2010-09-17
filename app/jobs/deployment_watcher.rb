@@ -16,8 +16,16 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module ServicesHelper
-  def options_for_service_select(selected = nil)
-    options_from_collection_for_select(Service.all, :id, :full_name, selected)
+
+class DeploymentWatcher
+
+  def run
+    deploy_deploying_deployments
   end
+
+  def deploy_deploying_deployments
+    # TODO: This is a bit inefficient to do one at a time
+    Deployment.deploying.each { |d| d.deploy_artifact }
+  end
+
 end

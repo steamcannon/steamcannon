@@ -72,6 +72,10 @@ class Environment < ActiveRecord::Base
     aasm_events_for_current_state.include?(:stop)
   end
 
+  def ready_for_deployments?
+    running? and running_all_instances?
+  end
+  
   protected
 
   def start_environment
