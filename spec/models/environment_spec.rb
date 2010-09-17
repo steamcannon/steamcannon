@@ -127,7 +127,7 @@ describe Environment do
     end
 
     it "should undeploy all deployments" do
-      @environment.deployments << Deployment.new
+      @environment.deployments << Deployment.new(:current_state => 'deployed')
       @environment.save!
       @environment.stop!
       @environment.deployments.inactive.first.should be_undeployed

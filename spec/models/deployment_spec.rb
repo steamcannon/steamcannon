@@ -20,15 +20,8 @@ require 'spec_helper'
 
 describe Deployment do
   before(:each) do
-    @valid_attributes = {
-      :artifact_version_id => 1,
-      :environment_id => 1,
-      :user_id => 1
-    }
-  end
+    @deployment = Factory(:deployment)
 
-  it "should create a new instance given valid attributes" do
-    Deployment.create!(@valid_attributes)
   end
 
   it "should belong to an artifact" do
@@ -40,40 +33,97 @@ describe Deployment do
     deployment.artifact.should equal(artifact)
   end
 
-  it "should be active after creation" do
-    deployment = Deployment.create!(@valid_attributes)
-    Deployment.active.first.should eql(deployment)
+  it "should be active after deploying" do
+    @deployment.deployed!
+    Deployment.active.first.should eql(@deployment)
     Deployment.inactive.count.should be(0)
   end
-
-  it "should populate deployed_at after creation" do
-    deployment = Deployment.create!(@valid_attributes)
-    deployment.deployed_at.should_not be_nil
+  
+  it "should populate deployed_at after moving to :deployed" do
+    @deployment.deployed_at.should_not be_nil
   end
 
-  it "should populate deployed_by after creation" do
+  it "should populate deployed_by after deploy" do
     login
-    deployment = Deployment.create!(@valid_attributes)
-    deployment.deployed_by.should be(@current_user.id)
+    @deployment.deployed!
+    @deployment.deployed_by.should be(@current_user.id)
   end
 
   it "should be inactive after undeploying" do
-    deployment = Deployment.create!(@valid_attributes)
-    deployment.undeploy!
-    Deployment.inactive.first.should eql(deployment)
+    @deployment.current_state = 'deployed'
+    @deployment.undeploy!
+    Deployment.inactive.first.should eql(@deployment)
     Deployment.active.count.should be(0)
   end
 
   it "should populate undeployed_at after undeploying" do
-    deployment = Deployment.create!(@valid_attributes)
-    deployment.undeploy!
-    deployment.undeployed_at.should_not be_nil
+    @deployment.current_state = 'deployed'
+    @deployment.undeploy!
+    @deployment.undeployed_at.should_not be_nil
   end
 
   it "should populate undeployed_by after undeploying" do
     login
-    deployment = Deployment.create!(@valid_attributes)
-    deployment.undeploy!
-    deployment.undeployed_by.should be(@current_user.id)
+    @deployment.current_state = 'deployed'
+    @deployment.undeploy!
+    @deployment.undeployed_by.should be(@current_user.id)
+  end
+
+  describe "deploy_artifact" do
+    before(:each) do
+      @service = Factory.build(:service)
+      @artifact = Factory.build(:artifact)
+      @artifact_version = Factory.build(:artifact_version)
+      @instance = Factory.build(:instance)
+      @deployment = Factory.build(:deployment)
+      @environment = Factory.build(:environment)
+      @agent_client = mock(AgentClient)
+      @agent_client.stub!(:deploy_artifact).and_return({ :artifact_id => 1 })
+      @deployment.stub!(:artifact).and_return(@artifact)
+      @deployment.stub!(:artifact_version).and_return(@artifact_version)
+      @deployment.stub!(:environment).and_return(@environment)
+      @instance.stub!(:agent_client).and_return(@agent_client)
+      @artifact.stub!(:service).and_return(@service)
+      @service.stub_chain(:instances, :in_environment).and_return([@instance])
+    end
+
+    it "should use a client from the instances with the same service as the artifact" do
+      @instance.should_receive(:agent_client).and_return(@agent_client)
+      @deployment.deploy_artifact
+    end
+
+    it "should limit to instances in the same environment" do
+      instances_mock = mock('instances')
+      instances_mock.should_receive(:in_environment).with(@environment).and_return([@instance])
+      @service.should_receive(:instances).and_return(instances_mock)
+      @deployment.deploy_artifact
+    end
+
+    it "should attempt to deploy the artifact_version" do
+      @agent_client.should_receive(:deploy_artifact).with(@artifact_version)
+      @deployment.deploy_artifact
+    end
+
+    it "should store the remote artifact id" do
+      @deployment.deploy_artifact
+      @deployment.agent_artifact_identifier.should == 1
+    end
+
+    it "should mark the deployment as deployed" do
+      @deployment.should_receive(:deployed!)
+      @deployment.deploy_artifact
+    end
+
+    it "should fail! the deployment if client deploy raises" do
+      @agent_client.stub!(:deploy_artifact).and_raise(AgentClient::RequestFailedError.new('msg'))
+      @deployment.should_receive(:fail!)
+      @deployment.deploy_artifact
+    end
+
+    it "should fail! if the client deploy does not return an artifact_id" do
+      @agent_client.stub!(:deploy_artifact).and_return({ })
+      @deployment.should_receive(:fail!)
+      @deployment.deploy_artifact
+    end
   end
 end
