@@ -106,6 +106,28 @@ describe Certificate do
     end
     
   end
+  
+  describe "encrypting and decrypting text" do
+    before(:each) do
+      Certificate.encryption_certificate = nil
+    end
+
+    it "should use the encryption certificate" do
+      # Generate the cert before mock
+      cert = Certificate.encryption_certificate
+      Certificate.should_receive(:encryption_certificate).and_return(cert)
+      Certificate.encrypt "steamcannon"
+    end
+    
+    it "should transform the input text" do
+      Certificate.encrypt("steamcannon").should_not == "steamcannon"
+    end
+    
+    it "should decrypt text to its original value" do
+      encrypted = Certificate.encrypt("steamcannon")
+      Certificate.decrypt(encrypted).should == "steamcannon"
+    end
+  end
 
   describe "generate_server_certificate" do
     before(:each) do

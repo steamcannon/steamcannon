@@ -95,6 +95,18 @@ class Certificate < ActiveRecord::Base
                          :keypair => keypair.to_pem)
 
     end
+    
+    # Encrypts and Base64 encodes str
+    def encrypt(str)
+      @encryption_key ||= OpenSSL::PKey::RSA.new(Certificate.encryption_certificate.keypair)
+      Base64.encode64(@encryption_key.public_encrypt(str))
+    end
+    
+    # Assumes str is a Base64 encoded string encrypted with our public key
+    def decrypt(str)
+      @encryption_key ||= OpenSSL::PKey::RSA.new(Certificate.encryption_certificate.keypair)
+      @encryption_key.private_decrypt(Base64.decode64(str))
+    end
 
     protected
 
