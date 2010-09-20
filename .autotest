@@ -1,4 +1,6 @@
 # -*-ruby-*-
+require 'active_support/core_ext'
+
 Autotest.add_hook(:initialize) {|at|
    at.add_mapping(%r{^spec/(jobs|tasks)/.*\.rb$}) { |filename, _|
     filename
