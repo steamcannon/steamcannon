@@ -1,3 +1,4 @@
+# -*-ruby-*-
 Autotest.add_hook(:initialize) {|at|
    at.add_mapping(%r{^spec/(jobs|tasks)/.*\.rb$}) { |filename, _|
     filename
@@ -9,4 +10,9 @@ Autotest.add_hook(:initialize) {|at|
   at.add_mapping(%r{^tasks/(.*)\.rb$}) { |_, m|
     ["spec/tasks/#{m[1]}_spec.rb"]
   }
+}
+
+Autotest.add_hook(:died) { |ex|
+  puts "Autospec died: " + ex
+  puts ex.backtrace.join("\n")
 }
