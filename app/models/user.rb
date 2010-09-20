@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
   has_many :environments
   has_many :deployments
   has_many :artifact_versions, :through => :artifacts
+  
+  before_save :encrypt_cloud_password
 
   acts_as_authentic do |c|
   end
@@ -31,13 +33,21 @@ class User < ActiveRecord::Base
   }
 
   attr_protected :superuser
+  
+  attr_accessor_with_default( :cloud_password ) do
+    self.crypted_cloud_password.blank? ? nil : Certificate.decrypt(self.crypted_cloud_password)
+  end
 
   def cloud
     Cloud::Deltacloud.new(cloud_username, cloud_password)
   end
   
   def profile_complete?
-    self.superuser? || (!self.cloud_username.blank? && !self.cloud_password.blank?)
+    self.superuser? || (!self.cloud_username.blank? && !self.crypted_cloud_password.blank?)
+  end
+  
+  def encrypt_cloud_password
+    self.crypted_cloud_password = Certificate.encrypt(self.cloud_password) unless self.cloud_password.blank?
   end
   
 end

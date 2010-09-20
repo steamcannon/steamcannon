@@ -38,6 +38,20 @@ describe User do
   it "should have a cloud password attribute" do
     User.new.should respond_to(:cloud_password)
   end
+  
+  it "should encrypt the cloud password attribute before save" do
+    u = User.create!(@valid_attributes)
+    u.cloud_password = "steamcannon"
+    Certificate.should_receive :encrypt
+    u.save
+  end
+  
+  it "should save the encrypted cloud password" do
+    u = User.create!(@valid_attributes)
+    u.cloud_password = "steamcannon"
+    u.should_receive :crypted_cloud_password=
+    u.save
+  end
 
   it "should have a cloud object" do
     User.new.should respond_to(:cloud)
