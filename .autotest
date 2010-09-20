@@ -12,7 +12,7 @@ Autotest.add_hook(:initialize) {|at|
   }
 }
 
-Autotest.add_hook(:died) { |ex|
+Autotest.add_hook(:died) { |_, ex|
   puts "Autospec died: " + ex
   puts ex.backtrace.join("\n")
 }
