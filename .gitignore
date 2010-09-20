@@ -1,4 +1,5 @@
 log/*.log
+tmp/*
 tmp/**/*
 public/stylesheets/compiled/*
 public/uploads/*
