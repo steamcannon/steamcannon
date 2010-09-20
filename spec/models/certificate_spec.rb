@@ -204,7 +204,7 @@ describe Certificate do
   describe "to_public_pem_file" do
     before(:each) do
       @cert = Certificate.ca_certificate
-      @path = Rails.root + "/tmp/cert_#{@cert.id}.pem"
+      @path = Rails.root + "tmp/cert_#{@cert.id}.pem"
       FileUtils.rm_f(@path)
     end
     
