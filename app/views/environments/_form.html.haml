@@ -23,7 +23,8 @@
         - platform_version.images.each_with_index do |image, index|
         - environment_image = @environment.environment_images.find_by_image_id(image.id)
           .image_row
-            = hidden_field_tag "environment[environment_images_attributes][#{index}][id]", environment_image.try(:id) 
+            - if environment_image_id = environment_image.try(:id) 
+              = hidden_field_tag "environment[environment_images_attributes][#{index}][id]", environment_image_id
             = hidden_field_tag "environment[environment_images_attributes][#{index}][image_id]", image.id
             .name
               = image.name
