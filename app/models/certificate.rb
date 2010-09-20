@@ -72,10 +72,6 @@ class Certificate < ActiveRecord::Base
       @encryption_certificate ||= Certificate.find_by_cert_type(Certificate::ENCRYPTION_TYPE) || generate_encryption_certificate
     end
     
-    def encryption_key
-      @encryption_key ||= OpenSSL::PKey::RSA.new(Certificate.encryption_certificate.keypair)
-    end
-
     def generate_server_certificate(certifiable)
       options = {
         # use the certifiable id as the serial. According to RFC 2459,
@@ -102,12 +98,12 @@ class Certificate < ActiveRecord::Base
     
     # Encrypts and Base64 encodes str
     def encrypt(str)
-      Base64.encode64(encryption_key.public_encrypt(str))
+      Base64.encode64(Certificate.encryption_certificate.to_rsa_keypair.public_encrypt(str))
     end
     
     # Assumes str is a Base64 encoded string encrypted with our public key
     def decrypt(str)
-      encryption_key.private_decrypt(Base64.decode64(str))
+      Certificate.encryption_certificate.to_rsa_keypair.private_decrypt(Base64.decode64(str))
     end
 
     protected
