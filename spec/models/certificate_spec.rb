@@ -22,7 +22,7 @@ require 'spec_helper'
 describe Certificate do
   class Certificate
     #so we can clear between tests
-    class << self;attr_writer :ca_certificate, :client_certificate;end 
+    class << self;attr_writer :ca_certificate, :client_certificate, :encryption_certificate;end 
   end
   
   before(:each) do
@@ -81,6 +81,28 @@ describe Certificate do
       Certificate.ca_certificate
       Certificate.should_receive(:create)
       Certificate.client_certificate
+    end
+    
+  end
+
+  describe "encryption_certificate" do
+    before(:each) do
+      Certificate.encryption_certificate = nil
+    end
+    
+    it "should return an existing encryption cert" do
+      cert = Factory.build(:encryption_certificate)
+      Certificate.should_receive(:find).and_return(cert)
+      Certificate.encryption_certificate.should == cert
+    end
+
+    it "should create an encryption cert if none found" do
+      Certificate.should_receive(:create)
+      Certificate.encryption_certificate
+    end
+    
+    it "should have a cert_type of encryption" do
+      Certificate.encryption_certificate.cert_type.should == Certificate::ENCRYPTION_TYPE
     end
     
   end

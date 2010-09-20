@@ -28,3 +28,7 @@ end
 Factory.define :client_certificate, :parent => :certificate do |cert|
   cert.cert_type Certificate::CLIENT_TYPE
 end
+
+Factory.define :encryption_certificate, :parent => :certificate do |cert|
+  cert.cert_type Certificate::ENCRYPTION_TYPE
+end

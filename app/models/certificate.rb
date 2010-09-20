@@ -25,6 +25,7 @@ class Certificate < ActiveRecord::Base
   CA_TYPE = 'ca'
   CLIENT_TYPE = 'client'
   SERVER_TYPE = 'server'
+  ENCRYPTION_TYPE = 'encryption'
 
   # The keypair accessors encrypt/decrypt the private keys as needed.
   def keypair=(keypair)
@@ -65,6 +66,10 @@ class Certificate < ActiveRecord::Base
 
     def client_certificate
       @client_certificate ||= Certificate.find_by_cert_type(Certificate::CLIENT_TYPE) || generate_client_certificate
+    end
+    
+    def encryption_certificate
+      @encryption_certificate ||= Certificate.find_by_cert_type(Certificate::ENCRYPTION_TYPE) || generate_encryption_certificate
     end
 
     def generate_server_certificate(certifiable)
@@ -125,6 +130,23 @@ class Certificate < ActiveRecord::Base
       cert, keypair = generate_certificate(options)
 
       Certificate.create(:cert_type => Certificate::CLIENT_TYPE,
+                         :certificate => cert.to_pem,
+                         :keypair => keypair.to_pem)
+    end
+
+    def generate_encryption_certificate
+      options = {
+        :serial => 1,
+        :subject => "O=SteamCannon Instance, CN=Encryption",
+        :extensions => [
+                        [ "basicConstraints", "CA:FALSE", true ],
+                        [ "keyUsage", "keyEncipherment", true ]
+                       ]
+      }
+
+      cert, keypair = generate_certificate(options)
+
+      Certificate.create(:cert_type => Certificate::ENCRYPTION_TYPE,
                          :certificate => cert.to_pem,
                          :keypair => keypair.to_pem)
     end
