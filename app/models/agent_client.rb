@@ -72,8 +72,6 @@ class AgentClient
     service_post 'configure', :config => config
   end
 
-  #TODO: store the artifact_id on the artifact_version locally, and pass the
-  #artifact_version AR here
   def undeploy_artifact(artifact_id)
     service_delete "artifacts/#{artifact_id}"
   end

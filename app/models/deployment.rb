@@ -59,7 +59,7 @@ class Deployment < ActiveRecord::Base
 
   def deploy_artifact
     return unless environment.ready_for_deployments?
-    
+
     instances_for_deploy.each do |instance|
       begin
         response = instance.agent_client(service).deploy_artifact(artifact_version)
@@ -79,10 +79,24 @@ class Deployment < ActiveRecord::Base
     end
   end
 
+  def undeploy_artifact
+    return unless deployed?
+    
+    instances_for_deploy.each do |instance|
+      begin
+        instance.agent_client(service).undeploy_artifact(agent_artifact_identifier)
+        undeploy!
+      rescue AgentClient::RequestFailedError => ex
+        #TODO: store the failure reason?
+        logger.info "undeploying artifact failed: #{ex}", ex.backtrace
+      end
+    end
+  end
+
   private
 
   def instances_for_deploy
-    chain = service.instances.running.in_environment(environment)
+    service.instances.running.in_environment(environment)
   end
 
   def record_deploy

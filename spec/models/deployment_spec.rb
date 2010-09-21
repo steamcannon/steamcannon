@@ -122,4 +122,55 @@ describe Deployment do
     end
   end
 
+  describe 'undeploy_artifact' do
+    before(:each) do
+      @artifact = Factory.build(:artifact)
+      @artifact_version = Factory.build(:artifact_version)
+      @instance = Factory.build(:instance)
+      @deployment = Factory.build(:deployment)
+      @agent_client = mock(AgentClient)
+      @agent_client.stub!(:undeploy_artifact).and_return(true)
+      @deployment.stub!(:artifact).and_return(@artifact)
+      @deployment.stub!(:artifact_version).and_return(@artifact_version)
+      @instance.stub!(:agent_client).and_return(@agent_client)
+      @deployment.stub!(:instances_for_deploy).and_return([@instance])
+      @deployment.stub!(:agent_artifact_identifier).and_return(1)
+      @deployment.current_state = 'deployed'
+    end
+    
+    it "should ignore failed deployments" do
+      @agent_client.should_not_receive(:undeploy_artifact)
+      @deployment.current_state = 'deploy_failed'
+      @deployment.undeploy_artifact
+    end
+    
+    it "should ingore deploying deployments" do
+      @agent_client.should_not_receive(:undeploy_artifact)
+      @deployment.current_state = 'deploying'
+      @deployment.undeploy_artifact
+    end
+    
+    it "should call undeploy on the client" do
+      @agent_client.should_receive(:undeploy_artifact).with(1)
+      @deployment.undeploy_artifact
+    end
+
+    it "should undeploy! on a successful undeploy" do
+      @deployment.should_receive(:undeploy!)
+      @deployment.undeploy_artifact
+    end
+    
+    it "should not undeploy! on an unsuccessful undeploy" do
+      @agent_client.stub!(:undeploy_artifact).and_raise(AgentClient::RequestFailedError.new(''))
+      @deployment.should_not_receive(:undeploy!)
+    end
+
+    it "should catch exceptions from undeploy" do 
+      @agent_client.stub!(:undeploy_artifact).and_raise(AgentClient::RequestFailedError.new(''))
+      lambda{
+        @deployment.undeploy_artifact
+      }.should_not raise_error(AgentClient::RequestFailedError)
+    end
+    
+  end
 end
