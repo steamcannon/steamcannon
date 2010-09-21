@@ -1,0 +1,12 @@
+---
+platforms:
+  - name: JBoss 2 Tier
+    platform_versions:
+      - version_number:
+        images:
+          - name: JBoss
+            cloud_id: ami-36d3265f
+          - name: mod_cluster
+            cloud_id: ami-9c26d3f5
+
+
