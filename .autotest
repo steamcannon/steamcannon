@@ -1,4 +1,5 @@
 # -*-ruby-*-
+
 require 'active_support/core_ext'
 
 Autotest.add_hook(:initialize) {|at|
@@ -17,4 +18,14 @@ Autotest.add_hook(:initialize) {|at|
 Autotest.add_hook(:died) { |_, ex|
   puts "Autospec died: " + ex
   puts ex.backtrace.join("\n")
+}
+
+# under jruby, the autotest process detaches, but continues to run as
+# a zombie if you interrupt with ^C (instead of running all
+# tests). This hook forces an exit before that can happen. Yes, the
+# correct thing to do is fix autotest or jruby, but I've been unable
+# to pin down the problem. - Toby
+Autotest.add_hook(:interrupt) { |at|
+  puts "Exiting on interrupt to prevent process detach."
+  exit
 }
