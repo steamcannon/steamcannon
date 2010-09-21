@@ -1,1 +1,1 @@
-FileUtils.rm_rf(Rails.root + "tmp/cert_*.pem")
+FileUtils.rm_f("/tmp/cert_*.pem")

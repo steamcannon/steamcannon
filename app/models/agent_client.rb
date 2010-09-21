@@ -81,14 +81,10 @@ class AgentClient
   protected
   def connection
     if APP_CONFIG[:use_ssl_with_agents]
-      ca_file_path = Certificate.ca_certificate.to_public_pem_file.to_s
-      # HACK: I hate to have to have vfs knowledge here, but the jruby
-      # openssl impl barfs on vfs: urls, and this is a real file anyway.
-      ca_file_path = ca_file_path[4..-1] if ca_file_path.starts_with?('vfs:') 
       options = {
         :ssl_client_cert => Certificate.client_certificate.to_x509_certificate,
         :ssl_client_key => Certificate.client_certificate.to_rsa_keypair,
-        :ssl_ca_file => ca_file_path,
+        :ssl_ca_file => Certificate.ca_certificate.to_public_pem_file,
         :verify_ssl => verify_ssl? ? OpenSSL::SSL::VERIFY_PEER : false
       }
       log "connecting with ssl (verify_ssl: #{options[:verify_ssl]})"
