@@ -55,7 +55,7 @@ class Environment < ActiveRecord::Base
   end
 
   aasm_event :failed do
-    transitions :to => :start_failed, :from => :starting
+    transitions :to => :start_failed, :from => [:starting, :start_failed]
   end
 
   before_update :remove_images_from_prior_platform_version
@@ -75,7 +75,7 @@ class Environment < ActiveRecord::Base
   def ready_for_deployments?
     running? and running_all_instances?
   end
-  
+
   protected
 
   def start_environment
