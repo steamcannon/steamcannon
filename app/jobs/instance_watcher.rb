@@ -22,9 +22,14 @@ class InstanceWatcher
   # TODO: This code is starting to seem a bit repetitive
   def run
     update_starting
-    update_configuring
-    update_verifying
+
+    # Purposely put the later states before the earlier ones
+    # so an instance can't flow from configuring -> verifying ->
+    # configuring_service within a single job execution
     update_configuring_services
+    update_verifying
+    update_configuring
+
     update_terminating
   end
 
