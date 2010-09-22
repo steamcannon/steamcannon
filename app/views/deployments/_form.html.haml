@@ -7,13 +7,13 @@
 %br
 = form.select :environment_id, current_user.environments.all.collect { |ev| [ev.name, ev.id ] }
 %br
-%br
-= form.label :datasource
-%br
-= form.radio_button :datasource, "local"
-Local
-%br
-= form.radio_button :datasource, "cloud"
-Cloud
-%br
+/%br
+/= form.label :datasource
+/%br
+/= form.radio_button :datasource, "local"
+/Local
+/%br
+/= form.radio_button :datasource, "cloud"
+/Cloud
+/%br
 %br

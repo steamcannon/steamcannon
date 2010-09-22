@@ -25,9 +25,9 @@ class Deployment < ActiveRecord::Base
   belongs_to :environment
   belongs_to :user
 
-  named_scope :active, :conditions => 'undeployed_at is null'
-  named_scope :inactive, :conditions => 'undeployed_at is not null'
-
+  named_scope :active, :conditions => "current_state = 'deploying' OR current_state = 'deployed'"
+  named_scope :inactive, :conditions => "current_state = 'undeployed' OR current_state = 'deploy_failed'"
+  
   before_create :record_deploy
 
   aasm_column :current_state
@@ -40,13 +40,13 @@ class Deployment < ActiveRecord::Base
   aasm_event :fail do
     transitions :to => :deploy_failed, :from => :deploying
   end
-
-  aasm_event :deployed do
+  
+  aasm_event :mark_as_deployed do
     transitions :to => :deployed, :from => :deploying
   end
 
-  aasm_event :undeploy do
-    transitions :to => :undeployed, :from => :deployed
+  aasm_event :mark_as_undeployed do
+    transitions :to => :undeployed, :from => [:deployed, :deploying]
   end
 
   def artifact
@@ -57,15 +57,15 @@ class Deployment < ActiveRecord::Base
     artifact.service
   end
 
-  def deploy_artifact
+  def deploy
     return unless environment.ready_for_deployments?
-    
+
     instances_for_deploy.each do |instance|
       begin
         response = instance.agent_client(service).deploy_artifact(artifact_version)
         if response.respond_to?(:[]) and response['artifact_id']
           self.agent_artifact_identifier = response['artifact_id']
-          deployed!
+          mark_as_deployed!
         else
           logger.info "deploying artifact failed. response from agent: #{response}"
           fail!
@@ -73,8 +73,24 @@ class Deployment < ActiveRecord::Base
 
       rescue AgentClient::RequestFailedError => ex
         #TODO: store the failure reason?
-        logger.info "deploying artifact failed: #{ex}", ex.backtrace
+        logger.info "deploying artifact failed: #{ex}"
+        logger.info ex.backtrace.join("\n")
         fail!
+      end
+    end
+  end
+
+  def undeploy
+    return unless deployed?
+    
+    instances_for_deploy.each do |instance|
+      begin
+        instance.agent_client(service).undeploy_artifact(agent_artifact_identifier)
+        mark_as_undeployed!
+      rescue AgentClient::RequestFailedError => ex
+        #TODO: store the failure reason?
+        logger.info "undeploying artifact failed: #{ex}"
+        logger.info ex.backtrace.join("\n")
       end
     end
   end
@@ -82,7 +98,7 @@ class Deployment < ActiveRecord::Base
   private
 
   def instances_for_deploy
-    chain = service.instances.running.in_environment(environment)
+    service.instances.running.in_environment(environment)
   end
 
   def record_deploy

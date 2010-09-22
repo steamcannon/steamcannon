@@ -12,5 +12,6 @@ coverage/*
 *.swp
 \#*
 .#*
+*_flymake.rb
 .rvmrc
 TAGS

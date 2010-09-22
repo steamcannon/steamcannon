@@ -87,7 +87,7 @@ class Environment < ActiveRecord::Base
   end
 
   def stop_environment
-    deployments.active.each(&:undeploy!)
+    deployments.active.each(&:mark_as_undeployed!)
     instances.active.each(&:stop!)
   end
 

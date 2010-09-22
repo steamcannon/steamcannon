@@ -16,26 +16,12 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-class InstanceService < ActiveRecord::Base
-  belongs_to :instance
-  belongs_to :service
+module Cloud
+  class Virtualbox
 
-  def name
-    service.name
-  end
+    def multicast_config(instance)
+      {}
+    end
 
-  def configure
-    send("configure_#{name}") if respond_to?("configure_#{name}")
-  end
-
-  protected
-
-  def cloud_specific_hacks
-    "Cloud::#{instance.cloud.name.camelize}".constantize
-  end
-
-  def configure_jboss_as
-    config = cloud_specific_hacks.multicast_config(instance).to_json
-    instance.agent_client(service.name).configure(config)
   end
 end
