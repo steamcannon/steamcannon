@@ -27,7 +27,9 @@ class Deployment < ActiveRecord::Base
 
   named_scope :active, :conditions => "current_state = 'deployed'"
   named_scope :inactive, :conditions => "current_state != 'deployed'"
-
+  named_scope :not_undeployed, :conditions => "current_state != 'undeployed'"
+  named_scope :not_failed, :conditions => "current_state != 'deploy_failed'"
+  
   before_create :record_deploy
 
   aasm_column :current_state
@@ -40,13 +42,13 @@ class Deployment < ActiveRecord::Base
   aasm_event :fail do
     transitions :to => :deploy_failed, :from => :deploying
   end
-
-  aasm_event :deployed do
+  
+  aasm_event :mark_as_deployed do
     transitions :to => :deployed, :from => :deploying
   end
 
-  aasm_event :undeploy do
-    transitions :to => :undeployed, :from => :deployed
+  aasm_event :mark_as_undeployed do
+    transitions :to => :undeployed, :from => [:deployed, :deploying]
   end
 
   def artifact
@@ -57,7 +59,7 @@ class Deployment < ActiveRecord::Base
     artifact.service
   end
 
-  def deploy_artifact
+  def deploy
     return unless environment.ready_for_deployments?
 
     instances_for_deploy.each do |instance|
@@ -65,7 +67,7 @@ class Deployment < ActiveRecord::Base
         response = instance.agent_client(service).deploy_artifact(artifact_version)
         if response.respond_to?(:[]) and response['artifact_id']
           self.agent_artifact_identifier = response['artifact_id']
-          deployed!
+          mark_as_deployed!
         else
           logger.info "deploying artifact failed. response from agent: #{response}"
           fail!
@@ -79,13 +81,13 @@ class Deployment < ActiveRecord::Base
     end
   end
 
-  def undeploy_artifact
+  def undeploy
     return unless deployed?
     
     instances_for_deploy.each do |instance|
       begin
         instance.agent_client(service).undeploy_artifact(agent_artifact_identifier)
-        undeploy!
+        mark_as_undeployed!
       rescue AgentClient::RequestFailedError => ex
         #TODO: store the failure reason?
         logger.info "undeploying artifact failed: #{ex}", ex.backtrace

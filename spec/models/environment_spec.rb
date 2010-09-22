@@ -126,7 +126,7 @@ describe Environment do
       @environment.should be_stopping
     end
 
-    it "should undeploy all deployments" do
+    it "should mark all deployments as undeployed" do
       @environment.deployments << Deployment.new(:current_state => 'deployed')
       @environment.save!
       @environment.stop!
