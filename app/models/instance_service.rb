@@ -20,6 +20,16 @@ class InstanceService < ActiveRecord::Base
   belongs_to :instance
   belongs_to :service
 
+  def peers(service_name)
+    service = Service.find_by_name(service_name)
+    environment = instance.environment
+    instance_ids = environment.instances.active.map(&:id)
+    InstanceService.find(:all, :conditions => {
+                           :instance_id => instance_ids,
+                           :service_id => service.id
+                         })
+  end
+
   def name
     service.name
   end
@@ -35,7 +45,20 @@ class InstanceService < ActiveRecord::Base
   end
 
   def configure_jboss_as
-    config = cloud_specific_hacks.multicast_config(instance).to_json
-    instance.agent_client(service.name).configure(config)
+    config = cloud_specific_hacks.multicast_config(instance)
+    proxies = peers('mod_cluster')
+    unless proxies.empty?
+      proxy_list = proxies.inject({}) do |list, proxy_instance|
+        dns = proxy_instance.instance.public_dns
+        list[dns] = {:host => dns, :port => 80} unless dns.blank?
+        list
+      end
+      config.merge!({:proxy_list => proxy_list})
+    end
+    instance.agent_client(service.name).configure(config.to_json)
+  end
+
+  def configure_mod_cluster
+    peers('jboss_as').each(&:configure)
   end
 end
