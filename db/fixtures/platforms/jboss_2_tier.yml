@@ -5,7 +5,7 @@ platforms:
       - version_number:
         images:
           - name: JBoss
-            cloud_id: ami-36d3265f
+            cloud_id: ami-fa26d393
           - name: mod_cluster
             cloud_id: ami-9c26d3f5
 
