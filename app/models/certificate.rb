@@ -54,7 +54,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def to_public_pem_file
-    filename = "/tmp/cert_#{id}.pem"
+    filename = "/tmp/cert_#{id}_#{Rails.env}.pem"
     File.open(filename, 'w') { |file| file.write(certificate) } unless File.exists?(filename)
     filename
   end
