@@ -7,6 +7,6 @@ platforms:
           - name: JBoss
             cloud_id: ami-fa26d393
           - name: mod_cluster
-            cloud_id: ami-9c26d3f5
+            cloud_id: ami-c017e2a9
 
 
