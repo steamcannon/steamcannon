@@ -39,7 +39,7 @@ module S3
       bucket = options[:bucket]
       resource = options[:resource]
       secret_access_key = options[:secret_access_key]
-      expires = options[:expires_at]
+      expires = options[:expires_at].to_i
 
       canonicalized_amz_headers = canonicalized_amz_headers(options[:headers] || {})
 
