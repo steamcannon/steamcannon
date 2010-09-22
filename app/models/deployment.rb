@@ -25,10 +25,8 @@ class Deployment < ActiveRecord::Base
   belongs_to :environment
   belongs_to :user
 
-  named_scope :active, :conditions => "current_state = 'deployed'"
-  named_scope :inactive, :conditions => "current_state != 'deployed'"
-  named_scope :not_undeployed, :conditions => "current_state != 'undeployed'"
-  named_scope :not_failed, :conditions => "current_state != 'deploy_failed'"
+  named_scope :active, :conditions => "current_state = 'deploying' OR current_state = 'deployed'"
+  named_scope :inactive, :conditions => "current_state = 'undeployed' OR current_state = 'deploy_failed'"
   
   before_create :record_deploy
 
@@ -75,7 +73,8 @@ class Deployment < ActiveRecord::Base
 
       rescue AgentClient::RequestFailedError => ex
         #TODO: store the failure reason?
-        logger.info "deploying artifact failed: #{ex}", ex.backtrace
+        logger.info "deploying artifact failed: #{ex}"
+        logger.info ex.backtrace.join("\n")
         fail!
       end
     end
@@ -90,7 +89,8 @@ class Deployment < ActiveRecord::Base
         mark_as_undeployed!
       rescue AgentClient::RequestFailedError => ex
         #TODO: store the failure reason?
-        logger.info "undeploying artifact failed: #{ex}", ex.backtrace
+        logger.info "undeploying artifact failed: #{ex}"
+        logger.info ex.backtrace.join("\n")
       end
     end
   end
