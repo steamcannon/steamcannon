@@ -124,13 +124,13 @@ describe Instance do
     before(:each) do
       @instance = Factory.build(:instance)
     end
-    
+
     describe "setting state_change_timestamp" do
       before(:each) do
         @now = Time.now
         Time.stub!(:now).and_return(@now)
       end
-      
+
       it "should be set if current_state changes on save" do
 
         @instance.should_receive(:state_change_timestamp=).with(@now)
@@ -150,7 +150,7 @@ describe Instance do
         @instance.save
       end
     end
-    
+
     describe "start" do
       before(:each) do
         @cloud_instance = mock(Object, :id => 'i-123',
@@ -250,7 +250,7 @@ describe Instance do
         end
       end
     end
-    
+
     describe "run" do
       before(:each) do
         @cloud_instance = mock(Object, :public_addresses => ['host'])
@@ -367,7 +367,7 @@ describe Instance do
     end
 
   end
-  
+
   describe "agent_client" do
     before(:all) do
       @instance = Instance.new
@@ -425,10 +425,10 @@ describe Instance do
   end
 
   describe "configure_agent" do
-    before(:each) do 
+    before(:each) do
       @instance = Factory(:instance, :current_state => 'configuring', :public_dns => 'hostname')
     end
-    
+
     it "should move to verifying state if agent is running" do
       @instance.stub!(:agent_running?).and_return(true)
       @instance.should_receive(:verify!)
@@ -477,23 +477,24 @@ describe Instance do
       @instance.send(:generate_server_cert)
     end
   end
-  
+
   describe "verify_agent" do
-    before(:each) do 
+    before(:each) do
       @instance = Factory(:instance)
       @instance.stub!(:run!)
       @instance.stub!(:discover_services)
+      @instance.current_state = 'verifying'
     end
-    
-    it "should move to running state if agent is running" do
+
+    it "should move to configuring_services state if agent is running" do
       @instance.stub!(:agent_running?).and_return(true)
-      @instance.should_receive(:run!)
+      @instance.should_receive(:configure_services!)
       @instance.verify_agent
     end
 
-    it "should not move to running state if agent is not running" do
+    it "should not move to configuring_services state if agent is not running" do
       @instance.stub!(:agent_running?).and_return(false)
-      @instance.should_not_receive(:run!)
+      @instance.should_not_receive(:configure_services!)
       @instance.verify_agent
     end
 
@@ -538,7 +539,38 @@ describe Instance do
       service.should_not be_nil
       service.name.should == 'a name'
     end
-    
+
   end
-  
+
+  describe "configure_services" do
+    before(:each) do
+      @instance = Factory(:instance)
+      @instance.current_state = 'configuring_services'
+      @instance.stub!(:run!)
+      @logger = mock(Object)
+      @instance.stub!(:logger).and_return(@logger)
+    end
+
+    it "should configure each instance_service" do
+      instance_service = Factory(:instance_service)
+      instance_service.should_receive(:configure)
+      @instance.stub!(:instance_services).and_return([instance_service])
+      @instance.configure_services
+    end
+
+    it "should run! after configuring services" do
+      @instance.should_receive(:run!)
+      @instance.configure_services
+    end
+
+    it "should log any agent client errors" do
+      error = AgentClient::RequestFailedError.new("test error")
+      instance_service = Factory(:instance_service)
+      instance_service.should_receive(:configure).and_raise(error)
+      @instance.stub!(:instance_services).and_return([instance_service])
+      @logger.should_receive(:error).at_least(:once)
+      @instance.configure_services
+    end
+  end
+
 end

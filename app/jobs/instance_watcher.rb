@@ -19,10 +19,12 @@
 
 class InstanceWatcher
 
+  # TODO: This code is starting to seem a bit repetitive
   def run
     update_starting
     update_configuring
     update_verifying
+    update_configuring_services
     update_terminating
   end
 
@@ -39,6 +41,11 @@ class InstanceWatcher
   def update_verifying
     # TODO: This is a bit inefficient to do one at a time
     Instance.verifying.each { |i| i.verify_agent }
+  end
+
+  def update_configuring_services
+    # TODO: This is a bit inefficient to do one at a time
+    Instance.configuring_services.each { |i| i.configure_services }
   end
 
 

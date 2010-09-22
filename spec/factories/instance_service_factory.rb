@@ -16,12 +16,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-class Service < ActiveRecord::Base
-  has_many :artifacts
-  has_many :instance_services
-  has_many :instances, :through => :instance_services
-
-  validates_presence_of :name
-  validates_uniqueness_of :name
-
+Factory.define :instance_service do |instance_service|
+  instance_service.association :instance
+  instance_service.association :service
 end

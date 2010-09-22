@@ -33,13 +33,14 @@ class Instance < ActiveRecord::Base
   named_scope :active, :conditions => "current_state <> 'stopped'"
   named_scope :inactive, :conditions => "current_state = 'stopped'"
   named_scope :in_environment, lambda { |env| { :conditions => { :environment_id => env.id } } }
-  
+
   aasm_column :current_state
   aasm_initial_state :pending
   aasm_state :pending
   aasm_state :starting, :enter => :start_instance
   aasm_state :configuring, :enter => :configure_instance
   aasm_state :verifying
+  aasm_state :configuring_services
   aasm_state :configure_failed, :enter => :state_failed
   aasm_state :running, :after_enter => :after_run_instance
   aasm_state :stopping, :enter => :stop_instance, :after_enter => :after_stop_instance
@@ -60,12 +61,16 @@ class Instance < ActiveRecord::Base
     transitions :to => :verifying, :from => :configuring
   end
 
+  aasm_event :configure_services do
+    transitions :to => :configuring_services, :from => :verifying
+  end
+
   aasm_event :configure_failed do
-    transitions :to => :configure_failed, :from => [:configuring, :verifying]
+    transitions :to => :configure_failed, :from => [:configuring, :verifying, :configuring_services]
   end
 
   aasm_event :run do
-    transitions :to => :running, :from => [:configuring, :verifying]
+    transitions :to => :running, :from => [:configuring, :verifying, :configuring_services]
   end
 
   aasm_event :stop do
@@ -124,11 +129,10 @@ class Instance < ActiveRecord::Base
   def verify_agent
     if agent_running?
       discover_services
-      run!
+      configure_services!
     elsif state_change_timestamp <= Time.now - 120.seconds
       configure_failed!
     end
-
   end
 
   def discover_services
@@ -137,6 +141,15 @@ class Instance < ActiveRecord::Base
       services << service
     end
     save
+  end
+
+  def configure_services
+    instance_services.each(&:configure)
+    run!
+  rescue AgentClient::RequestFailedError => ex
+    logger.error ex.inspect
+    logger.error ex.backtrace
+    configure_failed! if state_change_timestamp <= Time.now - 120.seconds
   end
 
   def agent_running?

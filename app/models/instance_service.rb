@@ -19,4 +19,24 @@
 class InstanceService < ActiveRecord::Base
   belongs_to :instance
   belongs_to :service
+
+  def name
+    service.name
+  end
+
+  def configure
+    send("configure_#{name}") if respond_to?("configure_#{name}")
+  end
+
+  protected
+
+  def configure_jboss_as
+    config = {
+      :s3_ping => {
+        :pre_signed_put_url => '',
+        :pre_signed_delete_url => ''
+      }
+    }.to_json
+    instance.agent_client(service.name).configure(config)
+  end
 end
