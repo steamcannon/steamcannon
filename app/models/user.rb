@@ -33,11 +33,17 @@ class User < ActiveRecord::Base
   }
 
   attr_protected :superuser
-  
-  attr_accessor_with_default( :cloud_password ) do
-    self.crypted_cloud_password.blank? ? nil : Certificate.decrypt(self.crypted_cloud_password)
-  end
 
+  attr_accessor_with_default :cloud_password_dirty, false
+  attr_accessor_with_default( :cloud_password ) do
+    self.crypted_cloud_password.blank? ? @cloud_password : Certificate.decrypt(self.crypted_cloud_password)
+  end
+  
+  def cloud_password=(pw)
+    @cloud_password_dirty = true
+    @cloud_password = pw
+  end
+  
   def cloud
     Cloud::Deltacloud.new(cloud_username, cloud_password)
   end
@@ -47,7 +53,7 @@ class User < ActiveRecord::Base
   end
   
   def encrypt_cloud_password
-    self.crypted_cloud_password = Certificate.encrypt(self.cloud_password) unless self.cloud_password.blank?
+    self.crypted_cloud_password = Certificate.encrypt(@cloud_password) if (@cloud_password_dirty || (new_record? && !@cloud_password.blank?))
   end
-  
+
 end

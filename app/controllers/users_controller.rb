@@ -30,6 +30,10 @@ class UsersController < ResourceController::Base
     flash[:error] = "Please complete your profile before continuing." unless current_user.profile_complete?
   end
   
+  update.before do
+    current_user.cloud_password_dirty = !params.blank? && !params[:user].blank? && !params[:user][:cloud_password].blank?
+  end
+  
   create do 
     flash { "Account registered" }
     wants.html { redirect_stored_or_default root_url }

@@ -117,7 +117,10 @@ describe UsersController do
   end
 
   describe "PUT account" do
-    before(:each) { login }
+    before(:each) do
+      login
+      @current_user.stub!(:cloud_password_dirty=).and_return(true)
+    end
 
     describe "with valid params" do
       before(:each) do

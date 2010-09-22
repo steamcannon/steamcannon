@@ -53,6 +53,13 @@ describe User do
     u.save
   end
 
+  it "should not save the encrypted cloud password if it hasn't changed" do
+    u = User.create!(@valid_attributes)
+    u.email = "somethingelse@steamcannon.org"
+    u.should_not_receive :crypted_cloud_password=
+    u.save
+  end
+
   it "should have a cloud object" do
     User.new.should respond_to(:cloud)
   end
