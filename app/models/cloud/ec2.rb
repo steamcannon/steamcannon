@@ -69,13 +69,15 @@ module Cloud
       def multicast_config(instance)
         access_key = instance.cloud.cloud_username
         secret_access_key = instance.cloud.cloud_password
+        environment = instance.environment
+        s3_resource = "Environment#{environment.id}/instance#{instance.id}"
 
         put_url = S3::Signature.
           generate_temporary_url(:access_key => access_key,
                                  :secret_access_key => secret_access_key,
                                  :method => :put,
                                  :bucket => 'ben-test',
-                                 :resource => "DemoCluster/node#{instance.id}",
+                                 :resource => s3_resource,
                                  :expires_at => 1.year.from_now,
                                  :headers => {'x-amz-acl' => 'public-read'})
         delete_url = S3::Signature.
@@ -83,7 +85,7 @@ module Cloud
                                  :secret_access_key => secret_access_key,
                                  :method => :delete,
                                  :bucket => 'ben-test',
-                                 :resource => "DemoCluster/node#{instance.id}",
+                                 :resource => s3_resource,
                                  :expires_at => 1.year.from_now)
 
         {
