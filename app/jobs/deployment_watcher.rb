@@ -25,7 +25,7 @@ class DeploymentWatcher
 
   def deploy_deploying_deployments
     # TODO: This is a bit inefficient to do one at a time
-    Deployment.deploying.each { |d| d.deploy_artifact }
+    Deployment.deploying.each { |d| d.deploy }
   end
 
 end

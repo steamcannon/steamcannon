@@ -30,7 +30,7 @@ describe DeploymentWatcher do
 
   it "should attempt to deploy the artifact for a deployment in the deploying state" do
     deployment = mock_model(Deployment)
-    deployment.should_receive(:deploy_artifact)
+    deployment.should_receive(:deploy)
     Deployment.stub!(:deploying).and_return([deployment])
     @deployment_watcher.deploy_deploying_deployments
   end
