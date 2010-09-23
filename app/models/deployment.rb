@@ -27,7 +27,7 @@ class Deployment < ActiveRecord::Base
 
   named_scope :active, :conditions => "current_state = 'deploying' OR current_state = 'deployed'"
   named_scope :inactive, :conditions => "current_state = 'undeployed' OR current_state = 'deploy_failed'"
-  
+
   before_create :record_deploy
 
   aasm_column :current_state
@@ -40,7 +40,7 @@ class Deployment < ActiveRecord::Base
   aasm_event :fail do
     transitions :to => :deploy_failed, :from => :deploying
   end
-  
+
   aasm_event :mark_as_deployed do
     transitions :to => :deployed, :from => :deploying
   end
@@ -65,7 +65,6 @@ class Deployment < ActiveRecord::Base
         response = instance.agent_client(service).deploy_artifact(artifact_version)
         if response.respond_to?(:[]) and response['artifact_id']
           self.agent_artifact_identifier = response['artifact_id']
-          mark_as_deployed!
         else
           logger.info "deploying artifact failed. response from agent: #{response}"
           fail!
@@ -78,21 +77,22 @@ class Deployment < ActiveRecord::Base
         fail!
       end
     end
+    mark_as_deployed!
   end
 
   def undeploy
     return unless deployed?
-    
+
     instances_for_deploy.each do |instance|
       begin
         instance.agent_client(service).undeploy_artifact(agent_artifact_identifier)
-        mark_as_undeployed!
       rescue AgentClient::RequestFailedError => ex
         #TODO: store the failure reason?
         logger.info "undeploying artifact failed: #{ex}"
         logger.info ex.backtrace.join("\n")
       end
     end
+    mark_as_undeployed!
   end
 
   private

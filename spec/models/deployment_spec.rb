@@ -38,7 +38,7 @@ describe Deployment do
     Deployment.active.first.should eql(@deployment)
     Deployment.inactive.count.should be(0)
   end
-  
+
   it "should populate deployed_at after moving to :deployed" do
     @deployment.deployed_at.should_not be_nil
   end
@@ -93,7 +93,7 @@ describe Deployment do
       @deployment.should_not_receive(:instances_for_deploy)
       @deployment.deploy
     end
-    
+
     it "should attempt to deploy the artifact_version" do
       @agent_client.should_receive(:deploy_artifact).with(@artifact_version)
       @deployment.deploy
@@ -104,8 +104,11 @@ describe Deployment do
       @deployment.agent_artifact_identifier.should == 1
     end
 
-    it "should mark the deployment as deployed" do
-      @deployment.should_receive(:mark_as_deployed!)
+    it "should mark the deployment as deployed once" do
+      instance2 = Factory.build(:instance)
+      instance2.stub!(:agent_client).and_return(@agent_client)
+      @deployment.stub!(:instances_for_deploy).and_return([@instance, instance2])
+      @deployment.should_receive(:mark_as_deployed!).once
       @deployment.deploy
     end
 
@@ -137,40 +140,43 @@ describe Deployment do
       @deployment.stub!(:agent_artifact_identifier).and_return(1)
       @deployment.current_state = 'deployed'
     end
-    
+
     it "should ignore failed deployments" do
       @agent_client.should_not_receive(:undeploy)
       @deployment.current_state = 'deploy_failed'
       @deployment.undeploy
     end
-    
+
     it "should ingore deploying deployments" do
       @agent_client.should_not_receive(:undeploy)
       @deployment.current_state = 'deploying'
       @deployment.undeploy
     end
-    
+
     it "should call undeploy on the client" do
       @agent_client.should_receive(:undeploy_artifact).with(1)
       @deployment.undeploy
     end
 
-    it "should mark_as_undeployed! on a successful undeploy" do
-      @deployment.should_receive(:mark_as_undeployed!)
+    it "should mark_as_undeployed! once on a successful undeploy" do
+      instance2 = Factory.build(:instance)
+      instance2.stub!(:agent_client).and_return(@agent_client)
+      @deployment.stub!(:instances_for_deploy).and_return([@instance, instance2])
+      @deployment.should_receive(:mark_as_undeployed!).once
       @deployment.undeploy
     end
-    
+
     it "should not mark_as_undeployed! on an unsuccessful undeploy" do
       @agent_client.stub!(:undeploy).and_raise(AgentClient::RequestFailedError.new(''))
       @deployment.should_not_receive(:mark_as_undeployed!)
     end
 
-    it "should catch exceptions from undeploy" do 
+    it "should catch exceptions from undeploy" do
       @agent_client.stub!(:undeploy).and_raise(AgentClient::RequestFailedError.new(''))
       lambda{
         @deployment.undeploy
       }.should_not raise_error(AgentClient::RequestFailedError)
     end
-    
+
   end
 end
