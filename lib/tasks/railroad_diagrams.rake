@@ -5,15 +5,20 @@ namespace :doc do
     end
 
     task :models => :notice do
-      sh "railroad -i -l -a -m -M | dot -Tpng > doc/models.png"
+      sh "railroad -i -a -m -M | dot -Tpng > doc/models.png"
     end
 
     task :controllers  => :notice do
-      sh "railroad -i -l -C | neato -Tpng > doc/controllers.png"
+      sh "railroad -i -C | neato -Tpng > doc/controllers.png"
     end
 
     task :states  => :notice do
-      sh "railroad -i -l -A | neato -Tpng > doc/states.png"
+      sh "railroad -i -A | dot -Tpng > doc/combined_states.png"
+      models = Dir.glob("app/models/*.rb")
+      models = models.select { |m| !File.new(m).grep(/include AASM/).empty? }
+      models.each do |m|
+        sh "railroad -i -s #{m} -A | dot -Tpng > doc/#{File.basename(m, '.rb')}_states.png"
+      end
     end
   end
 
