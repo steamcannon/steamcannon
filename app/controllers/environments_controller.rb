@@ -124,4 +124,23 @@ class EnvironmentsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+  
+  # POST /environments/1/clone
+  # POST /environments/1/clone.xml
+  def clone
+    environment = current_user.environments.find(params[:id])
+    unless environment.blank?
+      @environment = environment.clone
+      @environment.stop if @environment.can_stop?
+    end
+    respond_to do |format|
+      if @environment && @environment.save
+        format.html { redirect_to(@environment, :notice => 'Environment was successfully cloned.') }
+        format.xml  { render :xml => @environment, :status => :created, :location => @environment }
+      else
+        format.html { redirect_back_or_default(environments_url, :notice => 'Could not clone. The environment to be cloned was not found.') }
+        format.xml  { render :xml => @environment.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
 end

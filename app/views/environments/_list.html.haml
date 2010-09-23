@@ -23,6 +23,7 @@
           = link_to 'Start', start_environment_path(environment), :method => :post
         - else
           &nbsp;
+        = link_to 'Clone', clone_environment_path(environment), :method => :post
       .environment_edit
         = link_to 'Edit', edit_environment_path(environment)
       .environment_delete

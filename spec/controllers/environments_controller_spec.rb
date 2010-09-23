@@ -187,5 +187,56 @@ describe EnvironmentsController do
       post :stop, :id => "37"
     end
   end
+  
+  describe "POST clone" do
+    describe "with valid params" do
+      before(:each) do
+        Environment.should_receive( :find ).with( "37" ).and_return( mock_environment )
+      end
+
+      it "should clone the requested environment" do
+        clone_environment = mock_model( Environment, {:save => true, :current_state= => :stopped, :can_stop? => false} ) 
+        mock_environment.should_receive( :clone ).and_return( clone_environment )
+        post :clone, :id => "37"
+      end
+      
+      it "should put the cloned environment in the stopped state" do
+        clone_environment = mock_model( Environment, {:save => true, :current_state= => :running, :can_stop? => true} ) 
+        mock_environment.should_receive( :clone ).and_return( clone_environment )
+        clone_environment.should_receive( :stop )
+        post :clone, :id => "37"
+      end
+
+      it "assigns a newly created environment as @environment" do
+        clone_environment = mock_model( Environment, {:save => true, :current_state= => :stopped, :can_stop? => false} ) 
+        mock_environment.should_receive( :clone ).and_return( clone_environment )
+        post :clone, :id => "37"
+        assigns[:environment].should equal( clone_environment )
+      end
+
+      it "redirects to the environment" do
+        clone_environment = mock_model( Environment, {:save => true, :current_state= => :stopped, :can_stop? => false} ) 
+        mock_environment.should_receive( :clone ).and_return( clone_environment )
+        post :clone, :id => "37"
+        response.should redirect_to( environment_path( clone_environment ) )
+      end
+    end
+    
+    describe "with invalid params" do
+      before(:each) do
+        Environment.should_receive( :find ).with( "37" ).and_return( nil )
+      end
+
+      it "does not assign a newly created environment as @environment" do
+        post :clone, :id => "37"
+        assigns[:environment].should be_nil
+      end
+
+      it "redirects to the environment" do
+        post :clone, :id => "37"
+        response.should redirect_to( environments_url )
+      end
+    end
+  end
 
 end

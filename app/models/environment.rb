@@ -47,7 +47,7 @@ class Environment < ActiveRecord::Base
   end
 
   aasm_event :stop do
-    transitions :to => :stopping, :from => [:running, :start_failed]
+    transitions :to => :stopping, :from => [:running, :start_failed, :starting]
   end
 
   aasm_event :stopped do
