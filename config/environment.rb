@@ -24,7 +24,7 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "authlogic", :version => "2.1.5"
   config.gem "aws"
-  config.gem "s3", :version => "0.3.2"
+  config.gem "steamcannon-s3", :version => "0.3.2", :lib => "s3"
   config.gem "haml", :version => "3.0.15"
   config.gem "compass", :version => "0.10.2"
   config.gem "bbrowning-deltacloud-client", :version => "0.0.9.4", :lib => "deltacloud"
