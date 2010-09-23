@@ -16,52 +16,6 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-
-# Temporary monkey-patch until I fork and submit patch upstream
-module S3
-  class Signature
-
-    def self.generate_temporary_url(options)
-      bucket = options[:bucket]
-      resource = options[:resource]
-      access_key = options[:access_key]
-      expires = options[:expires_at].to_i
-      signature = generate_temporary_url_signature(options)
-
-      url = "http://s3.amazonaws.com/#{bucket}/#{resource}"
-      url << "?AWSAccessKeyId=#{access_key}"
-      url << "&Expires=#{expires}"
-      url << "&Signature=#{signature}"
-    end
-
-    def self.generate_temporary_url_signature(options)
-      http_verb = (options[:method] || :get).to_s.upcase
-      bucket = options[:bucket]
-      resource = options[:resource]
-      secret_access_key = options[:secret_access_key]
-      expires = options[:expires_at].to_i
-
-      canonicalized_amz_headers = canonicalized_amz_headers(options[:headers] || {})
-
-      string_to_sign = ""
-      string_to_sign << http_verb
-      string_to_sign << "\n\n\n"
-      string_to_sign << expires.to_s
-      string_to_sign << "\n"
-      string_to_sign << canonicalized_amz_headers
-      string_to_sign << "/#{bucket}/#{resource}"
-
-      digest = OpenSSL::Digest::Digest.new("sha1")
-      hmac = OpenSSL::HMAC.digest(digest, secret_access_key, string_to_sign)
-      base64 = Base64.encode64(hmac)
-      signature = base64.chomp
-
-      CGI.escape(signature)
-    end
-
-  end
-end
-
 module Cloud
   class Ec2
     class << self
