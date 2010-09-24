@@ -24,11 +24,17 @@ class Service < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  def deploy(environment, deployments = [])
-    AgentServices::DefaultService.instance_for_service(self, environment).deploy(deployments)
+  def deploy(environment, deployments)
+    AgentServices::DefaultService.instance_for_service(self, environment).
+      deploy(filter_deployments(deployments))
   end
 
   def undeploy(environment, deployments)
   end
-  
+
+  protected
+  def filter_deployments(deployments)
+    deployments.select { |deployment| deployment.service == self }
+  end
 end
+

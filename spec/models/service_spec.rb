@@ -42,5 +42,26 @@ describe Service do
       AgentServices::DefaultService.should_receive(:instance_for_service).with(@service, @environment).and_return(@agent_service)
       @service.deploy(@environment, [])
     end
+
+    it "should limit to deployments for itself" do
+      @service.should_receive(:filter_deployments).with([]).and_return([])
+      @service.deploy(@environment, [])
+    end
+  end
+
+  describe 'filter_deployments' do
+    before(:each) do
+      @service = Factory.build(:service)
+      @another_service = Factory.build(:service)
+      
+      @deployment_one = mock(Deployment)
+      @deployment_one.stub!(:service).and_return(@service)
+      @deployment_two = mock(Deployment)
+      @deployment_two.stub!(:service).and_return(@another_service)
+    end
+    
+    it "should remove deployments for other services" do
+      @service.send(:filter_deployments, [@deployment_one, @deployment_two]).should == [@deployment_one]
+    end
   end
 end

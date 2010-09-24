@@ -83,7 +83,7 @@ class Environment < ActiveRecord::Base
       deployments = [deployment_or_instance]
     else
       services = deployment_or_instance.services
-      deployments = []
+      deployments = self.deployments.active
     end
     
     services.each do |service|

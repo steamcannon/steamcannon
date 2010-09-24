@@ -274,7 +274,17 @@ describe Environment do
           @service_two.should_receive(:deploy).with(@environment, [])
           @environment.trigger_deployments(@instance)
         end
+
+        it "should pull all active deployments from the environment" do
+          deployments = mock(:association)
+          deployments.should_receive(:active).and_return([])
+          @environment.should_receive(:deployments).and_return(deployments)
+          @environment.trigger_deployments(@instance)
+        end
+
       end
+
+      
     end
 
     describe 'trigger_undeployments' do
