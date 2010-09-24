@@ -75,11 +75,12 @@ describe AgentServices::DefaultService do
         @agent_service.deploy([@deployment])
       end
 
-      it "not should mark the deployment as failed " do
+      it "should not mark the deployment as failed " do
         @deployment.should_not_receive(:fail!)
         @agent_service.deploy([@deployment])
       end
     end
+    
     context "when deployment fails on one instance" do
       before(:each) do
         @instance_two = Factory.build(:instance)
@@ -91,7 +92,29 @@ describe AgentServices::DefaultService do
         @deployment.should_not_receive(:mark_as_deployed!)
         @agent_service.deploy([@deployment])
       end
+
+      it "should mark the deployment as failed " do
+        @deployment.should_receive(:fail!)
+        @agent_service.deploy([@deployment])
+      end
     end
+
+    context "when there are no instances to deploy to" do
+      before(:each) do
+        @agent_service.stub!(:instances_for_deploy).and_return([])
+      end
+
+      it "should not mark the deployment as deployed" do
+        @deployment.should_not_receive(:mark_as_deployed!)
+        @agent_service.deploy([@deployment])
+      end
+
+      it "should not mark the deployment as failed " do
+        @deployment.should_not_receive(:fail!)
+        @agent_service.deploy([@deployment])
+      end
+    end
+
   end
 
   describe 'deploy_to_instance' do

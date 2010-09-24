@@ -37,6 +37,9 @@ module AgentServices
 
     def deploy(deployments)
       instances = instances_for_deploy
+
+      return false if instances.empty?
+      
       deployments.each do |deployment|
         remote_artifact_id = nil
         success = instances.inject(true) do |accumulated_success, instance|
@@ -46,8 +49,9 @@ module AgentServices
         end
 
         deployment.agent_artifact_identifier = remote_artifact_id
-
+        
         success ? deployment.mark_as_deployed! : deployment.fail!
+        
         success
       end
     end
