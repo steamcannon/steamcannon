@@ -31,7 +31,13 @@ class UsersController < ResourceController::Base
   end
   
   update.before do
-    current_user.cloud_password_dirty = !params.blank? && !params[:user].blank? && !params[:user][:cloud_password].blank?
+    if params && params[:user]
+      if params[:user][:cloud_password].blank?
+        params[:user].delete(:cloud_password) 
+      else
+        current_user.cloud_password_dirty = true
+      end
+    end
   end
   
   create do 
