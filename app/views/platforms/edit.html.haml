@@ -1,0 +1,9 @@
+%h1 Edit Platform
+.platform_form
+  - form_for object, :url => platform_path(object), :method=>:put do |f|
+    = f.error_messages
+    = render :partial => "form", :object => f
+    = f.submit "Update Platform"
+
+%p
+  = link_to 'Back', :back

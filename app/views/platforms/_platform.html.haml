@@ -1,0 +1,23 @@
+.platform
+  .platform_name
+    %strong Name:
+    = platform.name
+  - platform.platform_versions.each do |pv|
+    .platform_version
+      %strong Version: 
+      = pv.version_number
+      - pv.images.each do |i|
+        .platform_image
+          %strong Image
+          %br
+          = i.name
+          %br
+          = i.cloud_id
+  .actions
+    = link_to 'Show', platform_path(platform)
+    \|
+    = link_to 'Edit', edit_platform_path(platform)
+    \|
+    = link_to 'Delete', platform_path(platform), :method=>:delete, :confirm=>"Are you sure? This can't be undone."
+      
+

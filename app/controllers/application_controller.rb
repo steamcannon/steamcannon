@@ -63,7 +63,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_superuser
-    if !current_user.superuser?
+    if !current_user || !current_user.superuser?
       store_location
       redirect_to new_user_session_url
       return false

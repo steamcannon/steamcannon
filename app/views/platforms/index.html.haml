@@ -1,0 +1,10 @@
+#platforms
+  %h2 Platforms
+
+  - collection.each_slice(3) do |slice|
+    .platform_row
+      - slice.each do |platform|
+        = render :partial=>"/platforms/platform", :object => platform
+
+%p{:style=>'clear:both'}
+  = link_to "New Platform", new_platform_path

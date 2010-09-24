@@ -1,0 +1,25 @@
+#platforms {
+  h2 {
+    font-size: larger;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  .platform_row {
+    display: block;
+    clear: both;
+  }
+  .platform {
+    @include column(7);
+    @include list_container;
+    padding: 10px;
+    margin-right: 10px;
+    .actions {
+      margin-top: 20px;
+      font-size: smaller;
+      text-align: right;
+    }
+    .platform_image {
+      margin: 6px;      
+    }
+  }
+}
