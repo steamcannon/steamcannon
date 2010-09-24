@@ -29,4 +29,18 @@ describe Service do
   
   it { should validate_presence_of :name }
   it { should validate_uniqueness_of :name }
+
+  describe "deploy" do
+    before(:each) do
+      @service = Factory.build(:service)
+      @environment = Factory.build(:environment)
+      @agent_service = AgentServices::DefaultService.new(@service, @environment)
+    end
+    
+    it "should delegate to the agent_service" do
+      @agent_service.should_receive(:deploy).with([])
+      AgentServices.should_receive(:instance_for_service).with(@service, @environment).and_return(@agent_service)
+      @service.deploy(@environment, [])
+    end
+  end
 end

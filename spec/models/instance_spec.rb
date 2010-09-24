@@ -142,7 +142,6 @@ describe Instance do
       end
 
       it "should be set if current_state changes on save" do
-
         @instance.should_receive(:state_change_timestamp=).with(@now)
         @instance.current_state = 'running'
         @instance.save
@@ -269,6 +268,7 @@ describe Instance do
         @instance.stub!(:environment).and_return(@environment)
         @instance.current_state = 'verifying'
         @environment.stub!(:run!)
+        @environment.stub!(:trigger_deployments)
       end
 
       %w{ verifying configuring }.each do |from_state|
@@ -281,6 +281,11 @@ describe Instance do
 
       it "should call run! event on environment" do
         @environment.should_receive(:run!)
+        @instance.run!
+      end
+
+      it "should trigger deployments on environment" do
+        @environment.should_receive(:trigger_deployments).with(@instance)
         @instance.run!
       end
     end

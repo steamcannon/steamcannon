@@ -21,7 +21,9 @@ require 'spec_helper'
 describe Deployment do
   before(:each) do
     @deployment = Factory(:deployment)
-
+    @deployment.current_state = 'deploying'
+    @environment = @deployment.environment
+    @environment.stub!(:trigger_deployments)
   end
 
   it "should belong to an artifact" do
@@ -31,6 +33,11 @@ describe Deployment do
     deployment = Deployment.new
     deployment.artifact_version = artifact_version
     deployment.artifact.should equal(artifact)
+  end
+
+  it "should tell the environment to trigger deployments after creation" do
+    @environment.should_receive(:trigger_deployments).with(@deployment)
+    @deployment.send(:notify_environment_of_deploy)
   end
 
   it "should be active after deploying" do
@@ -69,6 +76,8 @@ describe Deployment do
     @deployment.undeployed_by.should be(@current_user.id)
   end
 
+
+=begin
   describe "deploy" do
     before(:each) do
       @service = Factory.build(:service)
@@ -179,4 +188,6 @@ describe Deployment do
     end
 
   end
+=end
+
 end

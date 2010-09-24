@@ -76,6 +76,23 @@ class Environment < ActiveRecord::Base
     running? and running_all_instances?
   end
 
+  def trigger_deployments(deployment_or_instance)
+    if deployment_or_instance.respond_to?(:service)
+      services = [deployment_or_instance.service]
+      deployments = [deployment_or_instance]
+    else
+      services = deployment_or_instance.services
+      deployments = []
+    end
+    
+    services.each do |service|
+      service.deploy(self, deployments)
+    end
+  end
+
+  def trigger_undeployments(deployments)
+  end
+  
   protected
 
   def start_environment
@@ -99,7 +116,6 @@ class Environment < ActiveRecord::Base
     instances.active.count == 0
   end
 
-  protected
   def remove_images_from_prior_platform_version
     if platform_version_id_changed?
       # remove any images that aren't part of the new platform version

@@ -29,7 +29,8 @@ class Deployment < ActiveRecord::Base
   named_scope :inactive, :conditions => "current_state = 'undeployed' OR current_state = 'deploy_failed'"
 
   before_create :record_deploy
-
+  after_create :notify_environment_of_deploy
+  
   aasm_column :current_state
   aasm_initial_state :deploying
   aasm_state :deploying
@@ -57,6 +58,8 @@ class Deployment < ActiveRecord::Base
     artifact.service
   end
 
+
+=begin
   def deploy
     return unless environment.ready_for_deployments?
 
@@ -94,12 +97,18 @@ class Deployment < ActiveRecord::Base
     end
     mark_as_undeployed!
   end
+=end
+
 
   private
-
-  def instances_for_deploy
-    service.instances.running.in_environment(environment)
+  
+  def notify_environment_of_deploy
+    environment.trigger_deployments(self)
   end
+  
+#   def instances_for_deploy
+#     service.instances.running.in_environment(environment)
+#   end
 
   def record_deploy
     audit_action :deployed

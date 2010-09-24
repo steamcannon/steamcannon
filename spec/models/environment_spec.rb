@@ -117,8 +117,9 @@ describe Environment do
 
   describe "stop" do
     before(:each) do
-      @environment = Environment.new(@valid_attributes)
+      @environment = Factory(:environment)
       @environment.current_state = 'running'
+      @environment.stub!(:service).and_return(Factory.build(:service))
     end
 
     it "should be stopping" do
@@ -127,7 +128,8 @@ describe Environment do
     end
 
     it "should mark all deployments as undeployed" do
-      @environment.deployments << Deployment.new(:current_state => 'deployed')
+      @deployment = Factory(:deployment, :environment => @environment)
+      @deployment.current_state = 'deployed'
       @environment.save!
       @environment.stop!
       @environment.deployments.inactive.first.should be_undeployed
@@ -244,6 +246,39 @@ describe Environment do
       @environment.should_receive(:running?).and_return(true)
       @environment.should_receive(:running_all_instances?).and_return(true)
       @environment.should be_ready_for_deployments
+    end
+  end
+
+  describe 'deployment delegation' do
+    before(:each) do
+      @environment = Factory.build(:environment)
+      @service_one = Factory.build(:service)
+      @service_two = Factory.build(:service)
+      @deployment = Factory.build(:deployment)
+      @instance = Factory.build(:instance)
+      @deployment.stub!(:service).and_return(@service_one)
+      @instance.stub!(:services).and_return([@service_one, @service_two])
+    end
+    
+    describe 'trigger_deployments' do
+      context 'passed a deployment' do 
+        it "should delegate to the service's deploy method" do
+          @service_one.should_receive(:deploy).with(@environment, [@deployment])
+          @environment.trigger_deployments(@deployment)
+        end
+      end
+
+      context 'passed an instance' do 
+        it "should delegate to the services' deploy method" do
+          @service_one.should_receive(:deploy).with(@environment, [])
+          @service_two.should_receive(:deploy).with(@environment, [])
+          @environment.trigger_deployments(@instance)
+        end
+      end
+    end
+
+    describe 'trigger_undeployments' do
+      it "should delegate to the services' undeploy methods"
     end
   end
 end
