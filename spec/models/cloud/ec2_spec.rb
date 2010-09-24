@@ -16,20 +16,38 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module Cloud
-  class Virtualbox
+require 'spec_helper'
 
-    def initialize(instance)
-      @instance = instance
+describe Cloud::Ec2 do
+  before(:each) do
+    @instance = Factory.build(:instance)
+    @ec2 = Cloud::Ec2.new(@instance)
+  end
+
+  describe "multicast_config" do
+    before(:each) do
+      @ec2.stub!(:pre_signed_put_url).and_return('put_url')
+      @ec2.stub!(:pre_signed_delete_url).and_return('delete_url')
     end
 
-    def multicast_config
-      {}
+    it "should generate put_url" do
+      @ec2.should_receive(:pre_signed_put_url)
+      @ec2.multicast_config
     end
 
-    def launch_options
-      {}
+    it "should generate delete_url" do
+      @ec2.should_receive(:pre_signed_delete_url)
+      @ec2.multicast_config
     end
 
+    it "should return put and delete urls" do
+      expected = {
+        :s3_ping => {
+          :pre_signed_put_url => 'put_url',
+          :pre_signed_delete_url => 'delete_url'
+        }
+      }
+      @ec2.multicast_config.should == expected
+    end
   end
 end

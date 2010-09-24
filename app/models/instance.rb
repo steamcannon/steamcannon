@@ -158,6 +158,10 @@ class Instance < ActiveRecord::Base
     false
   end
 
+  def cloud_specific_hacks
+    @cloud_hacks ||= "Cloud::#{cloud.name.camelize}".constantize.new(self)
+  end
+
   protected
 
   def start_instance
@@ -174,7 +178,7 @@ class Instance < ActiveRecord::Base
       :hardware_profile => hardware_profile,
       :keyname => 'default', # TODO: this should come from the user
       :user_data => instance_user_data
-    }
+    }.merge(cloud_specific_hacks.launch_options)
   end
 
   def instance_user_data

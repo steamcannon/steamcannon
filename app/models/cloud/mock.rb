@@ -19,7 +19,15 @@
 module Cloud
   class Mock
 
-    def multicast_config(instance)
+    def initialize(instance)
+      @instance = instance
+    end
+
+    def multicast_config
+      {}
+    end
+
+    def launch_options
       {}
     end
 

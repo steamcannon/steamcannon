@@ -95,14 +95,19 @@ describe Instance do
 
 
   describe "instance_launch_options" do
-    it "should include the instance user data" do
+    before(:each) do
+      cloud_specific_hacks = mock(Object)
+      cloud_specific_hacks.stub!(:launch_options).and_return({})
       @instance = Instance.new
+      @instance.stub!(:cloud_specific_hacks).and_return(cloud_specific_hacks)
+    end
+
+    it "should include the instance user data" do
       @instance.should_receive(:instance_user_data).and_return('ud')
       @instance.send(:instance_launch_options)[:user_data].should == 'ud'
     end
 
     it "should include the instance hardware profile" do
-      @instance = Instance.new
       @instance.should_receive(:hardware_profile).and_return('m1.small')
       @instance.send(:instance_launch_options)[:hardware_profile].should == 'm1.small'
     end

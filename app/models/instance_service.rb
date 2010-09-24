@@ -40,12 +40,8 @@ class InstanceService < ActiveRecord::Base
 
   protected
 
-  def cloud_specific_hacks
-    "Cloud::#{instance.cloud.name.camelize}".constantize
-  end
-
   def configure_jboss_as
-    config = cloud_specific_hacks.multicast_config(instance)
+    config = instance.cloud_specific_hacks.multicast_config
     proxies = peers('mod_cluster')
     unless proxies.empty?
       proxy_list = proxies.inject({}) do |list, proxy_instance|
