@@ -18,30 +18,6 @@
 
 require 'spec_helper'
 
-# this should really be in a separate file
-describe AgentServices do
-
-  describe 'instance_for_service' do
-    class AgentServices::DummyService < AgentServices::DefaultService
-    end
-
-    before(:each) do
-      @service = mock(Service)
-      @environment = mock(Environment)
-    end
-
-    it 'should look up the service class based on the service name' do
-      @service.should_receive(:name).and_return('dummy')
-      AgentServices.instance_for_service(@service, @environment).is_a?(AgentServices::DummyService).should == true
-    end
-
-    it 'should return an instance of the default service if no service can be found' do
-      @service.should_receive(:name).and_return('blah')
-      AgentServices.instance_for_service(@service, @environment).is_a?(AgentServices::DefaultService).should == true
-
-    end
-  end
-end
 
 describe AgentServices::DefaultService do
   before(:each) do
@@ -53,9 +29,24 @@ describe AgentServices::DefaultService do
     @deployment.stub!(:mark_as_deployed!)
     @deployment.stub!(:fail!)
     @agent_service.stub!(:instances_for_deploy).and_return([@instance])
-
   end
 
+  describe 'instance_for_service' do
+    class AgentServices::DummyService < AgentServices::DefaultService
+    end
+
+    it 'should look up the service class based on the service name' do
+      @service.should_receive(:name).and_return('dummy')
+      AgentServices::DefaultService.instance_for_service(@service, @environment).is_a?(AgentServices::DummyService).should == true
+    end
+
+    it 'should return an instance of the default service if no service can be found' do
+      @service.should_receive(:name).and_return('blah')
+      AgentServices::DefaultService.instance_for_service(@service, @environment).is_a?(AgentServices::DefaultService).should == true
+
+    end
+  end
+  
   describe 'deploy' do
     before(:each) do
       @agent_service.stub!(:deploy_to_instance).and_return(77)

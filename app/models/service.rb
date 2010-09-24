@@ -25,7 +25,7 @@ class Service < ActiveRecord::Base
   validates_uniqueness_of :name
 
   def deploy(environment, deployments = [])
-    AgentServices.instance_for_service(self, environment).deploy(deployments)
+    AgentServices::DefaultService.instance_for_service(self, environment).deploy(deployments)
   end
 
   def undeploy(environment, deployments)

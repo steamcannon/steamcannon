@@ -77,6 +77,7 @@ class Environment < ActiveRecord::Base
   end
 
   def trigger_deployments(deployment_or_instance)
+    Rails.logger.info "Triggering deployments for #{deployment_or_instance}"
     if deployment_or_instance.respond_to?(:service)
       services = [deployment_or_instance.service]
       deployments = [deployment_or_instance]

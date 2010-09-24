@@ -17,17 +17,17 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module AgentServices
-
-  class << self
-    def instance_for_service(service, environment)
-      class_name = "#{service.name.camelize}Service"
-      klass = "AgentServices::#{class_name}".constantize if const_defined?(class_name)
-      klass ||= AgentServices::DefaultService
-      klass.new(service, environment)
-    end
-  end
-
   class DefaultService
+    
+    class << self
+      def instance_for_service(service, environment)
+        class_name = "#{service.name.camelize}Service"
+        klass = "AgentServices::#{class_name}".constantize if AgentServices.const_defined?(class_name)
+        klass ||= self
+        klass.new(service, environment)
+      end
+    end
+    
     attr_reader :service, :environment
 
     def initialize(service, environment)
@@ -44,9 +44,9 @@ module AgentServices
           remote_artifact_id ||= result
           accumulated_success && result
         end
-        
+
         deployment.agent_artifact_identifier = remote_artifact_id
-        
+
         success ? deployment.mark_as_deployed! : deployment.fail!
         success
       end
@@ -64,7 +64,7 @@ module AgentServices
         Rails.logger.info "deploying artifact failed: #{ex}"
         Rails.logger.info ex.backtrace.join("\n")
       end
-      
+
       response
     end
 

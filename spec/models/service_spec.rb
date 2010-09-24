@@ -39,7 +39,7 @@ describe Service do
     
     it "should delegate to the agent_service" do
       @agent_service.should_receive(:deploy).with([])
-      AgentServices.should_receive(:instance_for_service).with(@service, @environment).and_return(@agent_service)
+      AgentServices::DefaultService.should_receive(:instance_for_service).with(@service, @environment).and_return(@agent_service)
       @service.deploy(@environment, [])
     end
   end
