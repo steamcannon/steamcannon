@@ -39,6 +39,12 @@ class User < ActiveRecord::Base
     self.crypted_cloud_password.blank? ? @cloud_password : Certificate.decrypt(self.crypted_cloud_password)
   end
   
+  def obfuscated_cloud_password
+    obfuscated = cloud_password.dup
+    obfuscated[0..-5] = '*' * (cloud_password.length-4)
+    obfuscated.length < 6 ? '******' : obfuscated
+  end
+  
   def cloud_password=(pw)
     @cloud_password_dirty = true
     @cloud_password = pw

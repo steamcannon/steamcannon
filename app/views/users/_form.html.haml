@@ -27,6 +27,8 @@
       Your Amazon Secret Access Key is not shown, although it has already been set.  
       #cloud_password_prompt
         %br
+        = form.object.obfuscated_cloud_password        
+        %br
         = link_to 'Change Secret Access Key', '#', :class=>'js-cloud_password_toggle'
   = form.label :cloud_username, "Amazon Access Key"
   %br
@@ -36,7 +38,7 @@
     %br
     = form.label :cloud_password, "Amazon Secret Access Key"
     %br
-    = form.text_field :cloud_password
+    = form.text_field :cloud_password, :value=>""
     %br
     = link_to 'Hide', '#', :class=>'js-cloud_password_toggle' if form.object.profile_complete?
   %br

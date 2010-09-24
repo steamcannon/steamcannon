@@ -59,6 +59,23 @@ describe User do
     u.should_not_receive :crypted_cloud_password=
     u.save
   end
+  
+  it "should provide an obfuscated version of the cloud password" do
+    u = User.create!(@valid_attributes)
+    u.should respond_to :obfuscated_cloud_password
+  end
+  
+  it "should completely obfuscate any cloud password with fewer than 6 characters" do
+    u = User.create!(@valid_attributes)
+    u.cloud_password = "12345"
+    u.obfuscated_cloud_password.should == "******"
+  end
+
+  it "should obfuscate all but the last for characters of any cloud password with more than 6 characters" do
+    u = User.create!(@valid_attributes)
+    u.cloud_password = "1234567890"
+    u.obfuscated_cloud_password.should == "******7890"
+  end
 
   it "should have a cloud object" do
     User.new.should respond_to(:cloud)
