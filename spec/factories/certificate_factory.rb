@@ -32,3 +32,7 @@ end
 Factory.define :encryption_certificate, :parent => :certificate do |cert|
   cert.cert_type Certificate::ENCRYPTION_TYPE
 end
+
+Factory.define :server_certificate, :parent => :certificate do |cert|
+  cert.cert_type Certificate::SERVER_TYPE
+end

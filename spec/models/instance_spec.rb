@@ -481,6 +481,13 @@ describe Instance do
       Certificate.should_not_receive(:generate_server_certificate)
       @instance.send(:generate_server_cert)
     end
+
+    it "should populate server_certificate attribute" do
+      cert = Factory(:server_certificate)
+      Certificate.stub!(:generate_server_certificate).and_return(cert)
+      @instance.send(:generate_server_cert)
+      @instance.server_certificate.should == cert
+    end
   end
 
   describe "verify_agent" do

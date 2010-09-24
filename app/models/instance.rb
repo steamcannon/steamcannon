@@ -232,7 +232,9 @@ class Instance < ActiveRecord::Base
   end
 
   def generate_server_cert
-    Certificate.generate_server_certificate(self) if !public_dns.blank? and !server_certificate
+    unless public_dns.blank? or server_certificate
+      self.server_certificate = Certificate.generate_server_certificate(self)
+    end
   end
 
   def set_state_change_timestamp
