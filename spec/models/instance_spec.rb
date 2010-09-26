@@ -251,7 +251,7 @@ describe Instance do
         @instance.configure_failed!
       end
 
-      %w{ verifying configuring }.each do |from_state|
+      %w{ verifying configuring configuring_services verifying_services }.each do |from_state|
         it "should be able to transition to configure_failed from #{from_state}" do
           @instance.current_state = from_state
           @instance.configure_failed!
@@ -568,7 +568,7 @@ describe Instance do
     before(:each) do
       @instance = Factory(:instance)
       @instance.current_state = 'configuring_services'
-      @instance.stub!(:run!)
+      @instance.stub!(:verify_services!)
       @logger = mock(Object)
       @instance.stub!(:logger).and_return(@logger)
     end
@@ -580,8 +580,8 @@ describe Instance do
       @instance.configure_services
     end
 
-    it "should run! after configuring services" do
-      @instance.should_receive(:run!)
+    it "should verify_services! after configuring services" do
+      @instance.should_receive(:verify_services!)
       @instance.configure_services
     end
 
@@ -592,6 +592,55 @@ describe Instance do
       @instance.stub!(:instance_services).and_return([instance_service])
       @logger.should_receive(:error).at_least(:once)
       @instance.configure_services
+    end
+  end
+
+
+  describe "verify_services" do
+    before(:each) do
+      @instance = Factory(:instance)
+      @instance.current_state = 'verifying_services'
+      @instance.stub!(:run!)
+      @logger = mock(Object)
+      @instance.stub!(:logger).and_return(@logger)
+    end
+
+    it "should verify each instance_service" do
+      instance_service = Factory.build(:instance_service)
+      instance_service.should_receive(:verify)
+      @instance.stub!(:instance_services).and_return([instance_service])
+      @instance.verify_services
+    end
+
+    it "should run! after verifying services" do
+      @instance.should_receive(:run!)
+      @instance.verify_services
+    end
+
+    it "should not run if verify returns false" do
+      instance_service = Factory.build(:instance_service)
+      instance_service.should_receive(:verify).and_return(false)
+      @instance.stub!(:instance_services).and_return([instance_service])
+      @instance.should_not_receive(:run!)
+      @instance.verify_services
+    end
+
+    it "should configure_failed! if it has been stuck too long even when no verify raises" do
+      instance_service = Factory.build(:instance_service)
+      instance_service.should_receive(:verify).and_return(false)
+      @instance.stub!(:instance_services).and_return([instance_service])
+      @instance.should_receive(:stuck_in_state_for_too_long?).and_return(true)
+      @instance.should_receive(:configure_failed!)
+      @instance.verify_services
+    end
+    
+    it "should log any agent client errors" do
+      error = AgentClient::RequestFailedError.new("test error")
+      instance_service = Factory(:instance_service)
+      instance_service.should_receive(:verify).and_raise(error)
+      @instance.stub!(:instance_services).and_return([instance_service])
+      @logger.should_receive(:error).at_least(:once)
+      @instance.verify_services
     end
   end
 

@@ -34,10 +34,17 @@ class InstanceService < ActiveRecord::Base
     service.name
   end
 
+  #TODO: move this stuff to agent_services, and write tests for it
   def configure
     send("configure_#{name}") if respond_to?("configure_#{name}")
   end
 
+  def verify
+    result = instance.agent_client(service).status
+    logger.info "################# #{result.inspect}"
+    result['state'] and result['state'] == 'started'
+  end
+  
   protected
 
   def configure_jboss_as
@@ -57,4 +64,5 @@ class InstanceService < ActiveRecord::Base
   def configure_mod_cluster
     peers('jboss_as').each(&:configure)
   end
+
 end

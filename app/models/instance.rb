@@ -41,6 +41,7 @@ class Instance < ActiveRecord::Base
   aasm_state :configuring, :enter => :configure_instance
   aasm_state :verifying
   aasm_state :configuring_services
+  aasm_state :verifying_services
   aasm_state :configure_failed, :enter => :state_failed
   aasm_state :running, :after_enter => :after_run_instance
   aasm_state :stopping, :enter => :stop_instance, :after_enter => :after_stop_instance
@@ -65,12 +66,21 @@ class Instance < ActiveRecord::Base
     transitions :to => :configuring_services, :from => :verifying
   end
 
+  aasm_event :verify_services do
+    transitions :to => :verifying_services, :from => :configuring_services
+  end
+
   aasm_event :configure_failed do
-    transitions :to => :configure_failed, :from => [:configuring, :verifying, :configuring_services]
+    transitions :to => :configure_failed, :from => [
+                                                    :configuring,
+                                                    :verifying,
+                                                    :configuring_services,
+                                                    :verifying_services
+                                                   ]
   end
 
   aasm_event :run do
-    transitions :to => :running, :from => [:configuring, :verifying, :configuring_services]
+    transitions :to => :running, :from => [:configuring, :verifying, :verifying_services]
   end
 
   aasm_event :stop do
@@ -121,7 +131,7 @@ class Instance < ActiveRecord::Base
     generate_server_cert
     if agent_running?
       verify!
-    elsif state_change_timestamp <= Time.now - 120.seconds
+    elsif stuck_in_state_for_too_long?
       configure_failed!
     end
   end
@@ -130,7 +140,7 @@ class Instance < ActiveRecord::Base
     if agent_running?
       discover_services
       configure_services!
-    elsif state_change_timestamp <= Time.now - 120.seconds
+    elsif stuck_in_state_for_too_long?
       configure_failed!
     end
   end
@@ -145,11 +155,21 @@ class Instance < ActiveRecord::Base
 
   def configure_services
     instance_services.each(&:configure)
-    run!
+    verify_services!
   rescue AgentClient::RequestFailedError => ex
     logger.error ex.inspect
     logger.error ex.backtrace
-    configure_failed! if state_change_timestamp <= Time.now - 120.seconds
+    configure_failed! if stuck_in_state_for_too_long?
+  end
+
+  def verify_services
+    begin
+      run! if instance_services.all?(&:verify)
+    rescue AgentClient::RequestFailedError => ex
+      logger.error ex.inspect
+      logger.error ex.backtrace
+    end
+    configure_failed! if stuck_in_state_for_too_long?
   end
 
   def agent_running?
@@ -163,7 +183,10 @@ class Instance < ActiveRecord::Base
   end
 
   protected
-
+  def stuck_in_state_for_too_long?
+    state_change_timestamp <= Time.now - 120.seconds
+  end
+  
   def start_instance
     cloud_instance = cloud.launch(image.cloud_id,
                                   instance_launch_options)
