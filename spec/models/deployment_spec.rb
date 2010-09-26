@@ -19,6 +19,9 @@
 require 'spec_helper'
 
 describe Deployment do
+  it { should have_many :instance_deployments }
+  it { should have_many :instances }
+
   before(:each) do
     @deployment = Factory(:deployment)
     @deployment.current_state = 'deploying'

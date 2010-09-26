@@ -27,6 +27,8 @@ class Instance < ActiveRecord::Base
   has_one :server_certificate, :as => :certifiable, :class_name => 'Certificate'
   has_many :instance_services, :dependent => :destroy
   has_many :services, :through => :instance_services
+  has_many :instance_deployments
+  has_many :deployments, :through => :instance_deployments
 
   before_save :set_state_change_timestamp
 

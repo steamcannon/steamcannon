@@ -22,10 +22,11 @@ require 'spec_helper'
 describe AgentServices::DefaultService do
   before(:each) do
     @service = Factory.build(:service)
-    @environment = Factory.build(:environment)
+    @environment = Factory(:environment)
+    @environment.stub!(:trigger_deployments)
     @agent_service = AgentServices::DefaultService.new(@service, @environment)
     @instance = Factory.build(:instance)
-    @deployment = Factory.build(:deployment)
+    @deployment = Factory.build(:deployment, :environment => @environment)
     @deployment.stub!(:mark_as_deployed!)
     @deployment.stub!(:fail!)
     @agent_service.stub!(:instances_for_deploy).and_return([@instance])
@@ -119,6 +120,7 @@ describe AgentServices::DefaultService do
 
   describe 'deploy_to_instance' do
     before(:each) do
+      @instance.save
       @agent_client = mock(AgentClient)
       @instance.stub!(:agent_client).and_return(@agent_client)
       @artifact_version = mock(ArtifactVersion)
@@ -126,14 +128,23 @@ describe AgentServices::DefaultService do
     end
 
     it "should undeploy if another version of the artifact is already deployed to the instance"
-    it "should skip the deployment if the deployment is already deployed to instance"
-
 
     it "should deploy" do
       @agent_client.should_receive(:deploy_artifact).with(@artifact_version)
       @agent_service.deploy_to_instance(@instance, @deployment)
     end
 
+    context "when the deployment has already been deployed to the instance" do
+      before(:each) do
+        @instance.deployments << @deployment
+      end
+      
+      it "should not deploy again" do
+        @agent_client.should_not_receive(:deploy_artifact)
+        @agent_service.deploy_to_instance(@instance, @deployment)
+      end
+    end
+    
     context "on a successful deploy" do
       before(:each) do
         @agent_client.stub!(:deploy_artifact).and_return({ 'artifact_id' => 77 })
@@ -143,7 +154,10 @@ describe AgentServices::DefaultService do
         @agent_service.deploy_to_instance(@instance, @deployment).should == 77
       end
 
-      it "should create an instance_deployment record"
+      it "should create an instance_deployment record" do
+        @agent_service.deploy_to_instance(@instance, @deployment)
+        @instance.deployments.first.should == @deployment
+      end
     end
 
     context "on a failed deploy" do
@@ -151,7 +165,10 @@ describe AgentServices::DefaultService do
         @agent_client.stub!(:deploy_artifact).and_raise(AgentClient::RequestFailedError.new('msg'))
       end
 
-      it "should not create an instance_deployment record"
+      it "should not create an instance_deployment record" do
+        @agent_service.deploy_to_instance(@instance, @deployment)
+        @instance.deployments.should be_empty
+      end
 
       it "should not raise"  do
         lambda{

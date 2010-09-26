@@ -58,10 +58,13 @@ module AgentServices
 
     def deploy_to_instance(instance, deployment)
       response = false
+      return response if instance.deployments.exists?(deployment)
+      
       begin
         result_hash = instance.agent_client(service).deploy_artifact(deployment.artifact_version)
         if result_hash.respond_to?(:[]) and result_hash['artifact_id']
-          response =  result_hash['artifact_id']
+          response = result_hash['artifact_id']
+          instance.deployments << deployment
         end
       rescue AgentClient::RequestFailedError => ex
         #TODO: store the failure reason?

@@ -25,6 +25,9 @@ class Deployment < ActiveRecord::Base
   belongs_to :environment
   belongs_to :user
 
+  has_many :instance_deployments
+  has_many :instances, :through => :instance_deployments
+  
   named_scope :active, :conditions => "current_state = 'deploying' OR current_state = 'deployed'"
   named_scope :inactive, :conditions => "current_state = 'undeployed' OR current_state = 'deploy_failed'"
 
