@@ -62,9 +62,7 @@ class DeploymentsController < ApplicationController
 
     respond_to do |format|
       if @deployment.save
-        unless @deployment.environment.running?
-          @deployment.environment.start!
-        end
+        @deployment.environment.start! if @deployment.environment.stopped?
         format.html { redirect_to(@deployment.artifact, :notice => 'Artifact was successfully deployed.') }
         format.xml  { render :xml => @deployment, :status => :created, :location => @deployment }
       else
