@@ -1,5 +1,7 @@
 .platform_version
   =f.label :version_number
+  \|
+  = remove_link_unless_new_record(f, "Delete this version")
   =f.text_field :version_number
 
   - field_set_tag "Images", :id => "images_#{f.object.id}", :style=>'margin-top:10px;padding-top:10px' do
@@ -8,3 +10,4 @@
     - f.fields_for :images do |image|
       =javascript_tag "var image='#{generate_template(f, :images)}'"
       =render :partial => 'image', :locals=>{:f=>image}
+    

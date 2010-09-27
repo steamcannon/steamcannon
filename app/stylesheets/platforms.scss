@@ -24,6 +24,7 @@
       border-left: 1px solid #ccc;
     }
     #platform_form {
+      input[type=text] { width: 220px; }
       margin: 10px;
       fieldset {
         margin-bottom: 10px;
@@ -31,7 +32,10 @@
       .platform_version, .image {
         margin: 10px 0 10px;
         padding-bottom: 10px;
-        border-bottom: 1px solid #ccc;
+      }
+      #versions {
+        margin-top: 30px;
+        padding-top: 10px;
       }
     }
   }

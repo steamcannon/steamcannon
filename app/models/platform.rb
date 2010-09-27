@@ -20,7 +20,7 @@
 class Platform < ActiveRecord::Base
   has_many :platform_versions
 
-  accepts_nested_attributes_for :platform_versions
+  accepts_nested_attributes_for :platform_versions, :allow_destroy => true
 
   def to_s
     name
