@@ -1,9 +1,12 @@
 .image
   =f.label :name
-  \|
-  = remove_link_unless_new_record(f, "Delete this image")
+  - unless f.object.new_record?
+    \|
+    = remove_link_unless_new_record(f, "Delete this image")
+  %br
   =f.text_field :name
-
+  %br
   =f.label :cloud_id
+  %br
   =f.text_field :cloud_id
   
