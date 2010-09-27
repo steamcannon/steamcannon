@@ -2,8 +2,6 @@
   .box_header
     %h2
       = header_text
-    #start_another
-      = link_to 'Add', '#'
   #environment_images_header
     .name
       Name
@@ -45,6 +43,9 @@
         = link_to "View Logs"
       .image_actions
         = link_to "Stop"
+      .start_another
+        = link_to 'Add', '#'
+        
     - if instances.empty?
       .image_row
         .name

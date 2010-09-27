@@ -87,6 +87,7 @@ describe User do
   
   it "should have an SSH key name attribute" do
     User.new.should respond_to(:ssh_key_name)
+    User.new.should respond_to(:ssh_key_name=)
   end
 
   it "should have 'default' as the default SSH key name attribute" do
