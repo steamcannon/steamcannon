@@ -100,6 +100,7 @@ describe Instance do
       cloud_specific_hacks.stub!(:launch_options).and_return({})
       @instance = Instance.new
       @instance.stub!(:cloud_specific_hacks).and_return(cloud_specific_hacks)
+      @instance.stub_chain(:environment, :user, :ssh_key_name).and_return('something_not_default')
     end
 
     it "should include the instance user data" do
@@ -110,6 +111,10 @@ describe Instance do
     it "should include the instance hardware profile" do
       @instance.should_receive(:hardware_profile).and_return('m1.small')
       @instance.send(:instance_launch_options)[:hardware_profile].should == 'm1.small'
+    end
+    
+    it "should include the instance user keyname" do
+      @instance.send(:instance_launch_options)[:keyname].should == 'something_not_default'
     end
   end
 

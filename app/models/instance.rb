@@ -176,9 +176,13 @@ class Instance < ActiveRecord::Base
       # FIXME: check this, according to docs it should be hwp_id
       # (http://localhost:8080/deltacloud/api/docs/instances/create)
       :hardware_profile => hardware_profile,
-      :keyname => 'default', # TODO: this should come from the user
+      :keyname => cloud_keyname,
       :user_data => instance_user_data
     }.merge(cloud_specific_hacks.launch_options)
+  end
+  
+  def cloud_keyname
+    environment.user.ssh_key_name
   end
 
   def instance_user_data
