@@ -1,11 +1,10 @@
 #platforms
   %h2 Edit Platform
   .platform
-    .platform_form
-      - form_for object, :url => platform_path(object), :method=>:put do |f|
-        = f.error_messages
-        = render :partial => "form", :locals => { :f => f }
-        = f.submit "Update Platform"
+    - form_for object, :url => platform_path(object), :method=>:put do |f|
+      = f.error_messages
+      = render :partial => "form", :locals => { :f => f }
+      = f.submit "Update Platform"
 
 %p{:style=>'clear:both'}
   = link_to 'Back', :back

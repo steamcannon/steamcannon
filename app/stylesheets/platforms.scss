@@ -9,7 +9,7 @@
     clear: both;
   }
   .platform {
-    @include column(7);
+    @include column(7.3);
     @include list_container;
     padding: 10px;
     margin-right: 10px;
@@ -23,10 +23,15 @@
       padding-left: 4px;
       border-left: 1px solid #ccc;
     }
-    .platform_form {
+    #platform_form {
       margin: 10px;
       fieldset {
         margin-bottom: 10px;
+      }
+      .platform_version, .image {
+        margin: 10px 0 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #ccc;
       }
     }
   }

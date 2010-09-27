@@ -1,16 +1,13 @@
-- field_set_tag "Platform Info" do 
-  =f.label :name
-  =f.text_field :name
+#platform_form
+  - field_set_tag "Platform Info" do 
+    =f.label :name
+    =f.text_field :name
   
-- field_set_tag "Versions" do
-  - f.fields_for :platform_versions do |version|
-    =version.label :version_number
-    =version.text_field :version_number
-    
-    - version.fields_for :images do |image|
-      =image.label :name
-      =image.text_field :name
+  - field_set_tag "Versions", :id=>'versions' do
+    = link_to 'Add Another Version', '#platform_version', :class=>'add_nested_item', :rel=>"#versions"
+    - f.object.platform_versions.build if f.object.platform_versions.blank?
+    - f.fields_for :platform_versions do |version|
+      =javascript_tag "var platform_version='#{generate_template(f, :platform_versions)}'"
+      =render :partial => 'platform_version', :locals=>{:f=>version}
       
-      =image.label :cloud_id
-      =image.text_field :cloud_id
-      
+= javascript_include_tag 'platform_form'

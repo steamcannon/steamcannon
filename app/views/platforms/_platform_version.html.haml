@@ -1,0 +1,10 @@
+.platform_version
+  =f.label :version_number
+  =f.text_field :version_number
+
+  - field_set_tag "Images", :id => "images_#{f.object.id}", :style=>'margin-top:10px;padding-top:10px' do
+    = link_to 'Add Another Image', "#image", :class=>'add_nested_item', :rel=>"#images_#{f.object.id}"
+    - f.object.images.build if f.object.images.blank?
+    - f.fields_for :images do |image|
+      =javascript_tag "var image='#{generate_template(f, :images)}'"
+      =render :partial => 'image', :locals=>{:f=>image}

@@ -1,12 +1,7 @@
 #platforms
   %h2 New Platform
   .platform
-    .platform_form
-      - if object.new_record?
-        - object.platform_versions.build 
-        - object.platform_versions.first.images.build
-      
-      - form_for object, :url => platforms_path do |f|
-        = f.error_messages
-        = render :partial => "form", :locals => { :f => f }
-        = f.submit "Create"
+    - form_for object, :url => platforms_path do |f|
+      = f.error_messages
+      = render :partial => "form", :locals => { :f => f }
+      = f.submit "Create"
