@@ -41,7 +41,6 @@ class InstanceService < ActiveRecord::Base
 
   def verify
     result = instance.agent_client(service).status
-    logger.info "################# #{result.inspect}"
     result['state'] and result['state'] == 'started'
   end
   

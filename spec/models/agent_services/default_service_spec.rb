@@ -133,7 +133,7 @@ describe AgentServices::DefaultService do
     it "should undeploy if another version of the artifact is already deployed to the instance" do
       other_deployment = mock(Deployment)
       @artifact.should_receive(:deployment_for_instance).with(@instance).and_return(other_deployment)
-      @agent_service.should_receive(:undeploy_from_instance).with(@instance, other_deployment)
+      @agent_service.should_receive(:undeploy).with(other_deployment)
       @agent_client.stub!(:deploy_artifact)
       @agent_service.deploy_to_instance(@instance, @deployment)
     end
@@ -254,7 +254,8 @@ describe AgentServices::DefaultService do
     end
 
     it "should undeploy" do
-      @agent_client.should_receive(:undeploy_artifact).with(@artifact_version)
+      @deployment.stub!(:agent_artifact_identifier).and_return(77)
+      @agent_client.should_receive(:undeploy_artifact).with(77)
       @agent_service.undeploy_from_instance(@instance, @deployment)
     end
 

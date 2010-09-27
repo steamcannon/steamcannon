@@ -66,7 +66,7 @@ module AgentServices
       #udeploy that first if so
       #FIXME: this currently ignores the result of the undeploy operation
       other_deployment = deployment.artifact.deployment_for_instance(instance)
-      undeploy_from_instance(instance, other_deployment) if other_deployment
+      undeploy(other_deployment) if other_deployment
       
       begin
         result_hash = instance.agent_client(service).deploy_artifact(deployment.artifact_version)
@@ -94,7 +94,7 @@ module AgentServices
     end
 
     def undeploy_from_instance(instance, deployment)
-      instance.agent_client(service).undeploy_artifact(deployment.artifact_version)
+      instance.agent_client(service).undeploy_artifact(deployment.agent_artifact_identifier)
       instance.instance_deployments.find_by_deployment_id(deployment.id).destroy
       true
     rescue AgentClient::RequestFailedError => ex
