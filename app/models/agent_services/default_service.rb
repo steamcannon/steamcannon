@@ -58,7 +58,15 @@ module AgentServices
 
     def deploy_to_instance(instance, deployment)
       response = false
+
+      #see if the deployment has already been deployed, and bail if so
       return response if instance.deployments.exists?(deployment)
+
+      #see if another version of this artifact has been deployed, and
+      #udeploy that first if so
+      #FIXME: this currently ignores the result of the undeploy operation
+      other_deployment = deployment.artifact.deployment_for_instance(instance)
+      undeploy_from_instance(instance, other_deployment) if other_deployment
       
       begin
         result_hash = instance.agent_client(service).deploy_artifact(deployment.artifact_version)

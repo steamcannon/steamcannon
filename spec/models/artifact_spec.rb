@@ -44,4 +44,24 @@ describe Artifact do
   it "should have many deployments" do
     Artifact.new.should respond_to(:deployments)
   end
+
+  describe 'deployment_for_instance' do
+    before(:each) do
+      @instance = Factory(:instance)
+      @deployment = Factory(:deployment)
+      @deployment.current_state = 'deployed'
+      @instance.deployments << @deployment
+      @artifact = @deployment.artifact
+      @deployment.save
+    end
+    
+    it "should return a deployment if the artifact is deployed there" do
+      @artifact.deployment_for_instance(@instance).should == @deployment
+    end
+    
+    it "should not return the deployment unless it is :deployed" do
+      @deployment.update_attribute(:current_state, 'undeployed')
+      @artifact.deployment_for_instance(@instance).should == nil
+    end
+  end
 end

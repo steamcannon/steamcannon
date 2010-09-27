@@ -23,7 +23,7 @@ class Artifact < ActiveRecord::Base
   
   has_many :artifact_versions
   has_many :deployments, :through => :artifact_versions
-
+  
   attr_protected :user
   validates_presence_of :name
   accepts_nested_attributes_for :artifact_versions
@@ -38,6 +38,10 @@ class Artifact < ActiveRecord::Base
 
   def service_name
     service.try(:full_name) || 'None'
+  end
+
+  def deployment_for_instance(instance)
+    deployments.deployed.detect { |d| d.instances.include?(instance) }
   end
 end
 
