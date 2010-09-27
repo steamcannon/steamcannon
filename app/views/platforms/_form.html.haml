@@ -1,1 +1,16 @@
-FORM GOES HERE
+- field_set_tag "Platform Info" do 
+  =f.label :name
+  =f.text_field :name
+  
+- field_set_tag "Versions" do
+  - f.fields_for :platform_versions do |version|
+    =version.label :version_number
+    =version.text_field :version_number
+    
+    - version.fields_for :images do |image|
+      =image.label :name
+      =image.text_field :name
+      
+      =image.label :cloud_id
+      =image.text_field :cloud_id
+      

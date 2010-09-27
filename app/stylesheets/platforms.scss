@@ -19,7 +19,15 @@
       text-align: right;
     }
     .platform_image {
-      margin: 6px;      
+      margin: 10px 6px;      
+      padding-left: 4px;
+      border-left: 1px solid #ccc;
+    }
+    .platform_form {
+      margin: 10px;
+      fieldset {
+        margin-bottom: 10px;
+      }
     }
   }
 }
