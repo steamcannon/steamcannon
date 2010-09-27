@@ -83,6 +83,13 @@ ActiveRecord::Schema.define(:version => 20100927192533) do
     t.datetime "updated_at"
   end
 
+  create_table "instance_deployments", :force => true do |t|
+    t.integer  "instance_id"
+    t.integer  "deployment_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "instance_services", :force => true do |t|
     t.integer  "instance_id"
     t.integer  "service_id"
