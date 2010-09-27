@@ -60,48 +60,10 @@ class Deployment < ActiveRecord::Base
   def service
     artifact.service
   end
-
-
-=begin
-  def deploy
-    return unless environment.ready_for_deployments?
-
-    instances_for_deploy.each do |instance|
-      begin
-        response = instance.agent_client(service).deploy_artifact(artifact_version)
-        if response.respond_to?(:[]) and response['artifact_id']
-          self.agent_artifact_identifier = response['artifact_id']
-        else
-          logger.info "deploying artifact failed. response from agent: #{response}"
-          fail!
-        end
-
-      rescue AgentClient::RequestFailedError => ex
-        #TODO: store the failure reason?
-        logger.info "deploying artifact failed: #{ex}"
-        logger.info ex.backtrace.join("\n")
-        fail!
-      end
-    end
-    mark_as_deployed!
-  end
-
+  
   def undeploy
-    return unless deployed?
-
-    instances_for_deploy.each do |instance|
-      begin
-        instance.agent_client(service).undeploy_artifact(agent_artifact_identifier)
-      rescue AgentClient::RequestFailedError => ex
-        #TODO: store the failure reason?
-        logger.info "undeploying artifact failed: #{ex}"
-        logger.info ex.backtrace.join("\n")
-      end
-    end
-    mark_as_undeployed!
+    service.undeploy(self)
   end
-=end
-
 
   private
   
@@ -109,10 +71,6 @@ class Deployment < ActiveRecord::Base
     environment.trigger_deployments(self)
   end
   
-#   def instances_for_deploy
-#     service.instances.running.in_environment(environment)
-#   end
-
   def record_deploy
     audit_action :deployed
   end

@@ -29,7 +29,9 @@ class Service < ActiveRecord::Base
       deploy(filter_deployments(deployments))
   end
 
-  def undeploy(environment, deployments)
+  def undeploy(deployment)
+    AgentServices::DefaultService.instance_for_service(self, deployment.environment).
+      undeploy(deployment)
   end
 
   protected

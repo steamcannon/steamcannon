@@ -75,6 +75,27 @@ module AgentServices
       response
     end
 
+    def undeploy(deployment)
+      success = deployment.instances.inject(true) do |accumulated_success, instance|
+        accumulated_success && undeploy_from_instance(instance, deployment)
+      end
+
+      deployment.mark_as_undeployed! if success
+      
+      success
+    end
+
+    def undeploy_from_instance(instance, deployment)
+      instance.agent_client(service).undeploy_artifact(deployment.artifact_version)
+      instance.instance_deployments.find_by_deployment_id(deployment.id).destroy
+      true
+    rescue AgentClient::RequestFailedError => ex
+      #TODO: store the failure reason?
+      Rails.logger.info "undeploying artifact failed: #{ex}"
+      Rails.logger.info ex.backtrace.join("\n")
+      false
+    end
+
     def instances_for_deploy
       service.instances.running.in_environment(environment)
     end

@@ -72,10 +72,6 @@ class Environment < ActiveRecord::Base
     aasm_events_for_current_state.include?(:stop)
   end
 
-  def ready_for_deployments?
-    running? and running_all_instances?
-  end
-
   def trigger_deployments(deployment_or_instance)
     Rails.logger.info "Triggering deployments for #{deployment_or_instance}"
     if deployment_or_instance.respond_to?(:service)
@@ -89,9 +85,6 @@ class Environment < ActiveRecord::Base
     services.each do |service|
       service.deploy(self, deployments)
     end
-  end
-
-  def trigger_undeployments(deployments)
   end
   
   protected

@@ -182,6 +182,110 @@ describe AgentServices::DefaultService do
     end
 
   end
+  
   describe 'undeploy' do
+    before(:each) do
+      @agent_service.stub!(:undeploy_from_instance).and_return(true)
+      @deployment.stub!(:instances).and_return([@instance])
+    end
+
+    it "should delegate to undeploy_from_instance for each instance" do
+      @agent_service.should_receive(:undeploy_from_instance).with(@instance, @deployment)
+      @agent_service.undeploy(@deployment)
+    end
+
+    context "when undeployment succeeds to all instances" do
+      before(:each) do
+        @instance_two = Factory.build(:instance)
+        @deployment.stub!(:instances).and_return([@instance, @instance_two])
+        @agent_service.should_receive(:undeploy_from_instance).twice.and_return(true)
+      end
+
+      it "should mark the deployment as undeployed" do
+        @deployment.should_receive(:mark_as_undeployed!)
+        @agent_service.undeploy(@deployment)
+      end
+    end
+    
+    context "when undeployment fails on one instance" do
+      before(:each) do
+        @instance_two = Factory.build(:instance)
+        @deployment.stub!(:instances).and_return([@instance, @instance_two])
+        @agent_service.should_receive(:undeploy_from_instance).twice.and_return(true, false)
+      end
+
+      it "should not mark the deployment as undeployed" do
+        @deployment.should_not_receive(:mark_as_undeployed!)
+        @agent_service.undeploy(@deployment)
+      end
+    end
+
+    context "when there are no instances to undeploy from" do
+      before(:each) do
+        @deployment.stub!(:instances_for_deploy).and_return([])
+      end
+
+      it "should mark the deployment as undeployed" do
+        @deployment.should_receive(:mark_as_undeployed!)
+        @agent_service.undeploy(@deployment)
+      end
+
+    end
+
   end
+
+  describe 'undeploy_from_instance' do
+    before(:each) do
+      @instance.save
+      @agent_client = mock(AgentClient)
+      @instance.stub!(:agent_client).and_return(@agent_client)
+      @artifact_version = mock(ArtifactVersion)
+      @deployment.stub!(:artifact_version).and_return(@artifact_version)
+      @instance.deployments << @deployment
+    end
+
+    it "should undeploy" do
+      @agent_client.should_receive(:undeploy_artifact).with(@artifact_version)
+      @agent_service.undeploy_from_instance(@instance, @deployment)
+    end
+
+    context "on a successful undeploy" do
+      before(:each) do
+        @agent_client.stub!(:undeploy_artifact)
+      end
+
+      it "should return true" do
+        @agent_service.undeploy_from_instance(@instance, @deployment).should == true
+      end
+
+      it "should delete the instance_deployment record" do
+        @agent_service.undeploy_from_instance(@instance, @deployment)
+        @instance.deployments.should be_empty
+      end
+    end
+
+    context "on a failed undeploy" do
+      before(:each) do
+        @agent_client.stub!(:undeploy_artifact).and_raise(AgentClient::RequestFailedError.new('msg'))
+      end
+
+      it "should not delete the instance_deployment record" do
+        @agent_service.undeploy_from_instance(@instance, @deployment)
+        @instance.deployments.first.should == @deployment
+      end
+
+      it "should not raise"  do
+        lambda{
+          @agent_service.undeploy_from_instance(@instance, @deployment)
+        }.should_not raise_error(AgentClient::RequestFailedError)
+      end
+
+      it "should return !true" do
+        @agent_service.undeploy_from_instance(@instance, @deployment).should_not == true
+      end
+    end
+
+  end
+
+  
 end

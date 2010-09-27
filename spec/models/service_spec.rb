@@ -49,6 +49,21 @@ describe Service do
     end
   end
 
+  describe "undeploy" do
+    before(:each) do
+      @service = Factory.build(:service)
+      @deployment = Factory(:deployment)
+      @agent_service = AgentServices::DefaultService.new(@service, @environment)
+    end
+
+    it "should delegate to the agent_service" do
+      @agent_service.should_receive(:undeploy).with(@deployment)
+      AgentServices::DefaultService.should_receive(:instance_for_service).with(@service, @deployment.environment).and_return(@agent_service)
+      @service.undeploy(@deployment)
+    end
+     
+  end
+  
   describe 'filter_deployments' do
     before(:each) do
       @service = Factory.build(:service)
