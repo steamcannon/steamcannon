@@ -21,4 +21,28 @@ require 'spec_helper'
 describe InstanceService do
   it { should belong_to :instance }
   it { should belong_to :service }
+
+
+  before(:each) do
+    @instance_service = Factory(:instance_service)
+    @mock_agent_service = mock('agent_service')
+  end
+
+  it "agent_service should lookup the agent service" do
+    AgentServices::Base.should_receive(:instance_for_service).with(@instance_service.service,
+                                                                             @instance_service.instance.environment)
+    @instance_service.agent_service
+  end
+
+  it 'should delegate configure to the agent service' do
+    @mock_agent_service.should_receive(:configure_instance).with(@instance_service.instance)
+    @instance_service.should_receive(:agent_service).and_return(@mock_agent_service)
+    @instance_service.configure
+  end
+  
+  it 'should delegate verify to the agent service' do
+    @mock_agent_service.should_receive(:verify_instance).with(@instance_service.instance)
+    @instance_service.should_receive(:agent_service).and_return(@mock_agent_service)
+    @instance_service.verify
+  end
 end

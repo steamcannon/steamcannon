@@ -37,7 +37,8 @@ describe AgentServices::Base do
     end
 
     it 'should look up the service class based on the service name' do
-      @service.should_receive(:name).and_return('dummy')
+      @service.should_receive(:name).twice.and_return('dummy')
+      AgentServices::Base.should_receive(:require).with('agent_services/dummy')
       AgentServices::Base.instance_for_service(@service, @environment).is_a?(AgentServices::Dummy).should == true
     end
 

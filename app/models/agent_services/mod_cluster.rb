@@ -16,24 +16,12 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-class InstanceService < ActiveRecord::Base
-  belongs_to :instance
-  belongs_to :service
-
-  def name
-    service.name
+module AgentServices
+  class ModCluster < Base
+    
+    def configure_instance(instance)
+      environment.active_instances_for_service('jboss_as').each(&:configure)
+    end
+    
   end
-
-  def agent_service
-    @agent_service ||= AgentServices::Base.instance_for_service(service, instance.environment)
-  end
-  
-  def configure
-    agent_service.configure_instance(instance)
-  end
-
-  def verify
-    agent_service.verify_instance(instance)
-  end
-
 end

@@ -16,24 +16,22 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-class InstanceService < ActiveRecord::Base
-  belongs_to :instance
-  belongs_to :service
-
-  def name
-    service.name
+module AgentServices
+  class JbossAs < Base
+    
+    def configure_instance(instance)
+      config = instance.cloud_specific_hacks.multicast_config
+      proxies = environment.active_instances_for_service('mod_cluster')
+      unless proxies.empty?
+        proxy_list = proxies.inject({}) do |list, proxy_instance|
+          dns = proxy_instance.public_dns
+          list[dns] = {:host => dns, :port => 80} unless dns.blank?
+          list
+        end
+        config.merge!({:proxy_list => proxy_list})
+      end
+      instance.agent_client(service).configure(config.to_json)
+    end
+    
   end
-
-  def agent_service
-    @agent_service ||= AgentServices::Base.instance_for_service(service, instance.environment)
-  end
-  
-  def configure
-    agent_service.configure_instance(instance)
-  end
-
-  def verify
-    agent_service.verify_instance(instance)
-  end
-
 end

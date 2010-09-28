@@ -86,6 +86,11 @@ class Environment < ActiveRecord::Base
       service.deploy(self, deployments)
     end
   end
+
+  def active_instances_for_service(service)
+    service = Service.find_by_name(service) unless service.is_a?(Service)
+    service.instances.active.in_environment(self)
+  end
   
   protected
 

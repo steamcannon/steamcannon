@@ -21,9 +21,15 @@ module AgentServices
     
     class << self
       def instance_for_service(service, environment)
-        class_name = service.name.camelize
-        klass = "AgentServices::#{class_name}".constantize if AgentServices.const_defined?(class_name)
-        klass ||= self
+        klass = self
+        begin
+          require "agent_services/#{service.name}"
+          class_name = service.name.camelize
+          klass = "AgentServices::#{class_name}".constantize if AgentServices.const_defined?(class_name)
+        rescue MissingSourceFile => ex
+          #ignore
+        end
+
         klass.new(service, environment)
       end
     end
@@ -109,8 +115,8 @@ module AgentServices
     end
 
     def verify_instance(instance)
-      #     result = instance.agent_client(service).status
-#     result['state'] and result['state'] == 'started'
+      result = instance.agent_client(service).status
+      result['state'] and result['state'] == 'started'
     end
 
     def configure_instance(instance)
