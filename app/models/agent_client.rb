@@ -21,7 +21,7 @@ class AgentClient
 
   attr_accessor :last_request
   attr_accessor :service_name
-  
+
   def initialize(instance, service_name)
     @instance = instance
     @service_name = service_name
@@ -56,7 +56,7 @@ class AgentClient
       service_post action
     end
   end
-  
+
   #TODO: store the artifact_id on the artifact_version locally, and pass the
   #artifact_version AR here
   def artifact(artifact_id)
@@ -65,7 +65,7 @@ class AgentClient
   end
 
   def deploy_artifact(artifact_version)
-    service_post 'artifacts', :artifact => File.new(artifact_version.archive.path, 'r')
+    service_post 'artifacts', :artifact => artifact_version.archive.to_file
   end
 
   def configure(config)
