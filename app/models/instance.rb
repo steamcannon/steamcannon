@@ -162,7 +162,7 @@ class Instance < ActiveRecord::Base
   rescue AgentClient::RequestFailedError => ex
     logger.error ex.inspect
     logger.error ex.backtrace
-    configure_failed! if stuck_in_state_for_too_long?
+    configure_failed! if stuck_in_state_for_too_long?(5.minutes)
   end
 
   def verify_services
@@ -172,7 +172,7 @@ class Instance < ActiveRecord::Base
       logger.error ex.inspect
       logger.error ex.backtrace
     end
-    configure_failed! if stuck_in_state_for_too_long?
+    configure_failed! if stuck_in_state_for_too_long?(5.minutes)
   end
 
   def agent_running?
@@ -186,8 +186,8 @@ class Instance < ActiveRecord::Base
   end
 
   protected
-  def stuck_in_state_for_too_long?
-    state_change_timestamp <= Time.now - 120.seconds
+  def stuck_in_state_for_too_long?(too_long = 2.minutes)
+    state_change_timestamp <= Time.now - too_long
   end
   
   def start_instance
