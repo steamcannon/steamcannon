@@ -25,12 +25,12 @@ class Service < ActiveRecord::Base
   validates_uniqueness_of :name
 
   def deploy(environment, deployments)
-    AgentServices::DefaultService.instance_for_service(self, environment).
+    AgentServices::Base.instance_for_service(self, environment).
       deploy(filter_deployments(deployments))
   end
 
   def undeploy(deployment)
-    AgentServices::DefaultService.instance_for_service(self, deployment.environment).
+    AgentServices::Base.instance_for_service(self, deployment.environment).
       undeploy(deployment)
   end
 

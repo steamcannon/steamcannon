@@ -19,12 +19,12 @@
 require 'spec_helper'
 
 
-describe AgentServices::DefaultService do
+describe AgentServices::Base do
   before(:each) do
     @service = Factory.build(:service)
     @environment = Factory(:environment)
     @environment.stub!(:trigger_deployments)
-    @agent_service = AgentServices::DefaultService.new(@service, @environment)
+    @agent_service = AgentServices::Base.new(@service, @environment)
     @instance = Factory.build(:instance)
     @deployment = Factory.build(:deployment, :environment => @environment)
     @deployment.stub!(:mark_as_deployed!)
@@ -33,17 +33,17 @@ describe AgentServices::DefaultService do
   end
 
   describe 'instance_for_service' do
-    class AgentServices::DummyService < AgentServices::DefaultService
+    class AgentServices::Dummy < AgentServices::Base
     end
 
     it 'should look up the service class based on the service name' do
       @service.should_receive(:name).and_return('dummy')
-      AgentServices::DefaultService.instance_for_service(@service, @environment).is_a?(AgentServices::DummyService).should == true
+      AgentServices::Base.instance_for_service(@service, @environment).is_a?(AgentServices::Dummy).should == true
     end
 
     it 'should return an instance of the default service if no service can be found' do
       @service.should_receive(:name).and_return('blah')
-      AgentServices::DefaultService.instance_for_service(@service, @environment).is_a?(AgentServices::DefaultService).should == true
+      AgentServices::Base.instance_for_service(@service, @environment).is_a?(AgentServices::Base).should == true
 
     end
   end
