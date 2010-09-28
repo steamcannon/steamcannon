@@ -62,12 +62,12 @@ describe Platform do
       Platform.create_from_yaml_file(File.join(@yaml_path, 'platform_versions_support.yml'))
       platform = Platform.find_by_name("Test Platform")
       platform.platform_versions.should_not be_empty
-      PlatformVersion.find_by_version_number(123).should_not be_nil
+      PlatformVersion.find_by_version_number('123').should_not be_nil
     end
 
     it "should support images" do
       Platform.create_from_yaml_file(File.join(@yaml_path, 'images_support.yml'))
-      version = PlatformVersion.find_by_version_number(123)
+      version = PlatformVersion.find_by_version_number('123')
       version.should_not be_nil
       version.images.should_not be_empty
       Image.find_all_by_cloud_id('ami_123').count.should be(1)

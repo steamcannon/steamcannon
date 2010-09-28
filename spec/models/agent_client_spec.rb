@@ -160,9 +160,10 @@ describe AgentClient do
     it "the local deploy_artifact action should :post to the remote deploy_artifact action" do
       @resource.should_receive(:post).with({:artifact => 'the_file'}, {}).and_return('{}')
       @connection.should_receive(:[]).with("/services/mock/artifacts").and_return(@resource)
+      archive = mock('archive')
+      archive.should_receive('to_file').and_return('the_file')
       artifact = mock('artifact')
-      artifact.stub_chain(:archive, :path).and_return("path")
-      File.should_receive(:new).with("path", "r").and_return('the_file')
+      artifact.should_receive('archive').and_return(archive)
       @client.deploy_artifact(artifact)
     end
 
