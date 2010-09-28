@@ -61,5 +61,13 @@ jQuery(document).ready(function($) {
     $('body.users_controller form .js-cloud_password_toggle').click(function() {
         $("#cloud_password_field").slideToggle();
         $("#cloud_password_prompt").slideToggle();
+    });
+    
+    $('#environment_images_container .image_row .start_another a').click(function() {
+        $($(this).closest('.start_another').next('.start_another_dialog')).show();        
+    })
+
+    $('#environment_images_container .image_row .start_another_dialog .close a').click(function() {
+        $($(this).closest('.start_another_dialog')).hide();        
     })
 })

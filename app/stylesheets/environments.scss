@@ -45,6 +45,8 @@
 
   .image_row {
     @include list_row;
+    @include clearfix;
+    position: relative;
   }
 
   .name {
@@ -111,6 +113,7 @@
     }
   }
   #environment_images_container {
+    overflow: visible;
     @include column(23);
     .image_id {
       @include column(2);
@@ -140,8 +143,39 @@
       h2 {
         float: left;
       }
-      .start_another {
+    }
+    .start_another { float: right; }
+    .start_another_dialog {
+      display: block; 
+      @include rounded;
+      padding: 10px 15px;
+      margin: 0 0 10px 0;
+      width: 210px;
+      border: 6px solid #ccc;
+      position: relative;
+      z-index: 10;
+      top: 0px;
+      left: 658px;
+      background-color: #fff;
+      input[type=text] {
+        width: 150px;
+      }
+      
+      p {
+        margin: 0 0 15px;
+      }
+      .close {
         float: right;
+        display: inline;
+        padding: 2px;
+        border: 5px solid #ccc;
+        position: relative;
+        @include rounded;
+        top: -28px;
+        right: -18px;
+        a {
+          text-decoration: none;
+        }
       }
     }
   }
