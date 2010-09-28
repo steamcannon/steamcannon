@@ -17,11 +17,11 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module AgentServices
-  class DefaultService
+  class Base
     
     class << self
       def instance_for_service(service, environment)
-        class_name = "#{service.name.camelize}Service"
+        class_name = service.name.camelize
         klass = "AgentServices::#{class_name}".constantize if AgentServices.const_defined?(class_name)
         klass ||= self
         klass.new(service, environment)
@@ -107,6 +107,14 @@ module AgentServices
     def instances_for_deploy
       service.instances.running.in_environment(environment)
     end
-  end
 
+    def verify_instance(instance)
+      #     result = instance.agent_client(service).status
+#     result['state'] and result['state'] == 'started'
+    end
+
+    def configure_instance(instance)
+      #noop, should be overridden in service specific child
+    end
+  end
 end

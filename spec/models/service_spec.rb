@@ -34,12 +34,12 @@ describe Service do
     before(:each) do
       @service = Factory.build(:service)
       @environment = Factory.build(:environment)
-      @agent_service = AgentServices::DefaultService.new(@service, @environment)
+      @agent_service = AgentServices::Base.new(@service, @environment)
     end
     
     it "should delegate to the agent_service" do
       @agent_service.should_receive(:deploy).with([])
-      AgentServices::DefaultService.should_receive(:instance_for_service).with(@service, @environment).and_return(@agent_service)
+      AgentServices::Base.should_receive(:instance_for_service).with(@service, @environment).and_return(@agent_service)
       @service.deploy(@environment, [])
     end
 
@@ -53,12 +53,12 @@ describe Service do
     before(:each) do
       @service = Factory.build(:service)
       @deployment = Factory(:deployment)
-      @agent_service = AgentServices::DefaultService.new(@service, @environment)
+      @agent_service = AgentServices::Base.new(@service, @environment)
     end
 
     it "should delegate to the agent_service" do
       @agent_service.should_receive(:undeploy).with(@deployment)
-      AgentServices::DefaultService.should_receive(:instance_for_service).with(@service, @deployment.environment).and_return(@agent_service)
+      AgentServices::Base.should_receive(:instance_for_service).with(@service, @deployment.environment).and_return(@agent_service)
       @service.undeploy(@deployment)
     end
      
