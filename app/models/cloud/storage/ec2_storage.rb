@@ -33,7 +33,7 @@ module Cloud
       end
 
       def to_file(path)
-        file = Tempfile.new(File.basename(path))
+        file = File.new(File.join(Dir.tmpdir, File.basename(path)), 'w+')
         file.write(s3_object(path).data)
         file.rewind
         file
