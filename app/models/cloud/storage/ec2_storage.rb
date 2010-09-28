@@ -24,8 +24,8 @@ module Cloud
       def initialize(access_key, secret_access_key)
         @access_key = access_key
         @secret_access_key = secret_access_key
-        @service = S3::Service.new(:access_key_id => @access_key,
-                                   :secret_access_key => @secret_access_key)
+        @s3 = Aws::S3.new(@access_key, @secret_access_key,
+                          :multi_thread => true)
       end
 
       def exists?(path)
@@ -34,39 +34,35 @@ module Cloud
 
       def to_file(path)
         file = Tempfile.new(File.basename(path))
-        file.write(s3_object(path).content)
+        file.write(s3_object(path).data)
         file.rewind
         file
       end
 
       def write(path, file, attachment)
+        content_type = attachment.instance_read(:content_type)
         object = s3_object(path)
-        object.content = file
-        object.content_type = attachment.instance_read(:content_type)
-        object.acl = :private
-        object.save
+        object.put(file, 'private', {'Content-Type' => content_type})
       end
 
       def delete(path)
-        s3_object(path).destroy
+        s3_object(path).delete
       end
 
       protected
 
       def bucket
         bucket_suffix = Digest::SHA1.hexdigest(@access_key)
-        # "_" required in bucket name to workaround a bug in S3 gem
         bucket_name = "SteamCannonArtifacts_#{bucket_suffix}"
 
         # Ensure our bucket exists and has correct permissions
-        bucket = @service.buckets.build(bucket_name)
-        bucket.save(:headers => {:x_amz_acl => 'private'})
+        bucket = Aws::S3::Bucket.create(@s3, bucket_name, true, 'private')
         bucket
       end
       memoize :bucket
 
       def s3_object(path)
-        bucket.objects.build(path)
+        bucket.key(path)
       end
     end
   end
