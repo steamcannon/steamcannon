@@ -148,7 +148,7 @@
     .start_another_dialog {
       display: block; 
       @include rounded;
-      padding: 10px 15px;
+      padding: 10px 15px 20px;
       margin: 0 0 10px 0;
       width: 210px;
       border: 6px solid #ccc;
@@ -160,15 +160,15 @@
       input[type=text] {
         width: 150px;
       }
-      
       p {
         margin: 0 0 15px;
       }
       .close {
         float: right;
         display: inline;
-        padding: 2px;
+        padding: 2px 4px;
         border: 5px solid #ccc;
+        background-color: #eee;
         position: relative;
         @include rounded;
         top: -28px;

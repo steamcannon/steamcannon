@@ -46,11 +46,11 @@
       .start_another
         = link_to 'Add', '#'
       .start_another_dialog{:style=>'display:none'}
-        .close{:style=>'float:right'}
-          = link_to "X", '#', :title=>'Close this dialog'
+        .close
+          = link_to "Close", '#', :title=>'Close this dialog'
         %p How many additional instances would you like to add to this environment?
         = label_tag "Number of instances"
-        = text_field_tag :new_instances
+        = text_field_tag :new_instances, 1
         &raquo;
         = link_to 'Start'
     - if instances.empty?
