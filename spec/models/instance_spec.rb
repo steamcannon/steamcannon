@@ -573,25 +573,38 @@ describe Instance do
       @instance.stub!(:verify_services!)
       @logger = mock(Object)
       @instance.stub!(:logger).and_return(@logger)
+      @instance_service = Factory(:instance_service)
+      @instance_service.stub!(:configure)
+      @instance.stub!(:instance_services).and_return([@instance_service])
     end
 
     it "should configure each instance_service" do
-      instance_service = Factory(:instance_service)
-      instance_service.should_receive(:configure)
-      @instance.stub!(:instance_services).and_return([instance_service])
+      @instance_service.should_receive(:configure)
       @instance.configure_services
     end
 
-    it "should verify_services! after configuring services" do
+    it "should verify_services! after configuring services if all instance_services are :configured" do
+      @instance_service.should_receive(:configured?).and_return(true)
       @instance.should_receive(:verify_services!)
+      @instance.configure_services
+    end
+
+    it "should not verify_services! after configuring services if all instance_services are not :configured" do
+      @instance_service.should_receive(:configured?).and_return(false)
+      @instance.should_not_receive(:verify_services!)
+      @instance.configure_services
+    end
+
+    it "should configure_failed! if it has been stuck too long even when no configure raises" do
+      @instance_service.should_receive(:configured?).and_return(false)
+      @instance.should_receive(:stuck_in_state_for_too_long?).and_return(true)
+      @instance.should_receive(:configure_failed!)
       @instance.configure_services
     end
 
     it "should log any agent client errors" do
       error = AgentClient::RequestFailedError.new("test error")
-      instance_service = Factory(:instance_service)
-      instance_service.should_receive(:configure).and_raise(error)
-      @instance.stub!(:instance_services).and_return([instance_service])
+      @instance_service.should_receive(:configure).and_raise(error)
       @logger.should_receive(:error).at_least(:once)
       @instance.configure_services
     end

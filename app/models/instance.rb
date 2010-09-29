@@ -157,11 +157,13 @@ class Instance < ActiveRecord::Base
   end
 
   def configure_services
-    instance_services.each(&:configure)
-    verify_services!
-  rescue AgentClient::RequestFailedError => ex
-    logger.error ex.inspect
-    logger.error ex.backtrace
+    begin
+      instance_services.each(&:configure)
+      verify_services! if instance_services.all?(&:configured?)
+    rescue AgentClient::RequestFailedError => ex
+      logger.error ex.inspect
+      logger.error ex.backtrace
+    end
     configure_failed! if stuck_in_state_for_too_long?(5.minutes)
   end
 

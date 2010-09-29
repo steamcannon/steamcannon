@@ -24,12 +24,13 @@ module AgentServices
         klass = self
         begin
           require "agent_services/#{service.name}"
-          class_name = service.name.camelize
-          klass = "AgentServices::#{class_name}".constantize if AgentServices.const_defined?(class_name)
+          klass = "AgentServices::#{service.name.camelize}".constantize
         rescue MissingSourceFile => ex
-          #ignore
+          Rails.logger.debug "AgentServices::Base.instance_for_service: require failed for agent_services/#{service.name}"
+        rescue NameError => ex
+          Rails.logger.debug "AgentServices::Base.instance_for_service: constantize failed: #{ex.message}"
         end
-
+        Rails.logger.debug "AgentServices::Base.instance_for_service: using #{klass.name} for #{service.name}"
         klass.new(service, environment)
       end
     end
@@ -121,6 +122,8 @@ module AgentServices
 
     def configure_instance(instance)
       #noop, should be overridden in service specific child
+      Rails.logger.debug "AgentServices::Base#configure_instance called - should #{service.name} have its own configure strategy?"
+      true
     end
   end
 end

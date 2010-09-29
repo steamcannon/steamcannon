@@ -17,9 +17,26 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class InstanceService < ActiveRecord::Base
+  include AASM
+  
   belongs_to :instance
   belongs_to :service
 
+  aasm_column :current_state
+
+  aasm_initial_state :pending
+  aasm_state :pending
+  aasm_state :configured
+  aasm_state :verified
+
+  aasm_event :configured do
+    transitions :to => :configured, :from => :pending
+  end
+  
+  aasm_event :verified do
+    transitions :to => :verified, :from => :configured
+  end
+  
   def name
     service.name
   end
@@ -29,11 +46,11 @@ class InstanceService < ActiveRecord::Base
   end
   
   def configure
-    agent_service.configure_instance(instance)
+    configured! if agent_service.configure_instance(instance)
   end
 
   def verify
-    agent_service.verify_instance(instance)
+    verified! if agent_service.verify_instance(instance)
   end
 
 end

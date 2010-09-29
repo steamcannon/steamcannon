@@ -18,20 +18,27 @@
 
 module AgentServices
   class JbossAs < Base
-    
+
+    # this won't configure unless there is at least one running
+    # mod_cluster instance already, and assumes that there will only
+    # be one. This is called (eventually) by
+    # Instance#configure_services, which will keep calling until
+    # configuration happens or the state times out.
     def configure_instance(instance)
+      proxies = environment.running_instances_for_service('mod_cluster')
+      return false if proxies.empty?
+
       config = instance.cloud_specific_hacks.multicast_config
-      proxies = environment.active_instances_for_service('mod_cluster')
-      unless proxies.empty?
-        proxy_list = proxies.inject({}) do |list, proxy_instance|
-          dns = proxy_instance.public_dns
-          list[dns] = {:host => dns, :port => 80} unless dns.blank?
-          list
-        end
-        config.merge!({:proxy_list => proxy_list})
+      proxy_list = proxies.inject({}) do |list, proxy_instance|
+        dns = proxy_instance.public_dns
+        list[dns] = {:host => dns, :port => 80} unless dns.blank?
+        list
       end
+      config.merge!({:proxy_list => proxy_list})
+
       instance.agent_client(service).configure(config.to_json)
+      true
     end
-    
+
   end
 end

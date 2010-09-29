@@ -19,9 +19,5 @@
 module AgentServices
   class ModCluster < Base
     
-    def configure_instance(instance)
-      environment.active_instances_for_service('jboss_as').each(&:configure)
-    end
-    
   end
 end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100927192533) do
+ActiveRecord::Schema.define(:version => 20100928202154) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(:version => 20100927192533) do
     t.integer  "service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "current_state"
   end
 
   create_table "instances", :force => true do |t|

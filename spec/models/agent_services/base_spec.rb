@@ -37,13 +37,13 @@ describe AgentServices::Base do
     end
 
     it 'should look up the service class based on the service name' do
-      @service.should_receive(:name).twice.and_return('dummy')
+      @service.stub!(:name).and_return('dummy')
       AgentServices::Base.should_receive(:require).with('agent_services/dummy')
       AgentServices::Base.instance_for_service(@service, @environment).is_a?(AgentServices::Dummy).should == true
     end
 
     it 'should return an instance of the default service if no service can be found' do
-      @service.should_receive(:name).and_return('blah')
+      @service.stub!(:name).and_return('blah')
       AgentServices::Base.instance_for_service(@service, @environment).is_a?(AgentServices::Base).should == true
 
     end
@@ -298,5 +298,14 @@ describe AgentServices::Base do
 
   end
 
+  describe 'configure_instance' do
+    it "should log a debug message" do
+      Rails.logger.should_receive(:debug)
+      @agent_service.configure_instance(@instance)
+    end
+    it "should return true" do
+      @agent_service.configure_instance(@instance).should be_true
+    end
+  end
   
 end

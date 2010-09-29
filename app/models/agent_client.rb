@@ -172,7 +172,7 @@ class AgentClient
   end
 
   def log(msg)
-    Rails.logger.info("AgentClient[Instance:#{@instance.id}]: #{msg}")
+    Rails.logger.info("AgentClient[Instance:#{@instance.id} (#{@instance.name})]: #{msg}")
   end
 
   class RequestFailedError < StandardError
