@@ -61,4 +61,36 @@ describe ArtifactVersion do
     artifact_version.version_number = 2
     artifact_version.to_s.should eql("test artifact version 2")
   end
+
+  describe "pull deployment" do
+    before(:each) do
+      @artifact_version = Factory.build(:artifact_version)
+      @archive = mock('archive')
+      @artifact_version.stub!(:archive).and_return(@archive)
+    end
+
+    it "should support pull deployment if archive has public url" do
+      @archive.stub!(:public_url).and_return('public_url')
+      @artifact_version.supports_pull_deployment?.should be(true)
+    end
+
+    it "should not support pull deployment if archive has no public url" do
+      @archive.stub!(:public_url).and_return(nil)
+      @artifact_version.supports_pull_deployment?.should be(false)
+    end
+
+    it "should return archive's public url as pull deployment url" do
+      @archive.stub!(:public_url).and_return('public_url')
+      @artifact_version.pull_deployment_url.should == 'public_url'
+    end
+  end
+
+  it "should get deployment file from archive" do
+    archive = mock('archive')
+    archive.should_receive(:to_file).and_return('the_file')
+    artifact_version = Factory.build(:artifact_version)
+    artifact_version.should_receive(:archive).and_return(archive)
+    artifact_version.deployment_file.should == 'the_file'
+  end
+
 end

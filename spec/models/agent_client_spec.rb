@@ -160,10 +160,8 @@ describe AgentClient do
     it "the local deploy_artifact action should :post to the remote deploy_artifact action" do
       @resource.should_receive(:post).with({:artifact => 'the_file'}, {}).and_return('{}')
       @connection.should_receive(:[]).with("/services/mock/artifacts").and_return(@resource)
-      archive = mock('archive')
-      archive.should_receive('to_file').and_return('the_file')
+      @client.should_receive('deployment_payload').and_return('the_file')
       artifact = mock('artifact')
-      artifact.should_receive('archive').and_return(archive)
       @client.deploy_artifact(artifact)
     end
 
@@ -179,5 +177,24 @@ describe AgentClient do
       @client.configure({})
     end
 
+  end
+
+  describe "deployment_payload" do
+    before(:each) do
+      @artifact = mock('artifact')
+    end
+
+    it "should attempt pull deployment if supported" do
+      @artifact.should_receive(:supports_pull_deployment?).and_return(true)
+      @artifact.should_receive(:pull_deployment_url).and_return('pull_url')
+      expected = { :location => 'pull_url' }
+      @client.send(:deployment_payload, @artifact).should == expected
+    end
+
+    it "should fall back to push deployment" do
+      @artifact.should_receive(:supports_pull_deployment?).and_return(false)
+      @artifact.should_receive(:deployment_file).and_return('the_file')
+      @client.send(:deployment_payload, @artifact).should == 'the_file'
+    end
   end
 end

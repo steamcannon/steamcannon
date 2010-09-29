@@ -90,6 +90,10 @@ describe Cloud::Storage do
       it "should have a delete method" do
         @storage.cloud_storage.should respond_to(:delete)
       end
+
+      it "should have a public_url method" do
+        @storage.cloud_storage.should respond_to(:public_url)
+      end
     end
   end
 end

@@ -34,4 +34,17 @@ class ArtifactVersion < ActiveRecord::Base
   def to_s
     "#{artifact.name} version #{version_number}"
   end
+
+  def supports_pull_deployment?
+    archive && !archive.public_url.blank?
+  end
+
+  def pull_deployment_url
+    archive.public_url
+  end
+
+  def deployment_file
+    archive.to_file
+  end
+
 end

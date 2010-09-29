@@ -60,6 +60,10 @@ module Cloud
         end
       end
 
+      def public_url
+        nil
+      end
+
     end
   end
 end

@@ -48,6 +48,10 @@ module Cloud
       @queued_for_delete = []
     end
 
+    def public_url(style_name = default_style)
+      cloud_storage.public_url(path(style_name))
+    end
+
     def user
       instance.artifact.user
     end

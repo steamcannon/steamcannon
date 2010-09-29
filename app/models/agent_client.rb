@@ -65,7 +65,7 @@ class AgentClient
   end
 
   def deploy_artifact(artifact_version)
-    service_post 'artifacts', :artifact => artifact_version.archive.to_file
+    service_post 'artifacts', :artifact => deployment_payload(artifact_version)
   end
 
   def configure(config)
@@ -173,6 +173,14 @@ class AgentClient
 
   def log(msg)
     Rails.logger.info("AgentClient[Instance:#{@instance.id} (#{@instance.name})]: #{msg}")
+  end
+
+  def deployment_payload(artifact_version)
+    if artifact_version.supports_pull_deployment?
+      { :location => artifact_version.pull_deployment_url }
+    else
+      artifact_version.deployment_file
+    end
   end
 
   class RequestFailedError < StandardError
