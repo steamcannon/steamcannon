@@ -1,3 +1,7 @@
 instance.watcher:
   job: InstanceWatcher
   cron: '*/15 * * * * ?'
+  
+instance.reaper:
+  job: InstanceReaper
+  cron: '* */5 * * * * ?'

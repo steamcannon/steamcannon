@@ -321,7 +321,18 @@ describe Instance do
     describe "terminate" do
       it "should terminate instance in cloud" do
         cloud = mock(Object)
+        cloud.stub!(:instance_available?).and_return(true)
         cloud.should_receive(:terminate).with('i-123')
+        @instance.cloud_id = 'i-123'
+        @instance.stub!(:cloud).and_return(cloud)
+        @instance.current_state = 'stopping'
+        @instance.terminate!
+      end
+      
+      it "should ensure the instance is available in the cloud before attempting to terminate it" do
+        cloud = mock(Object)
+        cloud.stub!(:instance_available?).and_return(false)
+        cloud.should_not_receive(:terminate)
         @instance.cloud_id = 'i-123'
         @instance.stub!(:cloud).and_return(cloud)
         @instance.current_state = 'stopping'
@@ -383,6 +394,9 @@ describe Instance do
       end
     end
 
+    describe "to unavailable" do
+      it "should call something on the environment to indicate that the environment is possibly in an inconsistent state"
+    end
   end
 
   describe "agent_client" do
@@ -646,4 +660,25 @@ describe Instance do
     end
   end
 
+  describe "verify_availability!" do
+    before(:each) do
+      @instance       = Factory(:instance)
+      @cloud          = mock(Object)
+      @logger         = mock(Object)
+
+      @instance.stub!(:cloud).and_return(@cloud)
+      @instance.stub!(:logger).and_return(@logger)
+    end
+
+    it "should return true when the instance is available" do
+      @cloud.should_receive(:instance_available?).and_return true
+      @instance.verify_running!.should be_true
+    end
+    
+    it "should return false when the instance is unavailable" do
+      @cloud.should_receive(:instance_available?).and_return false
+      @instance.verify_running!.should be_false
+    end
+    
+  end
 end

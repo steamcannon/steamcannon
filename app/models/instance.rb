@@ -50,6 +50,7 @@ class Instance < ActiveRecord::Base
   aasm_state :terminating, :enter => :terminate_instance
   aasm_state :stopped, :after_enter => :after_stopped_instance
   aasm_state :start_failed, :enter => :state_failed
+  aasm_state :unavailable
 
 
   aasm_event :start, :error => :error_raised do
@@ -103,6 +104,10 @@ class Instance < ActiveRecord::Base
   aasm_event :start_failed do
     transitions :to => :start_failed, :from => :pending
   end
+  
+  aasm_event :unavailable do
+    transitions :to => :unavailable, :from => [:running]
+  end
 
 
   def self.deploy!(image, environment, name, hardware_profile)
@@ -137,6 +142,10 @@ class Instance < ActiveRecord::Base
     elsif stuck_in_state_for_too_long?
       configure_failed!
     end
+  end
+  
+  def verify_running!
+    cloud.instance_available?
   end
 
   def verify_agent
@@ -240,7 +249,7 @@ class Instance < ActiveRecord::Base
   end
 
   def terminate_instance
-    cloud.terminate(cloud_id) unless cloud_id.nil?
+    cloud.terminate(cloud_id) unless cloud_id.nil? || !cloud.instance_available?(cloud_id)
   end
 
   def stopped_in_cloud?

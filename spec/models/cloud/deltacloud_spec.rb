@@ -37,6 +37,38 @@ describe Cloud::Deltacloud do
       @deltacloud.launch('ami-123', :hardware_profile => 'm1.small')
     end
   end
+  
+  describe "terminate" do
+    before(:each) do
+      @client = mock(Object)
+      @deltacloud.stub!(:client).and_return(@client)
+      @deltacloud.stub!(:user_data).and_return('')
+    end
+    
+    it "should not attempt to terminate an instance that doesn't exist" do
+      @client.stub!(:instance).with(1).and_return(nil)
+      @deltacloud.terminate(1).should == false
+    end
+  end
+  
+  describe "instance_available?" do
+    before(:each) do
+      @client = mock(Object)
+      @deltacloud.stub!(:client).and_return(@client)
+      @deltacloud.stub!(:user_data).and_return('')
+    end
+    
+    it "should return false when an instance is not available" do
+      @client.stub!(:instance).with(1).and_return(nil)
+      @deltacloud.instance_available?(1).should == false
+    end
+    
+    it "should return the instance if it is available" do
+      instance = Object.new
+      @client.stub!(:instance).with(1).and_return(instance)
+      @deltacloud.instance_available?(1).should equal(instance)
+    end
+  end
 
   describe "hardware profiles" do
     before(:each) do

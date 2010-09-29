@@ -38,10 +38,15 @@ module Cloud
     def launch(image_id, opts={})
       client.create_instance(image_id, opts)
     end
+    
+    def instance_available?(instance_id)
+      i = client.instance(instance_id)
+      i ? i : false
+    end
 
     def terminate instance_id
       i = client.instance(instance_id)
-      i.stop!
+      i ? i.stop! : false
     end
 
     def hardware_profiles

@@ -1,7 +1,6 @@
 login: &login
   adapter: postgresql
-  username: steamcannon
-  password: steamcannon
+  username: lanceball
 
 
 development:
