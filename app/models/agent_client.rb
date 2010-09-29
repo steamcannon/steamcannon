@@ -177,7 +177,7 @@ class AgentClient
 
   def deployment_payload(artifact_version)
     if artifact_version.supports_pull_deployment?
-      { :location => artifact_version.pull_deployment_url }
+      { :location => artifact_version.pull_deployment_url }.to_json
     else
       artifact_version.deployment_file
     end

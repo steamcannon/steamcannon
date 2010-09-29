@@ -187,7 +187,7 @@ describe AgentClient do
     it "should attempt pull deployment if supported" do
       @artifact.should_receive(:supports_pull_deployment?).and_return(true)
       @artifact.should_receive(:pull_deployment_url).and_return('pull_url')
-      expected = { :location => 'pull_url' }
+      expected = { :location => 'pull_url' }.to_json
       @client.send(:deployment_payload, @artifact).should == expected
     end
 
