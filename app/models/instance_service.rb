@@ -17,51 +17,40 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class InstanceService < ActiveRecord::Base
+  include AASM
+  
   belongs_to :instance
   belongs_to :service
 
-  def peers(service_name)
-    service = Service.find_by_name(service_name)
-    environment = instance.environment
-    instance_ids = environment.instances.active.map(&:id)
-    InstanceService.find(:all, :conditions => {
-                           :instance_id => instance_ids,
-                           :service_id => service.id
-                         })
-  end
+  aasm_column :current_state
 
+  aasm_initial_state :pending
+  aasm_state :pending
+  aasm_state :configured
+  aasm_state :verified
+
+  aasm_event :configured do
+    transitions :to => :configured, :from => :pending
+  end
+  
+  aasm_event :verified do
+    transitions :to => :verified, :from => :configured
+  end
+  
   def name
     service.name
   end
 
-  #TODO: move this stuff to agent_services, and write tests for it
+  def agent_service
+    @agent_service ||= AgentServices::Base.instance_for_service(service, instance.environment)
+  end
+  
   def configure
-    send("configure_#{name}") if respond_to?("configure_#{name}")
+    configured! if agent_service.configure_instance(instance)
   end
 
   def verify
-    result = instance.agent_client(service).status
-    result['state'] and result['state'] == 'started'
-  end
-  
-  protected
-
-  def configure_jboss_as
-    config = instance.cloud_specific_hacks.multicast_config
-    proxies = peers('mod_cluster')
-    unless proxies.empty?
-      proxy_list = proxies.inject({}) do |list, proxy_instance|
-        dns = proxy_instance.instance.public_dns
-        list[dns] = {:host => dns, :port => 80} unless dns.blank?
-        list
-      end
-      config.merge!({:proxy_list => proxy_list})
-    end
-    instance.agent_client(service.name).configure(config.to_json)
-  end
-
-  def configure_mod_cluster
-    peers('jboss_as').each(&:configure)
+    verified! if agent_service.verify_instance(instance)
   end
 
 end

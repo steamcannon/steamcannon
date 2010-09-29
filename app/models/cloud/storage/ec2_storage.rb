@@ -49,6 +49,20 @@ module Cloud
         s3_object(path).delete
       end
 
+      def public_url(path)
+        expires_at = Time.now + 1.hour
+
+        options = {
+          :access_key => @access_key,
+          :secret_access_key => @secret_access_key,
+          :method => :get,
+          :bucket => bucket.name,
+          :resource => path,
+          :expires_at => expires_at
+        }
+        S3::Signature.generate_temporary_url(options)
+    end
+
       protected
 
       def bucket
