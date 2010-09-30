@@ -87,11 +87,18 @@ class Environment < ActiveRecord::Base
     end
   end
 
-  def running_instances_for_service(service)
-    service = Service.find_by_name(service) unless service.is_a?(Service)
-    service.instances.running.in_environment(self)
+  def active_instances_for_service(service)
+    Service.by_name(service).instances.active.in_environment(self)
   end
-  
+
+  def running_instances_for_service(service)
+    Service.by_name(service).instances.running.in_environment(self)
+  end
+
+  def not_failed_instances_for_service(service)
+    Service.by_name(service).instances.active.not_failed.in_environment(self)
+  end
+
   protected
 
   def start_environment

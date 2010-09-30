@@ -32,8 +32,9 @@ class Instance < ActiveRecord::Base
 
   before_save :set_state_change_timestamp
 
-  named_scope :active, :conditions => "current_state <> 'stopped'"
-  named_scope :inactive, :conditions => "current_state = 'stopped'"
+  named_scope :active, :conditions => "instances.current_state <> 'stopped'"
+  named_scope :inactive, :conditions => "instances.current_state = 'stopped'"
+  named_scope :not_failed, :conditions => "instances.current_state not in ('start_failed', 'configure_failed')"
   named_scope :in_environment, lambda { |env| { :conditions => { :environment_id => env.id } } }
 
   aasm_column :current_state
@@ -70,7 +71,7 @@ class Instance < ActiveRecord::Base
   end
 
   aasm_event :verify_services do
-    transitions :to => :verifying_services, :from => :configuring_services
+    transitions :to => :verifying_services, :from => [:configuring_services, :verifying_services, :running]
   end
 
   aasm_event :configure_failed do

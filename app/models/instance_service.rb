@@ -30,7 +30,7 @@ class InstanceService < ActiveRecord::Base
   aasm_state :verified
 
   aasm_event :configured do
-    transitions :to => :configured, :from => :pending
+    transitions :to => :configured, :from => [:pending, :verified, :configured]
   end
   
   aasm_event :verified do

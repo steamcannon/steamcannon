@@ -34,6 +34,12 @@ class Service < ActiveRecord::Base
       undeploy(deployment)
   end
 
+  class << self
+    def by_name(service_or_name)
+      service_or_name.is_a?(Service) ? service_or_name : Service.find_by_name(service_or_name)
+    end
+  end
+  
   protected
   def filter_deployments(deployments)
     deployments.select { |deployment| deployment.service == self }
