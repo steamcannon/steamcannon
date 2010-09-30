@@ -24,6 +24,8 @@ class Environment < ActiveRecord::Base
   has_many :environment_images, :dependent => :destroy
   has_many :images, :through => :environment_images
   has_many :instances
+  has_many :instance_services, :through => :instances
+  
   belongs_to :platform_version
   belongs_to :user
   attr_protected :user_id

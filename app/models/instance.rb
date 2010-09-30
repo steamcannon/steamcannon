@@ -20,7 +20,8 @@
 class Instance < ActiveRecord::Base
   include AuditColumns
   include AASM
-
+  include StuckState
+  
   belongs_to :environment
   belongs_to :image
 
@@ -29,8 +30,6 @@ class Instance < ActiveRecord::Base
   has_many :services, :through => :instance_services
   has_many :instance_deployments
   has_many :deployments, :through => :instance_deployments
-
-  before_save :set_state_change_timestamp
 
   named_scope :active, :conditions => "instances.current_state <> 'stopped'"
   named_scope :inactive, :conditions => "instances.current_state = 'stopped'"
@@ -43,8 +42,6 @@ class Instance < ActiveRecord::Base
   aasm_state :starting, :enter => :start_instance
   aasm_state :configuring, :enter => :configure_instance
   aasm_state :verifying
-  aasm_state :configuring_services
-  aasm_state :verifying_services
   aasm_state :configure_failed, :enter => :state_failed
   aasm_state :running, :after_enter => :after_run_instance
   aasm_state :stopping, :enter => :stop_instance, :after_enter => :after_stop_instance
@@ -66,32 +63,18 @@ class Instance < ActiveRecord::Base
     transitions :to => :verifying, :from => :configuring
   end
 
-  aasm_event :configure_services do
-    transitions :to => :configuring_services, :from => :verifying
-  end
-
-  aasm_event :verify_services do
-    transitions :to => :verifying_services, :from => [:configuring_services, :verifying_services, :running]
-  end
-
   aasm_event :configure_failed do
-    transitions :to => :configure_failed, :from => [
-                                                    :configuring,
-                                                    :verifying,
-                                                    :configuring_services,
-                                                    :verifying_services
-                                                   ]
+    transitions :to => :configure_failed, :from => [:configuring, :verifying]
   end
 
   aasm_event :run do
-    transitions :to => :running, :from => [:configuring, :verifying, :verifying_services]
+    transitions :to => :running, :from => [:configuring, :verifying]
   end
 
   aasm_event :stop do
     transitions :to => :stopping, :from => [:pending, :starting, :configuring,
                                             :verifying, :running, :start_failed,
-                                            :configuring_services,
-                                            :verifying_services, :configure_failed]
+                                            :configure_failed]
   end
 
   aasm_event :terminate do
@@ -153,7 +136,7 @@ class Instance < ActiveRecord::Base
   def verify_agent
     if agent_running?
       discover_services
-      configure_services!
+      run!
     elsif stuck_in_state_for_too_long?
       configure_failed!
     end
@@ -167,27 +150,6 @@ class Instance < ActiveRecord::Base
     save
   end
 
-  def configure_services
-    begin
-      instance_services.each(&:configure)
-      verify_services! if instance_services.all?(&:configured?)
-    rescue AgentClient::RequestFailedError => ex
-      logger.error ex.inspect
-      logger.error ex.backtrace
-    end
-    configure_failed! if stuck_in_state_for_too_long?(5.minutes)
-  end
-
-  def verify_services
-    begin
-      run! if instance_services.all?(&:verify)
-    rescue AgentClient::RequestFailedError => ex
-      logger.error ex.inspect
-      logger.error ex.backtrace
-    end
-    configure_failed! if stuck_in_state_for_too_long?(5.minutes)
-  end
-
   def agent_running?
     !agent_client.agent_status.nil?
   rescue AgentClient::RequestFailedError => ex
@@ -199,9 +161,6 @@ class Instance < ActiveRecord::Base
   end
 
   protected
-  def stuck_in_state_for_too_long?(too_long = 2.minutes)
-    state_change_timestamp <= Time.now - too_long
-  end
   
   def start_instance
     cloud_instance = cloud.launch(image.cloud_id,
@@ -281,7 +240,4 @@ class Instance < ActiveRecord::Base
     end
   end
 
-  def set_state_change_timestamp
-    self.state_change_timestamp = Time.now if current_state_changed?
-  end
 end

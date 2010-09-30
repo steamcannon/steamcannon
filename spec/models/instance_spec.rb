@@ -253,7 +253,7 @@ describe Instance do
         @instance.configure_failed!
       end
 
-      %w{ verifying configuring configuring_services verifying_services }.each do |from_state|
+      %w{ verifying configuring }.each do |from_state|
         it "should be able to transition to configure_failed from #{from_state}" do
           @instance.current_state = from_state
           @instance.configure_failed!
@@ -525,15 +525,15 @@ describe Instance do
       @instance.current_state = 'verifying'
     end
 
-    it "should move to configuring_services state if agent is running" do
+    it "should move to :running state if agent is running" do
       @instance.stub!(:agent_running?).and_return(true)
-      @instance.should_receive(:configure_services!)
+      @instance.should_receive(:run!)
       @instance.verify_agent
     end
 
-    it "should not move to configuring_services state if agent is not running" do
+    it "should not move to :running state if agent is not running" do
       @instance.stub!(:agent_running?).and_return(false)
-      @instance.should_not_receive(:configure_services!)
+      @instance.should_not_receive(:run!)
       @instance.verify_agent
     end
 
@@ -581,6 +581,8 @@ describe Instance do
 
   end
 
+
+=begin
   describe "configure_services" do
     before(:each) do
       @instance = Factory(:instance)
@@ -624,6 +626,8 @@ describe Instance do
       @instance.configure_services
     end
   end
+
+
 
 
   describe "verify_services" do
@@ -673,8 +677,10 @@ describe Instance do
       @instance.verify_services
     end
   end
+=end
 
   describe "reachable?" do
+
     before(:each) do
       @instance       = Factory(:instance)
       @cloud          = mock(Object)

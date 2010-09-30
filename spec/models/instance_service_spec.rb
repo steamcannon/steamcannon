@@ -33,52 +33,116 @@ describe InstanceService do
                                                                    @instance_service.instance.environment)
     @instance_service.agent_service
   end
-  describe 'verify' do
+
+  context 'states' do
+    describe 'configure!' do
+      %w{ pending configuring verifying running }.each do |state|
+        it "should be able to move to :configuring from :#{state}" do
+          @instance_service.current_state = state
+          lambda {
+            @instance_service.configure!
+          }.should_not raise_error(AASM::InvalidTransition)
+          @instance_service.current_state.should == 'configuring'
+        end
+      end
+    end
+  end
+
+  describe 'configure_service' do
     before(:each) do
       @mock_agent_service.stub!(:configure_instance).and_return(true)
       @instance_service.stub!(:agent_service).and_return(@mock_agent_service)
+      @instance_service.current_state = 'configuring'
     end
-    
+
     it 'should delegate configure to the agent service' do
       @mock_agent_service.should_receive(:configure_instance).with(@instance_service.instance).and_return(true)
       @instance_service.should_receive(:agent_service).and_return(@mock_agent_service)
-      @instance_service.configure
+      @instance_service.configure_service
     end
 
-    it "should set the configured state if configuration occurred" do
-      @instance_service.should_receive(:configured!)
-      @instance_service.configure
+    it "should verify! if configuration occurred" do
+      @instance_service.should_receive(:verify!)
+      @instance_service.configure_service
     end
 
     it "should not change state if the configuration does not occur" do
       @mock_agent_service.should_receive(:configure_instance).with(@instance_service.instance).and_return(false)
-      @instance_service.should_not_receive(:configured!)
-      @instance_service.configure
+      @instance_service.should_not_receive(:verify!)
+      @instance_service.configure_service
+    end
+    
+    it "should fail! if its stuck in :configuring too long" do
+      @mock_agent_service.stub!(:configure_instance).and_return(false)
+      @instance_service.should_receive(:stuck_in_state_for_too_long?).and_return(true)
+      @instance_service.should_receive(:fail!)
+      @instance_service.configure_service
+    end
+
+    it "should not configure if there are any !:running required services" do
+      @instance_service.should_receive(:required_services_running?).and_return(false)
+      @mock_agent_service.should_not_receive(:configure_instance)
+      @instance_service.should_not_receive(:verify!)
+      @instance_service.should_not_receive(:fail!)
+      @instance_service.configure_service
     end
   end
 
-  describe 'verify' do
+  describe 'verify_service' do
     before(:each) do
       @mock_agent_service.stub!(:verify_instance).and_return(true)
       @instance_service.stub!(:agent_service).and_return(@mock_agent_service)
-      @instance_service.current_state = 'configured'
+      @instance_service.current_state = 'verifying'
     end
-    
+
     it 'should delegate verify to the agent service' do
       @mock_agent_service.should_receive(:verify_instance).with(@instance_service.instance).and_return(true)
       @instance_service.should_receive(:agent_service).and_return(@mock_agent_service)
-      @instance_service.verify
+      @instance_service.verify_service
     end
 
     it "should set the verified state if configuration verified" do
-      @instance_service.should_receive(:verified!)
-      @instance_service.verify
+      @instance_service.should_receive(:run!)
+      @instance_service.verify_service
     end
 
     it "should not change state if the configuration does not occur" do
       @mock_agent_service.should_receive(:verify_instance).with(@instance_service.instance).and_return(false)
-      @instance_service.should_not_receive(:verified!)
-      @instance_service.verify
+      @instance_service.should_not_receive(:run!)
+      @instance_service.verify_service
+    end
+
+    it "should fail! if its stuck in :verifying too long" do
+      @mock_agent_service.stub!(:verify_instance).and_return(false)
+      @instance_service.should_receive(:stuck_in_state_for_too_long?).and_return(true)
+      @instance_service.should_receive(:fail!)
+      @instance_service.verify_service
+    end
+  end
+
+  describe 'required_services_running?' do 
+    before(:each) do
+      @required_service = Factory(:service)
+      @instance_service.service.stub!(:required_services).and_return([@required_service])
+      @required_instance_service = Factory(:instance_service, :service => @required_service)
+      @environment = mock(Environment)
+      @environment.stub_chain(:instance_services, :for_service).and_return([@required_instance_service])
+      @instance_service.stub!(:environment).and_return(@environment)
+    end
+    
+    it "should return true if there are no required services" do
+      @instance_service.service.should_receive(:required_services).and_return([])
+      @instance_service.required_services_running?.should == true
+    end
+
+    it "should return true if all of the instance_services for required services are running" do
+      @required_instance_service.should_receive(:running?).and_return(true)
+      @instance_service.required_services_running?.should == true
+    end
+    
+    it "should return false if any of the instance_services for required services are !running" do
+      @required_instance_service.should_receive(:running?).and_return(false)
+      @instance_service.required_services_running?.should_not == true
     end
   end
 end

@@ -27,6 +27,8 @@ describe Environment do
     }
   end
 
+  it { should have_many :instance_services }
+  
   it "should create a new instance given valid attributes" do
     Environment.create!(@valid_attributes)
   end

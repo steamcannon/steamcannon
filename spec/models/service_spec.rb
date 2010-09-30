@@ -24,8 +24,12 @@ describe Service do
   end
 
   it { should have_many :artifacts }
-  it { should have_many :instance_services}
+  it { should have_many :instance_services }
   it { should have_many :instances }
+  it { should have_many :required_service_dependencies }
+  it { should have_many :dependent_service_dependencies }
+  it { should have_many :required_services }
+  it { should have_many :dependent_services }
   
   it { should validate_presence_of :name }
   it { should validate_uniqueness_of :name }
