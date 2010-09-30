@@ -4,4 +4,4 @@ instance.watcher:
   
 instance.reaper:
   job: InstanceReaper
-  cron: '* */5 * * * * ?'
+  cron: '0 */5 * * * ?'
