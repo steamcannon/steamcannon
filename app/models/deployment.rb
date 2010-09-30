@@ -25,8 +25,8 @@ class Deployment < ActiveRecord::Base
   belongs_to :environment
   belongs_to :user
 
-  has_many :instance_deployments
-  has_many :instances, :through => :instance_deployments
+  has_many :deployment_instance_services, :dependent => :destroy
+  has_many :instance_services, :through => :deployment_instance_services
   
   named_scope :active, :conditions => "current_state = 'deploying' OR current_state = 'deployed'"
   named_scope :inactive, :conditions => "current_state = 'undeployed' OR current_state = 'deploy_failed'"
@@ -62,7 +62,7 @@ class Deployment < ActiveRecord::Base
   end
   
   def undeploy
-    service.undeploy(self)
+    instance_services.each { |is| is.undeploy(self) }
   end
 
   private

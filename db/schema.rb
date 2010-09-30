@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100930175921) do
+ActiveRecord::Schema.define(:version => 20100930202658) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -37,6 +37,13 @@ ActiveRecord::Schema.define(:version => 20100930175921) do
     t.text     "keypair"
     t.integer  "certifiable_id"
     t.string   "certifiable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "deployment_instance_services", :force => true do |t|
+    t.integer  "deployment_id"
+    t.integer  "instance_service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -79,13 +86,6 @@ ActiveRecord::Schema.define(:version => 20100930175921) do
   create_table "images", :force => true do |t|
     t.string   "name"
     t.string   "cloud_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "instance_deployments", :force => true do |t|
-    t.integer  "instance_id"
-    t.integer  "deployment_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

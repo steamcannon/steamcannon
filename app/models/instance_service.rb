@@ -22,7 +22,9 @@ class InstanceService < ActiveRecord::Base
   
   belongs_to :instance
   belongs_to :service
-
+  has_many :deployment_instance_services, :dependent => :destroy
+  has_many :deployments, :through => :deployment_instance_services
+  
   named_scope :for_service, lambda { |service| { :conditions => { :service_id => service.id } } }
   
   aasm_column :current_state
@@ -79,5 +81,11 @@ class InstanceService < ActiveRecord::Base
     service.required_services.inject(true) do |accumulated_status, required_service|
       accumulated_status && environment.instance_services.for_service(required_service).all?(&:running?)
     end
+  end
+
+  def deploy
+  end
+
+  def undeploy
   end
 end

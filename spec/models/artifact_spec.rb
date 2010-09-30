@@ -45,23 +45,23 @@ describe Artifact do
     Artifact.new.should respond_to(:deployments)
   end
 
-  describe 'deployment_for_instance' do
+  describe 'deployment_for_instance_service' do
     before(:each) do
-      @instance = Factory(:instance)
+      @instance_service = Factory(:instance_service)
       @deployment = Factory(:deployment)
       @deployment.current_state = 'deployed'
-      @instance.deployments << @deployment
+      @instance_service.deployments << @deployment
       @artifact = @deployment.artifact
       @deployment.save
     end
     
     it "should return a deployment if the artifact is deployed there" do
-      @artifact.deployment_for_instance(@instance).should == @deployment
+      @artifact.deployment_for_instance_service(@instance_service).should == @deployment
     end
     
     it "should not return the deployment unless it is :deployed" do
       @deployment.update_attribute(:current_state, 'undeployed')
-      @artifact.deployment_for_instance(@instance).should == nil
+      @artifact.deployment_for_instance_service(@instance).should == nil
     end
   end
 end

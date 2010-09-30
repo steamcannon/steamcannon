@@ -21,7 +21,8 @@ require 'spec_helper'
 describe InstanceService do
   it { should belong_to :instance }
   it { should belong_to :service }
-
+  it { should have_many :deployment_instance_services }
+  it { should have_many :deployments }
 
   before(:each) do
     @instance_service = Factory(:instance_service)

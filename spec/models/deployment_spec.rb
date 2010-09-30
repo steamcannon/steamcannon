@@ -19,9 +19,10 @@
 require 'spec_helper'
 
 describe Deployment do
-  it { should have_many :instance_deployments }
-  it { should have_many :instances }
 
+  it { should have_many :deployment_instance_services }
+  it { should have_many :instance_services }
+  
   before(:each) do
     @deployment = Factory(:deployment)
     @deployment.current_state = 'deploying'
@@ -83,12 +84,12 @@ describe Deployment do
     before(:each) do
       @deployment = Factory.build(:deployment)
       @deployment.current_state = 'deployed'
-      @service = mock(Service)
-      @deployment.stub!(:service).and_return(@service)
+      @instance_service = mock(InstanceService)
+      @deployment.stub!(:instance_services).and_return([@instance_service])
     end
 
-    it "should delegate to the service" do
-      @service.should_receive(:undeploy).with(@deployment)
+    it "should undeploy from the instance_services" do
+      @instance_service.should_receive(:undeploy).with(@deployment)
       @deployment.undeploy
     end
 
