@@ -674,7 +674,7 @@ describe Instance do
     end
   end
 
-  describe "is_running?" do
+  describe "reachable?" do
     before(:each) do
       @instance       = Factory(:instance)
       @cloud          = mock(Object)
@@ -686,12 +686,12 @@ describe Instance do
 
     it "should return true when the instance is available" do
       @cloud.should_receive(:instance_available?).and_return true
-      @instance.is_running?.should be_true
+      @instance.reachable?.should be_true
     end
     
     it "should return false when the instance is unreachable" do
       @cloud.should_receive(:instance_available?).and_return false
-      @instance.is_running?.should be_false
+      @instance.reachable?.should be_false
     end
     
   end

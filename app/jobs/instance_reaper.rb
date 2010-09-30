@@ -21,7 +21,7 @@ class InstanceReaper
   def run
     # Check all running instances and ensure that they are still running
     # otherwise make them unavailable
-    Instance.running.each { |i| i.unreachable! if (i.cloud.nil? || !i.is_running?) }
+    Instance.running.each { |i| i.unreachable! if (i.cloud.nil? || !i.reachable?) }
   end
 
 end

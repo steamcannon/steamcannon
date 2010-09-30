@@ -145,7 +145,7 @@ class Instance < ActiveRecord::Base
     end
   end
   
-  def is_running?
+  def reachable?
     # deltacloud returns the instance if it's available. We just want to return a boolean
     cloud.instance_available?(self.cloud_id) ? true : false
   end
