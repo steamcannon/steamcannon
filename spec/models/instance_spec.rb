@@ -394,8 +394,9 @@ describe Instance do
       end
     end
 
-    describe "to unavailable" do
+    describe "to unreachable" do
       it "should call something on the environment to indicate that the environment is possibly in an inconsistent state"
+      it "should have a way to recover from a node marked as unreachable that is suddenly available again"
     end
   end
 
@@ -673,7 +674,7 @@ describe Instance do
     end
   end
 
-  describe "verify_availability!" do
+  describe "is_running?" do
     before(:each) do
       @instance       = Factory(:instance)
       @cloud          = mock(Object)
@@ -685,12 +686,12 @@ describe Instance do
 
     it "should return true when the instance is available" do
       @cloud.should_receive(:instance_available?).and_return true
-      @instance.verify_running!.should be_true
+      @instance.is_running?.should be_true
     end
     
-    it "should return false when the instance is unavailable" do
+    it "should return false when the instance is unreachable" do
       @cloud.should_receive(:instance_available?).and_return false
-      @instance.verify_running!.should be_false
+      @instance.is_running?.should be_false
     end
     
   end

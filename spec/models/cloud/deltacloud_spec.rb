@@ -54,6 +54,8 @@ describe Cloud::Deltacloud do
   describe "instance_available?" do
     before(:each) do
       @client = mock(Object)
+      @instance = mock(Object)
+      @instance.stub!(:state).and_return("RUNNING")
       @deltacloud.stub!(:client).and_return(@client)
       @deltacloud.stub!(:user_data).and_return('')
     end
@@ -63,10 +65,15 @@ describe Cloud::Deltacloud do
       @deltacloud.instance_available?(1).should == false
     end
     
+    it "should return false when an instance is in a TERMINATED state" do
+      @instance.stub!(:state).and_return("TERMINATED")
+      @client.stub!(:instance).with(1).and_return(@instance)
+      @deltacloud.instance_available?(1).should == false
+    end
+    
     it "should return the instance if it is available" do
-      instance = Object.new
-      @client.stub!(:instance).with(1).and_return(instance)
-      @deltacloud.instance_available?(1).should equal(instance)
+      @client.stub!(:instance).with(1).and_return(@instance)
+      @deltacloud.instance_available?(1).should equal(@instance)
     end
   end
 

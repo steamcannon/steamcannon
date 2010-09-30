@@ -51,7 +51,7 @@ class Instance < ActiveRecord::Base
   aasm_state :terminating, :enter => :terminate_instance
   aasm_state :stopped, :after_enter => :after_stopped_instance
   aasm_state :start_failed, :enter => :state_failed
-  aasm_state :unavailable
+  aasm_state :unreachable
 
 
   aasm_event :start, :error => :error_raised do
@@ -106,8 +106,8 @@ class Instance < ActiveRecord::Base
     transitions :to => :start_failed, :from => :pending
   end
   
-  aasm_event :unavailable do
-    transitions :to => :unavailable, :from => [:running]
+  aasm_event :unreachable do
+    transitions :to => :unreachable, :from => [:running]
   end
 
 
@@ -145,8 +145,9 @@ class Instance < ActiveRecord::Base
     end
   end
   
-  def verify_running!
-    cloud.instance_available?
+  def is_running?
+    # deltacloud returns the instance if it's available. We just want to return a boolean
+    cloud.instance_available?(self.cloud_id) ? true : false
   end
 
   def verify_agent
