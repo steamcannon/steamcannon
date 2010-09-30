@@ -23,11 +23,11 @@ describe Cloud::Storage::Ec2Storage do
     @ec2 = Cloud::Storage::Ec2Storage.new('access_key', 'secret_access_key')
     @path = 'path/to/file.war'
     @s3_object = mock('s3_object')
-    @ec2.stub!(:s3_object).and_return(@s3_object)
   end
 
   describe "exists?" do
     it "should call exists? on the s3 object" do
+      @ec2.stub!(:s3_object).and_return(@s3_object)
       @s3_object.should_receive(:exists?).and_return(true)
       @ec2.exists?(@path).should be(true)
     end
@@ -35,6 +35,7 @@ describe Cloud::Storage::Ec2Storage do
 
   describe "to_file" do
     before(:each) do
+      @ec2.stub!(:s3_object).and_return(@s3_object)
       @s3_object.stub!(:data).and_return('data')
       @tempfile = mock('tempfile')
       @tempfile.stub!(:write)
@@ -69,6 +70,7 @@ describe Cloud::Storage::Ec2Storage do
       @attachment = mock('attachment')
       @content_type = 'application/octet-stream'
       @attachment.stub!(:instance_read).with(:content_type).and_return(@content_type)
+      @ec2.stub!(:s3_object).and_return(@s3_object)
       @s3_object.stub!(:put)
     end
 
@@ -91,6 +93,7 @@ describe Cloud::Storage::Ec2Storage do
 
   describe "delete" do
     it "should call delete on the s3 object" do
+      @ec2.stub!(:s3_object).and_return(@s3_object)
       @s3_object.should_receive(:delete).and_return(true)
       @ec2.delete(@path)
     end
@@ -127,5 +130,34 @@ describe Cloud::Storage::Ec2Storage do
   end
 
   describe "bucket" do
+    before(:each) do
+      @bucket = Aws::S3::Bucket
+      @bucket.stub!(:create)
+    end
+
+    it "should create with correct prefix" do
+      prefix = /^SteamCannonArtifacts_/
+      @bucket.should_receive(:create).with(anything, prefix, anything, anything)
+      @ec2.bucket
+    end
+
+    it "should create if it doesn't already exist" do
+      @bucket.should_receive(:create).with(anything, anything, true, anything)
+      @ec2.bucket
+    end
+
+    it "should create with private permissions" do
+      @bucket.should_receive(:create).with(anything, anything, anything, 'private')
+      @ec2.bucket
+    end
+  end
+
+  describe "s3_object" do
+    it "should return key from bucket" do
+      bucket = mock('bucket')
+      @ec2.should_receive(:bucket).and_return(bucket)
+      bucket.should_receive(:key).with(@path).and_return('key')
+      @ec2.s3_object(@path).should == 'key'
+    end
   end
 end

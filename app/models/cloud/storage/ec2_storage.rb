@@ -61,9 +61,8 @@ module Cloud
           :expires_at => expires_at
         }
         S3::Signature.generate_temporary_url(options)
-    end
+      end
 
-      protected
 
       def bucket
         bucket_suffix = Digest::SHA1.hexdigest(@access_key)
@@ -78,6 +77,7 @@ module Cloud
       def s3_object(path)
         bucket.key(path)
       end
+
     end
   end
 end
