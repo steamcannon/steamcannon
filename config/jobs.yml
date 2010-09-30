@@ -1,6 +1,10 @@
 instance.watcher:
   job: InstanceWatcher
   cron: '*/15 * * * * ?'
+
+instance.service.watcher:
+  job: InstanceServiceWatcher
+  cron: '*/15 * * * * ?'
   
 instance.reaper:
   job: InstanceReaper
