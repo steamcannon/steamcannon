@@ -115,6 +115,14 @@ describe Environment do
       @environment.save!
       @environment.should_not be_running_all_instances
     end
+
+    it "should move all instance_services to configuring" do
+      instance_service = mock(InstanceService)
+      instance_service.should_receive(:configure!)
+      @environment.should_receive(:instance_services).and_return([instance_service])
+      @environment.stub!(:running_all_instances?).and_return(true)
+      @environment.run!
+    end
   end
 
   describe "stop" do

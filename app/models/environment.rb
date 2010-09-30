@@ -35,7 +35,7 @@ class Environment < ActiveRecord::Base
   aasm_column :current_state
   aasm_initial_state :stopped
   aasm_state :starting, :enter => :start_environment
-  aasm_state :running
+  aasm_state :running, :after_enter => :move_instance_services_to_configuring
   aasm_state :stopping, :enter => :stop_environment
   aasm_state :stopped
   aasm_state :start_failed
@@ -132,5 +132,9 @@ class Environment < ActiveRecord::Base
         env_image.destroy unless new_images.include?(env_image.image)
       end
     end
+  end
+
+  def move_instance_services_to_configuring
+    instance_services.each(&:configure!)
   end
 end
