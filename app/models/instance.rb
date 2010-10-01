@@ -197,7 +197,6 @@ class Instance < ActiveRecord::Base
 
   def after_run_instance
     environment.run!
-    environment.trigger_deployments(self)
   end
 
   def stop_instance
@@ -219,6 +218,7 @@ class Instance < ActiveRecord::Base
   end
 
   def after_stopped_instance
+    instance_services.each(&:destroy)
     environment.stopped!
   end
 

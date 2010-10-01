@@ -268,7 +268,6 @@ describe Instance do
         @instance.stub!(:environment).and_return(@environment)
         @instance.current_state = 'verifying'
         @environment.stub!(:run!)
-        @environment.stub!(:trigger_deployments)
       end
 
       %w{ verifying configuring }.each do |from_state|
@@ -284,10 +283,6 @@ describe Instance do
         @instance.run!
       end
 
-      it "should trigger deployments on environment" do
-        @environment.should_receive(:trigger_deployments).with(@instance)
-        @instance.run!
-      end
     end
 
     describe "stop" do
@@ -314,6 +309,7 @@ describe Instance do
         @instance.stop!
         @instance.stopped_by.should be(@current_user.id)
       end
+
     end
 
     describe "terminate" do
@@ -379,6 +375,15 @@ describe Instance do
         @instance.current_state = 'terminating'
         @instance.stopped!
         @instance.should be_terminating
+      end
+
+      it "should destroy all instance services" do
+        instance_service = mock(InstanceService)
+        instance_service.should_receive(:destroy)
+        @instance.should_receive(:instance_services).and_return([instance_service])
+        @instance.stub!(:stopped_in_cloud?).and_return(true)
+        @instance.current_state = 'terminating'
+        @instance.stopped!
       end
     end
 
