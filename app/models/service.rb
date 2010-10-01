@@ -28,25 +28,11 @@ class Service < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  def deploy(environment, deployments)
-    AgentServices::Base.instance_for_service(self, environment).
-      deploy(filter_deployments(deployments))
-  end
-
-  def undeploy(deployment)
-    AgentServices::Base.instance_for_service(self, deployment.environment).
-      undeploy(deployment)
-  end
-
   class << self
     def by_name(service_or_name)
       service_or_name.is_a?(Service) ? service_or_name : Service.find_by_name(service_or_name)
     end
   end
   
-  protected
-  def filter_deployments(deployments)
-    deployments.select { |deployment| deployment.service == self }
-  end
 end
 

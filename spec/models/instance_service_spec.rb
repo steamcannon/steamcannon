@@ -146,4 +146,30 @@ describe InstanceService do
       @instance_service.required_services_running?.should_not == true
     end
   end
+
+  describe "deploy and undeploy" do
+    before(:each) do
+      @instance_service.stub!(:agent_service).and_return(@mock_agent_service)
+      @mock_deployment = mock(Deployment)
+    end
+    
+    it "deploy should delegate to the agent_service" do
+      @mock_agent_service.should_receive(:deploy).with(@instance_service, @mock_deployment)
+      @instance_service.deploy(@mock_deployment)
+    end
+
+    it "undeploy should delegate to the agent_service" do
+      @mock_agent_service.should_receive(:undeploy).with(@instance_service, @mock_deployment)
+      @instance_service.undeploy(@mock_deployment)
+    end
+  end
+
+  describe 'handle_pending_deployments' do
+    before(:each) do 
+    end
+    
+    it "should deploy any deployed deployments from the environment for the service" 
+      
+
+  end
 end

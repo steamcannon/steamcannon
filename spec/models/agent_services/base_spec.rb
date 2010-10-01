@@ -27,6 +27,7 @@ describe AgentServices::Base do
     @agent_service = AgentServices::Base.new(@service, @environment)
     @instance_service = Factory.build(:instance_service)
     @deployment = Factory.build(:deployment, :environment => @environment)
+    @deployment.stub!(:perform_deploy)
     @deployment.stub!(:mark_as_deployed!)
     @deployment.stub!(:fail!)
     @agent_service.stub!(:instance_services_for_deploy).and_return([@instance_service])
@@ -51,76 +52,6 @@ describe AgentServices::Base do
   
   describe 'deploy' do
     before(:each) do
-      @agent_service.stub!(:deploy_to_instance_service).and_return(77)
-    end
-
-    it "should delegate to deploy_to_instance_service for each instance_service and deployment" do
-      @agent_service.should_receive(:deploy_to_instance_service).with(@instance_service, @deployment)
-      @agent_service.deploy([@deployment])
-    end
-
-    it "should set the artifact id on the deployment (HACK until we impl STEAM-85)" do
-      @deployment.should_receive(:agent_artifact_identifier=).with(77)
-      @agent_service.deploy([@deployment])
-    end
-
-
-    context "when deployment succeeds to all instances" do
-      before(:each) do
-        @instance_service_two = Factory.build(:instance_service)
-        @agent_service.stub!(:instance_services_for_deploy).and_return([@instance_service, @instance_service_two])
-        @agent_service.should_receive(:deploy_to_instance_service).twice.and_return(77)
-      end
-
-      it "should mark the deployment as deployed" do
-        @deployment.should_receive(:mark_as_deployed!)
-        @agent_service.deploy([@deployment])
-      end
-
-      it "should not mark the deployment as failed " do
-        @deployment.should_not_receive(:fail!)
-        @agent_service.deploy([@deployment])
-      end
-    end
-    
-    context "when deployment fails on one instance_service" do
-      before(:each) do
-        @instance_service_two = Factory.build(:instance_service)
-        @agent_service.stub!(:instance_services_for_deploy).and_return([@instance_service, @instance_service_two])
-        @agent_service.should_receive(:deploy_to_instance_service).twice.and_return(77, false)
-      end
-
-      it "should not mark the deployment as deployed" do
-        @deployment.should_not_receive(:mark_as_deployed!)
-        @agent_service.deploy([@deployment])
-      end
-
-      it "should mark the deployment as failed " do
-        @deployment.should_receive(:fail!)
-        @agent_service.deploy([@deployment])
-      end
-    end
-
-    context "when there are no instances to deploy to" do
-      before(:each) do
-        @agent_service.stub!(:instance_services_for_deploy).and_return([])
-      end
-
-      it "should not mark the deployment as deployed" do
-        @deployment.should_not_receive(:mark_as_deployed!)
-        @agent_service.deploy([@deployment])
-      end
-
-      it "should not mark the deployment as failed " do
-        @deployment.should_not_receive(:fail!)
-        @agent_service.deploy([@deployment])
-      end
-    end
-
-  end
-
-  describe 'deploy_to_instance_service' do
-    before(:each) do
       @instance_service.save
       @agent_client = mock(AgentClient)
       @instance_service.stub!(:agent_client).and_return(@agent_client)
@@ -131,17 +62,23 @@ describe AgentServices::Base do
       @deployment.stub!(:artifact).and_return(@artifact)
     end
 
+    it "should set the artifact id on the deployment (HACK until we impl STEAM-85)" do
+      @agent_client.stub(:deploy_artifact).and_return({ 'artifact_id' => 1234})
+      @agent_service.deploy(@instance_service, @deployment)
+      @deployment.agent_artifact_identifier.should == 1234
+    end
+
     it "should undeploy if another version of the artifact is already deployed to the instance_service" do
       other_deployment = mock(Deployment)
       @artifact.should_receive(:deployment_for_instance_service).with(@instance_service).and_return(other_deployment)
-      @agent_service.should_receive(:undeploy).with(other_deployment)
+      @agent_service.should_receive(:undeploy).with(@instance_service, other_deployment)
       @agent_client.stub!(:deploy_artifact)
-      @agent_service.deploy_to_instance_service(@instance_service, @deployment)
+      @agent_service.deploy(@instance_service, @deployment)
     end
 
     it "should deploy" do
       @agent_client.should_receive(:deploy_artifact).with(@artifact_version)
-      @agent_service.deploy_to_instance_service(@instance_service, @deployment)
+      @agent_service.deploy(@instance_service, @deployment)
     end
 
     context "when the deployment has already been deployed to the instance" do
@@ -151,7 +88,7 @@ describe AgentServices::Base do
       
       it "should not deploy again" do
         @agent_client.should_not_receive(:deploy_artifact)
-        @agent_service.deploy_to_instance_service(@instance_service, @deployment)
+        @agent_service.deploy(@instance_service, @deployment)
       end
     end
     
@@ -160,12 +97,12 @@ describe AgentServices::Base do
         @agent_client.stub!(:deploy_artifact).and_return({ 'artifact_id' => 77 })
       end
 
-      it "should return an artifact_id (HACK until we impl STEAM-85)" do
-        @agent_service.deploy_to_instance_service(@instance_service, @deployment).should == 77
+      it "should return true" do
+        @agent_service.deploy(@instance_service, @deployment).should be_true
       end
 
       it "should create an deployment_istance_service record" do
-        @agent_service.deploy_to_instance_service(@instance_service, @deployment)
+        @agent_service.deploy(@instance_service, @deployment)
         @instance_service.deployments.first.should == @deployment
       end
     end
@@ -176,75 +113,25 @@ describe AgentServices::Base do
       end
 
       it "should not create an deployment_instance_service record" do
-        @agent_service.deploy_to_instance_service(@instance_service, @deployment)
+        @agent_service.deploy(@instance_service, @deployment)
         @instance_service.deployments.should be_empty
       end
 
       it "should not raise"  do
         lambda{
-          @agent_service.deploy_to_instance_service(@instance_service, @deployment)
+          @agent_service.deploy(@instance_service, @deployment)
         }.should_not raise_error(AgentClient::RequestFailedError)
       end
 
       it "should return !true" do
-        @agent_service.deploy_to_instance_service(@instance_service, @deployment).should_not == true
+        @agent_service.deploy(@instance_service, @deployment).should_not == true
       end
     end
 
   end
   
+
   describe 'undeploy' do
-    before(:each) do
-      @agent_service.stub!(:undeploy_from_instance_service).and_return(true)
-      @deployment.stub!(:instance_services).and_return([@instance_service])
-    end
-
-    it "should delegate to undeploy_from_instance_service for each instance_service" do
-      @agent_service.should_receive(:undeploy_from_instance_service).with(@instance_service, @deployment)
-      @agent_service.undeploy(@deployment)
-    end
-
-    context "when undeployment succeeds to all instance_services" do
-      before(:each) do
-        @instance_service_two = Factory.build(:instance_service)
-        @deployment.stub!(:instance_services).and_return([@instance_service, @instance_service_two])
-        @agent_service.should_receive(:undeploy_from_instance_service).twice.and_return(true)
-      end
-
-      it "should mark the deployment as undeployed" do
-        @deployment.should_receive(:mark_as_undeployed!)
-        @agent_service.undeploy(@deployment)
-      end
-    end
-    
-    context "when undeployment fails on one instance_service" do
-      before(:each) do
-        @instance_service_two = Factory.build(:instance_service)
-        @deployment.stub!(:instance_services).and_return([@instance_service, @instance_service_two])
-        @agent_service.should_receive(:undeploy_from_instance_service).twice.and_return(true, false)
-      end
-
-      it "should not mark the deployment as undeployed" do
-        @deployment.should_not_receive(:mark_as_undeployed!)
-        @agent_service.undeploy(@deployment)
-      end
-    end
-
-    context "when there are no instance_services to undeploy from" do
-      before(:each) do
-        @deployment.stub!(:instance_services_for_deploy).and_return([])
-      end
-
-      it "should mark the deployment as undeployed" do
-        @deployment.should_receive(:mark_as_undeployed!)
-        @agent_service.undeploy(@deployment)
-      end
-
-    end
-
-  end
-
-  describe 'undeploy_from_instance_service' do
     before(:each) do
       @instance_service.save
       @agent_client = mock(AgentClient)
@@ -257,7 +144,7 @@ describe AgentServices::Base do
     it "should undeploy" do
       @deployment.stub!(:agent_artifact_identifier).and_return(77)
       @agent_client.should_receive(:undeploy_artifact).with(77)
-      @agent_service.undeploy_from_instance_service(@instance_service, @deployment)
+      @agent_service.undeploy(@instance_service, @deployment)
     end
 
     context "on a successful undeploy" do
@@ -266,11 +153,11 @@ describe AgentServices::Base do
       end
 
       it "should return true" do
-        @agent_service.undeploy_from_instance_service(@instance_service, @deployment).should == true
+        @agent_service.undeploy(@instance_service, @deployment).should == true
       end
 
       it "should delete the deployment_instance_service record" do
-        @agent_service.undeploy_from_instance_service(@instance_service, @deployment)
+        @agent_service.undeploy(@instance_service, @deployment)
         @instance_service.deployments.should be_empty
       end
     end
@@ -281,18 +168,18 @@ describe AgentServices::Base do
       end
 
       it "should not delete the deployment_instance_service record" do
-        @agent_service.undeploy_from_instance_service(@instance_service, @deployment)
+        @agent_service.undeploy(@instance_service, @deployment)
         @instance_service.deployments.first.should == @deployment
       end
 
       it "should not raise"  do
         lambda{
-          @agent_service.undeploy_from_instance_service(@instance_service, @deployment)
+          @agent_service.undeploy(@instance_service, @deployment)
         }.should_not raise_error(AgentClient::RequestFailedError)
       end
 
       it "should return !true" do
-        @agent_service.undeploy_from_instance_service(@instance_service, @deployment).should_not == true
+        @agent_service.undeploy(@instance_service, @deployment).should_not == true
       end
     end
 

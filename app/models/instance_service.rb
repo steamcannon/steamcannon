@@ -33,7 +33,7 @@ class InstanceService < ActiveRecord::Base
   aasm_state :configuring
   aasm_state :configure_failed
   aasm_state :verifying
-  aasm_state :running
+  aasm_state :running, :after_enter => :handle_pending_deployments
   
   aasm_event :configure do
     transitions :to => :configuring, :from => [:pending, :configuring, :verifying, :running]
@@ -83,9 +83,20 @@ class InstanceService < ActiveRecord::Base
     end
   end
 
-  def deploy
+  def deploy(deployment)
+    agent_service.deploy(self, deployment)
   end
 
-  def undeploy
+  def undeploy(deployment)
+    agent_service.undeploy(self, deployment)
+  end
+
+  protected
+  def handle_pending_deployments
+    environment.deployments.deployed.select do |deployment|
+      deployment.service == service
+    end.each do |deployment|
+      deploy(deployment)
+    end
   end
 end

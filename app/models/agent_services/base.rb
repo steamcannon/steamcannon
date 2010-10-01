@@ -42,44 +42,22 @@ module AgentServices
       @environment = environment
     end
 
-    def deploy(deployments)
-      instance_services = instance_services_for_deploy
-
-      return false if instance_services.empty?
-      
-      deployments.each do |deployment|
-        remote_artifact_id = nil
-        success = instance_services.inject(true) do |accumulated_success, instance_service|
-          result = deploy_to_instance_service(instance_service, deployment)
-          remote_artifact_id ||= result
-          accumulated_success && result
-        end
-
-        deployment.agent_artifact_identifier = remote_artifact_id
-        
-        success ? deployment.mark_as_deployed! : deployment.fail!
-        
-        success
-      end
-    end
-
-    def deploy_to_instance_service(instance_service, deployment)
-      response = false
-
+    def deploy(instance_service, deployment)
       #see if the deployment has already been deployed, and bail if so
-      return response if instance_service.deployments.exists?(deployment)
+      return false if instance_service.deployments.exists?(deployment)
 
       #see if another version of this artifact has been deployed, and
       #udeploy that first if so
       #FIXME: this currently ignores the result of the undeploy operation
       other_deployment = deployment.artifact.deployment_for_instance_service(instance_service)
-      undeploy(other_deployment) if other_deployment
+      undeploy(instance_service, other_deployment) if other_deployment
       
       begin
         result_hash = instance_service.agent_client.deploy_artifact(deployment.artifact_version)
         if result_hash.respond_to?(:[]) and result_hash['artifact_id']
-          response = result_hash['artifact_id']
+          deployment.update_attribute(:agent_artifact_identifier, result_hash['artifact_id'])
           instance_service.deployments << deployment
+          return true
         end
       rescue AgentClient::RequestFailedError => ex
         #TODO: store the failure reason?
@@ -87,20 +65,10 @@ module AgentServices
         Rails.logger.info ex.backtrace.join("\n")
       end
 
-      response
+      false
     end
 
-    def undeploy(deployment)
-      success = deployment.instance_services.inject(true) do |accumulated_success, instance_service|
-        accumulated_success && undeploy_from_instance_service(instance_service, deployment)
-      end
-
-      deployment.mark_as_undeployed! if success
-      
-      success
-    end
-
-    def undeploy_from_instance_service(instance_service, deployment)
+    def undeploy(instance_service, deployment)
       instance_service.agent_client.undeploy_artifact(deployment.agent_artifact_identifier)
       instance_service.deployment_instance_services.find_by_deployment_id(deployment.id).destroy
       true
@@ -109,10 +77,6 @@ module AgentServices
       Rails.logger.info "undeploying artifact failed: #{ex}"
       Rails.logger.info ex.backtrace.join("\n")
       false
-    end
-
-    def instance_services_for_deploy
-      environment.instance_services.running.for_service(service)
     end
 
     def verify_instance_service(instance_service)

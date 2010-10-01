@@ -137,12 +137,11 @@ describe Environment do
       @environment.should be_stopping
     end
 
-    it "should mark all deployments as undeployed" do
-      @deployment = Factory(:deployment, :environment => @environment)
-      @deployment.current_state = 'deployed'
-      @environment.save!
+    it "should undeploy all deployments" do
+      @deployment = mock(:deployment)
+      @environment.stub_chain(:deployments, :deployed).and_return([@deployment])
+      @deployment.should_receive(:undeploy!)
       @environment.stop!
-      @environment.deployments.inactive.first.should be_undeployed
     end
 
     it "should stop all instances" do
@@ -234,46 +233,6 @@ describe Environment do
         end
       end
     end
-  end
-
-  describe 'deployment delegation' do
-    before(:each) do
-      @environment = Factory.build(:environment)
-      @service_one = Factory.build(:service)
-      @service_two = Factory.build(:service)
-      @deployment = Factory.build(:deployment)
-      @instance = Factory.build(:instance)
-      @deployment.stub!(:service).and_return(@service_one)
-      @instance.stub!(:services).and_return([@service_one, @service_two])
-    end
-    
-    describe 'trigger_deployments' do
-      context 'passed a deployment' do 
-        it "should delegate to the service's deploy method" do
-          @service_one.should_receive(:deploy).with(@environment, [@deployment])
-          @environment.trigger_deployments(@deployment)
-        end
-      end
-
-      context 'passed an instance' do 
-        it "should delegate to the services' deploy method" do
-          @service_one.should_receive(:deploy).with(@environment, [])
-          @service_two.should_receive(:deploy).with(@environment, [])
-          @environment.trigger_deployments(@instance)
-        end
-
-        it "should pull all active deployments from the environment" do
-          deployments = mock(:association)
-          deployments.should_receive(:active).and_return([])
-          @environment.should_receive(:deployments).and_return(deployments)
-          @environment.trigger_deployments(@instance)
-        end
-
-      end
-
-      
-    end
-
   end
 
 
