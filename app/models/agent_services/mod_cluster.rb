@@ -18,8 +18,13 @@
 
 module AgentServices
   class ModCluster < Base
+    # doesn't actually do any mod_cluster configuration, but instead
+    # triggers (re)configuration of any jboss services that self
+    # configured before the mod_cluster service gets here.
+    # see also: JbossAs#configure_instance_service
     def configure_instance_service(instance_service)
-      Rails.logger.debug("AgentServices::ModCluster.configure_instance_service is a noop")
+      environment.instance_services.running.
+        for_service(Service.by_name('jboss_as')).each(&:configure_service)
       true
     end
   end
