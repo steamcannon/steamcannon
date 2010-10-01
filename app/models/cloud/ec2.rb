@@ -36,43 +36,19 @@ module Cloud
     def launch_options
       # TODO: Need to optimize this to not check security groups for
       # every instance we launch
-      # TODO: Need to pull service-specific ports from somewhere else
-      user = @instance.environment.user
-      ensure_security_group(:user => user,
-                            :name => 'steamcannon',
-                            :description => 'SteamCannon',
-                            :permissions => [
-                                             # Allow all traffic inside group
-                                             :self,
-                                             # SSH
-                                             { :protocol => 'tcp',
-                                               :from_port => '22',
-                                               :to_port => '22',
-                                               :cidr_ips => '0.0.0.0/0'
-                                             },
-                                             # SteamCannon Agent
-                                             { :protocol => 'tcp',
-                                               :from_port => '7575',
-                                               :to_port => '7575',
-                                               :cidr_ips => '0.0.0.0/0'
-                                             },
-                                             # HTTP
-                                             { :protocol => 'tcp',
-                                               :from_port => '80',
-                                               :to_port => '80',
-                                               :cidr_ips => '0.0.0.0/0'
-                                             },
-                                             # JBoss AS
-                                             { :protocol => 'tcp',
-                                               :from_port => '8080',
-                                               :to_port => '8080',
-                                               :cidr_ips => '0.0.0.0/0'
-                                             }
-                                            ])
-      {:security_group => ['steamcannon']}
+      groups = [base_security_group]
+      groups += service_security_groups
+      groups.each do |group|
+        ensure_security_group(group)
+      end
+      {:security_group => groups.map { |group| group[:name] }}
     end
 
     protected
+
+    def user
+      @instance.environment.user
+    end
 
     def pre_signed_put_url
       pre_signed_url(:method => :put,
@@ -113,6 +89,54 @@ module Cloud
     end
     memoize :multicast_bucket
 
+    def base_security_group
+      { :user => user,
+        :name => 'steamcannon',
+        :description => 'SteamCannon',
+        :permissions => [
+                         # Allow all traffic inside group
+                         :self,
+                         # SSH
+                         { :protocol => 'tcp',
+                           :from_port => '22',
+                           :to_port => '22',
+                           :cidr_ips => '0.0.0.0/0'
+                         },
+                         # SteamCannon Agent
+                         { :protocol => 'tcp',
+                           :from_port => '7575',
+                           :to_port => '7575',
+                           :cidr_ips => '0.0.0.0/0'
+                         }]
+      }
+    end
+
+    def service_security_groups
+      # TODO - pull these from service classes
+      [
+       # mod_cluster
+       { :user => user,
+         :name => 'steamcannon_mod_cluster',
+         :description => 'SteamCannon mod_cluster service',
+         :permissions => [{ :protocol => 'tcp',
+                            :from_port => 80,
+                            :to_port => 80,
+                            :cidr_ips => '0.0.0.0/0'
+                          }]
+       },
+       # jboss_as
+       { :user => user,
+         :name => 'steamcannon_jboss_as',
+         :description => 'SteamCannon jboss_as service',
+         :permissions => [{ :protocol => 'tcp',
+                            :from_port => 8080,
+                            :to_port => 8080,
+                            :cidr_ips => '0.0.0.0/0'
+                          }]
+       }
+      ]
+    end
+
     def ensure_security_group(options)
       user = options[:user]
       group_name = options[:name]
@@ -123,7 +147,7 @@ module Cloud
         group = ec2.describe_security_groups([group_name])[0]
       rescue Aws::AwsError => e
         # group doesn't exist, create it
-        ec2.create_security_group(group_name, group_desc)
+        ec2.create_security_group(group_name, group_description)
         group = ec2.describe_security_groups([group_name])[0]
       end
 
@@ -138,7 +162,7 @@ module Cloud
 
     def ensure_security_group_permission(ec2, group, permission)
       unless group[:aws_perms].include?(permission)
-        if permission[:protocl]
+        if permission[:protocol]
           ec2.authorize_security_group_IP_ingress(group[:aws_group_name],
                                                   permission[:from_port],
                                                   permission[:to_port],
@@ -150,6 +174,16 @@ module Cloud
                                                      permission[:group])
         end
       end
+    rescue Aws::AwsError => e
+      # Amazon doesn't always report new permissions immediately so sometimes
+      # we try to create a group permission after it already exists
+      # Ignore AWS errors for now
+      log(e)
+      log(e.backtrace)
+    end
+
+    def log(msg)
+      Rails.logger.info("Cloud::Ec2[Instance:#{@instance.id} (#{@instance.name})]: #{msg}")
     end
 
   end
