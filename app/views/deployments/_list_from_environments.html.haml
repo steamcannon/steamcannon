@@ -22,7 +22,14 @@
       .deployment_environment
         = deployment.artifact_version.version_number
       .deployment_status
-        = deployment.current_state.humanize
+        - if deployment.instance_services.empty?
+          Pending Deployment
+        - else
+          Deployed to:
+          %ul
+            - deployment.instance_services.each do |instance_service|
+              %li
+                = instance_service.instance.name
       /.deployment_health
       /  &nbsp;&nbsp;
       /  = image_tag 'healthy.png'

@@ -103,7 +103,7 @@
       @include column(4);
     }
     .deployment_status {
-      @include column(2);
+      @include column(4);
     }
     .deployment_health {
       @include column(2);
