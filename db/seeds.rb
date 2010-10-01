@@ -16,3 +16,5 @@ end
 unless Platform.find_by_name("Single Tier")
   Platform.create_from_yaml_file("db/fixtures/platforms/single_tier.yml")
 end
+
+Service.load_from_yaml_file('db/fixtures/services/jboss_services.yml')

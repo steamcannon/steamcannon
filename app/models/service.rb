@@ -24,7 +24,7 @@ class Service < ActiveRecord::Base
   has_many :dependent_service_dependencies, :class_name => 'ServiceDependency', :foreign_key => 'required_service_id', :dependent => :destroy
   has_many :required_services, :through => :required_service_dependencies
   has_many :dependent_services, :through => :dependent_service_dependencies
-  
+
   validates_presence_of :name
   validates_uniqueness_of :name
 
@@ -32,7 +32,30 @@ class Service < ActiveRecord::Base
     def by_name(service_or_name)
       service_or_name.is_a?(Service) ? service_or_name : Service.find_by_name(service_or_name)
     end
+
+    # ---
+    # services:
+    #  - name: jboss_as
+    #  - name: mod_cluster
+    #    requires:
+    #      - jboss_as
+    # It is safe to load the same file multiple times - it will not
+    # spam the db w/service records.
+
+    def load_from_yaml_file(file_path)
+      yaml = YAML::load_file(file_path)
+      yaml['services'].each do |service_yaml|
+        service = Service.find_or_create_by_name(service_yaml['name'])
+        service_requirements = service.required_services
+        if service_yaml['requires']
+          service_yaml['requires'].each do |required_service_name|
+            required_service = Service.find_or_create_by_name(required_service_name)
+            service.required_services << required_service unless service_requirements.include?(required_service)
+          end
+        end
+      end
+    end
   end
-  
+
 end
 
