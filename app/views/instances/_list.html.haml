@@ -31,9 +31,10 @@
           None
         - else
           %ul
-            - instance.services.each do |service|
+            - instance.instance_services.each do |instance_service|
               %li
-                = service.full_name
+                = instance_service.service.full_name
+                = instance_service.current_state
       .image_status
         = instance.current_state
       .image_health

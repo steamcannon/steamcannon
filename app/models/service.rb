@@ -20,8 +20,8 @@ class Service < ActiveRecord::Base
   has_many :artifacts
   has_many :instance_services
   has_many :instances, :through => :instance_services
-  has_many :required_service_dependencies, :class_name => 'ServiceDependency', :foreign_key => 'required_service_id', :dependent => :destroy
-  has_many :dependent_service_dependencies, :class_name => 'ServiceDependency', :foreign_key => 'dependent_service_id', :dependent => :destroy
+  has_many :required_service_dependencies, :class_name => 'ServiceDependency', :foreign_key => 'dependent_service_id', :dependent => :destroy
+  has_many :dependent_service_dependencies, :class_name => 'ServiceDependency', :foreign_key => 'required_service_id', :dependent => :destroy
   has_many :required_services, :through => :required_service_dependencies
   has_many :dependent_services, :through => :dependent_service_dependencies
   

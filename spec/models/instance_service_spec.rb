@@ -51,13 +51,13 @@ describe InstanceService do
 
   describe 'configure_service' do
     before(:each) do
-      @mock_agent_service.stub!(:configure_instance).and_return(true)
+      @mock_agent_service.stub!(:configure_instance_service).and_return(true)
       @instance_service.stub!(:agent_service).and_return(@mock_agent_service)
       @instance_service.current_state = 'configuring'
     end
 
     it 'should delegate configure to the agent service' do
-      @mock_agent_service.should_receive(:configure_instance).with(@instance_service.instance).and_return(true)
+      @mock_agent_service.should_receive(:configure_instance_service).with(@instance_service).and_return(true)
       @instance_service.should_receive(:agent_service).and_return(@mock_agent_service)
       @instance_service.configure_service
     end
@@ -68,13 +68,13 @@ describe InstanceService do
     end
 
     it "should not change state if the configuration does not occur" do
-      @mock_agent_service.should_receive(:configure_instance).with(@instance_service.instance).and_return(false)
+      @mock_agent_service.should_receive(:configure_instance_service).with(@instance_service).and_return(false)
       @instance_service.should_not_receive(:verify!)
       @instance_service.configure_service
     end
     
     it "should fail! if its stuck in :configuring too long" do
-      @mock_agent_service.stub!(:configure_instance).and_return(false)
+      @mock_agent_service.stub!(:configure_instance_service).and_return(false)
       @instance_service.should_receive(:stuck_in_state_for_too_long?).and_return(true)
       @instance_service.should_receive(:fail!)
       @instance_service.configure_service
@@ -82,7 +82,7 @@ describe InstanceService do
 
     it "should not configure if there are any !:running required services" do
       @instance_service.should_receive(:required_services_running?).and_return(false)
-      @mock_agent_service.should_not_receive(:configure_instance)
+      @mock_agent_service.should_not_receive(:configure_instance_service)
       @instance_service.should_not_receive(:verify!)
       @instance_service.should_not_receive(:fail!)
       @instance_service.configure_service
@@ -91,13 +91,13 @@ describe InstanceService do
 
   describe 'verify_service' do
     before(:each) do
-      @mock_agent_service.stub!(:verify_instance).and_return(true)
+      @mock_agent_service.stub!(:verify_instance_service).and_return(true)
       @instance_service.stub!(:agent_service).and_return(@mock_agent_service)
       @instance_service.current_state = 'verifying'
     end
 
     it 'should delegate verify to the agent service' do
-      @mock_agent_service.should_receive(:verify_instance).with(@instance_service.instance).and_return(true)
+      @mock_agent_service.should_receive(:verify_instance_service).with(@instance_service).and_return(true)
       @instance_service.should_receive(:agent_service).and_return(@mock_agent_service)
       @instance_service.verify_service
     end
@@ -108,13 +108,13 @@ describe InstanceService do
     end
 
     it "should not change state if the configuration does not occur" do
-      @mock_agent_service.should_receive(:verify_instance).with(@instance_service.instance).and_return(false)
+      @mock_agent_service.should_receive(:verify_instance_service).with(@instance_service).and_return(false)
       @instance_service.should_not_receive(:run!)
       @instance_service.verify_service
     end
 
     it "should fail! if its stuck in :verifying too long" do
-      @mock_agent_service.stub!(:verify_instance).and_return(false)
+      @mock_agent_service.stub!(:verify_instance_service).and_return(false)
       @instance_service.should_receive(:stuck_in_state_for_too_long?).and_return(true)
       @instance_service.should_receive(:fail!)
       @instance_service.verify_service

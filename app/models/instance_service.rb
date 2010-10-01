@@ -26,6 +26,7 @@ class InstanceService < ActiveRecord::Base
   has_many :deployments, :through => :deployment_instance_services
   
   named_scope :for_service, lambda { |service| { :conditions => { :service_id => service.id } } }
+  named_scope :not_pending, { :conditions => "instance_services.current_state <> 'pending'" }
   
   aasm_column :current_state
   aasm_initial_state :pending
@@ -63,18 +64,23 @@ class InstanceService < ActiveRecord::Base
     @agent_service ||= AgentServices::Base.instance_for_service(service, instance.environment)
   end
 
+  def agent_client
+    instance.agent_client(service)
+  end
+  
   def configure_service
     if required_services_running?
-      verify! if agent_service.configure_instance(instance)
+      configure!
+      verify! if agent_service.configure_instance_service(self)
     else
       logger.debug "InstanceService[#{id} #{name}]#configure_service - deferring configuration pending required services"
     end
-    fail! if stuck_in_state_for_too_long?
+    fail! if stuck_in_state_for_too_long?(5.minutes)
   end
 
   def verify_service
-    run! if agent_service.verify_instance(instance)
-    fail! if stuck_in_state_for_too_long?
+    run! if agent_service.verify_instance_service(self)
+    fail! if stuck_in_state_for_too_long?(5.minutes)
   end
 
   def required_services_running?

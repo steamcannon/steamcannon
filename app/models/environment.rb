@@ -108,6 +108,6 @@ class Environment < ActiveRecord::Base
   end
 
   def move_instance_services_to_configuring
-    instance_services.each(&:configure!)
+    instance_services.pending.each(&:configure!)
   end
 end

@@ -20,9 +20,9 @@ module AgentServices
   class JbossAs < Base
     # configures the jboss multicast, and also sets up the proxy list
     # for mod_cluster if any mod_cluster instances are available. 
-    def configure_instance_service(instance_servce)
-      config = instance.cloud_specific_hacks.multicast_config
-      proxies = environment.instance_services.running.for_service(Service.by_name('mod_cluster'))
+    def configure_instance_service(instance_service)
+      config = instance_service.instance.cloud_specific_hacks.multicast_config
+      proxies = environment.instance_services.not_pending.for_service(Service.by_name('mod_cluster'))
       if !proxies.empty?
         proxy_list = proxies.collect(&:instance).inject({}) do |list, proxy_instance|
           dns = proxy_instance.public_dns
@@ -31,7 +31,7 @@ module AgentServices
         end
         config.merge!({:proxy_list => proxy_list})
       end
-      
+      Rails.logger.debug "AgentServices::JbossAs#configure_instance_service: configuring with #{config.to_json}"
       instance_service.agent_client.configure(config.to_json)
       
       true
