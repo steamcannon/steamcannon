@@ -47,10 +47,11 @@ module AgentServices
       return false if instance_service.deployments.exists?(deployment)
 
       #see if another version of this artifact has been deployed, and
-      #udeploy that first if so
+      #udeploy that first if so. This will undeploy it from all
+      #instance_services, not just this one
       #FIXME: this currently ignores the result of the undeploy operation
       other_deployment = deployment.artifact.deployment_for_instance_service(instance_service)
-      undeploy(instance_service, other_deployment) if other_deployment
+      other_deployment.undeploy! if other_deployment
       
       begin
         result_hash = instance_service.agent_client.deploy_artifact(deployment.artifact_version)
