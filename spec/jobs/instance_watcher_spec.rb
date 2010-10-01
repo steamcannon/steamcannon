@@ -23,11 +23,9 @@ describe InstanceWatcher do
     @instance_watcher = InstanceWatcher.new
   end
 
-  it "should update starting, configuring, verifying, configuring_services, verifying_services, and terminating instances" do
+  it "should update starting, configuring, verifying, and terminating instances" do
     @instance_watcher.should_receive(:update_starting)
     @instance_watcher.should_receive(:update_configuring)
-    @instance_watcher.should_receive(:update_configuring_services)
-    @instance_watcher.should_receive(:update_verifying_services)
     @instance_watcher.should_receive(:update_verifying)
     @instance_watcher.should_receive(:update_terminating)
     @instance_watcher.run
@@ -45,20 +43,6 @@ describe InstanceWatcher do
     instance.should_receive(:configure_agent)
     Instance.stub!(:configuring).and_return([instance])
     @instance_watcher.update_configuring
-  end
-
-  it "should attempt to configure_services on any configuring_services instances" do
-    instance = mock_model(Instance)
-    instance.should_receive(:configure_services)
-    Instance.stub!(:configuring_services).and_return([instance])
-    @instance_watcher.update_configuring_services
-  end
-
-  it "should attempt to verify_services on any verifying_services instances" do
-    instance = mock_model(Instance)
-    instance.should_receive(:verify_services)
-    Instance.stub!(:verifying_services).and_return([instance])
-    @instance_watcher.update_verifying_services
   end
 
   it "should attempt to verify any verifying instances" do

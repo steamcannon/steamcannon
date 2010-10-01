@@ -16,7 +16,9 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-class InstanceDeployment < ActiveRecord::Base
-  belongs_to :instance
-  belongs_to :deployment
+require 'spec_helper'
+
+describe ImageService do
+  it { should belong_to :image }
+  it { should belong_to :service }
 end

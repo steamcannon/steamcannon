@@ -40,8 +40,8 @@ class Artifact < ActiveRecord::Base
     service.try(:full_name) || 'None'
   end
 
-  def deployment_for_instance(instance)
-    deployments.deployed.detect { |d| d.instances.include?(instance) }
+  def deployment_for_instance_service(instance_service)
+    deployments.deployed.detect { |d| d.instance_services.exists?(instance_service.id) }
   end
 end
 

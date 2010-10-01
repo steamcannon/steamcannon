@@ -16,24 +16,21 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'spec_helper'
 
-describe Service do
-  before(:each) do
-    @service = Factory(:service)
+class InstanceServiceWatcher
+
+  def run
+    verify_verifying_instance_services
+    configure_configuring_instance_services
   end
 
-  it { should have_many :artifacts }
-  it { should have_many :instance_services }
-  it { should have_many :instances }
-  it { should have_many :required_service_dependencies }
-  it { should have_many :dependent_service_dependencies }
-  it { should have_many :required_services }
-  it { should have_many :dependent_services }
-  it { should have_many :image_services }
-  it { should have_many :images }
-  
-  it { should validate_presence_of :name }
-  it { should validate_uniqueness_of :name }
+  def configure_configuring_instance_services
+    # TODO: This is a bit inefficient to do one at a time
+    InstanceService.configuring.each { |i| i.configure_service }
+  end
 
+  def verify_verifying_instance_services
+    # TODO: This is a bit inefficient to do one at a time
+    InstanceService.verifying.each { |i| i.verify_service }
+  end
 end

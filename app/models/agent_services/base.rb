@@ -42,44 +42,22 @@ module AgentServices
       @environment = environment
     end
 
-    def deploy(deployments)
-      instances = instances_for_deploy
-
-      return false if instances.empty?
-      
-      deployments.each do |deployment|
-        remote_artifact_id = nil
-        success = instances.inject(true) do |accumulated_success, instance|
-          result = deploy_to_instance(instance, deployment)
-          remote_artifact_id ||= result
-          accumulated_success && result
-        end
-
-        deployment.agent_artifact_identifier = remote_artifact_id
-        
-        success ? deployment.mark_as_deployed! : deployment.fail!
-        
-        success
-      end
-    end
-
-    def deploy_to_instance(instance, deployment)
-      response = false
-
+    def deploy(instance_service, deployment)
       #see if the deployment has already been deployed, and bail if so
-      return response if instance.deployments.exists?(deployment)
+      return false if instance_service.deployments.exists?(deployment)
 
       #see if another version of this artifact has been deployed, and
       #udeploy that first if so
       #FIXME: this currently ignores the result of the undeploy operation
-      other_deployment = deployment.artifact.deployment_for_instance(instance)
-      undeploy(other_deployment) if other_deployment
+      other_deployment = deployment.artifact.deployment_for_instance_service(instance_service)
+      undeploy(instance_service, other_deployment) if other_deployment
       
       begin
-        result_hash = instance.agent_client(service).deploy_artifact(deployment.artifact_version)
+        result_hash = instance_service.agent_client.deploy_artifact(deployment.artifact_version)
         if result_hash.respond_to?(:[]) and result_hash['artifact_id']
-          response = result_hash['artifact_id']
-          instance.deployments << deployment
+          deployment.update_attribute(:agent_artifact_identifier, result_hash['artifact_id'])
+          instance_service.deployments << deployment
+          return true
         end
       rescue AgentClient::RequestFailedError => ex
         #TODO: store the failure reason?
@@ -87,22 +65,12 @@ module AgentServices
         Rails.logger.info ex.backtrace.join("\n")
       end
 
-      response
+      false
     end
 
-    def undeploy(deployment)
-      success = deployment.instances.inject(true) do |accumulated_success, instance|
-        accumulated_success && undeploy_from_instance(instance, deployment)
-      end
-
-      deployment.mark_as_undeployed! if success
-      
-      success
-    end
-
-    def undeploy_from_instance(instance, deployment)
-      instance.agent_client(service).undeploy_artifact(deployment.agent_artifact_identifier)
-      instance.instance_deployments.find_by_deployment_id(deployment.id).destroy
+    def undeploy(instance_service, deployment)
+      instance_service.agent_client.undeploy_artifact(deployment.agent_artifact_identifier)
+      instance_service.deployment_instance_services.find_by_deployment_id(deployment.id).destroy
       true
     rescue AgentClient::RequestFailedError => ex
       #TODO: store the failure reason?
@@ -111,18 +79,14 @@ module AgentServices
       false
     end
 
-    def instances_for_deploy
-      service.instances.running.in_environment(environment)
-    end
-
-    def verify_instance(instance)
-      result = instance.agent_client(service).status
+    def verify_instance_service(instance_service)
+      result = instance_service.agent_client.status
       result['state'] and result['state'] == 'started'
     end
 
-    def configure_instance(instance)
+    def configure_instance_service(instance_service)
       #noop, should be overridden in service specific child
-      Rails.logger.debug "AgentServices::Base#configure_instance called - should #{service.name} have its own configure strategy?"
+      Rails.logger.debug "AgentServices::Base#configure_instance_service called - should #{service.name} have its own configure strategy?"
       true
     end
   end

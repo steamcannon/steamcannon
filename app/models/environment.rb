@@ -24,6 +24,8 @@ class Environment < ActiveRecord::Base
   has_many :environment_images, :dependent => :destroy
   has_many :images, :through => :environment_images
   has_many :instances
+  has_many :instance_services, :through => :instances
+  
   belongs_to :platform_version
   belongs_to :user
   attr_protected :user_id
@@ -33,7 +35,7 @@ class Environment < ActiveRecord::Base
   aasm_column :current_state
   aasm_initial_state :stopped
   aasm_state :starting, :enter => :start_environment
-  aasm_state :running
+  aasm_state :running, :after_enter => :move_instance_services_to_configuring
   aasm_state :stopping, :enter => :stop_environment
   aasm_state :stopped
   aasm_state :start_failed
@@ -72,33 +74,6 @@ class Environment < ActiveRecord::Base
     aasm_events_for_current_state.include?(:stop)
   end
 
-  def trigger_deployments(deployment_or_instance)
-    Rails.logger.info "Triggering deployments for #{deployment_or_instance}"
-    if deployment_or_instance.respond_to?(:service)
-      services = [deployment_or_instance.service]
-      deployments = [deployment_or_instance]
-    else
-      services = deployment_or_instance.services
-      deployments = self.deployments.active
-    end
-    
-    services.each do |service|
-      service.deploy(self, deployments)
-    end
-  end
-
-  def active_instances_for_service(service)
-    Service.by_name(service).instances.active.in_environment(self)
-  end
-
-  def running_instances_for_service(service)
-    Service.by_name(service).instances.running.in_environment(self)
-  end
-
-  def not_failed_instances_for_service(service)
-    Service.by_name(service).instances.active.not_failed.in_environment(self)
-  end
-
   protected
 
   def start_environment
@@ -110,7 +85,7 @@ class Environment < ActiveRecord::Base
   end
 
   def stop_environment
-    deployments.active.each(&:mark_as_undeployed!)
+    deployments.deployed.each(&:undeploy!)
     instances.active.each(&:stop!)
   end
 
@@ -130,5 +105,9 @@ class Environment < ActiveRecord::Base
         env_image.destroy unless new_images.include?(env_image.image)
       end
     end
+  end
+
+  def move_instance_services_to_configuring
+    instance_services.pending.each(&:configure!)
   end
 end

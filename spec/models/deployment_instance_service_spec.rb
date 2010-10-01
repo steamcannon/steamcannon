@@ -18,22 +18,7 @@
 
 require 'spec_helper'
 
-describe Service do
-  before(:each) do
-    @service = Factory(:service)
-  end
-
-  it { should have_many :artifacts }
-  it { should have_many :instance_services }
-  it { should have_many :instances }
-  it { should have_many :required_service_dependencies }
-  it { should have_many :dependent_service_dependencies }
-  it { should have_many :required_services }
-  it { should have_many :dependent_services }
-  it { should have_many :image_services }
-  it { should have_many :images }
-  
-  it { should validate_presence_of :name }
-  it { should validate_uniqueness_of :name }
-
+describe DeploymentInstanceService do
+  it { should belong_to :deployment }
+  it { should belong_to :instance_service }
 end

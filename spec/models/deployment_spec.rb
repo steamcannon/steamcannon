@@ -19,14 +19,14 @@
 require 'spec_helper'
 
 describe Deployment do
-  it { should have_many :instance_deployments }
-  it { should have_many :instances }
+
+  it { should have_many :deployment_instance_services }
+  it { should have_many :instance_services }
 
   before(:each) do
+    login
     @deployment = Factory(:deployment)
-    @deployment.current_state = 'deploying'
-    @environment = @deployment.environment
-    @environment.stub!(:trigger_deployments)
+    @instance_service = mock(InstanceService)
   end
 
   it "should belong to an artifact" do
@@ -38,58 +38,44 @@ describe Deployment do
     deployment.artifact.should equal(artifact)
   end
 
-  it "should tell the environment to trigger deployments after creation" do
-    @environment.should_receive(:trigger_deployments).with(@deployment)
-    @deployment.send(:notify_environment_of_deploy)
+  describe 'creation' do
+    before(:each) do
+      @environment = Factory(:environment)
+      @environment.stub_chain(:instance_services, :running, :for_service).and_return([@instance_service])
+      @instance_service.should_receive(:deploy)
+      @deployment = Factory(:deployment, :environment => @environment)
+    end
+    
+    it "should populate deployed_at after moving to :deployed" do
+      @deployment.deployed_at.should_not be_nil
+    end
+
+    it "should populate deployed_by after deploy" do
+      @deployment.deployed_by.should be(@current_user.id)
+    end
   end
 
-  it "should be active after deploying" do
-    @deployment.mark_as_deployed!
-    Deployment.active.first.should eql(@deployment)
-    Deployment.inactive.count.should be(0)
-  end
-
-  it "should populate deployed_at after moving to :deployed" do
-    @deployment.deployed_at.should_not be_nil
-  end
-
-  it "should populate deployed_by after deploy" do
-    login
-    @deployment.mark_as_deployed!
-    @deployment.deployed_by.should be(@current_user.id)
-  end
-
-  it "should be inactive after undeploying" do
-    @deployment.current_state = 'deployed'
-    @deployment.mark_as_undeployed!
-    Deployment.inactive.first.should eql(@deployment)
-    Deployment.active.count.should be(0)
-  end
-
-  it "should populate undeployed_at after undeploying" do
-    @deployment.current_state = 'deployed'
-    @deployment.mark_as_undeployed!
-    @deployment.undeployed_at.should_not be_nil
-  end
-
-  it "should populate undeployed_by after undeploying" do
-    login
-    @deployment.current_state = 'deployed'
-    @deployment.mark_as_undeployed!
-    @deployment.undeployed_by.should be(@current_user.id)
-  end
-
-  describe 'undeploy' do
+  describe 'undeploy!' do
     before(:each) do
       @deployment = Factory.build(:deployment)
       @deployment.current_state = 'deployed'
-      @service = mock(Service)
-      @deployment.stub!(:service).and_return(@service)
+      @instance_service.stub!(:undeploy)
+      @deployment.stub!(:instance_services).and_return([@instance_service])
     end
 
-    it "should delegate to the service" do
-      @service.should_receive(:undeploy).with(@deployment)
-      @deployment.undeploy
+    it "should populate undeployed_at after undeploying" do
+      @deployment.undeploy!
+      @deployment.undeployed_at.should_not be_nil
+    end
+
+    it "should populate undeployed_by after undeploying" do
+      @deployment.undeploy!
+      @deployment.undeployed_by.should be(@current_user.id)
+    end
+
+    it "should undeploy from the instance_services" do
+      @instance_service.should_receive(:undeploy).with(@deployment)
+      @deployment.undeploy!
     end
 
   end

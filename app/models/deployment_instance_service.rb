@@ -16,24 +16,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'spec_helper'
-
-describe Service do
-  before(:each) do
-    @service = Factory(:service)
-  end
-
-  it { should have_many :artifacts }
-  it { should have_many :instance_services }
-  it { should have_many :instances }
-  it { should have_many :required_service_dependencies }
-  it { should have_many :dependent_service_dependencies }
-  it { should have_many :required_services }
-  it { should have_many :dependent_services }
-  it { should have_many :image_services }
-  it { should have_many :images }
-  
-  it { should validate_presence_of :name }
-  it { should validate_uniqueness_of :name }
-
+class DeploymentInstanceService < ActiveRecord::Base
+  belongs_to :deployment
+  belongs_to :instance_service
 end

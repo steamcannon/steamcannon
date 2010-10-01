@@ -21,15 +21,10 @@ module AgentServices
     # doesn't actually do any mod_cluster configuration, but instead
     # triggers (re)configuration of any jboss services that self
     # configured before the mod_cluster service gets here.
-    # see also: JbossAs#configure_instance
-    def configure_instance(instance)
-      jboss_service = Service.by_name('jboss_as')
-      environment.active_instances_for_service(jboss_service).each do |jboss_instance|
-        # we pluck out and configure just the jboss service on the
-        # instance instead of all services, since one of those
-        # services could be mod_cluster, which would put us in a loop.
-        jboss_instance.instance_services.find_by_service_id(jboss_service.id).configure
-      end
+    # see also: JbossAs#configure_instance_service
+    def configure_instance_service(instance_service)
+      environment.instance_services.running.
+        for_service(Service.by_name('jboss_as')).each(&:configure_service)
       true
     end
   end

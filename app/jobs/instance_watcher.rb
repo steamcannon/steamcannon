@@ -26,8 +26,6 @@ class InstanceWatcher
     # Purposely put the later states before the earlier ones
     # so an instance can't flow from configuring -> verifying ->
     # configuring_service within a single job execution
-    update_verifying_services
-    update_configuring_services
     update_verifying
     update_configuring
 
@@ -48,17 +46,6 @@ class InstanceWatcher
     # TODO: This is a bit inefficient to do one at a time
     Instance.verifying.each { |i| i.verify_agent }
   end
-
-  def update_configuring_services
-    # TODO: This is a bit inefficient to do one at a time
-    Instance.configuring_services.each { |i| i.configure_services }
-  end
-
-  def update_verifying_services
-    # TODO: This is a bit inefficient to do one at a time
-    Instance.verifying_services.each { |i| i.verify_services }
-  end
-
 
   def update_terminating
     # TODO: This is a bit inefficient to do one at a time

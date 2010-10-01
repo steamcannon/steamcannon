@@ -16,24 +16,17 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'spec_helper'
-
-describe Service do
-  before(:each) do
-    @service = Factory(:service)
+module StuckState
+  def self.included(base)
+    base.send(:before_save, :set_state_change_timestamp)
   end
 
-  it { should have_many :artifacts }
-  it { should have_many :instance_services }
-  it { should have_many :instances }
-  it { should have_many :required_service_dependencies }
-  it { should have_many :dependent_service_dependencies }
-  it { should have_many :required_services }
-  it { should have_many :dependent_services }
-  it { should have_many :image_services }
-  it { should have_many :images }
-  
-  it { should validate_presence_of :name }
-  it { should validate_uniqueness_of :name }
+  protected
+  def stuck_in_state_for_too_long?(too_long = 2.minutes)
+    state_change_timestamp <= Time.now - too_long
+  end
 
+  def set_state_change_timestamp
+    self.state_change_timestamp = Time.now if current_state_changed?
+  end
 end

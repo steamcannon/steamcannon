@@ -39,8 +39,6 @@ describe Instance do
   it { should have_one :server_certificate }
   it { should have_many :instance_services }
   it { should have_many :services }
-  it { should have_many :instance_deployments }
-  it { should have_many :deployments }
   
   it "should create a new instance given valid attributes" do
     Instance.create!(@valid_attributes)
@@ -253,7 +251,7 @@ describe Instance do
         @instance.configure_failed!
       end
 
-      %w{ verifying configuring configuring_services verifying_services }.each do |from_state|
+      %w{ verifying configuring }.each do |from_state|
         it "should be able to transition to configure_failed from #{from_state}" do
           @instance.current_state = from_state
           @instance.configure_failed!
@@ -270,7 +268,6 @@ describe Instance do
         @instance.stub!(:environment).and_return(@environment)
         @instance.current_state = 'verifying'
         @environment.stub!(:run!)
-        @environment.stub!(:trigger_deployments)
       end
 
       %w{ verifying configuring }.each do |from_state|
@@ -286,10 +283,6 @@ describe Instance do
         @instance.run!
       end
 
-      it "should trigger deployments on environment" do
-        @environment.should_receive(:trigger_deployments).with(@instance)
-        @instance.run!
-      end
     end
 
     describe "stop" do
@@ -316,6 +309,7 @@ describe Instance do
         @instance.stop!
         @instance.stopped_by.should be(@current_user.id)
       end
+
     end
 
     describe "terminate" do
@@ -381,6 +375,15 @@ describe Instance do
         @instance.current_state = 'terminating'
         @instance.stopped!
         @instance.should be_terminating
+      end
+
+      it "should destroy all instance services" do
+        instance_service = mock(InstanceService)
+        instance_service.should_receive(:destroy)
+        @instance.should_receive(:instance_services).and_return([instance_service])
+        @instance.stub!(:stopped_in_cloud?).and_return(true)
+        @instance.current_state = 'terminating'
+        @instance.stopped!
       end
     end
 
@@ -525,15 +528,15 @@ describe Instance do
       @instance.current_state = 'verifying'
     end
 
-    it "should move to configuring_services state if agent is running" do
+    it "should move to :running state if agent is running" do
       @instance.stub!(:agent_running?).and_return(true)
-      @instance.should_receive(:configure_services!)
+      @instance.should_receive(:run!)
       @instance.verify_agent
     end
 
-    it "should not move to configuring_services state if agent is not running" do
+    it "should not move to :running state if agent is not running" do
       @instance.stub!(:agent_running?).and_return(false)
-      @instance.should_not_receive(:configure_services!)
+      @instance.should_not_receive(:run!)
       @instance.verify_agent
     end
 
@@ -581,6 +584,8 @@ describe Instance do
 
   end
 
+
+=begin
   describe "configure_services" do
     before(:each) do
       @instance = Factory(:instance)
@@ -624,6 +629,8 @@ describe Instance do
       @instance.configure_services
     end
   end
+
+
 
 
   describe "verify_services" do
@@ -673,8 +680,10 @@ describe Instance do
       @instance.verify_services
     end
   end
+=end
 
   describe "reachable?" do
+
     before(:each) do
       @instance       = Factory(:instance)
       @cloud          = mock(Object)

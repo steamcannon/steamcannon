@@ -25,32 +25,16 @@ class Deployment < ActiveRecord::Base
   belongs_to :environment
   belongs_to :user
 
-  has_many :instance_deployments
-  has_many :instances, :through => :instance_deployments
-  
-  named_scope :active, :conditions => "current_state = 'deploying' OR current_state = 'deployed'"
-  named_scope :inactive, :conditions => "current_state = 'undeployed' OR current_state = 'deploy_failed'"
-
-  before_create :record_deploy
-  after_create :notify_environment_of_deploy
+  has_many :deployment_instance_services, :dependent => :destroy
+  has_many :instance_services, :through => :deployment_instance_services
   
   aasm_column :current_state
-  aasm_initial_state :deploying
-  aasm_state :deploying
-  aasm_state :deploy_failed
-  aasm_state :deployed, :enter => :record_deploy
-  aasm_state :undeployed, :enter => :record_undeploy
+  aasm_initial_state :deployed
+  aasm_state :deployed, :after_enter => :perform_deploy
+  aasm_state :undeployed, :after_enter => :perform_undeploy
 
-  aasm_event :fail do
-    transitions :to => :deploy_failed, :from => :deploying
-  end
-
-  aasm_event :mark_as_deployed do
-    transitions :to => :deployed, :from => :deploying
-  end
-
-  aasm_event :mark_as_undeployed do
-    transitions :to => :undeployed, :from => [:deployed, :deploying]
+  aasm_event :undeploy do
+    transitions :to => :undeployed, :from => :deployed
   end
 
   def artifact
@@ -60,22 +44,18 @@ class Deployment < ActiveRecord::Base
   def service
     artifact.service
   end
-  
-  def undeploy
-    service.undeploy(self)
-  end
 
-  private
+
+  protected
   
-  def notify_environment_of_deploy
-    environment.trigger_deployments(self)
-  end
-  
-  def record_deploy
+  def perform_deploy
+    environment.instance_services.running.for_service(service).each { |is| is.deploy(self) }
     audit_action :deployed
   end
-
-  def record_undeploy
+  
+  def perform_undeploy
+    instance_services.each { |is| is.undeploy(self) }
     audit_action :undeployed
   end
+
 end

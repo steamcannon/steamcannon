@@ -21,32 +21,23 @@ require 'spec_helper'
 
 describe AgentServices::ModCluster do
   before(:each) do
-    @service = Factory(:service)
     @environment = Factory(:environment)
     @agent_service = AgentServices::ModCluster.new(@service, @environment)
-    @instance = Factory(:instance)
-    @instance.services << @service
+    @instance_service = Factory(:instance_service)
     Service.stub!(:by_name).and_return(Factory(:service))
-    @jboss_instance = Factory(:instance)
     @jboss_instance_service = Factory.build(:instance_service)
-    @jboss_instance_service.stub!(:configure)
-    @jboss_instance.stub_chain(:instance_services, :find_by_service_id).and_return(@jboss_instance_service)
-    @environment.stub!(:active_instances_for_service).and_return([@jboss_instance])
+    @jboss_instance_service.stub!(:configure_service)
+    @environment.stub_chain(:instance_services, :running, :for_service).and_return([@jboss_instance_service])
   end
 
   describe 'configure_instance' do
-    it "should operate on active jboss instances" do
-      @environment.should_receive(:active_instances_for_service).and_return([@jboss_instance])
-      @agent_service.configure_instance(@instance)
-    end
-
     it "should return true" do
-      @agent_service.configure_instance(@instance).should == true
+      @agent_service.configure_instance_service(@instance_service).should == true
     end
 
     it "should configure the jboss instance_services" do
-      @jboss_instance_service.should_receive(:configure)
-      @agent_service.configure_instance(@instance)
+      @jboss_instance_service.should_receive(:configure_service)
+      @agent_service.configure_instance_service(@instance_service)
     end
   end
 end

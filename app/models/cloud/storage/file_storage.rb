@@ -43,21 +43,9 @@ module Cloud
       end
 
       def delete(path)
-        begin
-          FileUtils.rm(path) if File.exist?(path)
-        rescue Errno::ENOENT => e
-          # ignore file-not-found, let everything else pass
-        end
-        begin
-          while(true)
-            path = File.dirname(path)
-            FileUtils.rmdir(path)
-          end
-        rescue Errno::EEXIST, Errno::ENOTEMPTY, Errno::ENOENT, Errno::EINVAL, Errno::ENOTDIR
-          # Stop trying to remove parent directories
-        rescue SystemCallError => e
-          # Ignore it
-        end
+        FileUtils.rm(path) if exists?(path)
+      rescue Errno::ENOENT => e
+        # ignore file-not-found, let everything else pass
       end
 
       def public_url

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100928202154) do
+ActiveRecord::Schema.define(:version => 20101001192546) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -37,6 +37,13 @@ ActiveRecord::Schema.define(:version => 20100928202154) do
     t.text     "keypair"
     t.integer  "certifiable_id"
     t.string   "certifiable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "deployment_instance_services", :force => true do |t|
+    t.integer  "deployment_id"
+    t.integer  "instance_service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -76,16 +83,16 @@ ActiveRecord::Schema.define(:version => 20100928202154) do
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
 
-  create_table "images", :force => true do |t|
-    t.string   "name"
-    t.string   "cloud_id"
+  create_table "image_services", :force => true do |t|
+    t.integer  "image_id"
+    t.integer  "service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "instance_deployments", :force => true do |t|
-    t.integer  "instance_id"
-    t.integer  "deployment_id"
+  create_table "images", :force => true do |t|
+    t.string   "name"
+    t.string   "cloud_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -96,6 +103,7 @@ ActiveRecord::Schema.define(:version => 20100928202154) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "current_state"
+    t.datetime "state_change_timestamp"
   end
 
   create_table "instances", :force => true do |t|
@@ -133,6 +141,13 @@ ActiveRecord::Schema.define(:version => 20100928202154) do
 
   create_table "platforms", :force => true do |t|
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "service_dependencies", :force => true do |t|
+    t.integer  "required_service_id"
+    t.integer  "dependent_service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
