@@ -71,3 +71,29 @@ jQuery(document).ready(function($) {
         $($(this).closest('.start_another_dialog')).hide();        
     })
 })
+
+
+function remote_stop_instance(url) {
+  $.post(url, function(data){
+    alert(data.message);
+  }, "json");
+}
+
+/**
+ * Checks the status of the instance and updates the element at #instance_[id] .image_status
+ */
+function check_instance_status(url, id) {
+  $.post(url, function(data) {
+    elem = $('#' + id + ' .image_status');
+    if (elem.text() != data.message) {
+      elem.text(data.message);
+    }
+  }, "json")
+  setTimeout("check_instance_status('" + url + "', '" + id + "')", 10000);
+}
+
+function monitor_instance(url, id) {
+  jQuery(document).ready(function($) {
+    check_instance_status(url, id);
+  });
+}

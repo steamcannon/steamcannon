@@ -21,7 +21,8 @@ require 'spec_helper'
 describe InstancesController do
   before(:each) do
     login
-    @instances = [Object.new]
+    @instances = [Factory(:instance)]
+    @instances.stub!(:to_json).and_return("{}")
     @current_user.stub!(:environments).and_return(Environment)
     mock_environment.stub!(:instances).and_return(@instances)
   end
@@ -32,7 +33,7 @@ describe InstancesController do
   
   describe "GET index" do
     before(:each) do
-      Environment.stub(:find).with("13").and_return( mock_environment )
+      Environment.stub!(:find).with("13").and_return( mock_environment )
       get :index, :environment_id => "13"
     end
     
@@ -59,7 +60,8 @@ describe InstancesController do
 
   describe "GET show" do
     before(:each) do
-      Environment.stub(:find).with("13").and_return( mock_environment )
+      Environment.stub!(:find).with("13").and_return( mock_environment )
+      mock_environment.instances.stub(:find).with("1").and_return(@instances.first)
     end
 
     it "should assign the requested environment as @environment" do
@@ -87,12 +89,14 @@ describe InstancesController do
 
   describe "POST stop" do
     before(:each) do
-      Environment.stub(:find).with("13").and_return( mock_environment )
-      @instances = [Object.new]
-      mock_environment.stub(:instances).and_return(@instances)
+      Environment.stub!(:find).with("13").and_return( mock_environment )
+      @instances.first.stub!(:stop!)
+      mock_environment.instances.stub(:find).with("1").and_return(@instances.first)
+      mock_environment.stub!(:instances).and_return(@instances)
     end
 
     it "should assign the requested environment as @environment" do
+      mock_environment.instances.stub!(:find).with("1").and_return(@instances.first)
       post :stop, :id => "1", :environment_id => "13"
       assigns[:environment].should equal(mock_environment)
     end
@@ -101,6 +105,38 @@ describe InstancesController do
       mock_environment.instances.should_receive(:find).with("1").and_return(@instances.first)
       post :stop, :id => "1", :environment_id => "13"
       assigns[:instance].should equal(@instances.first)
+    end
+    
+    it "should stop the instance" do
+      mock_environment.instances.stub!(:find).with("1").and_return(@instances.first)
+      @instances.first.should_receive(:stop!)
+      post :stop, :id => "1", :environment_id => "13"
+    end
+  end
+
+  describe "POST status" do
+    before(:each) do
+      Environment.stub!(:find).with("13").and_return( mock_environment )
+      mock_environment.instances.stub(:find).with("1").and_return(@instances.first)
+      mock_environment.stub!(:instances).and_return(@instances)
+    end
+
+    it "should assign the requested environment as @environment" do
+      mock_environment.instances.stub!(:find).with("1").and_return(@instances.first)
+      post :status, :id => "1", :environment_id => "13"
+      assigns[:environment].should equal(mock_environment)
+    end
+
+    it "should assign the requested instance as @instance" do
+      mock_environment.instances.should_receive(:find).with("1").and_return(@instances.first)
+      post :status, :id => "1", :environment_id => "13"
+      assigns[:instance].should equal(@instances.first)
+    end
+    
+    it "should stop the instance" do
+      mock_environment.instances.stub!(:find).with("1").and_return(@instances.first)
+      @instances.first.should_receive(:current_state)
+      post :status, :id => "1", :environment_id => "13"
     end
   end
 

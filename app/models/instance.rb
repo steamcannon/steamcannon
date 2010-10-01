@@ -110,6 +110,9 @@ class Instance < ActiveRecord::Base
     transitions :to => :unreachable, :from => [:running]
   end
 
+  def can_stop?
+    aasm_events_for_current_state.include?(:stop)
+  end
 
   def self.deploy!(image, environment, name, hardware_profile)
     instance = Instance.new(:image_id => image.id,
