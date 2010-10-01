@@ -33,8 +33,8 @@ class Deployment < ActiveRecord::Base
   aasm_state :deployed, :after_enter => :perform_deploy
   aasm_state :undeployed, :after_enter => :perform_undeploy
 
-  aasm_event :undeploy! do
-    transitions :to => :undeployed, :from => [:deployed]
+  aasm_event :undeploy do
+    transitions :to => :undeployed, :from => :deployed
   end
 
   def artifact
