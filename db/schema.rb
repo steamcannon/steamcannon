@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100930202658) do
+ActiveRecord::Schema.define(:version => 20101001192546) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -82,6 +82,13 @@ ActiveRecord::Schema.define(:version => 20100930202658) do
   end
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
+
+  create_table "image_services", :force => true do |t|
+    t.integer  "image_id"
+    t.integer  "service_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "images", :force => true do |t|
     t.string   "name"

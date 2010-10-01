@@ -26,6 +26,11 @@ describe Image do
     }
   end
 
+  it { should have_many :platform_versions }
+  it { should have_many :instances }
+  it { should have_many :image_services }
+  it { should have_many :services }
+  
   it "should create a new instance given valid attributes" do
     Image.create!(@valid_attributes)
   end
@@ -38,11 +43,4 @@ describe Image do
     Image.new.should respond_to(:cloud_id)
   end
 
-  it "should have many platform versions" do
-    Image.new.should respond_to(:platform_versions)
-  end
-
-  it "should have many instances" do
-    Image.new.should respond_to(:instances)
-  end
 end

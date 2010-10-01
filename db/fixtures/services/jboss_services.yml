@@ -1,6 +1,8 @@
 ---
 services:
   - name: jboss_as
+    full_name: JBoss AS
   - name: mod_cluster
+    full_name: Mod Cluster
     requires:
       - jboss_as

@@ -42,7 +42,8 @@ class Platform < ActiveRecord::Base
   #             role: frontend
   #           - name: Test Image 234
   #             cloud_id: ami_234
-  #             role: backend
+  #             services:
+  #               - jboss_as
   #       - version_number: 234
   #         images:
   #           - cloud_id: ami_123
