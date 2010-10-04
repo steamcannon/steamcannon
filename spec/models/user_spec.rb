@@ -71,6 +71,12 @@ describe User do
     u.obfuscated_cloud_password.should == "******"
   end
 
+  it "should handle cloud passwords with fewer than 4 characters" do
+    u = User.create!(@valid_attributes)
+    u.cloud_password = "123"
+    u.obfuscated_cloud_password.should == "******"
+  end
+
   it "should obfuscate all but the last for characters of any cloud password with more than 6 characters" do
     u = User.create!(@valid_attributes)
     u.cloud_password = "1234567890"

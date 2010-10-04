@@ -41,8 +41,12 @@ class User < ActiveRecord::Base
   
   def obfuscated_cloud_password
     obfuscated = cloud_password.dup
-    obfuscated[0..-5] = '*' * (cloud_password.length-4)
-    obfuscated.length < 6 ? '******' : obfuscated
+    if obfuscated.length < 6
+      obfuscated = '******'
+    else
+      obfuscated[0..-5] = '*' * (cloud_password.length-4)
+    end
+    obfuscated
   end
   
   def cloud_password=(pw)
