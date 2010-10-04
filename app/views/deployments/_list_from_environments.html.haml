@@ -13,7 +13,7 @@
     /.deployment_health
     /  Health
   - deployments.each do |deployment|
-    .deployment_row
+    - div_for(deployment, :class=>'deployment_row') do
       .deployment_artifact
         = link_to deployment.artifact.name, artifact_path(deployment.artifact_version.artifact)
       /.deployment_chart
@@ -22,14 +22,17 @@
       .deployment_environment
         = deployment.artifact_version.version_number
       .deployment_status
-        - if deployment.instance_services.empty?
-          Pending Deployment
-        - else
-          Deployed to:
-          %ul
+        Deployed to:
+        %ul
+          - if deployment.instance_services.empty?
+            %li Pending Deployment
+          - else
             - deployment.instance_services.each do |instance_service|
               %li
                 = instance_service.instance.name
+      - javascript_tag do
+        ="monitor_deployment('#{status_deployment_path(deployment.id)}', '##{dom_id(deployment)}');"
+      
       /.deployment_health
       /  &nbsp;&nbsp;
       /  = image_tag 'healthy.png'

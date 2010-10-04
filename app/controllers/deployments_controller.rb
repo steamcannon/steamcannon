@@ -83,4 +83,19 @@ class DeploymentsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  # POST /environments/:id/status.json
+  def status
+    @deployment = current_user.deployments.find(params[:id])
+    if @deployment
+      respond_to do |format|
+        format.js { render(generate_json_response(:ok, :services=>@deployment.instance_services.collect{|s|"#{s.instance.name}"})) }
+      end
+    else      
+      respond_to do |format|
+        format.js { render(generate_json_response(:error, :message=>"Cannot find requested deployment")) }
+      end
+    end
+  end
+  
 end

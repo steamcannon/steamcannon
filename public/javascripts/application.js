@@ -79,22 +79,55 @@ function remote_stop_instance(url) {
   }, "json");
 }
 
-/**
- * Checks the status of the instance and updates the element at #instance_[id] .image_status
- */
-function update_status(url, selector, repeat) {
+function update_environment_status(url, selector) {
   $.post(url, function(data) {
-    elem = $(selector);
+    elem = $(selector + ' .environment_status');
     if (elem.text() != data.message) {
       elem.text(data.message);
     }
   }, "json");
-  setTimeout("update_status('" + url + "', '" + selector + "')", 10000);
+  setTimeout("update_environment_status('" + url + "', '" + selector + "')", 30000);
 }
 
-function monitor_status(url, selector, repeat) {
-  if (repeat == null) { repeat = 10000; }
+function monitor_environment(url, selector) {
   jQuery(document).ready(function($) {
-    update_status(url, selector, repeat);
+    update_environment_status(url, selector);
   });
 }
+
+function update_deployment_status(url, selector) {
+  $.post(url, function(data) {
+    services = "<ul>";
+    if (data.services.length == 0) { data.services.push("Pending Deployment"); }
+    $.each(data.services, function(index, value){ services += "<li>" + value + "</li>"; });
+    services += "</ul>";
+    $(selector + ' .deployment_status ul').replaceWith(services);
+  }, "json");
+  setTimeout("update_deployment_status('" + url + "', '" + selector + "')", 30000);
+}
+
+function monitor_deployment(url, selector) {
+  jQuery(document).ready(function($) {
+    update_deployment_status(url, selector);
+  });
+}
+
+function update_instance_status(url, selector) {
+  $.post(url, function(data) {
+    $(selector + ' .image_status').text(data.message);
+    $(selector + ' .image_id').text(data.id);
+    services = "<ul>";
+    if (data.services.length == 0) { data.services.push("None"); }
+    $.each(data.services, function(index, value){ services += "<li>" + value + "</li>"; });
+    services += "</ul>";
+    $(selector + ' .services ul').replaceWith(services);
+  }, "json");
+  setTimeout("update_instance_status('" + url + "', '" + selector + "')", 30000);
+}
+
+function monitor_instance(url, selector) {
+  jQuery(document).ready(function($) {
+    update_instance_status(url, selector);
+  });
+}
+

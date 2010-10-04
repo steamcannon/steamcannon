@@ -27,10 +27,10 @@
       .hardware_profile
         = instance.hardware_profile
       .services
-        - if instance.services.blank?
-          None
-        - else
-          %ul
+        %ul
+          - if instance.services.blank?
+            %li None
+          - else
             - instance.instance_services.each do |instance_service|
               %li
                 = instance_service.service.full_name
@@ -56,7 +56,7 @@
         = link_to 'Start'
     
     - javascript_tag do
-      ="monitor_status('#{status_environment_instance_path(instance.environment.id, instance.id)}', '##{dom_id(instance)} .image_status', 10000);"
+      ="monitor_instance('#{status_environment_instance_path(instance.environment.id, instance.id)}', '##{dom_id(instance)}');"
     - if instances.empty?
       .image_row
         .name

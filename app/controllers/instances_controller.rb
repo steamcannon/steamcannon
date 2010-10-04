@@ -45,7 +45,10 @@ class InstancesController < ApplicationController
     get_instance
     if @instance
       respond_to do |format|
-        format.js { render(generate_json_response(:ok, :message=>@instance.current_state)) }
+        format.js { render(generate_json_response(:ok, 
+                                                  :message=>@instance.current_state, 
+                                                  :id=>@instance.cloud_id, 
+                                                  :services=>@instance.instance_services.collect{|s|"#{s.service.full_name} #{s.current_state}"})) }
       end
     else      
       respond_to do |format|

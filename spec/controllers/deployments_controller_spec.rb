@@ -125,4 +125,22 @@ describe DeploymentsController do
     end
   end
 
+  describe "POST status" do
+    before(:each) do
+      Deployment.stub!(:find).with("13").and_return( mock_deployment )
+      @instance_services = []
+      mock_deployment.stub(:instance_services).and_return(@instance_services)
+    end
+
+    it "should assign the requested deployment as @deployment" do
+      post :status, :id => "13"
+      assigns[:deployment].should equal(mock_deployment)
+    end
+
+    it "should get the deployment's current instances" do
+      mock_deployment.should_receive(:instance_services)
+      post :status, :id => "13"
+    end
+  end
+
 end

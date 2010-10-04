@@ -47,5 +47,9 @@ describe DeploymentsController do
     it "recognizes and generates #destroy" do
       { :delete => "/deployments/1" }.should route_to(:controller => "deployments", :action => "destroy", :id => "1") 
     end
+
+    it "recognizes and generates #status" do
+      { :post => '/deployments/1/status' }.should route_to(:controller => 'deployments', :action => 'status', :id => '1')
+    end
   end
 end
