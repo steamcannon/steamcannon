@@ -6,7 +6,7 @@ class InstancesController < ApplicationController
   def index
     @instances = @environment.instances
     respond_to do |format|
-      format.json { render(generate_json_response(:ok, :instances=>@instances.to_json)) }
+      format.js { render(generate_json_response(:ok, :instances=>@instances.to_json)) }
     end
   end
 
@@ -15,11 +15,11 @@ class InstancesController < ApplicationController
     get_instance
     unless @instance.blank?      
       respond_to do |format|
-        format.json { render(generate_json_response(:ok, :instance=>@instance.to_json)) }
+        format.js { render(generate_json_response(:ok, :instance=>@instance.to_json)) }
       end
     else      
       respond_to do |format|
-        format.json { render(generate_json_response(:error, :message=>"Invalid instance")) }
+        format.js { render(generate_json_response(:error, :message=>"Invalid instance")) }
       end
     end
   end
@@ -30,12 +30,12 @@ class InstancesController < ApplicationController
     if @instance && @instance.can_stop?
       @instance.stop! 
       respond_to do |format|
-        format.json { render(generate_json_response(:ok, :instance=>@instance.to_json, :message=>"Stopping #{@instance.name} (#{@instance.cloud_id})")) }
+        format.js { render(generate_json_response(:ok, :instance=>@instance.to_json, :message=>"Stopping #{@instance.name} (#{@instance.cloud_id})")) }
       end
     else      
       message = (@instance && !@instance.can_stop?) ? "Cannot stop instance while it is #{@instance.current_state}." : "Cannot find instance"
       respond_to do |format|
-        format.json { render(generate_json_response(:error, :message=>message)) }
+        format.js { render(generate_json_response(:error, :message=>message)) }
       end
     end
   end
@@ -45,11 +45,11 @@ class InstancesController < ApplicationController
     get_instance
     if @instance
       respond_to do |format|
-        format.json { render(generate_json_response(:ok, :message=>@instance.current_state)) }
+        format.js { render(generate_json_response(:ok, :message=>@instance.current_state)) }
       end
     else      
       respond_to do |format|
-        format.json { render(generate_json_response(:error, :message=>"Cannot find requested instance")) }
+        format.js { render(generate_json_response(:error, :message=>"Cannot find requested instance")) }
       end
     end
   end

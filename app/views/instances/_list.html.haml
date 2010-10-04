@@ -56,7 +56,7 @@
         = link_to 'Start'
     
     - javascript_tag do
-      ="monitor_status('#{status_environment_instance_path(instance.environment.id, instance.id)}', '##{dom_id(instance)} .image_status');"
+      ="monitor_status('#{status_environment_instance_path(instance.environment.id, instance.id)}', '##{dom_id(instance)} .image_status', 10000);"
     - if instances.empty?
       .image_row
         .name

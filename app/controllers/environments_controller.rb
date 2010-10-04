@@ -149,11 +149,11 @@ class EnvironmentsController < ApplicationController
     @environment = current_user.environments.find(params[:id])
     if @environment
       respond_to do |format|
-        format.json { render(generate_json_response(:ok, :message=>@environment.current_state)) }
+        format.js { render(generate_json_response(:ok, :message=>@environment.current_state)) }
       end
     else      
       respond_to do |format|
-        format.json { render(generate_json_response(:error, :message=>"Cannot find requested environment")) }
+        format.js { render(generate_json_response(:error, :message=>"Cannot find requested environment")) }
       end
     end
   end

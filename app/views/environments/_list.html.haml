@@ -29,7 +29,7 @@
       .environment_delete
         = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?"
     - javascript_tag do
-      ="monitor_status('#{status_environment_path(environment.id)}', '##{dom_id(environment)} .environment_status');"
+      ="monitor_status('#{status_environment_path(environment.id)}', '##{dom_id(environment)} .environment_status', 10000);"
   
   - if environments.empty?
     .environment_row
