@@ -21,7 +21,7 @@ class Instance < ActiveRecord::Base
   include AuditColumns
   include AASM
   include StuckState
-  
+
   belongs_to :environment
   belongs_to :image
 
@@ -86,7 +86,7 @@ class Instance < ActiveRecord::Base
   aasm_event :start_failed do
     transitions :to => :start_failed, :from => :pending
   end
-  
+
   aasm_event :unreachable do
     transitions :to => :unreachable, :from => [:running, :pending, :starting, :configuring, :verifying,
                                                :configure_failed, :stopping, :terminating, :start_failed]
@@ -129,7 +129,7 @@ class Instance < ActiveRecord::Base
       configure_failed!
     end
   end
-  
+
   def reachable?
     # deltacloud returns the instance if it's available. We just want to return a boolean
     cloud.instance_available?(self.cloud_id) ? true : false
@@ -163,7 +163,7 @@ class Instance < ActiveRecord::Base
   end
 
   protected
-  
+
   def start_instance
     cloud_instance = cloud.launch(image.cloud_id,
                                   instance_launch_options)
@@ -173,14 +173,12 @@ class Instance < ActiveRecord::Base
 
   def instance_launch_options
     {
-      # FIXME: check this, according to docs it should be hwp_id
-      # (http://localhost:8080/deltacloud/api/docs/instances/create)
       :hardware_profile => hardware_profile,
-      :keyname => cloud_keyname,
+      :key_name => cloud_keyname,
       :user_data => instance_user_data
     }.merge(cloud_specific_hacks.launch_options)
   end
-  
+
   def cloud_keyname
     environment.user.ssh_key_name
   end
