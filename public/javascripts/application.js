@@ -82,18 +82,18 @@ function remote_stop_instance(url) {
 /**
  * Checks the status of the instance and updates the element at #instance_[id] .image_status
  */
-function check_instance_status(url, id) {
+function update_status(url, selector) {
   $.post(url, function(data) {
-    elem = $('#' + id + ' .image_status');
+    elem = $(selector);
     if (elem.text() != data.message) {
       elem.text(data.message);
     }
   }, "json")
-  setTimeout("check_instance_status('" + url + "', '" + id + "')", 10000);
+  setTimeout("update_status('" + url + "', '" + selector + "')", 10000);
 }
 
-function monitor_instance(url, id) {
+function monitor_status(url, selector) {
   jQuery(document).ready(function($) {
-    check_instance_status(url, id);
+    update_status(url, selector);
   });
 }

@@ -2,7 +2,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :artifacts
   map.resources :artifact_versions
   map.resources :platforms
-  map.resources :environments, :member => {:start => :post, :stop => :post, :clone => :post} do |environment|
+  map.resources :environments, :member => {:start => :post, :stop => :post, :clone => :post, :status => :post} do |environment|
     environment.resources :instances, :member => {:stop => :post, :status => :post}, :only => [:show, :index]
   end
   map.resources :deployments

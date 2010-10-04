@@ -47,5 +47,9 @@ describe EnvironmentsController do
     it "recognizes and generates #destroy" do
       { :delete => "/environments/1" }.should route_to(:controller => "environments", :action => "destroy", :id => "1") 
     end
+    
+    it "recognizes and generates #status" do
+      { :post => '/environments/1/status' }.should route_to(:controller => 'environments', :action => 'status', :id => '1')
+    end
   end
 end

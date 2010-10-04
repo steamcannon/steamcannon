@@ -9,7 +9,7 @@
     .environment_status
       Status
   - environments.each do |environment|
-    .environment_row
+    - div_for(environment, :class=>'environment_row') do
       .environment_name
         = link_to environment.name, environment
       .environment_platform
@@ -28,6 +28,9 @@
         = link_to 'Edit', edit_environment_path(environment)
       .environment_delete
         = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?"
+    - javascript_tag do
+      ="monitor_status('#{status_environment_path(environment.id)}', '##{dom_id(environment)} .environment_status');"
+  
   - if environments.empty?
     .environment_row
       .environment_name

@@ -286,7 +286,7 @@ describe Instance do
     end
 
     describe "stop" do
-      %w{ pending starting configuring verifying running start_failed }.each do |from_state|
+      %w{ pending starting configuring verifying running start_failed unreachable }.each do |from_state|
         it "should be able to transition to stopping from #{from_state}" do
           @instance.current_state = from_state
           @instance.stop!
@@ -398,6 +398,13 @@ describe Instance do
     end
 
     describe "to unreachable" do
+    %w{ running pending starting configuring verifying configure_failed stopping terminating start_failed }.each do |from_state|
+       it "should be able to transition to unreachable from #{from_state}" do
+         @instance.current_state = from_state
+         @instance.unreachable!
+         @instance.should be_unreachable
+       end
+     end
       it "should call something on the environment to indicate that the environment is possibly in an inconsistent state"
       it "should have a way to recover from a node marked as unreachable that is suddenly available again"
     end

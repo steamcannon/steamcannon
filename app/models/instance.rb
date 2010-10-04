@@ -72,7 +72,7 @@ class Instance < ActiveRecord::Base
   aasm_event :stop do
     transitions :to => :stopping, :from => [:pending, :starting, :configuring,
                                             :verifying, :running, :start_failed,
-                                            :configure_failed]
+                                            :configure_failed, :unreachable]
   end
 
   aasm_event :terminate do
@@ -88,7 +88,8 @@ class Instance < ActiveRecord::Base
   end
   
   aasm_event :unreachable do
-    transitions :to => :unreachable, :from => [:running]
+    transitions :to => :unreachable, :from => [:running, :pending, :starting, :configuring, :verifying,
+                                               :configure_failed, :stopping, :terminating, :start_failed]
   end
 
   def can_stop?

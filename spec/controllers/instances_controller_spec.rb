@@ -133,7 +133,7 @@ describe InstancesController do
       assigns[:instance].should equal(@instances.first)
     end
     
-    it "should stop the instance" do
+    it "should get the instance's current state" do
       mock_environment.instances.stub!(:find).with("1").and_return(@instances.first)
       @instances.first.should_receive(:current_state)
       post :status, :id => "1", :environment_id => "13"
