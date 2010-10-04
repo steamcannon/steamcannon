@@ -39,7 +39,7 @@ describe Instance do
   it { should have_one :server_certificate }
   it { should have_many :instance_services }
   it { should have_many :services }
-  
+
   it "should create a new instance given valid attributes" do
     Instance.create!(@valid_attributes)
   end
@@ -112,9 +112,9 @@ describe Instance do
       @instance.should_receive(:hardware_profile).and_return('m1.small')
       @instance.send(:instance_launch_options)[:hardware_profile].should == 'm1.small'
     end
-    
-    it "should include the instance user keyname" do
-      @instance.send(:instance_launch_options)[:keyname].should == 'something_not_default'
+
+    it "should include the instance user key_name" do
+      @instance.send(:instance_launch_options)[:key_name].should == 'something_not_default'
     end
   end
 
@@ -322,7 +322,7 @@ describe Instance do
         @instance.current_state = 'stopping'
         @instance.terminate!
       end
-      
+
       it "should ensure the instance is available in the cloud before attempting to terminate it" do
         cloud = mock(Object)
         cloud.stub!(:instance_available?).and_return(false)
@@ -677,7 +677,7 @@ describe Instance do
       @instance.should_receive(:configure_failed!)
       @instance.verify_services
     end
-    
+
     it "should log any agent client errors" do
       error = AgentClient::RequestFailedError.new("test error")
       instance_service = Factory(:instance_service)
@@ -704,11 +704,11 @@ describe Instance do
       @cloud.should_receive(:instance_available?).and_return true
       @instance.reachable?.should be_true
     end
-    
+
     it "should return false when the instance is unreachable" do
       @cloud.should_receive(:instance_available?).and_return false
       @instance.reachable?.should be_false
     end
-    
+
   end
 end
