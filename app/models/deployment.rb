@@ -45,6 +45,9 @@ class Deployment < ActiveRecord::Base
     artifact.service
   end
 
+  def artifact_identifier
+    !agent_artifact_identifier.blank? ? agent_artifact_identifier : artifact_version.archive_file_name
+  end
 
   protected
   
