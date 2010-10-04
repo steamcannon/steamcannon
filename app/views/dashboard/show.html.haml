@@ -5,12 +5,12 @@
     - for artifact in @artifacts
       .artifact
         .status
-          - unless artifact.deployments.active.empty? 
+          - unless artifact.deployments.empty? 
             [Running]
         %h3
           = link_to artifact.name, artifact
         %ul.deployments
-          - for deployment in artifact.deployments.active
+          - for deployment in artifact.deployments
             %li
               = link_to deployment.environment.name, deployment.environment
     .actions
