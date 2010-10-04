@@ -27,6 +27,7 @@ describe AgentServices::Base do
     @agent_service = AgentServices::Base.new(@service, @environment)
     @instance_service = Factory.build(:instance_service)
     @deployment = Factory.build(:deployment, :environment => @environment)
+    @deployment.stub!(:artifact_identifier).and_return('art_id')
     @deployment.stub!(:perform_deploy)
     @deployment.stub!(:mark_as_deployed!)
     @deployment.stub!(:fail!)
@@ -62,7 +63,7 @@ describe AgentServices::Base do
       @deployment.stub!(:artifact).and_return(@artifact)
     end
 
-    it "should set the artifact id on the deployment (HACK until we impl STEAM-85)" do
+    it "should set the artifact id on the deployment if given" do
       @agent_client.stub(:deploy_artifact).and_return({ 'artifact_id' => 1234})
       @agent_service.deploy(@instance_service, @deployment)
       @deployment.agent_artifact_identifier.should == 1234
@@ -142,8 +143,8 @@ describe AgentServices::Base do
     end
 
     it "should undeploy" do
-      @deployment.stub!(:agent_artifact_identifier).and_return(77)
-      @agent_client.should_receive(:undeploy_artifact).with(77)
+      @deployment.stub!(:artifact_identifier).and_return('the_id')
+      @agent_client.should_receive(:undeploy_artifact).with('the_id')
       @agent_service.undeploy(@instance_service, @deployment)
     end
 

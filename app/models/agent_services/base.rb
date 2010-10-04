@@ -54,12 +54,10 @@ module AgentServices
       other_deployment.undeploy! if other_deployment
       
       begin
-        result_hash = instance_service.agent_client.deploy_artifact(deployment.artifact_version)
-        if result_hash.respond_to?(:[]) and result_hash['artifact_id']
-          deployment.update_attribute(:agent_artifact_identifier, result_hash['artifact_id'])
-          instance_service.deployments << deployment
-          return true
-        end
+        result = instance_service.agent_client.deploy_artifact(deployment.artifact_version)
+        deployment.update_attribute(:agent_artifact_identifier, result['artifact_id']) if result.respond_to?(:[]) 
+        instance_service.deployments << deployment
+        return true
       rescue AgentClient::RequestFailedError => ex
         #TODO: store the failure reason?
         Rails.logger.info "deploying artifact failed: #{ex}"
@@ -70,7 +68,7 @@ module AgentServices
     end
 
     def undeploy(instance_service, deployment)
-      instance_service.agent_client.undeploy_artifact(deployment.agent_artifact_identifier)
+      instance_service.agent_client.undeploy_artifact(deployment.artifact_identifier)
       instance_service.deployment_instance_services.find_by_deployment_id(deployment.id).destroy
       true
     rescue AgentClient::RequestFailedError => ex

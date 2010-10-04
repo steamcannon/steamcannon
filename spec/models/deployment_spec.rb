@@ -38,6 +38,21 @@ describe Deployment do
     deployment.artifact.should equal(artifact)
   end
 
+  describe 'artifact_identifier' do
+    it "should use the agent_artifact_identifier if available" do
+      @deployment.agent_artifact_identifier = '77'
+      @deployment.artifact_identifier.should == '77'
+    end
+
+    it "should use the name of the artifact_version if no agent_artifact_identifier available" do
+      artifact_version = mock(ArtifactVersion)
+      artifact_version.should_receive(:archive_file_name).and_return('blah.war')
+      @deployment.stub!(:artifact_version).and_return(artifact_version)
+      @deployment.agent_artifact_identifier = nil
+      @deployment.artifact_identifier.should == 'blah.war'
+    end
+  end
+
   describe 'creation' do
     before(:each) do
       @environment = Factory(:environment)
@@ -45,7 +60,7 @@ describe Deployment do
       @instance_service.should_receive(:deploy)
       @deployment = Factory(:deployment, :environment => @environment)
     end
-    
+
     it "should populate deployed_at after moving to :deployed" do
       @deployment.deployed_at.should_not be_nil
     end
