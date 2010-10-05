@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :artifacts
+  map.resources :artifacts, :member => { :status => :post }
   map.resources :artifact_versions
   map.resources :platforms
   map.resources :environments, :member => {:start => :post, :stop => :post, :clone => :post, :status => :post} do |environment|

@@ -100,4 +100,20 @@ class ArtifactsController < ApplicationController
     end
   end
 
+  # POST /artifacts/:id/status.json
+  def status
+    @artifact = current_user.artifacts.find(params[:id])
+    if @artifact
+      status = @artifact.deployments.deployed.empty? ? " " : "Running"
+      deployments = @artifact.deployments.collect { |d| "#{d.environment.name} (#{d.current_state})" }
+      respond_to do |format|
+        format.js { render(generate_json_response(:ok, :message=>status, :deployments=>deployments)) }
+      end
+    else      
+      respond_to do |format|
+        format.js { render(generate_json_response(:error, :message=>"Cannot find requested artifact")) }
+      end
+    end
+  end
+  
 end

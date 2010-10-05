@@ -112,6 +112,23 @@ function monitor_deployment(url, selector) {
   });
 }
 
+function update_artifact_status(url, selector) {
+  $.post(url, function(data) {
+    deployments = "<ul class='deployments'>";
+    $.each(data.deployments, function(index, value){ deployments += "<li>" + value + "</li>"; });
+    deployments += "</ul>";
+    $(selector + ' ul.deployments').replaceWith(deployments);
+    $(selector + ' .status').text(data.message)
+  }, "json");
+  setTimeout("update_artifact_status('" + url + "', '" + selector + "')", 30000);
+}
+
+function monitor_artifact(url, selector) {
+  jQuery(document).ready(function($) {
+    update_artifact_status(url, selector);
+  });
+}
+
 function update_instance_status(url, selector) {
   $.post(url, function(data) {
     $(selector + ' .image_status').text(data.message);

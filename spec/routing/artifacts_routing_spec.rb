@@ -47,5 +47,9 @@ describe ArtifactsController do
     it "recognizes and generates #destroy" do
       { :delete => "/artifacts/1" }.should route_to(:controller => "artifacts", :action => "destroy", :id => "1")
     end
+
+    it "recognizes and generates #status" do
+      { :post => '/artifacts/1/status' }.should route_to(:controller => 'artifacts', :action => 'status', :id => '1')
+    end
   end
 end

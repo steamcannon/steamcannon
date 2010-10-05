@@ -191,7 +191,7 @@ describe EnvironmentsController do
   describe "POST status" do
     before(:each) do
       Environment.stub!(:find).with("13").and_return( mock_environment )
-      mock_environment.stub(:current_state)
+      mock_environment.stub(:current_state).and_return('running')
     end
 
     it "should assign the requested environment as @environment" do

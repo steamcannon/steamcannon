@@ -26,6 +26,9 @@
         list-style-type: none;
         li {
           display: inline;
+          margin-left: 10px;
+          padding-left: 10px;
+          border-left: 1px solid #ccc;
         }
       }
     }

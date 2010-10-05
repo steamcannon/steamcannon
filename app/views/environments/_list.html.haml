@@ -15,7 +15,7 @@
       .environment_platform
         = environment.platform_version
       .environment_status
-        = environment.current_state
+        = environment.current_state.titleize
       .environment_action
         - if environment.can_stop?
           = link_to 'Stop', stop_environment_path(environment), :method => :post, :confirm => "Are you sure you want to stop #{environment.name}?"

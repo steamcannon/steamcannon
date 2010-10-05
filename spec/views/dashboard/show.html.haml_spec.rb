@@ -22,7 +22,7 @@ describe "/dashboard/show.html.haml" do
   include DashboardHelper
 
   before(:each) do
-    assigns[:artifacts] = [ Factory.build(:artifact) ]
+    assigns[:artifacts] = [ Factory.build(:artifact, :id=>1) ]
     assigns[:environments] = []
   end
 

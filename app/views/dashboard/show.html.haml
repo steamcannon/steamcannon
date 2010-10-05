@@ -3,24 +3,32 @@
   #artifacts
     %h2 Artifacts
     - for artifact in @artifacts
-      .artifact
+      - div_for(artifact) do
         .status
-          - unless artifact.deployments.empty? 
-            [Running]
+          - unless artifact.deployments.deployed.empty? 
+            Running
         %h3
           = link_to artifact.name, artifact
         %ul.deployments
           - for deployment in artifact.deployments
             %li
-              = link_to deployment.environment.name, deployment.environment
+              = deployment.environment.name
+              = "(#{deployment.current_state})"
+        - javascript_tag do
+          ="monitor_artifact('#{status_artifact_path(artifact.id)}', '##{dom_id(artifact)}');"
     .actions
       = link_to 'Add artifact', new_artifact_url 
           
   #environments
     %h2 Environments
     - for environment in @environments
-      .environment
+      - div_for(environment, :class=>'environment') do
         = link_to environment.name, environment
-        - if environment.running?
-          [Running]
+        %span.environment_status
+          - if environment.running?
+            [Running]
+          - else
+            &nbsp;
+        - javascript_tag do
+          ="monitor_environment('#{status_environment_path(environment.id)}', '##{dom_id(environment)}');"
     
