@@ -21,6 +21,7 @@ require 'spec_helper'
 
 describe AgentServices::ModCluster do
   before(:each) do
+    @service = Factory(:service, :name => 'mod_cluster')
     @environment = Factory(:environment)
     @agent_service = AgentServices::ModCluster.new(@service, @environment)
     @instance_service = Factory(:instance_service)
@@ -38,6 +39,12 @@ describe AgentServices::ModCluster do
     it "should configure the jboss instance_services" do
       @jboss_instance_service.should_receive(:configure_service)
       @agent_service.configure_instance_service(@instance_service)
+    end
+  end
+
+  describe "open_ports" do
+    it "should have port 80" do
+      @agent_service.open_ports.should include(80)
     end
   end
 end

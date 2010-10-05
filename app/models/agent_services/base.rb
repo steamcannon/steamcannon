@@ -18,7 +18,7 @@
 
 module AgentServices
   class Base
-    
+
     class << self
       def instance_for_service(service, environment)
         klass = self
@@ -34,7 +34,7 @@ module AgentServices
         klass.new(service, environment)
       end
     end
-    
+
     attr_reader :service, :environment
 
     def initialize(service, environment)
@@ -52,10 +52,10 @@ module AgentServices
       #FIXME: this currently ignores the result of the undeploy operation
       other_deployment = deployment.artifact.deployment_for_instance_service(instance_service)
       other_deployment.undeploy! if other_deployment
-      
+
       begin
         result = instance_service.agent_client.deploy_artifact(deployment.artifact_version)
-        deployment.update_attribute(:agent_artifact_identifier, result['artifact_id']) if result.respond_to?(:[]) 
+        deployment.update_attribute(:agent_artifact_identifier, result['artifact_id']) if result.respond_to?(:[])
         instance_service.deployments << deployment
         return true
       rescue AgentClient::RequestFailedError => ex
@@ -87,6 +87,11 @@ module AgentServices
       #noop, should be overridden in service specific child
       Rails.logger.debug "AgentServices::Base#configure_instance_service called - should #{service.name} have its own configure strategy?"
       true
+    end
+
+    def open_ports
+      # Default to no open ports
+      []
     end
   end
 end

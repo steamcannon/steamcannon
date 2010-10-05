@@ -112,29 +112,34 @@ module Cloud
     end
 
     def service_security_groups
-      # TODO - pull these from service classes
-      [
-       # mod_cluster
-       { :user => user,
-         :name => 'steamcannon_mod_cluster',
-         :description => 'SteamCannon mod_cluster service',
-         :permissions => [{ :protocol => 'tcp',
-                            :from_port => 80,
-                            :to_port => 80,
-                            :cidr_ips => '0.0.0.0/0'
-                          }]
-       },
-       # jboss_as
-       { :user => user,
-         :name => 'steamcannon_jboss_as',
-         :description => 'SteamCannon jboss_as service',
-         :permissions => [{ :protocol => 'tcp',
-                            :from_port => 8080,
-                            :to_port => 8080,
-                            :cidr_ips => '0.0.0.0/0'
-                          }]
-       }
-      ]
+      agent_services.map do |agent_service|
+        security_group_from_service(agent_service)
+      end
+    end
+
+    def security_group_from_service(agent_service)
+      name = "steamcannon_#{agent_service.service.name}"
+      description = "SteamCannon #{agent_service.service.full_name} Service"
+      permissions = agent_service.open_ports.map do |port|
+        { :protocol => 'tcp',
+          :from_port => port,
+          :to_port => port,
+          :cidr_ips => '0.0.0.0/0'
+        }
+
+      end
+      { :user => user,
+        :name => name,
+        :description => description,
+        :permissions => permissions
+      }
+    end
+
+    def agent_services
+      environment = @instance.environment
+      @instance.image.services.map do |service|
+        AgentServices::Base.instance_for_service(service, environment)
+      end
     end
 
     def ensure_security_group(options)

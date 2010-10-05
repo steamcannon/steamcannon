@@ -27,5 +27,10 @@ module AgentServices
         for_service(Service.by_name('jboss_as')).each(&:configure_service)
       true
     end
+
+    def open_ports
+      [80]
+    end
+
   end
 end

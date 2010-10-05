@@ -50,7 +50,7 @@ describe AgentServices::Base do
 
     end
   end
-  
+
   describe 'deploy' do
     before(:each) do
       @instance_service.save
@@ -86,13 +86,13 @@ describe AgentServices::Base do
       before(:each) do
         @instance_service.deployments << @deployment
       end
-      
+
       it "should not deploy again" do
         @agent_client.should_not_receive(:deploy_artifact)
         @agent_service.deploy(@instance_service, @deployment)
       end
     end
-    
+
     context "on a successful deploy" do
       before(:each) do
         @agent_client.stub!(:deploy_artifact).and_return({ 'artifact_id' => 77 })
@@ -130,7 +130,7 @@ describe AgentServices::Base do
     end
 
   end
-  
+
 
   describe 'undeploy' do
     before(:each) do
@@ -191,10 +191,16 @@ describe AgentServices::Base do
       Rails.logger.should_receive(:debug)
       @agent_service.configure_instance_service(@instance_service)
     end
-    
+
     it "should return true" do
       @agent_service.configure_instance_service(@instance_service).should be_true
     end
   end
-  
+
+  describe 'open_ports' do
+    it "should be empty" do
+      @agent_service.open_ports.should be_empty
+    end
+  end
+
 end
