@@ -140,4 +140,18 @@ describe InstancesController do
     end
   end
 
+  describe "POST clone" do
+    describe "with valid params" do
+      it "should clone the requested instance" 
+      it "should only allow instances that are running to be cloned"
+      it "should assign a newly created instance as @instance" 
+      it "should redirect to the environment"
+    end
+    
+    describe "with invalid params" do
+      it "should not assign a newly created instance as @instance"
+      it "should redirect to the environment" 
+    end
+  end
+
 end

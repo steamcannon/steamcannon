@@ -53,5 +53,10 @@ describe InstancesController do
     it "does not route #destroy" do
       { :delete => "/environments/1/instances/2" }.should_not be_routable
     end
+    
+    it "recognizes and generates #clone" do
+      { :post => '/environments/1/instances/2/clone' }.should route_to(:controller => 'instances', :action => 'clone', :environment_id => '1', :id => '2')
+    end
+    
   end
 end

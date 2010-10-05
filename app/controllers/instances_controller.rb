@@ -57,7 +57,6 @@ class InstancesController < ApplicationController
     end
   end
   
-  
   protected
   def require_environment
     @environment = current_user.environments.find(params[:environment_id])

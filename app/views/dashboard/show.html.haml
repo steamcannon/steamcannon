@@ -10,7 +10,7 @@
         %h3
           = link_to artifact.name, artifact
         %ul.deployments
-          - for deployment in artifact.deployments
+          - for deployment in artifact.deployments.deployed
             %li
               = deployment.environment.name
               = "(#{deployment.current_state})"
