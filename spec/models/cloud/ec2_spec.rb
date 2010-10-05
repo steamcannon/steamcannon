@@ -220,19 +220,60 @@ describe Cloud::Ec2 do
   end
 
   describe "service_security_groups" do
+    it "should retrieve all agent services" do
+      @ec2.should_receive(:agent_services).and_return([])
+      @ec2.send(:service_security_groups)
+    end
+
+    it "should create security group from each service" do
+      agent_service = mock('agent service')
+      @ec2.stub!(:agent_services).and_return([agent_service])
+      @ec2.should_receive(:security_group_from_service).with(agent_service).and_return('group')
+      @ec2.send(:service_security_groups).should == ['group']
+    end
+  end
+
+  describe "security_group_from_service" do
     before(:each) do
       @user = Factory.build(:user)
       @ec2.stub!(:user).and_return(@user)
+      @service = Factory.build(:service)
+      @agent_service = mock('agent_service',
+                            :service => @service,
+                            :open_ports => [])
     end
 
-    it "should include steamcannon_mod_cluster group" do
-      groups = @ec2.send(:service_security_groups)
-      groups.find { |g| g[:name] == 'steamcannon_mod_cluster' }.should_not be_nil
+    it "should belong to correct user" do
+      @ec2.should_receive(:user).and_return(@user)
+      @ec2.send(:security_group_from_service, @agent_service)[:user].should == @user
     end
 
-    it "should include steamcannon_jboss_as group" do
-      groups = @ec2.send(:service_security_groups)
-      groups.find { |g| g[:name] == 'steamcannon_jboss_as' }.should_not be_nil
+    it "should create name from service's name" do
+      @service.should_receive(:name).and_return('name')
+      @ec2.send(:security_group_from_service, @agent_service)[:name].should match(/name/)
+    end
+
+    it "should create description from service's full name" do
+      @service.should_receive(:full_name).and_return('full name')
+      @ec2.send(:security_group_from_service, @agent_service)[:description].should match(/full name/)
+    end
+
+    it "should create permission for every open port" do
+      @agent_service.should_receive(:open_ports).and_return([80])
+      permissions = @ec2.send(:security_group_from_service, @agent_service)[:permissions]
+      permissions.size.should be(1)
+      permissions.first[:to_port].should be(80)
+      permissions.first[:from_port].should be(80)
+    end
+  end
+
+  describe "agent_services" do
+    it "should do create instance for service" do
+      service = Factory.build(:service)
+      @instance.stub_chain(:image, :services).and_return([service])
+      AgentServices::Base.should_receive(:instance_for_service).
+        with(service, @instance.environment)
+      @ec2.send(:agent_services)
     end
   end
 end

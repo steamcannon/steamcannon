@@ -20,5 +20,16 @@ require 'spec_helper'
 
 
 describe AgentServices::JbossAs do
+  before(:each) do
+    @service = Factory(:service, :name => 'jboss_as')
+    @environment = Factory(:environment)
+    @agent_service = AgentServices::JbossAs.new(@service, @environment)
+  end
+
+  describe "open_ports" do
+    it "should have port 8080" do
+      @agent_service.open_ports.should include(8080)
+    end
+  end
 
 end
