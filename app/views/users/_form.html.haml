@@ -42,7 +42,7 @@
     %br
     = link_to 'Hide', '#', :class=>'js-cloud_password_toggle' if form.object.profile_complete?
   %br
-  = form.label :ssh_key_name, "Amazon SSH Key Name"
+  = form.label :ssh_key_name, "Amazon SSH Key Name (leave blank to disable SSH access)"
   %br
   = form.text_field :ssh_key_name
   %br
