@@ -98,8 +98,8 @@ describe User do
     User.new.should respond_to(:ssh_key_name=)
   end
 
-  it "should have 'default' as the default SSH key name attribute" do
-    User.new.ssh_key_name.should == 'default'
+  it "should have no default SSH key name attribute" do
+    User.new.ssh_key_name.should be_blank
   end
 
   it "should have many artifacts" do
