@@ -37,20 +37,20 @@ describe Cloud::Deltacloud do
       @deltacloud.launch('ami-123', :hardware_profile => 'm1.small')
     end
   end
-  
+
   describe "terminate" do
     before(:each) do
       @client = mock(Object)
       @deltacloud.stub!(:client).and_return(@client)
       @deltacloud.stub!(:user_data).and_return('')
     end
-    
+
     it "should not attempt to terminate an instance that doesn't exist" do
       @client.stub!(:instance).with(1).and_return(nil)
       @deltacloud.terminate(1).should == false
     end
   end
-  
+
   describe "instance_available?" do
     before(:each) do
       @client = mock(Object)
@@ -59,18 +59,18 @@ describe Cloud::Deltacloud do
       @deltacloud.stub!(:client).and_return(@client)
       @deltacloud.stub!(:user_data).and_return('')
     end
-    
+
     it "should return false when an instance is not available" do
       @client.stub!(:instance).with(1).and_return(nil)
       @deltacloud.instance_available?(1).should == false
     end
-    
+
     it "should return false when an instance is in a TERMINATED state" do
       @instance.stub!(:state).and_return("TERMINATED")
       @client.stub!(:instance).with(1).and_return(@instance)
       @deltacloud.instance_available?(1).should == false
     end
-    
+
     it "should return the instance if it is available" do
       @client.stub!(:instance).with(1).and_return(@instance)
       @deltacloud.instance_available?(1).should equal(@instance)
@@ -117,6 +117,40 @@ describe Cloud::Deltacloud do
       DeltaCloud.should_receive(:new).once.and_return(Object.new)
       @deltacloud.client
       @deltacloud.client
+    end
+  end
+
+  describe "valid_credentials?" do
+    it "should validate with right credentials and url" do
+      APP_CONFIG['deltacloud_url'] = 'url'
+      DeltaCloud.should_receive(:valid_credentials?).with('abc', '123', 'url')
+      @deltacloud.valid_credentials?
+    end
+  end
+
+  describe "valid_key_name?" do
+    before(:each) do
+      @client = mock('client')
+      @deltacloud.stub!(:client).and_return(@client)
+    end
+
+    it "should retrieve all keys from client" do
+      @client.should_receive(:keys).and_return([])
+      @deltacloud.valid_key_name?('key')
+    end
+
+    it "should return true if key ids include key_name" do
+      key = mock('key', :id => 'key')
+      key2 = mock('key', :id => 'key2')
+      @client.stub!(:keys).and_return([key, key2])
+      @deltacloud.valid_key_name?('key').should be(true)
+    end
+
+    it "should return false if key ids does not include key_name" do
+      key = mock('key', :id => 'key')
+      key2 = mock('key', :id => 'key2')
+      @client.stub!(:keys).and_return([key, key2])
+      @deltacloud.valid_key_name?('key3').should be(false)
     end
   end
 end

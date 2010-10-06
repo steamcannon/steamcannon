@@ -38,7 +38,7 @@ module Cloud
     def launch(image_id, opts={})
       client.create_instance(image_id, opts)
     end
-    
+
     def instance_available?(instance_id)
       i = client.instance(instance_id)
       (i && i.state != "TERMINATED") ? i : false
@@ -59,6 +59,15 @@ module Cloud
 
     def client
       @client ||= DeltaCloud.new(@cloud_username, @cloud_password, APP_CONFIG['deltacloud_url'])
+    end
+
+    def valid_credentials?
+      DeltaCloud.valid_credentials?(@cloud_username, @cloud_password, APP_CONFIG['deltacloud_url'])
+    end
+
+    def valid_key_name?(key_name)
+      key_names = client.keys.map(&:id)
+      key_names.include?(key_name)
     end
 
   end

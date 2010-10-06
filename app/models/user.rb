@@ -22,8 +22,10 @@ class User < ActiveRecord::Base
   has_many :environments
   has_many :deployments
   has_many :artifact_versions, :through => :artifacts
-  
+
   before_save :encrypt_cloud_password
+  validate :validate_cloud_credentials
+  validate :validate_ssh_key_name
 
   acts_as_authentic do |c|
   end
@@ -38,7 +40,7 @@ class User < ActiveRecord::Base
   attr_accessor_with_default( :cloud_password ) do
     self.crypted_cloud_password.blank? ? @cloud_password : Certificate.decrypt(self.crypted_cloud_password)
   end
-  
+
   def obfuscated_cloud_password
     obfuscated = cloud_password.dup
     if obfuscated.length < 6
@@ -48,22 +50,36 @@ class User < ActiveRecord::Base
     end
     obfuscated
   end
-  
+
   def cloud_password=(pw)
     @cloud_password_dirty = true
     @cloud_password = pw
   end
-  
+
   def cloud
     Cloud::Deltacloud.new(cloud_username, cloud_password)
   end
-  
+
   def profile_complete?
     self.superuser? || (!self.cloud_username.blank? && !self.crypted_cloud_password.blank?)
   end
-  
+
   def encrypt_cloud_password
     self.crypted_cloud_password = Certificate.encrypt(@cloud_password) if (@cloud_password_dirty || (new_record? && !@cloud_password.blank?))
+  end
+
+  def validate_cloud_credentials
+    if cloud_username_changed? or @cloud_password_dirty
+      message = "Cloud credentials are invalid"
+      errors.add_to_base(message) unless cloud.valid_credentials?
+    end
+  end
+
+  def validate_ssh_key_name
+    if ssh_key_name_changed? and !ssh_key_name.blank?
+      message = "SSH key name is invalid"
+      errors.add_to_base(message) unless cloud.valid_key_name?(ssh_key_name)
+    end
   end
 
 end
