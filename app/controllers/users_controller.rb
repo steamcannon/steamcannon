@@ -19,39 +19,39 @@
 
 class UsersController < ResourceController::Base
   navigation :users
-  
+
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :require_superuser, :only => [:assume_user]
   before_filter :require_superuser_to_edit_other_user, :only => [:edit, :update]
   before_filter :require_complete_profile, :only => [:show]
-  
+
   edit.before do
     flash[:error] = "Please complete your profile before continuing." unless current_user.profile_complete?
   end
-  
+
   update.before do
     if params && params[:user]
       if params[:user][:cloud_password].blank?
-        params[:user].delete(:cloud_password) 
+        params[:user].delete(:cloud_password)
       else
         current_user.cloud_password_dirty = true
       end
     end
   end
-  
-  create do 
+
+  create do
     flash { "Account registered" }
     wants.html { redirect_stored_or_default root_url }
   end
-  
+
   update do
     flash { "Account updated" }
     wants.html do
       # lets us share this action between self managed accounts and
       # admin'ed users
       if object == current_user
-        redirect_to account_url
+        redirect_stored_or_default account_url
       else
         redirect_to object_url
       end
@@ -64,7 +64,7 @@ class UsersController < ResourceController::Base
     flash[:notice] = "You have assumed the account of '#{object.email}'. You will need to logout and back in to return to your account."
     redirect_to root_path
   end
-  
+
   protected
   def object
     super || current_user
