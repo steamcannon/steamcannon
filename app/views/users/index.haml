@@ -18,7 +18,10 @@
         .user_superuser
           = user.superuser?
       .user_lastlogin
-        == #{time_ago_in_words(user.last_login_at)} ago
+        - if user.current_login_at
+          == #{time_ago_in_words(user.current_login_at)} ago
+        - else
+          &nbsp;
       - content_for_superuser do
         .user_assume
           = link_to 'Assume User', assume_user_user_path(user)
