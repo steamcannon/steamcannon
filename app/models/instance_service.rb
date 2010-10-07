@@ -19,15 +19,15 @@
 class InstanceService < ActiveRecord::Base
   include AASM
   include StuckState
-  
+
   belongs_to :instance
   belongs_to :service
   has_many :deployment_instance_services, :dependent => :destroy
   has_many :deployments, :through => :deployment_instance_services
-  
+
   named_scope :for_service, lambda { |service| { :conditions => { :service_id => service.id } } }
   named_scope :not_pending, { :conditions => "instance_services.current_state <> 'pending'" }
-  
+
   aasm_column :current_state
   aasm_initial_state :pending
   aasm_state :pending
@@ -35,11 +35,11 @@ class InstanceService < ActiveRecord::Base
   aasm_state :configure_failed
   aasm_state :verifying
   aasm_state :running, :after_enter => :handle_pending_deployments
-  
+
   aasm_event :configure do
     transitions :to => :configuring, :from => [:pending, :configuring, :verifying, :running]
   end
-  
+
   aasm_event :verify do
     transitions :to => :verifying, :from => :configuring
   end
@@ -56,10 +56,14 @@ class InstanceService < ActiveRecord::Base
     service.name
   end
 
+  def full_name
+    service.full_name
+  end
+
   def environment
     instance.environment
   end
-  
+
   def agent_service
     @agent_service ||= AgentServices::Base.instance_for_service(service, instance.environment)
   end
@@ -67,7 +71,7 @@ class InstanceService < ActiveRecord::Base
   def agent_client
     instance.agent_client(service)
   end
-  
+
   def configure_service
     if required_services_running?
       configure!
@@ -95,6 +99,10 @@ class InstanceService < ActiveRecord::Base
 
   def undeploy(deployment)
     agent_service.undeploy(self, deployment)
+  end
+
+  def url
+    agent_service.url_for_instance_service(self)
   end
 
   protected

@@ -13,11 +13,11 @@ class InstancesController < ApplicationController
   # GET /environments/:environment_id/instances/1.json
   def show
     get_instance
-    unless @instance.blank?      
+    unless @instance.blank?
       respond_to do |format|
         format.js { render(generate_json_response(:ok, :instance=>@instance.to_json)) }
       end
-    else      
+    else
       respond_to do |format|
         format.js { render(generate_json_response(:error, :message=>"Invalid instance")) }
       end
@@ -28,41 +28,40 @@ class InstancesController < ApplicationController
   def stop
     get_instance
     if @instance && @instance.can_stop?
-      @instance.stop! 
+      @instance.stop!
       respond_to do |format|
         format.js { render(generate_json_response(:ok, :instance=>@instance.to_json, :message=>"Stopping #{@instance.name} (#{@instance.cloud_id})")) }
       end
-    else      
+    else
       message = (@instance && !@instance.can_stop?) ? "Cannot stop instance while it is #{@instance.current_state}." : "Cannot find instance"
       respond_to do |format|
         format.js { render(generate_json_response(:error, :message=>message)) }
       end
     end
   end
-  
+
   # POST /environments/:environment_id/instances/1/status.json
   def status
     get_instance
     if @instance
       respond_to do |format|
-        format.js { render(generate_json_response(:ok, 
-                                                  :message=>@instance.current_state, 
-                                                  :id=>@instance.cloud_id, 
-                                                  :services=>@instance.instance_services.collect{|s|"#{s.service.full_name} #{s.current_state}"})) }
+        format.js { render(generate_json_response(:ok,
+                                                  :html => render_to_string(:partial => 'instances/row',
+                                                                            :locals => {:instance => @instance}))) }
       end
-    else      
+    else
       respond_to do |format|
         format.js { render(generate_json_response(:error, :message=>"Cannot find requested instance")) }
       end
     end
   end
-  
+
   protected
   def require_environment
     @environment = current_user.environments.find(params[:environment_id])
   end
-  
+
   def get_instance
-    @instance = @environment.instances.find(params[:id])    
+    @instance = @environment.instances.find(params[:id])
   end
 end

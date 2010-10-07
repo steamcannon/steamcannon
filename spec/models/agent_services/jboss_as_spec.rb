@@ -32,4 +32,28 @@ describe AgentServices::JbossAs do
     end
   end
 
+  describe "url_for_instance_service" do
+    before(:each) do
+      @instance_service = Factory(:instance_service)
+    end
+
+    it "should build url for http" do
+      url = @agent_service.url_for_instance_service(@instance_service)
+      url.start_with?('http://').should be(true)
+    end
+
+    it "should build url for instance's public_dns" do
+      instance = Factory(:instance)
+      @instance_service.should_receive(:instance).and_return(instance)
+      instance.should_receive(:public_dns).and_return('public_dns')
+      url = @agent_service.url_for_instance_service(@instance_service)
+      url.include?('public_dns').should be(true)
+    end
+
+    it "should build url for port 8080" do
+      url = @agent_service.url_for_instance_service(@instance_service)
+      url.end_with?(':8080').should be(true)
+    end
+  end
+
 end

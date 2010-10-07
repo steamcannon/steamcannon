@@ -41,5 +41,10 @@ module AgentServices
       [8080]
     end
 
+    def url_for_instance_service(instance_service)
+      host = instance_service.instance.public_dns
+      "http://#{host}:8080"
+    end
+
   end
 end

@@ -131,13 +131,7 @@ function monitor_artifact(url, selector) {
 
 function update_instance_status(url, selector) {
   $.post(url, function(data) {
-    $(selector + ' .image_status').text(data.message);
-    $(selector + ' .image_id').text(data.id);
-    services = "<ul>";
-    if (data.services.length == 0) { data.services.push("None"); }
-    $.each(data.services, function(index, value){ services += "<li>" + value + "</li>"; });
-    services += "</ul>";
-    $(selector + ' .services ul').replaceWith(services);
+    $(selector).html(data.html);
   }, "json");
   setTimeout("update_instance_status('" + url + "', '" + selector + "')", 30000);
 }

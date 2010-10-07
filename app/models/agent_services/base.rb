@@ -93,5 +93,10 @@ module AgentServices
       # Default to no open ports
       []
     end
+
+    def url_for_instance_service(instance_service)
+      # Default to no url
+      nil
+    end
   end
 end

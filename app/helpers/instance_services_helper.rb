@@ -16,26 +16,16 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module AgentServices
-  class ModCluster < Base
-    # doesn't actually do any mod_cluster configuration, but instead
-    # triggers (re)configuration of any jboss services that self
-    # configured before the mod_cluster service gets here.
-    # see also: JbossAs#configure_instance_service
-    def configure_instance_service(instance_service)
-      environment.instance_services.running.
-        for_service(Service.by_name('jboss_as')).each(&:configure_service)
-      true
-    end
 
-    def open_ports
-      [80]
-    end
+module InstanceServicesHelper
 
-    def url_for_instance_service(instance_service)
-      host = instance_service.instance.public_dns
-      "http://#{host}/mod_cluster_manager"
+  def instance_service_link(instance_service)
+    url = instance_service.url
+    full_name = instance_service.full_name
+    if instance_service.running? and url
+      link_to(full_name, url)
+    else
+      full_name
     end
-
   end
 end

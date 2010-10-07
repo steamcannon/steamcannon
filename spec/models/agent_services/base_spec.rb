@@ -197,9 +197,16 @@ describe AgentServices::Base do
     end
   end
 
-  describe 'open_ports' do
+  describe "open_ports" do
     it "should be empty" do
       @agent_service.open_ports.should be_empty
+    end
+  end
+
+  describe "url_for_instance_service" do
+    it "should default to nil" do
+      instance_service = Factory(:instance_service)
+      @agent_service.url_for_instance_service(instance_service).should be_nil
     end
   end
 

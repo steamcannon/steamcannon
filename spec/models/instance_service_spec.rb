@@ -35,6 +35,27 @@ describe InstanceService do
     @instance_service.agent_service
   end
 
+  it "should lookup url from agent_service" do
+    agent_service = mock('agent_service')
+    @instance_service.should_receive(:agent_service).and_return(agent_service)
+    agent_service.should_receive(:url_for_instance_service).with(@instance_service)
+    @instance_service.url
+  end
+
+  it "should return name from service" do
+    service = mock('service')
+    @instance_service.should_receive(:service).and_return(service)
+    service.should_receive(:name).and_return('name')
+    @instance_service.name.should == 'name'
+  end
+
+  it "should return full_name from service" do
+    service = mock('service')
+    @instance_service.should_receive(:service).and_return(service)
+    service.should_receive(:full_name).and_return('full_name')
+    @instance_service.full_name.should == 'full_name'
+  end
+
   context 'states' do
     describe 'configure!' do
       %w{ pending configuring verifying running }.each do |state|
@@ -72,7 +93,7 @@ describe InstanceService do
       @instance_service.should_not_receive(:verify!)
       @instance_service.configure_service
     end
-    
+
     it "should fail! if its stuck in :configuring too long" do
       @mock_agent_service.stub!(:configure_instance_service).and_return(false)
       @instance_service.should_receive(:stuck_in_state_for_too_long?).and_return(true)
@@ -121,7 +142,7 @@ describe InstanceService do
     end
   end
 
-  describe 'required_services_running?' do 
+  describe 'required_services_running?' do
     before(:each) do
       @required_service = Factory(:service)
       @instance_service.service.stub!(:required_services).and_return([@required_service])
@@ -130,7 +151,7 @@ describe InstanceService do
       @environment.stub_chain(:instance_services, :for_service).and_return([@required_instance_service])
       @instance_service.stub!(:environment).and_return(@environment)
     end
-    
+
     it "should return true if there are no required services" do
       @instance_service.service.should_receive(:required_services).and_return([])
       @instance_service.required_services_running?.should == true
@@ -140,7 +161,7 @@ describe InstanceService do
       @required_instance_service.should_receive(:running?).and_return(true)
       @instance_service.required_services_running?.should == true
     end
-    
+
     it "should return false if any of the instance_services for required services are !running" do
       @required_instance_service.should_receive(:running?).and_return(false)
       @instance_service.required_services_running?.should_not == true
@@ -152,7 +173,7 @@ describe InstanceService do
       @instance_service.stub!(:agent_service).and_return(@mock_agent_service)
       @mock_deployment = mock(Deployment)
     end
-    
+
     it "deploy should delegate to the agent_service" do
       @mock_agent_service.should_receive(:deploy).with(@instance_service, @mock_deployment)
       @instance_service.deploy(@mock_deployment)
@@ -165,11 +186,11 @@ describe InstanceService do
   end
 
   describe 'handle_pending_deployments' do
-    before(:each) do 
+    before(:each) do
     end
-    
-    it "should deploy any deployed deployments from the environment for the service" 
-      
+
+    it "should deploy any deployed deployments from the environment for the service"
+
 
   end
 end
