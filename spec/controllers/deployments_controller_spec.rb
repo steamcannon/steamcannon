@@ -84,10 +84,10 @@ describe DeploymentsController do
         assigns[:deployment].should equal(mock_deployment)
       end
 
-      it "redirects to the artifact show page" do
+      it "redirects to the environment show page" do
         Deployment.stub(:new).and_return(mock_deployment)
         post :create, :deployment => {}
-        response.should redirect_to(artifact_url(mock_deployment.artifact))
+        response.should redirect_to(environment_url(mock_deployment.environment))
       end
     end
 

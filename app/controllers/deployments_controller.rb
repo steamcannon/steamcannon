@@ -63,7 +63,7 @@ class DeploymentsController < ApplicationController
     respond_to do |format|
       if @deployment.save
         @deployment.environment.start! if @deployment.environment.stopped?
-        format.html { redirect_to(@deployment.artifact, :notice => 'Artifact was successfully deployed.') }
+        format.html { redirect_to(@deployment.environment, :notice => 'Artifact was queued for deployment') }
         format.xml  { render :xml => @deployment, :status => :created, :location => @deployment }
       else
         format.html { render :action => "new" }
@@ -79,7 +79,7 @@ class DeploymentsController < ApplicationController
     @deployment.undeploy!
 
     respond_to do |format|
-      format.html { redirect_back_or_default(@deployment.artifact, :notice => 'Artifact was successfully undeployed.') }
+      format.html { redirect_back_or_default(@deployment.artifact, :notice => 'Artifact was queued for undeployment.') }
       format.xml  { head :ok }
     end
   end
@@ -91,11 +91,11 @@ class DeploymentsController < ApplicationController
       respond_to do |format|
         format.js { render(generate_json_response(:ok, :services=>@deployment.instance_services.collect{|s|"#{s.instance.name}"})) }
       end
-    else      
+    else
       respond_to do |format|
         format.js { render(generate_json_response(:error, :message=>"Cannot find requested deployment")) }
       end
     end
   end
-  
+
 end
