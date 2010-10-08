@@ -4,6 +4,7 @@ describe StorageVolume do
   it { should belong_to :environment_image }
   it { should belong_to :instance }
   it { should have_one :image }
+  it { should have_one :environment }
   
   before(:each) do
     @storage_volume = Factory(:storage_volume)
@@ -76,14 +77,18 @@ describe StorageVolume do
   describe 'create_in_cloud' do
     before(:each) do
       @instance = Factory(:instance)
+      @instance.stub_chain(:cloud_specific_hacks, :default_realm).and_return('def realm')
       @storage_volume.stub!(:instance).and_return(@instance)
       @cloud_volume = mock('cloud_volume')
       @cloud_volume.stub!(:id).and_return("vol-1234")
+      @image = Factory.build(:image, :storage_volume_capacity => '77')
+      @storage_volume.stub!(:image).and_return(@image)
     end
 
     it "should try to create" do
       @cloud.should_receive(:create_storage_volume).
-        with(:realm => @instance.cloud_specific_hacks.default_realm).
+        with(:realm => @instance.cloud_specific_hacks.default_realm,
+             :capacity => '77').
         and_return(@cloud_volume)
       @storage_volume.send(:create_in_cloud)
     end
@@ -92,6 +97,23 @@ describe StorageVolume do
       @cloud.should_receive(:create_storage_volume).and_return(@cloud_volume)
       @storage_volume.send(:create_in_cloud)
       @storage_volume.volume_identifier.should == 'vol-1234'
+    end
+  end
+
+  describe 'attach' do
+    before(:each) do
+      @instance = mock(Instance, :cloud_id => 'i-1234')
+      @storage_volume.stub!(:instance).and_return(@instance)
+      @cloud_volume = mock('cloud_volume')
+      @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
+      @image = mock(Image)
+      @image.stub!(:storage_volume_device).and_return('/dev/sdh')
+      @storage_volume.stub!(:image).and_return(@image)
+    end
+    
+    it "should attach" do
+      @cloud_volume.should_receive(:attach!).with(:instance_id => 'i-1234', :device => '/dev/sdh')
+      @storage_volume.attach
     end
   end
   

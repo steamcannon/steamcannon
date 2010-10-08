@@ -38,7 +38,8 @@ describe EnvironmentImage do
 
   describe 'start!' do
     before(:each) do
-      @instance = mock_model(Instance)
+      @instance = Factory(:instance)
+      @instance.stub_chain(:cloud_specific_hacks, :default_realm).and_return('def realm')
       Instance.stub!(:deploy!).and_return(@instance)
       @image = Factory(:image)
       @environment_image = Factory(:environment_image, :image => @image)
@@ -53,29 +54,30 @@ describe EnvironmentImage do
       context "with an image that needs a volume" do
         before(:each) do
           @image.should_receive(:needs_storage_volume?).and_return(true)
+          @storage_volume = mock(StorageVolume)
+          @storage_volume.stub(:prepare).with(@instance) 
         end
         
         it "should create storage_volumes when the image needs one" do
+          @environment_image.storage_volumes.should_receive(:create).and_return(@storage_volume)
           @environment_image.start!(1)
-          @environment_image.storage_volumes.first.should_not be_nil
         end
         
         it "should not create a storage_volume if it already exists" do
-          @environment_image.storage_volumes.create
+          @environment_image.stub(:storage_volumes).and_return([@storage_volume])
           @environment_image.storage_volumes.should_not_receive(:create)
           @environment_image.start!(1)
         end
 
         it "should create a storage volume if one does not exist at the instance num index" do
-          @environment_image.storage_volumes.create
+          @environment_image.stub(:storage_volumes).and_return([@storage_volume])
+          @environment_image.storage_volumes.should_receive(:create).and_return(@storage_volume)
           @environment_image.start!(2)
-          @environment_image.storage_volumes.count.should == 2
         end
         
         it "should trigger the storage_volume to prepare" do
-          storage_volume = mock(StorageVolume)
-          storage_volume.should_receive(:prepare).with(@instance)
-          @environment_image.stub!(:storage_volumes).and_return([storage_volume])
+          @storage_volume.should_receive(:prepare).with(@instance) 
+          @environment_image.stub!(:storage_volumes).and_return([@storage_volume])
           @environment_image.start!(1)
         end
       end

@@ -21,6 +21,7 @@ class StorageVolume < ActiveRecord::Base
   belongs_to :environment_image
   belongs_to :instance
   has_one :image, :through => :environment_image
+  has_one :environment, :through => :environment_image
   
   def prepare(instance)
     update_attribute(:instance, instance)
@@ -29,6 +30,9 @@ class StorageVolume < ActiveRecord::Base
   end
   
   def attach
+    #TODO: handle errors here
+    cloud_volume.attach!(:instance_id => instance.cloud_id,
+                         :device => image.storage_volume_device)
   end
 
   def detach
@@ -51,8 +55,9 @@ class StorageVolume < ActiveRecord::Base
 
   def create_in_cloud
     #TODO: handle errors here
-    @cloud_volume = cloud.create_storage_volume(:realm => instance.cloud_specific_hacks.default_realm)
-    update_attribute(:volume_identifier, @cloud_volume.id)
+    @cloud_volume = cloud.create_storage_volume(:realm => instance.cloud_specific_hacks.default_realm,
+                                                :capacity => image.storage_volume_capacity)
+    update_attribute(:volume_identifier, @cloud_volume.id) if @cloud_volume
     @cloud_volume
   end
 

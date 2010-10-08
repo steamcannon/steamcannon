@@ -79,9 +79,6 @@ class Environment < ActiveRecord::Base
 
   def start_environment
     environment_images.each do |env_image|
-      if !env_image.image.storage_volume_capacity.blank?
-        storage_volumes.create(:image => env_image.image)
-      end
       env_image.num_instances.times do |i|
         env_image.start!(i+1)
       end
