@@ -41,9 +41,16 @@ module Cloud
       groups.each do |group|
         ensure_security_group(group)
       end
-      {:security_group => groups.map { |group| group[:name] }}
+      {
+        :security_group => groups.map { |group| group[:name] },
+        :realm_id => default_realm
+      }
     end
 
+    def default_realm
+      'us-east-1d'
+    end
+    
     protected
 
     def user
