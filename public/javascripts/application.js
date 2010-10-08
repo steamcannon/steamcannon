@@ -142,3 +142,21 @@ function monitor_instance(url, selector) {
   });
 }
 
+function tail_log(url, num_lines, offset, tailing) {
+  var params = {num_lines: num_lines, offset: offset};
+  $.get(url, params, function(data) {
+    logs = $('#log_output');
+    if (logs.text().trim() == 'Fetching log...') {
+      logs.html('');
+    }
+    if (data.lines.length > 0) {
+      logs.html(logs.html() + "<br />" + data.lines.join("<br />"));
+      if (tailing) {
+        $("html, body").animate({scrollTop: $(document).height()}, 10);
+      }
+    }
+    if (tailing) {
+      setTimeout("tail_log('" + url + "', " + num_lines + ", " + data.offset + ", true)", 5000);
+    }
+  }, "json");
+}

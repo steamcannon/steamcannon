@@ -1,0 +1,34 @@
+#show_logs
+  %h2 #{@instance_service.full_name} Logs
+  %p
+    = link_to 'Return to Environment', environment_path(@environment)
+  %br
+  .log_options
+    - @logs.each do |log|
+      = link_to_unless(@log == log, log, :log => log, :type => @type)
+  .log_options
+    = link_to_unless(@type == 'tail', 'Tail', :type => 'tail', :log => @log)
+    = link_to_unless(@type == 'all', 'All messages', :type => 'all', :log => @log)
+
+  #logs_container
+    %h2 #{@log}
+    #log_output
+      Fetching log...
+      
+  - if @type == 'tail'
+    :javascript
+      tail_log('#{url_for(:log => @log, :type => @type)}', 200, -12000, true);
+  - else
+    :javascript
+      tail_log('#{url_for(:log => @log, :type => @type)}', 2048, 0, false);
+
+  %br
+  .log_options
+    - @logs.each do |log|
+      = link_to_unless(@log == log, log, :log => log, :type => @type)
+  .log_options
+    = link_to_unless(@type == 'tail', 'Tail', :type => 'tail', :log => @log)
+    = link_to_unless(@type == 'all', 'All messages', :type => 'all', :log => @log)
+  %br
+  %p
+    = link_to 'Return to Environment', environment_path(@environment)

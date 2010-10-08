@@ -12,14 +12,15 @@
       - instance.instance_services.each do |instance_service|
         %li
           = instance_service_link(instance_service)
-          = instance_service.current_state
+          %br
+          State: #{instance_service.current_state}
+          %br
+          = link_to "View Logs", logs_environment_instance_instance_service_path(instance.environment, instance, instance_service)
 .image_status
   = instance.current_state
 .image_health
   &nbsp;&nbsp;
   = image_tag 'healthy.png'
-.image_logs
-  = link_to "View Logs"
 .image_actions
   = link_to_function "Stop", "remote_stop_instance('#{stop_environment_instance_path(instance.environment.id, instance.id)}')"
 .start_another

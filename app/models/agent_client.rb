@@ -76,6 +76,14 @@ class AgentClient
     service_delete "artifacts/#{artifact_id}"
   end
 
+  def logs
+    service_get "logs"
+  end
+
+  def fetch_log(log_id, num_lines, offset)
+    service_get "logs/#{log_id}?num_lines=#{num_lines}&offset=#{offset}"
+  end
+
   protected
   def connection
     if APP_CONFIG[:use_ssl_with_agents]

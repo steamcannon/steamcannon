@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
   has_many :environments
   has_many :deployments
   has_many :artifact_versions, :through => :artifacts
+  has_many :instances, :through => :environments
 
   before_save :encrypt_cloud_password
   validate :validate_cloud_credentials
