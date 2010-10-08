@@ -192,6 +192,18 @@ describe Instance do
       end
     end
 
+    describe 'attach_volume' do
+      before(:each) do
+        @instance.current_state = 'starting'
+      end
+      
+      it "should transition if there is a storage_volume and it is running in the cloud" do
+        @instance.should_receive(:has_storage_volume_and_is_running_in_cloud?).and_return(true)
+        @instance.attach_volume!
+        @instance.should be_attaching_volume
+      end
+    end
+    
     describe "configure" do
       before(:each) do
         @cloud_instance = mock(Object, :public_addresses => ['host'])
@@ -222,6 +234,12 @@ describe Instance do
       it "should update public_dns from cloud" do
         @instance.should_receive(:public_dns=).with('host')
         @instance.configure!
+      end
+
+      it "should also be able to transition from :attaching_volume" do
+        @instance.current_state = 'attaching_volume'
+        @instance.configure!
+        @instance.should be_configuring
       end
 
     end
@@ -711,5 +729,63 @@ describe Instance do
       @instance.reachable?.should be_false
     end
 
+  end
+
+  describe 'has_storage_volume_and_is_running_in_cloud?' do
+    before(:each) do
+      @instance = Instance.new
+    end
+    
+    it "should be true if there is a storage volume and running_in_cloud? is true" do
+      @instance.should_receive(:storage_volume).and_return(mock(StorageVolume))
+      @instance.should_receive(:running_in_cloud?).and_return(true)
+      @instance.send(:has_storage_volume_and_is_running_in_cloud?).should be_true
+    end
+
+    it "should be false if there is a storage volume and running_in_cloud? is false" do
+      @instance.should_receive(:storage_volume).and_return(mock(StorageVolume))
+      @instance.should_receive(:running_in_cloud?).and_return(false)
+      @instance.send(:has_storage_volume_and_is_running_in_cloud?).should_not be_true
+    end
+
+    it "should be false if there is no storage volume" do
+      @instance.should_receive(:storage_volume).and_return(nil)
+      @instance.should_not_receive(:running_in_cloud?)
+      @instance.send(:has_storage_volume_and_is_running_in_cloud?).should_not be_true
+    end
+
+  end
+
+  describe 'attach_volume' do
+    before(:each) do
+      @instance = Instance.new
+      @storage_volume = mock(StorageVolume, :attach => false)
+      @instance.stub!(:storage_volume).and_return(@storage_volume)
+      @instance.stub!(:configure!)
+      @instance.stub!(:stuck_in_state_for_too_long?).and_return(false)
+    end
+
+    it "should attach the volume" do
+      @storage_volume.should_receive(:attach)
+      @instance.attach_volume
+    end
+
+    it "should move to configuring if the attach succeeds" do
+      @storage_volume.should_receive(:attach).and_return(true)
+      @instance.should_receive(:configure!)
+      @instance.attach_volume
+    end
+    
+    it "should not move to configuring if the attach fails" do
+      @storage_volume.should_receive(:attach).and_return(false)
+      @instance.should_not_receive(:configure!)
+      @instance.attach_volume
+    end
+
+    it "should move to start_failed if it waits too long to attach" do
+      @instance.should_receive(:stuck_in_state_for_too_long?).and_return(true)
+      @instance.should_receive(:start_failed!)
+      @instance.attach_volume
+    end
   end
 end

@@ -22,7 +22,8 @@ class InstanceWatcher
   # TODO: This code is starting to seem a bit repetitive
   def run
     update_starting
-
+    update_attaching_volume
+    
     # Purposely put the later states before the earlier ones
     # so an instance can't flow from configuring -> verifying ->
     # configuring_service within a single job execution
@@ -34,9 +35,17 @@ class InstanceWatcher
 
   def update_starting
     # TODO: This is a bit inefficient to do one at a time
-    Instance.starting.each { |i| i.configure! }
+    Instance.starting.each do |i|
+      i.attach_volume!
+      i.configure! unless i.attaching_volume?
+    end
   end
 
+  def update_attaching_volume
+    # TODO: This is a bit inefficient to do one at a time
+    Instance.attaching_volume.each { |i| i.attach_volume }
+  end
+  
   def update_configuring
     # TODO: This is a bit inefficient to do one at a time
     Instance.configuring.each { |i| i.configure_agent }

@@ -23,21 +23,48 @@ describe InstanceWatcher do
     @instance_watcher = InstanceWatcher.new
   end
 
-  it "should update starting, configuring, verifying, and terminating instances" do
+  it "should update starting, attaching_volume, configuring, verifying, and terminating instances" do
     @instance_watcher.should_receive(:update_starting)
+    @instance_watcher.should_receive(:update_attaching_volume)
     @instance_watcher.should_receive(:update_configuring)
     @instance_watcher.should_receive(:update_verifying)
     @instance_watcher.should_receive(:update_terminating)
     @instance_watcher.run
   end
 
-  it "should transition each starting instance to configuring" do
-    instance = mock_model(Instance)
-    instance.should_receive(:configure!)
-    Instance.stub!(:starting).and_return([instance])
-    @instance_watcher.update_starting
+  describe 'update_starting' do
+    before(:each) do
+      @instance = mock_model(Instance)
+      @instance.stub!(:attach_volume!)
+      @instance.stub!(:attaching_volume?).and_return(true)
+      Instance.stub!(:starting).and_return([@instance])
+    end
+    
+    it "should try to transition to attaching_volume" do
+      @instance.should_receive(:attach_volume!)
+      @instance_watcher.update_starting
+    end
+    
+    it "should transition each starting instance to configuring if it did not move to attaching_volume" do
+      @instance.should_receive(:attaching_volume?).and_return(false)
+      @instance.should_receive(:configure!)
+      @instance_watcher.update_starting
+    end
+
+    it "should not transition each starting instance to configuring if it did move to attaching_volume" do
+      @instance.should_receive(:attaching_volume?).and_return(true)
+      @instance.should_not_receive(:configure!)
+      @instance_watcher.update_starting
+    end
   end
 
+  it "should attempt to attach the volume for any attaching_volume instances" do
+    instance = mock_model(Instance)
+    instance.should_receive(:attach_volume)
+    Instance.stub!(:attaching_volume).and_return([instance])
+    @instance_watcher.update_attaching_volume
+  end
+  
   it "should attempt to configure any configuring instances" do
     instance = mock_model(Instance)
     instance.should_receive(:configure_agent)

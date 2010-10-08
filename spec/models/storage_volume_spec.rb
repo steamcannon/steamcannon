@@ -106,6 +106,8 @@ describe StorageVolume do
       @storage_volume.stub!(:instance).and_return(@instance)
       @cloud_volume = mock('cloud_volume')
       @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
+      @storage_volume.stub!(:cloud_volume_is_available?).and_return(true)
+      @storage_volume.stub!(:cloud_volume_is_attached?).and_return(false)
       @image = mock(Image)
       @image.stub!(:storage_volume_device).and_return('/dev/sdh')
       @storage_volume.stub!(:image).and_return(@image)
@@ -115,8 +117,63 @@ describe StorageVolume do
       @cloud_volume.should_receive(:attach!).with(:instance_id => 'i-1234', :device => '/dev/sdh')
       @storage_volume.attach
     end
+
+    it "should not attach if the cloud volume is not available" do
+      @storage_volume.should_receive(:cloud_volume_is_available?).and_return(false)
+      @cloud_volume.should_not_receive(:attach!)
+      @storage_volume.attach
+    end
+
+    it "should return true if the volume is already attached" do
+      @storage_volume.should_receive(:cloud_volume_is_available?).and_return(false)
+      @storage_volume.should_receive(:cloud_volume_is_attached?).and_return(true)
+      @cloud_volume.should_not_receive(:attach!)
+      @storage_volume.attach.should be_true
+    end
   end
-  
+
+    
+  describe 'cloud_volume_is_attached?' do
+    before(:each) do
+      @cloud_volume = mock('cloud_volume')
+      @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
+      @instance = mock(Instance, :cloud_id => 'i-1234')
+      @storage_volume.stub!(:instance).and_return(@instance)
+    end
+    
+    it "should be true if the volume_identifier is set and the cloud_volume exists, is in use, and is attached to the instance" do
+      @storage_volume.volume_identifier = 'blah'
+      @cloud_volume.should_receive(:state).and_return('IN-USE')
+      @cloud_volume.should_receive(:instance_id).and_return('i-1234')
+      @storage_volume.cloud_volume_is_attached?.should be_true
+    end
+
+    it "should be false if the volume_identifier is not set" do
+      @storage_volume.volume_identifier = nil
+      @storage_volume.cloud_volume_is_attached?.should_not be_true
+    end
+
+    it "should be false if the cloud_volume does not exist" do
+      @storage_volume.volume_identifier = 'blah'
+      @storage_volume.should_receive(:cloud_volume).and_return(nil)
+      @storage_volume.cloud_volume_is_attached?.should_not be_true
+    end
+
+    it "should be false if the cloud volume has a status other than 'in-use'" do
+      @storage_volume.volume_identifier = 'blah'
+      @cloud_volume.should_receive(:state).and_return('not avail')
+      @storage_volume.cloud_volume_is_attached?.should_not be_true
+    end
+
+    it "should be false if the volume is attached to another instance" do
+      @storage_volume.volume_identifier = 'blah'
+      @cloud_volume.should_receive(:state).and_return('IN-USE')
+      @cloud_volume.should_receive(:instance_id).and_return('i-1235')
+      @storage_volume.cloud_volume_is_attached?.should_not be_true
+    end
+  end
+
+
   it "should destroy from deltacloud on destroy"
   
 end

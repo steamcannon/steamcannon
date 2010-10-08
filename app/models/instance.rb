@@ -40,6 +40,7 @@ class Instance < ActiveRecord::Base
   aasm_initial_state :pending
   aasm_state :pending
   aasm_state :starting, :enter => :start_instance
+  aasm_state :attaching_volume
   aasm_state :configuring, :enter => :configure_instance
   aasm_state :verifying
   aasm_state :configure_failed, :enter => :state_failed
@@ -55,8 +56,12 @@ class Instance < ActiveRecord::Base
     transitions :to => :starting, :from => :pending
   end
 
+  aasm_event :attach_volume do
+    transitions :to => :attaching_volume, :from => :starting, :guard => :has_storage_volume_and_is_running_in_cloud?
+  end
+  
   aasm_event :configure do
-    transitions :to => :configuring, :from => :starting, :guard => :running_in_cloud?
+    transitions :to => :configuring, :from => [:starting, :attaching_volume], :guard => :running_in_cloud?
   end
 
   aasm_event :verify do
@@ -74,6 +79,7 @@ class Instance < ActiveRecord::Base
   aasm_event :stop do
     transitions :to => :stopping, :from => [:pending, :starting, :configuring,
                                             :verifying, :running, :start_failed,
+                                            :attaching_volume,
                                             :configure_failed, :unreachable]
   end
 
@@ -86,11 +92,12 @@ class Instance < ActiveRecord::Base
   end
 
   aasm_event :start_failed do
-    transitions :to => :start_failed, :from => :pending
+    transitions :to => :start_failed, :from => [:pending, :attaching_volume]
   end
 
   aasm_event :unreachable do
     transitions :to => :unreachable, :from => [:running, :pending, :starting, :configuring, :verifying,
+                                               :attaching_volume,
                                                :configure_failed, :stopping, :terminating, :start_failed]
   end
 
@@ -123,6 +130,14 @@ class Instance < ActiveRecord::Base
                     service_or_service_name.name : service_or_service_name)
   end
 
+  def attach_volume
+    if storage_volume.attach
+      configure!
+    elsif stuck_in_state_for_too_long?
+      start_failed!
+    end
+  end
+  
   def configure_agent
     generate_server_cert
     if agent_running?
@@ -193,6 +208,10 @@ class Instance < ActiveRecord::Base
   def running_in_cloud?
     update_attributes(:public_dns => cloud_instance.public_addresses.first)
     cloud_instance.state.downcase == 'running' and !public_dns.blank?
+  end
+
+  def has_storage_volume_and_is_running_in_cloud?
+    storage_volume and running_in_cloud?
   end
 
   def configure_instance

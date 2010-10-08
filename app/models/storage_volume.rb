@@ -32,7 +32,8 @@ class StorageVolume < ActiveRecord::Base
   def attach
     #TODO: handle errors here
     cloud_volume.attach!(:instance_id => instance.cloud_id,
-                         :device => image.storage_volume_device)
+                         :device => image.storage_volume_device) if cloud_volume_is_available?
+    cloud_volume_is_attached?
   end
 
   def detach
@@ -47,7 +48,14 @@ class StorageVolume < ActiveRecord::Base
       cloud_volume and
       cloud_volume.state.downcase == 'available'
   end
-   
+
+  def cloud_volume_is_attached?
+    !volume_identifier.blank? and
+      cloud_volume and
+      cloud_volume.state.downcase == 'in-use' and
+      cloud_volume.instance_id == instance.cloud_id
+  end
+  
  protected
   def cloud
     environment.user.cloud
