@@ -26,9 +26,11 @@ class Instance < ActiveRecord::Base
   belongs_to :image
 
   has_one :server_certificate, :as => :certifiable, :class_name => 'Certificate'
+  has_one :storage_volume, :dependent => :nullify
+  
   has_many :instance_services, :dependent => :destroy
   has_many :services, :through => :instance_services
-
+  
   named_scope :active, :conditions => "instances.current_state <> 'stopped'"
   named_scope :inactive, :conditions => "instances.current_state = 'stopped'"
   named_scope :not_failed, :conditions => "instances.current_state not in ('start_failed', 'configure_failed')"

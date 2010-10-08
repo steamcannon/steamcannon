@@ -20,9 +20,18 @@
 class EnvironmentImage < ActiveRecord::Base
   belongs_to :environment
   belongs_to :image
-
+  has_many :storage_volumes
+  
   def start!(instance_number)
-    name = "#{image.name} ##{instance_number}"
-    Instance.deploy!(image, environment, name, hardware_profile)
+    instance = Instance.deploy!(image,
+                                environment,
+                                "#{image.name} ##{instance_number}",
+                                hardware_profile)
+    
+    if image.needs_storage_volume?
+      storage_volume = storage_volumes[instance_number - 1] || storage_volumes.create
+      storage_volume.prepare(instance)
+    end
+
   end
 end

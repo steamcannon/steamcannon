@@ -43,4 +43,21 @@ describe Image do
     Image.new.should respond_to(:cloud_id)
   end
 
+  describe "needs_storage_volume?" do
+    before(:each) do
+      @image = Factory.build(:image)
+    end
+    
+    it "should be true if the storage_volume_capacity is set" do
+      @image.storage_volume_capacity = '1'
+      @image.needs_storage_volume?.should be_true
+    end
+
+    it "should be false if the storage_volume_capacity is not set" do
+      @image.storage_volume_capacity = nil
+      @image.needs_storage_volume?.should_not be_true
+    end
+
+    
+  end
 end

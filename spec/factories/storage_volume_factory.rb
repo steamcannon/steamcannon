@@ -16,26 +16,6 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+Factory.define :storage_volume do |volume|
 
-class Image < ActiveRecord::Base
-  has_many :platform_versions, :through => :platform_version_images
-  has_many :instances
-  has_many :image_services
-  has_many :services, :through => :image_services
-
-  def needs_storage_volume?
-    !storage_volume_capacity.blank?
-  end
-  
-  # See Platform.create_from_yaml_file
-  def self.new_from_yaml(yaml)
-    services = yaml.delete('services')
-    image = Image.find_or_create_by_cloud_id(yaml)
-    image_services = image.services
-    services && services.each do |service_name|
-      service = Service.find_or_create_by_name(service_name)
-      image.services << service unless image_services.include?(service)
-    end
-    image
-  end
 end

@@ -39,6 +39,7 @@ describe Instance do
   it { should have_one :server_certificate }
   it { should have_many :instance_services }
   it { should have_many :services }
+  it { should have_one :storage_volume }
 
   it "should create a new instance given valid attributes" do
     Instance.create!(@valid_attributes)

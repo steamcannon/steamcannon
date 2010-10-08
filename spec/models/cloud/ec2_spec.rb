@@ -75,8 +75,12 @@ describe Cloud::Ec2 do
     end
 
     it "should return security group names" do
-      expected = {:security_group => ['steamcannon_base', 'steamcannon_service']}
-      @ec2.launch_options.should == expected
+      expected =  ['steamcannon_base', 'steamcannon_service']
+      @ec2.launch_options[:security_group].should == expected
+    end
+
+    it "should return the default realm" do
+      @ec2.launch_options[:realm_id].should == 'us-east-1d'
     end
   end
 

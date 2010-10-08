@@ -23,6 +23,7 @@ class Environment < ActiveRecord::Base
   has_many :deployments, :dependent => :destroy
   has_many :environment_images, :dependent => :destroy
   has_many :images, :through => :environment_images
+  has_many :storage_volumes, :through => :environment_images
   has_many :instances
   has_many :instance_services, :through => :instances
   
@@ -78,6 +79,9 @@ class Environment < ActiveRecord::Base
 
   def start_environment
     environment_images.each do |env_image|
+      if !env_image.image.storage_volume_capacity.blank?
+        storage_volumes.create(:image => env_image.image)
+      end
       env_image.num_instances.times do |i|
         env_image.start!(i+1)
       end

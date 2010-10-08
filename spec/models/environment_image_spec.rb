@@ -28,17 +28,64 @@ describe EnvironmentImage do
     }
   end
 
+  it { should belong_to :environment }
+  it { should belong_to :image }
+  it { should have_many :storage_volumes }
+  
   it "should create a new instance given valid attributes" do
     EnvironmentImage.create!(@valid_attributes)
   end
 
-  it "should be able to deploy an instance" do
-    instance = mock_model(Instance)
-    Instance.should_receive(:deploy!).and_return(instance)
-    image = Image.new(:name => "test_image")
-    env_image = EnvironmentImage.new(:image => image,
-                                     :hardware_profile => "m1-small",
-                                     :num_instances => 1)
-    env_image.start!(1)
+  describe 'start!' do
+    before(:each) do
+      @instance = mock_model(Instance)
+      Instance.stub!(:deploy!).and_return(@instance)
+      @image = Factory(:image)
+      @environment_image = Factory(:environment_image, :image => @image)
+    end
+    
+    it "should be able to deploy an instance" do
+      Instance.should_receive(:deploy!).and_return(@instance)
+      @environment_image.start!(1)
+    end
+    
+    context "storage volumes" do
+      context "with an image that needs a volume" do
+        before(:each) do
+          @image.should_receive(:needs_storage_volume?).and_return(true)
+        end
+        
+        it "should create storage_volumes when the image needs one" do
+          @environment_image.start!(1)
+          @environment_image.storage_volumes.first.should_not be_nil
+        end
+        
+        it "should not create a storage_volume if it already exists" do
+          @environment_image.storage_volumes.create
+          @environment_image.storage_volumes.should_not_receive(:create)
+          @environment_image.start!(1)
+        end
+
+        it "should create a storage volume if one does not exist at the instance num index" do
+          @environment_image.storage_volumes.create
+          @environment_image.start!(2)
+          @environment_image.storage_volumes.count.should == 2
+        end
+        
+        it "should trigger the storage_volume to prepare" do
+          storage_volume = mock(StorageVolume)
+          storage_volume.should_receive(:prepare).with(@instance)
+          @environment_image.stub!(:storage_volumes).and_return([storage_volume])
+          @environment_image.start!(1)
+        end
+      end
+
+      it "should not create storage_volumes if none needed" do
+        @environment_image.start!(1)
+        @environment_image.storage_volumes.first.should be_nil
+      end
+
+
+    end
   end
 end

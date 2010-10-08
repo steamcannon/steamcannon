@@ -28,7 +28,8 @@ describe Environment do
   end
 
   it { should have_many :instance_services }
-  
+  it { should have_many :storage_volumes }
+
   it "should create a new instance given valid attributes" do
     Environment.create!(@valid_attributes)
   end
@@ -69,18 +70,26 @@ describe Environment do
   end
 
   describe "start" do
+    before(:each) do
+      @environment = Factory(:environment)
+    end
     it "should be starting" do
-      environment = Environment.new(@valid_attributes)
-      environment.start!
-      environment.should be_starting
+      @environment.start!
+      @environment.should be_starting
     end
 
-    it "should start environment images" do
-      environment_image = EnvironmentImage.new(:num_instances => 1)
-      environment = Environment.new(@valid_attributes)
-      environment.environment_images << environment_image
-      environment_image.should_receive(:start!)
-      environment.start!
+    context "with an environment image" do
+      before(:each) do
+        @environment_image = Factory(:environment_image, :environment => @environment, :num_instances => 1)
+        @environment_image.stub!(:start!)
+        @environment.stub!(:environment_images).and_return([@environment_image])
+      end
+
+      it "should start environment images" do
+        @environment_image.should_receive(:start!)
+        @environment.start!
+      end
+      
     end
   end
 
@@ -201,13 +210,13 @@ describe Environment do
         @platform_version.save
         @environment.images << @image
         @environment.save
-        
+
         @other_platform_version = Factory(:platform_version)
         @other_image = Factory(:image)
         @other_platform_version.images << @other_image
         @other_platform_version.save
       end
-      
+
       context "when the platform_version changes" do
         it "should remove environment_images from the old platform_version" do
           @environment.platform_version = @other_platform_version
@@ -222,7 +231,7 @@ describe Environment do
           @environment.save
           @environment.images.should include(@other_image)
         end
-        
+
         it "should not remove images that are in the new platform version as well" do
           @other_platform_version.images << @image
           @other_platform_version.save
