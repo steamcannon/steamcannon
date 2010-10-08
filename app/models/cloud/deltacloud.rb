@@ -27,14 +27,6 @@ module Cloud
       @cloud_password = cloud_password
     end
 
-    def instance(id)
-      client.instance(id)
-    end
-
-    def instances
-      client.instances
-    end
-
     def launch(image_id, opts={})
       client.create_instance(image_id, opts)
     end
@@ -49,6 +41,14 @@ module Cloud
       i ? i.stop! : false
     end
 
+    def method_missing(meth, *args, &block)
+      if client.respond_to?(meth)
+        client.send(meth, *args, &block)
+      else
+        super
+      end
+    end
+    
     def hardware_profiles
       @hardware_profiles ||= client.hardware_profiles.map(&:name)
     end
