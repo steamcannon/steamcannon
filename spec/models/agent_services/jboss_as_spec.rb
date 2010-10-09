@@ -21,7 +21,7 @@ require 'spec_helper'
 
 describe AgentServices::JbossAs do
   before(:each) do
-    @service = Factory(:service, :name => 'jboss_as')
+    @service = Factory.build(:service, :name => 'jboss_as')
     @environment = Factory(:environment)
     @agent_service = AgentServices::JbossAs.new(@service, @environment)
   end

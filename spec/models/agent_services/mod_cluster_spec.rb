@@ -21,7 +21,7 @@ require 'spec_helper'
 
 describe AgentServices::ModCluster do
   before(:each) do
-    @service = Factory(:service, :name => 'mod_cluster')
+    @service = Factory.build(:service, :name => 'mod_cluster')
     @environment = Factory(:environment)
     @agent_service = AgentServices::ModCluster.new(@service, @environment)
     @instance_service = Factory(:instance_service)
