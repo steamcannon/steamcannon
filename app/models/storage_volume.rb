@@ -22,6 +22,8 @@ class StorageVolume < ActiveRecord::Base
   belongs_to :instance
   has_one :image, :through => :environment_image
   has_one :environment, :through => :environment_image
+
+  before_destroy :destroy_cloud_volume
   
   def prepare(instance)
     update_attribute(:instance, instance)
@@ -37,6 +39,7 @@ class StorageVolume < ActiveRecord::Base
   end
 
   def detach
+    #TODO: implement
   end
   
   def cloud_volume
@@ -44,16 +47,18 @@ class StorageVolume < ActiveRecord::Base
   end
 
   def cloud_volume_is_available?
-    !volume_identifier.blank? and
-      cloud_volume and
+    cloud_volume_exists? and
       cloud_volume.state.downcase == 'available'
   end
 
   def cloud_volume_is_attached?
-    !volume_identifier.blank? and
-      cloud_volume and
+    cloud_volume_exists? and
       cloud_volume.state.downcase == 'in-use' and
       cloud_volume.instance_id == instance.cloud_id
+  end
+
+  def cloud_volume_exists?
+    !cloud_volume.nil?
   end
   
  protected
@@ -69,4 +74,7 @@ class StorageVolume < ActiveRecord::Base
     @cloud_volume
   end
 
+  def destroy_cloud_volume
+    cloud_volume.destroy! if cloud_volume_exists?
+  end
 end

@@ -31,32 +31,38 @@ describe StorageVolume do
     end
     
   end
+
+  describe "cloud_volume_exists?" do
+    it "should be true if the cloud_volume is not nil" do
+      @storage_volume.should_receive(:cloud_volume).and_return(mock('cloud volume'))
+      @storage_volume.cloud_volume_exists?.should be_true
+    end
+
+    it "should be false if the cloud_volume is nil" do
+      @storage_volume.should_receive(:cloud_volume).and_return(nil)
+      @storage_volume.cloud_volume_exists?.should_not be_true
+    end
+  end
   
   describe 'cloud_volume_is_available?' do
-    it "should be true if the volume_identifier is set and the cloud_volume exists, with a status of 'available'" do
-      @storage_volume.volume_identifier = 'blah'
+    it "should be true if the cloud_volume exists with a status of 'available'" do
       cloud_volume = mock('cloud_volume')
       cloud_volume.should_receive(:state).and_return('AVAILABLE')
       @storage_volume.should_receive(:cloud_volume).at_least(1).and_return(cloud_volume)
+      @storage_volume.should_receive(:cloud_volume_exists?).and_return(true)
       @storage_volume.cloud_volume_is_available?.should be_true
     end
 
-    it "should be false if the volume_identifier is not set" do
-      @storage_volume.volume_identifier = nil
-      @storage_volume.cloud_volume_is_available?.should_not be_true
-    end
-
     it "should be false if the cloud_volume does not exist" do
-      @storage_volume.volume_identifier = 'blah'
-      @storage_volume.should_receive(:cloud_volume).and_return(nil)
+      @storage_volume.should_receive(:cloud_volume_exists?).and_return(false)
       @storage_volume.cloud_volume_is_available?.should_not be_true
     end
 
     it "should be false if the cloud volume has a status other than 'available'" do
-      @storage_volume.volume_identifier = 'blah'
       cloud_volume = mock('cloud_volume')
       cloud_volume.should_receive(:state).and_return('not avail')
       @storage_volume.should_receive(:cloud_volume).at_least(1).and_return(cloud_volume)
+      @storage_volume.should_receive(:cloud_volume_exists?).and_return(true)
       @storage_volume.cloud_volume_is_available?.should_not be_true
     end
   end
@@ -141,32 +147,26 @@ describe StorageVolume do
       @storage_volume.stub!(:instance).and_return(@instance)
     end
     
-    it "should be true if the volume_identifier is set and the cloud_volume exists, is in use, and is attached to the instance" do
-      @storage_volume.volume_identifier = 'blah'
+    it "should be true if the cloud_volume exists, is in use, and is attached to the instance" do
       @cloud_volume.should_receive(:state).and_return('IN-USE')
       @cloud_volume.should_receive(:instance_id).and_return('i-1234')
+      @storage_volume.should_receive(:cloud_volume_exists?).and_return(true)
       @storage_volume.cloud_volume_is_attached?.should be_true
     end
 
-    it "should be false if the volume_identifier is not set" do
-      @storage_volume.volume_identifier = nil
-      @storage_volume.cloud_volume_is_attached?.should_not be_true
-    end
-
     it "should be false if the cloud_volume does not exist" do
-      @storage_volume.volume_identifier = 'blah'
-      @storage_volume.should_receive(:cloud_volume).and_return(nil)
+      @storage_volume.should_receive(:cloud_volume_exists?).and_return(false)
       @storage_volume.cloud_volume_is_attached?.should_not be_true
     end
 
     it "should be false if the cloud volume has a status other than 'in-use'" do
-      @storage_volume.volume_identifier = 'blah'
       @cloud_volume.should_receive(:state).and_return('not avail')
+      @storage_volume.should_receive(:cloud_volume_exists?).and_return(true)
       @storage_volume.cloud_volume_is_attached?.should_not be_true
     end
 
     it "should be false if the volume is attached to another instance" do
-      @storage_volume.volume_identifier = 'blah'
+      @storage_volume.should_receive(:cloud_volume_exists?).and_return(true)
       @cloud_volume.should_receive(:state).and_return('IN-USE')
       @cloud_volume.should_receive(:instance_id).and_return('i-1235')
       @storage_volume.cloud_volume_is_attached?.should_not be_true
@@ -174,6 +174,12 @@ describe StorageVolume do
   end
 
 
-  it "should destroy from deltacloud on destroy"
+  it "should destroy from deltacloud on destroy" do
+    cloud_volume = mock('cloud_volume')
+    @storage_volume.stub!(:cloud_volume).and_return(cloud_volume)
+    cloud_volume.should_receive(:destroy!)
+    @storage_volume.stub!(:cloud_volume_exists?).and_return(true)
+    @storage_volume.destroy
+  end
   
 end
