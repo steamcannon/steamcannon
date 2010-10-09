@@ -17,10 +17,10 @@
       
   - if @type == 'tail'
     :javascript
-      tail_log('#{url_for(:log => @log, :type => @type)}', 200, -12000, true);
+      tail_log('#{raw url_for(:log => @log, :type => @type, :escape => false)}', 200, -12000, true);
   - else
     :javascript
-      tail_log('#{url_for(:log => @log, :type => @type)}', 2048, 0, false);
+      tail_log('#{raw url_for(:log => @log, :type => @type, :escape => false)}', 2048, 0, false);
 
   %br
   .log_options

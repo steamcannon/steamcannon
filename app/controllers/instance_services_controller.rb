@@ -5,14 +5,16 @@ class InstanceServicesController < ApplicationController
 
   def logs
     @instance_service = @instance.instance_services.find(params[:id])
-    @logs = log_ids
-    @log = params[:log] || @logs.first
     @type = params[:type] || 'tail'
-    @num_lines = params[:num_lines] || 20
-    @offset = params[:offset] || 0
     respond_to do |format|
-      format.html
+      format.html {
+        @logs = log_ids
+        @log = params[:log] || @logs.first
+      }
       format.js {
+        @log = params[:log]
+        @num_lines = params[:num_lines] || 20
+        @offset = params[:offset] || 0
         render(generate_json_response(:ok, tail_response))
       }
     end

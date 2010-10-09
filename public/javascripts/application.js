@@ -155,8 +155,8 @@ function tail_log(url, num_lines, offset, tailing) {
         $("html, body").animate({scrollTop: $(document).height()}, 10);
       }
     }
-    if (tailing) {
-      setTimeout("tail_log('" + url + "', " + num_lines + ", " + data.offset + ", true)", 5000);
+    if (tailing || data.lines.length > 0) {
+      setTimeout("tail_log('" + url + "', " + num_lines + ", " + data.offset + ", + " + tailing + ")", 5000);
     }
   }, "json");
 }
