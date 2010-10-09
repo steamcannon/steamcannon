@@ -44,14 +44,14 @@ jQuery(document).ready(function($) {
         $('.platform_version_block').hide()
         $('#platform_version_' + this.value).show()
     })
-    
+
     //show the correct data on load
     $('#environment_form #environment_platform_version_id').trigger('change')
 
     /*
-     * remove other, unused platform versions, since some versions of IE 
+     * remove other, unused platform versions, since some versions of IE
      * will still submit form fields within hidden content.
-     */  
+     */
     $('body.environments_controller form').submit(function() {
         $('.platform_version_block:hidden').remove()
     })
@@ -62,13 +62,13 @@ jQuery(document).ready(function($) {
         $("#cloud_password_field").slideToggle();
         $("#cloud_password_prompt").slideToggle();
     });
-    
+
     $('#environment_images_container .image_row .start_another a').click(function() {
-        $($(this).closest('.start_another').next('.start_another_dialog')).show();        
+        $($(this).closest('.start_another').next('.start_another_dialog')).show();
     })
 
     $('#environment_images_container .image_row .start_another_dialog .close a').click(function() {
-        $($(this).closest('.start_another_dialog')).hide();        
+        $($(this).closest('.start_another_dialog')).hide();
     })
 })
 
