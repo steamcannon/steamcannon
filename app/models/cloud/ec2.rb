@@ -17,12 +17,8 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module Cloud
-  class Ec2
+  class Ec2 < Cloud::Base
     extend ActiveSupport::Memoizable
-
-    def initialize(user)
-      @user = user
-    end
 
     def multicast_config(instance)
       {

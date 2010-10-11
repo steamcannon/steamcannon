@@ -17,6 +17,23 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module Cloud
-  class Mock < Cloud::Base
+  class Base
+
+    def initialize(user)
+      @user = user
+    end
+
+    def multicast_config(instance)
+      {}
+    end
+
+    def launch_options(instance)
+      {}
+    end
+
+    def default_realm
+      nil
+    end
+
   end
 end

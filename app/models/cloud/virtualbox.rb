@@ -17,19 +17,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module Cloud
-  class Virtualbox
-
-    def initialize(instance)
-      @instance = instance
-    end
-
-    def multicast_config
-      {}
-    end
-
-    def launch_options
-      {}
-    end
-
+  class Virtualbox < Cloud::Base
   end
 end
