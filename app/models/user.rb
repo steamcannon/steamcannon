@@ -83,4 +83,8 @@ class User < ActiveRecord::Base
     end
   end
 
+  def cloud_specific_hacks
+    @cloud_hacks ||= "Cloud::#{cloud.name.camelize}".constantize.new(self)
+  end
+
 end

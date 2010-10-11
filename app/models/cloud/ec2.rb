@@ -20,24 +20,24 @@ module Cloud
   class Ec2
     extend ActiveSupport::Memoizable
 
-    def initialize(instance)
-      @instance = instance
+    def initialize(user)
+      @user = user
     end
 
-    def multicast_config
+    def multicast_config(instance)
       {
         :s3_ping => {
-          :pre_signed_put_url => pre_signed_put_url,
-          :pre_signed_delete_url => pre_signed_delete_url
+          :pre_signed_put_url => pre_signed_put_url(instance),
+          :pre_signed_delete_url => pre_signed_delete_url(instance)
         }
       }
     end
 
-    def launch_options
+    def launch_options(instance)
       # TODO: Need to optimize this to not check security groups for
       # every instance we launch
       groups = [base_security_group]
-      groups += service_security_groups
+      groups += service_security_groups(instance)
       groups.each do |group|
         ensure_security_group(group)
       end
@@ -50,29 +50,31 @@ module Cloud
     def default_realm
       'us-east-1d'
     end
-    
+
     protected
 
-    def user
-      @instance.environment.user
+    def access_key
+      @user.cloud_username
     end
 
-    def pre_signed_put_url
-      pre_signed_url(:method => :put,
+    def secret_access_key
+      @user.cloud_password
+    end
+
+    def pre_signed_put_url(instance)
+      pre_signed_url(instance, :method => :put,
                      :headers => {'x-amz-acl' => 'public-read'})
     end
 
-    def pre_signed_delete_url
-      pre_signed_url(:method => :delete)
+    def pre_signed_delete_url(instance)
+      pre_signed_url(instance, :method => :delete)
     end
 
-    def pre_signed_url(options)
-      access_key = @instance.cloud.cloud_username
-      secret_access_key = @instance.cloud.cloud_password
-      environment = @instance.environment
-      s3_bucket = multicast_bucket(environment.user)
-      s3_resource = "Environment#{environment.id}/instance#{@instance.id}"
-      expires_at = @instance.created_at + 1.year
+    def pre_signed_url(instance, options)
+      environment = instance.environment
+      s3_bucket = multicast_bucket
+      s3_resource = "Environment#{environment.id}/instance#{instance.id}"
+      expires_at = instance.created_at + 1.year
 
       options.merge!(:access_key => access_key,
                      :secret_access_key => secret_access_key,
@@ -82,13 +84,11 @@ module Cloud
       S3::Signature.generate_temporary_url(options)
     end
 
-    def multicast_bucket(user)
-      bucket_suffix = Digest::SHA1.hexdigest(user.cloud_username)
+    def multicast_bucket
+      bucket_suffix = Digest::SHA1.hexdigest(access_key)
       bucket_name = "SteamCannonEnvironments_#{bucket_suffix}"
 
-      s3 = Aws::S3.new(user.cloud_username,
-                       user.cloud_password,
-                       :multi_thread => true)
+      s3 = Aws::S3.new(access_key, secret_access_key, :multi_thread => true)
 
       # Ensure our bucket exists and has correct permissions
       bucket = Aws::S3::Bucket.create(s3, bucket_name, true, 'public-read')
@@ -97,7 +97,7 @@ module Cloud
     memoize :multicast_bucket
 
     def base_security_group
-      { :user => user,
+      { :user => @user,
         :name => 'steamcannon',
         :description => 'SteamCannon',
         :permissions => [
@@ -118,8 +118,8 @@ module Cloud
       }
     end
 
-    def service_security_groups
-      agent_services.map do |agent_service|
+    def service_security_groups(instance)
+      agent_services(instance).map do |agent_service|
         security_group_from_service(agent_service)
       end
     end
@@ -135,26 +135,25 @@ module Cloud
         }
 
       end
-      { :user => user,
+      { :user => @user,
         :name => name,
         :description => description,
         :permissions => permissions
       }
     end
 
-    def agent_services
-      environment = @instance.environment
-      @instance.image.services.map do |service|
+    def agent_services(instance)
+      environment = instance.environment
+      instance.image.services.map do |service|
         AgentServices::Base.instance_for_service(service, environment)
       end
     end
 
     def ensure_security_group(options)
-      user = options[:user]
       group_name = options[:name]
       group_description = options[:description]
 
-      ec2 = Aws::Ec2.new(user.cloud_username, user.cloud_password)
+      ec2 = Aws::Ec2.new(access_key, secret_access_key)
       begin
         group = ec2.describe_security_groups([group_name])[0]
       rescue Aws::AwsError => e
@@ -195,7 +194,7 @@ module Cloud
     end
 
     def log(msg)
-      Rails.logger.info("Cloud::Ec2[Instance:#{@instance.id} (#{@instance.name})]: #{msg}")
+      Rails.logger.info("Cloud::Ec2: #{msg}")
     end
 
   end

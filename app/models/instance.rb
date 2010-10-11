@@ -27,10 +27,10 @@ class Instance < ActiveRecord::Base
 
   has_one :server_certificate, :as => :certifiable, :class_name => 'Certificate'
   has_one :storage_volume, :dependent => :nullify
-  
+
   has_many :instance_services, :dependent => :destroy
   has_many :services, :through => :instance_services
-  
+
   named_scope :active, :conditions => "instances.current_state <> 'stopped'"
   named_scope :inactive, :conditions => "instances.current_state = 'stopped'"
   named_scope :not_failed, :conditions => "instances.current_state not in ('start_failed', 'configure_failed')"
@@ -59,7 +59,7 @@ class Instance < ActiveRecord::Base
   aasm_event :attach_volume do
     transitions :to => :attaching_volume, :from => :starting, :guard => :has_storage_volume_and_is_running_in_cloud?
   end
-  
+
   aasm_event :configure do
     transitions :to => :configuring, :from => [:starting, :attaching_volume], :guard => :running_in_cloud?
   end
@@ -137,7 +137,7 @@ class Instance < ActiveRecord::Base
       start_failed!
     end
   end
-  
+
   def configure_agent
     generate_server_cert
     if agent_running?
@@ -176,7 +176,7 @@ class Instance < ActiveRecord::Base
   end
 
   def cloud_specific_hacks
-    @cloud_hacks ||= "Cloud::#{cloud.name.camelize}".constantize.new(self)
+    environment.user.cloud_specific_hacks
   end
 
   protected
@@ -193,7 +193,7 @@ class Instance < ActiveRecord::Base
       :hardware_profile => hardware_profile,
       :key_name => cloud_keyname,
       :user_data => instance_user_data
-    }.merge(cloud_specific_hacks.launch_options)
+    }.merge(cloud_specific_hacks.launch_options(self))
   end
 
   def cloud_keyname

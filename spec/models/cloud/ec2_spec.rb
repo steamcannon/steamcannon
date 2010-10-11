@@ -20,8 +20,11 @@ require 'spec_helper'
 
 describe Cloud::Ec2 do
   before(:each) do
+    @user = Factory.build(:user,
+                          :cloud_username => 'username',
+                          :cloud_password => 'password')
+    @ec2 = Cloud::Ec2.new(@user)
     @instance = Factory.build(:instance)
-    @ec2 = Cloud::Ec2.new(@instance)
   end
 
   describe "multicast_config" do
@@ -31,13 +34,13 @@ describe Cloud::Ec2 do
     end
 
     it "should generate put_url" do
-      @ec2.should_receive(:pre_signed_put_url)
-      @ec2.multicast_config
+      @ec2.should_receive(:pre_signed_put_url).with(@instance)
+      @ec2.multicast_config(@instance)
     end
 
     it "should generate delete_url" do
-      @ec2.should_receive(:pre_signed_delete_url)
-      @ec2.multicast_config
+      @ec2.should_receive(:pre_signed_delete_url).with(@instance)
+      @ec2.multicast_config(@instance)
     end
 
     it "should return put and delete urls" do
@@ -47,7 +50,7 @@ describe Cloud::Ec2 do
           :pre_signed_delete_url => 'delete_url'
         }
       }
-      @ec2.multicast_config.should == expected
+      @ec2.multicast_config(@instance).should == expected
     end
   end
 
@@ -60,53 +63,47 @@ describe Cloud::Ec2 do
 
     it "should include base security group" do
       @ec2.should_receive(:base_security_group).and_return({})
-      @ec2.launch_options
+      @ec2.launch_options(@instance)
     end
 
     it "should include service specific security groups" do
-      @ec2.should_receive(:service_security_groups).and_return([])
-      @ec2.launch_options
+      @ec2.should_receive(:service_security_groups).with(@instance).and_return([])
+      @ec2.launch_options(@instance)
     end
 
     it "should ensure security groups exist" do
       @ec2.should_receive(:ensure_security_group).with({:name => 'steamcannon_base'})
       @ec2.should_receive(:ensure_security_group).with({:name => 'steamcannon_service'})
-      @ec2.launch_options
+      @ec2.launch_options(@instance)
     end
 
     it "should return security group names" do
       expected =  ['steamcannon_base', 'steamcannon_service']
-      @ec2.launch_options[:security_group].should == expected
+      @ec2.launch_options(@instance)[:security_group].should == expected
     end
 
     it "should return the default realm" do
-      @ec2.launch_options[:realm_id].should == 'us-east-1d'
+      @ec2.launch_options(@instance)[:realm_id].should == 'us-east-1d'
     end
-  end
-
-  it "should retrieve user from instance's environment" do
-    user = Factory.build(:user)
-    @instance.stub_chain(:environment, :user).and_return(user)
-    @ec2.send(:user).should == user
   end
 
   describe "pre_signed_put_url" do
     it "should have :put method" do
-      @ec2.should_receive(:pre_signed_url).with(hash_including(:method => :put))
-      @ec2.send(:pre_signed_put_url)
+      @ec2.should_receive(:pre_signed_url).with(@instance, hash_including(:method => :put))
+      @ec2.send(:pre_signed_put_url, @instance)
     end
 
     it "should have public-read permissions" do
       @ec2.should_receive(:pre_signed_url).
-        with(hash_including(:headers => {'x-amz-acl' => 'public-read'}))
-      @ec2.send(:pre_signed_put_url)
+        with(@instance, hash_including(:headers => {'x-amz-acl' => 'public-read'}))
+      @ec2.send(:pre_signed_put_url, @instance)
     end
   end
 
   describe "pre_signed_delete_url" do
     it "should have :delete method" do
-      @ec2.should_receive(:pre_signed_url).with(hash_including(:method => :delete))
-      @ec2.send(:pre_signed_delete_url)
+      @ec2.should_receive(:pre_signed_url).with(@instance, hash_including(:method => :delete))
+      @ec2.send(:pre_signed_delete_url, @instance)
     end
   end
 
@@ -118,7 +115,6 @@ describe Cloud::Ec2 do
       @instance.stub!(:cloud).and_return(@cloud)
       @environment = Factory.build(:environment)
       @instance.stub!(:environment).and_return(@environment)
-      @user = Factory.build(:user, :cloud_username => 'username')
       @environment.stub!(:user).and_return(@user)
       @ec2.stub!(:multicast_bucket).and_return('bucket')
       @created_at = Time.now
@@ -127,25 +123,25 @@ describe Cloud::Ec2 do
       @sig.stub!(:generate_temporary_url)
     end
 
-    it "should get access_key from cloud object" do
-      @cloud.should_receive(:cloud_username).and_return('username')
+    it "should get access_key from user object" do
+      @user.should_receive(:cloud_username).and_return('username')
       @sig.should_receive(:generate_temporary_url).
         with(hash_including(:access_key => 'username'))
-      @ec2.send(:pre_signed_url, {})
+      @ec2.send(:pre_signed_url, @instance, {})
     end
 
-    it "should get secret_access_key from cloud object" do
-      @cloud.should_receive(:cloud_password).and_return('password')
+    it "should get secret_access_key from user object" do
+      @user.should_receive(:cloud_password).and_return('password')
       @sig.should_receive(:generate_temporary_url).
         with(hash_including(:secret_access_key => 'password'))
-      @ec2.send(:pre_signed_url, {})
+      @ec2.send(:pre_signed_url, @instance, {})
     end
 
     it "should get multicast bucket" do
       @ec2.should_receive(:multicast_bucket).and_return('bucket')
       @sig.should_receive(:generate_temporary_url).
         with(hash_including(:bucket => 'bucket'))
-      @ec2.send(:pre_signed_url, {})
+      @ec2.send(:pre_signed_url, @instance, {})
     end
 
     it "should expire 1 year after instance creation" do
@@ -153,12 +149,12 @@ describe Cloud::Ec2 do
       @instance.should_receive(:created_at).and_return(@created_at)
       @sig.should_receive(:generate_temporary_url).
         with(hash_including(:expires_at => expires_at))
-      @ec2.send(:pre_signed_url, {})
+      @ec2.send(:pre_signed_url, @instance, {})
     end
 
     it "should return temporary url" do
       @sig.should_receive(:generate_temporary_url).and_return('url')
-      @ec2.send(:pre_signed_url, {}).should == 'url'
+      @ec2.send(:pre_signed_url, @instance, {}).should == 'url'
     end
   end
 
@@ -167,38 +163,30 @@ describe Cloud::Ec2 do
       @s3 = Aws::S3
       @s3.stub!(:new)
       @s3::Bucket.stub(:create)
-      @user = Factory.build(:user,
-                            :cloud_username => 'username',
-                            :cloud_password => 'password')
     end
 
     it "should generate suffix from cloud username" do
       Digest::SHA1.should_receive(:hexdigest).with('username')
-      @ec2.send(:multicast_bucket, @user)
+      @ec2.send(:multicast_bucket)
     end
 
     it "should create a new s3 object" do
       @s3.should_receive(:new).with('username', 'password', anything)
-      @ec2.send(:multicast_bucket, @user)
+      @ec2.send(:multicast_bucket)
     end
 
     it "should create s3 bucket with public read permissions" do
       @s3::Bucket.should_receive(:create).with(anything, anything, true, 'public-read')
-      @ec2.send(:multicast_bucket, @user)
+      @ec2.send(:multicast_bucket)
     end
 
     it "should return bucket name" do
       Digest::SHA1.stub!(:hexdigest).and_return('suffix')
-      @ec2.send(:multicast_bucket, @user).should == "SteamCannonEnvironments_suffix"
+      @ec2.send(:multicast_bucket).should == "SteamCannonEnvironments_suffix"
     end
   end
 
   describe "base_security_group" do
-    before(:each) do
-      @user = Factory.build(:user)
-      @ec2.stub!(:user).and_return(@user)
-    end
-
     it "should be named steamcannon" do
       @ec2.send(:base_security_group)[:name].should == 'steamcannon'
     end
@@ -226,21 +214,19 @@ describe Cloud::Ec2 do
   describe "service_security_groups" do
     it "should retrieve all agent services" do
       @ec2.should_receive(:agent_services).and_return([])
-      @ec2.send(:service_security_groups)
+      @ec2.send(:service_security_groups, @instance)
     end
 
     it "should create security group from each service" do
       agent_service = mock('agent service')
       @ec2.stub!(:agent_services).and_return([agent_service])
       @ec2.should_receive(:security_group_from_service).with(agent_service).and_return('group')
-      @ec2.send(:service_security_groups).should == ['group']
+      @ec2.send(:service_security_groups, @instance).should == ['group']
     end
   end
 
   describe "security_group_from_service" do
     before(:each) do
-      @user = Factory.build(:user)
-      @ec2.stub!(:user).and_return(@user)
       @service = Factory.build(:service)
       @agent_service = mock('agent_service',
                             :service => @service,
@@ -248,7 +234,6 @@ describe Cloud::Ec2 do
     end
 
     it "should belong to correct user" do
-      @ec2.should_receive(:user).and_return(@user)
       @ec2.send(:security_group_from_service, @agent_service)[:user].should == @user
     end
 
@@ -277,7 +262,7 @@ describe Cloud::Ec2 do
       @instance.stub_chain(:image, :services).and_return([service])
       AgentServices::Base.should_receive(:instance_for_service).
         with(service, @instance.environment)
-      @ec2.send(:agent_services)
+      @ec2.send(:agent_services, @instance)
     end
   end
 end

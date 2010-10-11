@@ -118,6 +118,15 @@ describe User do
     user.superuser.should == false
   end
 
+  it "should create cloud specific hacks" do
+    user = Factory.build(:user)
+    cloud = mock('cloud')
+    user.should_receive(:cloud).and_return(cloud)
+    cloud.should_receive(:name).and_return('ec2')
+    Cloud::Ec2.should_receive(:new).with(user)
+    user.cloud_specific_hacks
+  end
+
   context "visible_to_user named_scope" do
     before(:each) do
       @superuser = Factory(:superuser)

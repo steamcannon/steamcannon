@@ -21,7 +21,8 @@ module AgentServices
     # configures the jboss multicast, and also sets up the proxy list
     # for mod_cluster if any mod_cluster instances are available.
     def configure_instance_service(instance_service)
-      config = instance_service.instance.cloud_specific_hacks.multicast_config
+      instance = instance_service.instance
+      config = instance.cloud_specific_hacks.multicast_config(instance)
       proxies = environment.instance_services.not_pending.for_service(Service.by_name('mod_cluster'))
       if !proxies.empty?
         proxy_list = proxies.collect(&:instance).inject({}) do |list, proxy_instance|

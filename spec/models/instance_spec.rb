@@ -94,6 +94,16 @@ describe Instance do
     instance.cloud_instance.should be(cloud_instance)
   end
 
+  it "should delegate to user for cloud specific hacks" do
+    instance = Factory.build(:instance)
+    environment = Factory.build(:environment)
+    user = Factory.build(:user)
+    instance.should_receive(:environment).and_return(environment)
+    environment.should_receive(:user).and_return(user)
+    user.should_receive(:cloud_specific_hacks).and_return('hacks')
+    instance.cloud_specific_hacks.should == 'hacks'
+  end
+
 
   describe "instance_launch_options" do
     before(:each) do
@@ -196,14 +206,14 @@ describe Instance do
       before(:each) do
         @instance.current_state = 'starting'
       end
-      
+
       it "should transition if there is a storage_volume and it is running in the cloud" do
         @instance.should_receive(:has_storage_volume_and_is_running_in_cloud?).and_return(true)
         @instance.attach_volume!
         @instance.should be_attaching_volume
       end
     end
-    
+
     describe "configure" do
       before(:each) do
         @cloud_instance = mock(Object, :public_addresses => ['host'])
@@ -735,7 +745,7 @@ describe Instance do
     before(:each) do
       @instance = Instance.new
     end
-    
+
     it "should be true if there is a storage volume and running_in_cloud? is true" do
       @instance.should_receive(:storage_volume).and_return(mock(StorageVolume))
       @instance.should_receive(:running_in_cloud?).and_return(true)
@@ -775,7 +785,7 @@ describe Instance do
       @instance.should_receive(:configure!)
       @instance.attach_volume
     end
-    
+
     it "should not move to configuring if the attach fails" do
       @storage_volume.should_receive(:attach).and_return(false)
       @instance.should_not_receive(:configure!)
