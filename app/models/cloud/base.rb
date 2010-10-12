@@ -48,6 +48,10 @@ module Cloud
           :runaway => runaway_instances.size
         }
       end
+    rescue => e
+      puts e.inspect
+      puts e.backtrace
+      { :running => 0, :managed => 0, :runaway => 0 }
     end
 
     def running_instances
