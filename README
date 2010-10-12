@@ -6,16 +6,21 @@ The only required setting in steamcannon.yml is your deltacloud_url:
 
 See RAILS_ROOT/config/steamcannon.yml.example for more options.
 
+SteamCannon uses PostgreSQL as its database and has only been tested with
+version 8.4.x. By default we expect steamcannon_dev, steamcannon_test, and
+steamcannon_production databases and a steamcannon user. Look at
+config/database.yml and modify as needed for your environment.
+
 Then setup the database schema and load seed data:
   $ rake db:setup
 
 Make sure you're running at least version 0.0.7.2 of steamcannon-deltacloud-core
 (the server to which steamcannon connects). It's recommended to deploy deltacloud
-into your TB using a deltacloud-rack.yml similar to below:
+into your TB using a deltacloud-rack.yml similar to below (change the jruby path)
 
 ---
 application:
-  RACK_ROOT: $TORQUEBOX_HOME/jruby/lib/ruby/gems/1.8/gems/steamcannon-deltacloud-core-0.0.7.2-java
+  RACK_ROOT: /path/to/jruby/lib/ruby/gems/1.8/gems/steamcannon-deltacloud-core-0.0.7.2-java
   RACK_ENV: production
 web:
   context: /deltacloud
