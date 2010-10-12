@@ -3,6 +3,7 @@
  * *
  * Licensed under GPL and MIT. */
 
+@import "compass/utilities/general/clearfix";
 @import "compass/reset";
 @import "960/grid";
 
@@ -10,12 +11,6 @@
 
 $ninesixty-columns: 24;
 
-
-.clearfix {
-  margin: 0;
-  padding: 0;
-  clear: both;
-}
 
 body.ninesixty {
 
@@ -25,6 +20,7 @@ body.ninesixty {
 
   #header {
     @include grid-container;
+    @include clearfix;
     #logos {
       @include grid(12);
     }
@@ -40,6 +36,7 @@ body.ninesixty {
 
   #content {
     @include grid-container;
+    @include clearfix;
   }
 
   #footer {
@@ -58,3 +55,38 @@ body.ninesixty {
 
   }
 }
+
+#show_artifact {
+  #artifact_versions_container {
+    @include grid(12);
+    @include alpha();
+    .version_number {
+      @include grid(2);
+      @include alpha();
+    }
+    .archive {
+      @include grid(6);
+    }
+    .actions {
+      @include grid(4);
+      @include omega();
+    }
+  }
+
+  #deployments_container {
+    @include grid(12);
+    @include omega();
+    .artifact {
+      @include grid(4);
+      @include alpha();
+    }
+    .environment {
+      @include grid(5);
+    }
+    .actions {
+      @include grid(3);
+      @include omega();
+    }
+  }
+}
+
