@@ -81,7 +81,7 @@ describe Instance do
   it "should find the user's cloud" do
     cloud = Object.new
     instance = Instance.new
-    instance.stub_chain(:environment, :user, :cloud).and_return(cloud)
+    instance.stub_chain(:user, :cloud).and_return(cloud)
     instance.cloud.should eql(cloud)
   end
 
@@ -96,12 +96,17 @@ describe Instance do
 
   it "should delegate to user for cloud specific hacks" do
     instance = Factory.build(:instance)
-    environment = Factory.build(:environment)
     user = Factory.build(:user)
-    instance.should_receive(:environment).and_return(environment)
-    environment.should_receive(:user).and_return(user)
+    instance.should_receive(:user).and_return(user)
     user.should_receive(:cloud_specific_hacks).and_return('hacks')
     instance.cloud_specific_hacks.should == 'hacks'
+  end
+
+  it "should delegate to environment for user" do
+    instance = Factory.build(:instance)
+    user = Factory.build(:user)
+    instance.should_receive(:user).and_return(user)
+    instance.user.should == user
   end
 
 

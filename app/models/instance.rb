@@ -117,7 +117,7 @@ class Instance < ActiveRecord::Base
   end
 
   def cloud
-    environment.user.cloud
+    user.cloud
   end
 
   def cloud_instance
@@ -176,7 +176,11 @@ class Instance < ActiveRecord::Base
   end
 
   def cloud_specific_hacks
-    environment.user.cloud_specific_hacks
+    user.cloud_specific_hacks
+  end
+
+  def user
+    environment.user
   end
 
   protected
@@ -197,7 +201,7 @@ class Instance < ActiveRecord::Base
   end
 
   def cloud_keyname
-    environment.user.ssh_key_name
+    user.ssh_key_name
   end
 
   def instance_user_data
