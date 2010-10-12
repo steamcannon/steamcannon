@@ -1,1 +1,2 @@
-= render :partial => "list", :locals => { :artifacts => @artifacts, :header_text => "Artifacts", :empty_text => "You have no artifacts.", :action_link => (link_to 'Add Artifact', new_artifact_path, :class => "actionlink") }
+#artifacts_index
+  = render :partial => "list", :locals => { :artifacts => @artifacts, :header_text => "Artifacts", :empty_text => "You have no artifacts.", :action_link => (link_to 'Add Artifact', new_artifact_path, :class => "actionlink") }

@@ -110,14 +110,19 @@ form {
 
 
 .tabular {
-  border-bottom: 1px solid $color_dark;
+  margin-bottom: 1em;
   .header {
     border-bottom: 1px solid $color_dark;
+    margin-bottom: 1ex;
     div {
       font-weight: bold;
     } 
     @include clearfix;
   }
+  .row {
+    @include clearfix;
+  }
+  @include clearfix;
 }
 
 #artifact_versions_container {
@@ -125,5 +130,27 @@ form {
     .version_number {
       text-align: center;
     }
+  }
+}
+
+#environment_instances_container  {
+  font-size: 90%;
+  .services {
+    ul {
+      margin: 0;
+      list-style-type: none;
+      li {
+        margin: 0;
+      }
+    }
+  }
+}
+
+#artifacts_container {
+  .latest_version {
+    text-align: center;
+  }
+  .header .latest_version {
+    text-align: left;
   }
 }

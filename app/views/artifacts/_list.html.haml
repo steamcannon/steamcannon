@@ -1,30 +1,30 @@
-#artifacts_container
+#artifacts_container.tabular
   %h2
     = header_text
-  #artifacts_header
-    .artifact_name
+  .header
+    .name
       Name
-    .artifact_service
+    .service
       Service
-    .artifact_latest_version
+    .latest_version
       Latest Version
+    .actions
+      Actions
   - artifacts.each do |artifact|
-    .artifact_row
-      .artifact_name
+    .row
+      .name
         = link_to artifact.name, artifact_path(artifact)
-      .artifact_service
+      .service
         = artifact.service_name
-      .artifact_latest_version
+      .latest_version
         = artifact.latest_version_number || 'None'
 
-      .artifact_deploy
+      .actions
         - if artifact.latest_version_number
           = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact.latest_version.id)
         - else
           &nbsp;
-      .artifact_edit
         = link_to 'Edit', edit_artifact_path(artifact)
-      .artifact_delete
         = link_to 'Delete', artifact, :method => :delete, :confirm => "Are you sure you want to delete #{artifact.name}?"
   - if artifacts.empty?
     .artifact_row
