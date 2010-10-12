@@ -2,12 +2,23 @@ Before running the app, first create RAILS_ROOT/config/steamcannon.yml
 
 The only required setting in steamcannon.yml is your deltacloud_url:
     # Required, url of the deltacloud-core server
-    deltacloud_url:  http://localhost:3001/api
+    deltacloud_url:  http://localhost:8080/deltacloud/api
 
 See RAILS_ROOT/config/steamcannon.yml.example for more options.
 
 Then setup the database schema and load seed data:
   $ rake db:setup
 
-Make sure you're running at least version 0.0.6.1 of bbrowning-deltacloud-core
-(the server to which steamcannon connects)
+Make sure you're running at least version 0.0.7.2 of steamcannon-deltacloud-core
+(the server to which steamcannon connects). It's recommended to deploy deltacloud
+into your TB using a deltacloud-rack.yml similar to below:
+
+---
+application:
+  RACK_ROOT: $TORQUEBOX_HOME/jruby/lib/ruby/gems/1.8/gems/steamcannon-deltacloud-core-0.0.7.2-java
+  RACK_ENV: production
+web:
+  context: /deltacloud
+environment:
+  API_DRIVER: ec2
+EOF
