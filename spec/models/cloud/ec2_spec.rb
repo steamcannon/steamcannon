@@ -87,6 +87,18 @@ describe Cloud::Ec2 do
     end
   end
 
+  describe "running_instances" do
+    it "should be empty if cloud username isn't set" do
+      @user.stub!(:cloud_username).and_return('')
+      @ec2.running_instances.should be_empty
+    end
+
+    it "should be empty if cloud password isn't set" do
+      @user.stub!(:cloud_password).and_return('')
+      @ec2.running_instances.should be_empty
+    end
+  end
+
   describe "pre_signed_put_url" do
     it "should have :put method" do
       @ec2.should_receive(:pre_signed_url).with(@instance, hash_including(:method => :put))

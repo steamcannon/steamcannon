@@ -47,9 +47,16 @@ module Cloud
     end
 
     def running_instances
+      return [] if access_key.blank? or secret_access_key.blank?
       ec2 = Aws::Ec2.new(access_key, secret_access_key, :multi_thread => true)
       all = ec2.describe_instances.map { |i| i.merge(:id => i[:aws_instance_id]) }
       all.select { |i| i[:aws_state] == 'running' }
+    rescue Aws::AwsError => e
+      # If we encounter any Amazon errors, log them and pretend we have no
+      # running instances for now
+      log(e)
+      log(e.backtrace)
+      []
     end
     memoize :running_instances
 
@@ -199,10 +206,6 @@ module Cloud
       # Ignore AWS errors for now
       log(e)
       log(e.backtrace)
-    end
-
-    def log(msg)
-      Rails.logger.info("Cloud::Ec2: #{msg}")
     end
 
   end

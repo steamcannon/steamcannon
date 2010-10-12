@@ -48,10 +48,6 @@ module Cloud
           :runaway => runaway_instances.size
         }
       end
-    rescue => e
-      puts e.inspect
-      puts e.backtrace
-      { :running => 0, :managed => 0, :runaway => 0 }
     end
 
     def running_instances
@@ -59,6 +55,12 @@ module Cloud
         instance.state.upcase != 'STOPPED'
       end
       instances.map { |i| {:id => i.id} }
+    rescue => e
+      # If we encounter any errors, log them and pretend there are
+      # no running instances for now
+      log(e)
+      log(e.backtrace)
+      []
     end
 
     def managed_instances
@@ -82,6 +84,10 @@ module Cloud
       else
         return cache_value[:value]
       end
+    end
+
+    def log(msg)
+      Rails.logger.info("#{self.class}: #{msg}")
     end
 
   end
