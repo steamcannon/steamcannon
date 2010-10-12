@@ -23,7 +23,7 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "authlogic", :version => "2.1.5"
-  config.gem "aws"
+  config.gem "aws", :version => "2.3.21"
   config.gem "s3", :version => "0.3.4"
   config.gem "haml", :version => "3.0.15"
   config.gem "compass", :version => "0.10.2"
