@@ -15,3 +15,4 @@ coverage/*
 *_flymake.rb
 .rvmrc
 TAGS
+.bundle
