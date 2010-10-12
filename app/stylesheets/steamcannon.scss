@@ -1,7 +1,9 @@
+@import "compass/utilities/general/clearfix";
+
 $bar_background_color: #dddddf;
 
 $color_dark: #2B435A;
-$color_light: #656565;
+$color_light: #C28600;
 $page_title_color: #897F64;
 
 $link_color:         $color_dark;
@@ -43,10 +45,13 @@ a {
 #footer-bar {
   padding-top: .2em;
   padding-bottom: .2em;
-  margin-top: 1em;
   background-color: $bar_background_color;
   border-bottom: 1px solid $bar_background_color - #333; 
   border-top: 1px solid $bar_background_color - #333; 
+}
+
+#content {
+  margin-bottom: 2em;
 }
 
 #footer {
@@ -76,6 +81,49 @@ a {
           color: #933;
         }
       }
+    }
+  }
+}
+
+form {
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    li {
+      margin: 0 0 1em 0;
+      padding: 0;
+      label {
+        font-weight: bold;
+        display: block;
+        margin: 0;
+        padding: 0;
+      }
+
+      input, textarea {
+        border: 1px solid $color_light;
+        background-color: #f0f0f0;
+      }
+    }
+  }
+}
+
+
+.tabular {
+  border-bottom: 1px solid $color_dark;
+  .header {
+    border-bottom: 1px solid $color_dark;
+    div {
+      font-weight: bold;
+    } 
+    @include clearfix;
+  }
+}
+
+#artifact_versions_container {
+  .row {
+    .version_number {
+      text-align: center;
     }
   }
 }
