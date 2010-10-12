@@ -1,5 +1,35 @@
 $bar_background_color: #dddddf;
 
+$color_dark: #2B435A;
+$color_light: #656565;
+$page_title_color: #897F64;
+
+$link_color:         $color_dark;
+$link_visited_color: $color_dark;
+$link_hover_color:   $color_dark + #222;
+
+a {
+  text-decoration: none;
+  color: $link_color;
+
+  &:hover {
+    color: $link_hover_color;
+  }
+}
+
+#top-links {
+  font-size: 90%;
+  font-weight: bold;
+  margin: 1ex 0;
+  padding: 0;
+  list-style-type: none;
+  li {
+    display: inline;
+    margin: 0;
+    padding: 0 1ex;
+  }
+}
+
 #header-bar {
   padding-top: 1em;
   padding-bottom: 1ex;
@@ -13,25 +43,35 @@ $bar_background_color: #dddddf;
 #footer-bar {
   padding-top: .2em;
   padding-bottom: .2em;
-  margin-bottom: 3em;
+  margin-top: 1em;
   background-color: $bar_background_color;
   border-bottom: 1px solid $bar_background_color - #333; 
   border-top: 1px solid $bar_background_color - #333; 
 }
 
+#footer {
+  font-size: 80%;
+  color: $bar_background_color - #777;
+}
+
 #main-navigation {
   font-size: 120%;
+  border-bottom: 1px solid $bar_background_color;
+  margin-bottom: 1em;
   ul.nav {
     list-style-type: none;
+    margin: 0px;
     li {
       display: inline;
       margin: 0px;
       margin-right: 1ex;
       padding: 0px;
       a {
-        text-decoration: none;
         font-weight: bold;
         color: #555;
+        &:hover {
+          color: #955;
+        }
         &.selected {
           color: #933;
         }
