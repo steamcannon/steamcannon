@@ -29,12 +29,18 @@ describe CloudInstancesController do
       @cloud.stub!(:running_instances).and_return([])
       @cloud.stub!(:managed_instances).and_return([])
       @cloud.stub!(:runaway_instances).and_return([])
+      @cloud.stub!(:instances_summary)
       @current_user.stub!(:cloud_specific_hacks).and_return(@cloud)
     end
 
     it "should be successful" do
       get :index
       response.should be_success
+    end
+
+    it "should refresh instances summary" do
+      @cloud.should_receive(:instances_summary).with(true)
+      get :index
     end
   end
 

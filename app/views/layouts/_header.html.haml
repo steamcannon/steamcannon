@@ -9,12 +9,12 @@
   - if @current_user
     .header_instances
       .running_instances
-        Running Instances: #{@current_user.cloud_specific_hacks.running_instances.size}
+        Running Instances: #{@current_user.cloud_specific_hacks.instances_summary[:running]}
       .managed_instances
-        Managed Instances: #{@current_user.cloud_specific_hacks.managed_instances.size}
-      - runaway_instances = @current_user.cloud_specific_hacks.runaway_instances
-      - if runaway_instances.size > 0
+        Managed Instances: #{@current_user.cloud_specific_hacks.instances_summary[:managed]}
+      - runaway_instances = @current_user.cloud_specific_hacks.instances_summary[:runaway]
+      - if runaway_instances > 0
         .runaway_instances
-          = link_to "Possible Runaway Instances: #{runaway_instances.size}", cloud_instances_path
+          = link_to "Possible Runaway Instances: #{runaway_instances}", cloud_instances_path
       - else
         = link_to 'Details', cloud_instances_path

@@ -36,6 +36,20 @@ module Cloud
       nil
     end
 
+    def instances_cache_key
+      "User#{@user.id}InstancesCache"
+    end
+
+    def instances_summary(force_refresh = false)
+      expires_in = force_refresh ? 0.seconds : 5.minutes
+      expiring_fetch(instances_cache_key, expires_in) do
+        { :running => running_instances.size,
+          :managed => managed_instances.size,
+          :runaway => runaway_instances.size
+        }
+      end
+    end
+
     def running_instances
       instances = @user.cloud.instances.select do |instance|
         instance.state.upcase != 'STOPPED'
@@ -51,6 +65,19 @@ module Cloud
 
     def runaway_instances
       []
+    end
+
+    protected
+
+    def expiring_fetch(cache_key, expires_in)
+      cache_value = Rails.cache.read(cache_key)
+      if !cache_value || cache_value[:inserted_at] < expires_in.ago.utc
+        value = yield
+        Rails.cache.write(cache_key, :inserted_at => Time.now.utc, :value => value)
+        return value
+      else
+        return cache_value[:value]
+      end
     end
 
   end

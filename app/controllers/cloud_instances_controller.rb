@@ -21,6 +21,7 @@ class CloudInstancesController < ApplicationController
 
   def index
     cloud = current_user.cloud_specific_hacks
+    cloud.instances_summary(true) # force refresh of instances summary
     @running_instances = cloud.running_instances
     @managed_instances = cloud.managed_instances
     @runaway_instances = cloud.runaway_instances
