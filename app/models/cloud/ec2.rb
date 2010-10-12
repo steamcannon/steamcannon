@@ -18,7 +18,6 @@
 
 module Cloud
   class Ec2 < Cloud::Base
-    extend ActiveSupport::Memoizable
 
     def multicast_config(instance)
       {
@@ -45,6 +44,19 @@ module Cloud
 
     def default_realm
       'us-east-1d'
+    end
+
+    def running_instances
+      ec2 = Aws::Ec2.new(access_key, secret_access_key, :multi_thread => true)
+      all = ec2.describe_instances.map { |i| i.merge(:id => i[:aws_instance_id]) }
+      all.select { |i| i[:aws_state] == 'running' }
+    end
+    memoize :running_instances
+
+    def runaway_instances
+      candidates = running_instances.select { |i| i[:aws_groups].include?('steamcannon') }
+      managed = managed_instances
+      candidates.reject { |i| managed.include?(i) }
     end
 
     protected

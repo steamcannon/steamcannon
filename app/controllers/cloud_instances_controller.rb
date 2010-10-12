@@ -16,42 +16,19 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module Cloud
-  class Base
-    extend ActiveSupport::Memoizable
+class CloudInstancesController < ApplicationController
+  before_filter :require_user
 
-    def initialize(user)
-      @user = user
-    end
-
-    def multicast_config(instance)
-      {}
-    end
-
-    def launch_options(instance)
-      {}
-    end
-
-    def default_realm
-      nil
-    end
-
-    def running_instances
-      instances = @user.cloud.instances.select do |instance|
-        instance.state.upcase != 'STOPPED'
-      end
-      instances.map { |i| {:id => i.id} }
-    end
-
-    def managed_instances
-      running_instances.select do |instance|
-        !Instance.find_by_cloud_id(instance[:id]).nil?
-      end
-    end
-
-    def runaway_instances
-      []
-    end
-
+  def index
+    cloud = current_user.cloud_specific_hacks
+    @running_instances = cloud.running_instances
+    @managed_instances = cloud.managed_instances
+    @runaway_instances = cloud.runaway_instances
   end
+
+  def destroy
+    current_user.cloud.terminate(params[:id])
+    redirect_to cloud_instances_path
+  end
+
 end

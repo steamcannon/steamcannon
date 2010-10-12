@@ -16,42 +16,26 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module Cloud
-  class Base
-    extend ActiveSupport::Memoizable
+module CloudInstancesHelper
 
-    def initialize(user)
-      @user = user
-    end
+  def cloud_instances_header(instance_type)
+    { :running => 'Running Instances',
+      :managed => 'Managed Instances',
+      :runaway => 'Possible Runaway Instances'
+    }[instance_type]
+  end
 
-    def multicast_config(instance)
-      {}
-    end
+  def cloud_instances_header_info(instance_type)
+    { :running => 'All instances running under your cloud credentials',
+      :managed => 'Running instances managed by this SteamCannon',
+      :runaway => 'Running instances orphaned or managed by a different SteamCannon'
+    }[instance_type]
+  end
 
-    def launch_options(instance)
-      {}
-    end
-
-    def default_realm
-      nil
-    end
-
-    def running_instances
-      instances = @user.cloud.instances.select do |instance|
-        instance.state.upcase != 'STOPPED'
-      end
-      instances.map { |i| {:id => i.id} }
-    end
-
-    def managed_instances
-      running_instances.select do |instance|
-        !Instance.find_by_cloud_id(instance[:id]).nil?
-      end
-    end
-
-    def runaway_instances
-      []
-    end
-
+  def cloud_instances_actions(instance_type)
+    { :running => false,
+      :managed => false,
+      :runaway => true
+    }[instance_type]
   end
 end

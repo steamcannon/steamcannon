@@ -1,0 +1,26 @@
+#running_instances_container,
+#managed_instances_container,
+#runaway_instances_container {
+  @include list_container;
+  @include column(7);
+
+  .instances_header {
+    @include list_header;
+  }
+
+  .instance_row {
+    @include list_row;
+  }
+
+  .instance_id {
+    @include column(4);
+  }
+
+  .instance_actions {
+    @include column(3, true);
+  }
+}
+
+#runaway_instances_container {
+  @include last;
+}

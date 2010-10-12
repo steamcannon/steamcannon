@@ -6,4 +6,15 @@
     = link_to @current_user.email, account_path unless @current_user.nil?
   = link_to 'Log out', user_session_path, :method => :delete unless @current_user.nil?
   = link_to 'Log in', new_user_session_path if @current_user.nil?
-
+  - if @current_user
+    .header_instances
+      .running_instances
+        Running Instances: #{@current_user.cloud_specific_hacks.running_instances.size}
+      .managed_instances
+        Managed Instances: #{@current_user.cloud_specific_hacks.managed_instances.size}
+      - runaway_instances = @current_user.cloud_specific_hacks.runaway_instances
+      - if runaway_instances.size > 0
+        .runaway_instances
+          = link_to "Possible Runaway Instances: #{runaway_instances.size}", cloud_instances_path
+      - else
+        = link_to 'Details', cloud_instances_path

@@ -16,42 +16,14 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module Cloud
-  class Base
-    extend ActiveSupport::Memoizable
+require 'spec_helper'
 
-    def initialize(user)
-      @user = user
-    end
+describe CloudInstancesHelper do
 
-    def multicast_config(instance)
-      {}
-    end
-
-    def launch_options(instance)
-      {}
-    end
-
-    def default_realm
-      nil
-    end
-
-    def running_instances
-      instances = @user.cloud.instances.select do |instance|
-        instance.state.upcase != 'STOPPED'
-      end
-      instances.map { |i| {:id => i.id} }
-    end
-
-    def managed_instances
-      running_instances.select do |instance|
-        !Instance.find_by_cloud_id(instance[:id]).nil?
-      end
-    end
-
-    def runaway_instances
-      []
-    end
-
+  #Delete this example and add some real ones or delete this file
+  it "should be included in the object returned by #helper" do
+    included_modules = (class << helper; self; end).send :included_modules
+    included_modules.should include(CloudInstancesHelper)
   end
+
 end

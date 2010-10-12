@@ -1,0 +1,8 @@
+#running_instances_container
+  = render :partial => 'list', :locals => {:instances => @running_instances, :instance_type => :running, :allow_stop => false}
+
+#managed_instances_container
+  = render :partial => 'list', :locals => {:instances => @managed_instances, :instance_type => :managed, :allow_stop => false}
+
+#runaway_instances_container
+  = render :partial => 'list', :locals => {:instances => @runaway_instances, :instance_type => :runaway, :allow_stop => true}
