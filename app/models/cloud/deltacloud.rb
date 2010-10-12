@@ -48,13 +48,15 @@ module Cloud
         super
       end
     end
-    
+
     def hardware_profiles
       @hardware_profiles ||= client.hardware_profiles.map(&:name)
     end
 
     def name
-      client.driver_name
+      Rails.cache.fetch('DeltacloudDriverName') do
+        client.driver_name
+      end
     end
 
     def client
