@@ -32,7 +32,7 @@ module CloudInstancesHelper
     }[instance_type]
   end
 
-  def cloud_instances_actions(instance_type)
+  def cloud_instances_actions?(instance_type)
     { :running => false,
       :managed => false,
       :runaway => true

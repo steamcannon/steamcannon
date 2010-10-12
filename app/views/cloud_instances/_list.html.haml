@@ -3,13 +3,13 @@
 .instances_header
   .instance_id
     Identifier
-  - if cloud_instances_actions(instance_type)
+  - if cloud_instances_actions?(instance_type)
     .instance_actions
       Actions
 - instances.each do |instance|
   .instance_row
     .instance_id
       = instance[:id]
-    - if cloud_instances_actions(instance_type)
+    - if cloud_instances_actions?(instance_type)
       .instance_actions
         = link_to 'Terminate', cloud_instance_path(instance[:id]), :method => :delete, :confirm => "Are you sure you want to terminate #{instance[:id]}?"

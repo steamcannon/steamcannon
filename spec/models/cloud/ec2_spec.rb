@@ -109,13 +109,6 @@ describe Cloud::Ec2 do
 
   describe "pre_signed_url" do
     before(:each) do
-      @cloud = mock('cloud')
-      @cloud.stub!(:cloud_username).and_return('username')
-      @cloud.stub!(:cloud_password).and_return('password')
-      @instance.stub!(:cloud).and_return(@cloud)
-      @environment = Factory.build(:environment)
-      @instance.stub!(:environment).and_return(@environment)
-      @environment.stub!(:user).and_return(@user)
       @ec2.stub!(:multicast_bucket).and_return('bucket')
       @created_at = Time.now
       @instance.stub!(:created_at).and_return(@created_at)

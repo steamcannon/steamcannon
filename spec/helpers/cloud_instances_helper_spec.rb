@@ -20,10 +20,18 @@ require 'spec_helper'
 
 describe CloudInstancesHelper do
 
-  #Delete this example and add some real ones or delete this file
-  it "should be included in the object returned by #helper" do
-    included_modules = (class << helper; self; end).send :included_modules
-    included_modules.should include(CloudInstancesHelper)
+  [:running, :managed, :runaway].each do |instance_type|
+    it "should have a cloud_instances_header value for #{instance_type} instance type" do
+      helper.cloud_instances_header(instance_type).should_not be_nil
+    end
+
+    it "should have a cloud_instances_header_info value for #{instance_type} instance type" do
+      helper.cloud_instances_header_info(instance_type).should_not be_nil
+    end
+
+    it "should have a cloud_instances_actions? value for #{instance_type} instance type" do
+      helper.cloud_instances_actions?(instance_type).should_not be_nil
+    end
   end
 
 end
