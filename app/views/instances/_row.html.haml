@@ -21,9 +21,8 @@
 .image_health
   &nbsp;&nbsp;
   = image_tag 'healthy.png'
-.image_actions
+.actions
   = link_to_function "Stop", "remote_stop_instance('#{stop_environment_instance_path(instance.environment.id, instance.id)}')"
-.start_another
   = link_to 'Add', '#'
   .start_another_dialog{:style=>'display:none'}
     .close

@@ -90,3 +90,119 @@ body.ninesixty {
   }
 }
 
+#artifacts_index {
+  .name {
+    @include alpha();
+    @include grid(6);
+  }
+  .service {
+    @include grid(4);
+  }
+  .latest_version {
+    @include grid(4);
+  }
+  .actions {
+    @include grid(4);
+    @include omega();
+  }
+}
+
+#environment_form {
+  #environment_images_container {
+    @include grid(16);
+    @include grid-suffix(8);
+    .row {
+      margin-bottom: 1ex;
+    }
+    .name {
+      @include grid(8);
+      @include alpha();
+    }
+    .hardware_profile {
+      @include grid(4);
+    }
+    .num_instances {
+      @include grid(4);
+      @include omega();
+    }
+  }
+}
+
+#show_environment {
+  #detail {
+    @include grid(8);
+    @include alpha();
+  }
+
+  #deployments {
+    @include grid(16);
+    @include omega();
+
+    #deployments_container {
+      .artifact {
+        @include grid(4);
+        @include alpha();
+      }
+      .environment {
+        @include grid(4);
+      }
+      .status {
+        @include grid(2);
+      }
+      .actions {
+        @include grid(2);
+        @include omega();
+      }
+    }
+  }
+
+  #instances {
+    @include grid(24);
+    @include alpha();
+    @include omega();
+
+    #environment_instances_container {
+      .name {
+        @include grid(7);
+        @include alpha();
+      }
+      .image_id {
+        @include grid(2);
+      }
+      .hardware_profile {
+        @include grid(3);
+      }
+      .services {
+        @include grid(3);
+      }
+      .image_status {
+        @include grid(3);
+      }
+      .image_health {
+        @include grid(2);
+      }
+      .actions {
+        @include grid(4);
+        @include omega();
+      }
+    }
+  }
+}
+
+#environments_index {
+  .name {
+    @include grid(6);
+    @include alpha();
+  } 
+  .platform {
+    @include grid(6);
+  } 
+  .status {
+    @include grid(4);
+  } 
+  .actions {
+    @include grid(8);
+    @include omega();
+  } 
+}
+

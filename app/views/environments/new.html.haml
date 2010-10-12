@@ -1,9 +1,8 @@
-.dcloud_form
+#new-environment
   %h2
     Create New Environment
   - form_for(@environment) do |f|
     = f.error_messages
     = render :partial => "form", :object => f
     = f.submit 'Create', :class => "submit"
-  %p
     = link_to 'Cancel', environments_path, :class => "actionlink"

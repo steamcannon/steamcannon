@@ -1,22 +1,24 @@
-#environments_container
+#environments_container.tabular
   %h2
     = header_text
-  #environments_header
-    .environment_name
+  .header
+    .name
       Name
-    .environment_platform
+    .platform
       Platform
-    .environment_status
+    .status
       Status
+    .actions
+      Actions
   - environments.each do |environment|
-    - div_for(environment, :class=>'environment_row') do
-      .environment_name
+    - div_for(environment, :class=>'row') do
+      .name
         = link_to environment.name, environment
-      .environment_platform
+      .platform
         = environment.platform_version
-      .environment_status
+      .status
         = environment.current_state.titleize
-      .environment_action
+      .actions
         - if environment.can_stop?
           = link_to 'Stop', stop_environment_path(environment), :method => :post, :confirm => "Are you sure you want to stop #{environment.name}?"
         - elsif environment.can_start?
@@ -24,16 +26,14 @@
         - else
           &nbsp;
         = link_to 'Clone', clone_environment_path(environment), :method => :post
-      .environment_edit
         = link_to 'Edit', edit_environment_path(environment)
-      .environment_delete
         = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?"
     - javascript_tag do
       ="monitor_environment('#{status_environment_path(environment.id)}', '##{dom_id(environment)}');"
   
   - if environments.empty?
-    .environment_row
-      .environment_name
+    .row
+      .name
         = empty_text
   - if defined?(action_link)
     = action_link
