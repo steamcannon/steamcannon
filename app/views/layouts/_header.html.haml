@@ -1,20 +1,27 @@
-.header_logo
-  %span SteamCannon
-  = render_navigation
-.header_info
-  #hi-username
-    = link_to @current_user.email, account_path unless @current_user.nil?
-  = link_to 'Log out', user_session_path, :method => :delete unless @current_user.nil?
-  = link_to 'Log in', new_user_session_path if @current_user.nil?
-  - if @current_user
-    .header_instances
-      .running_instances
-        Running Instances: #{@current_user.cloud_specific_hacks.instances_summary[:running]}
-      .managed_instances
-        Managed Instances: #{@current_user.cloud_specific_hacks.instances_summary[:managed]}
-      - runaway_instances = @current_user.cloud_specific_hacks.instances_summary[:runaway]
-      - if runaway_instances > 0
-        .runaway_instances
-          = link_to "Possible Runaway Instances: #{runaway_instances}", cloud_instances_path
-      - else
-        = link_to 'Details', cloud_instances_path
+#nav-wrapper
+
+#header-bar
+  #header-wrapper
+    #header
+      #logos
+        %span SteamCannon
+  #header-navigation
+    = render_navigation
+
+  .header_info
+    #hi-username
+      = link_to @current_user.email, account_path unless @current_user.nil?
+    = link_to 'Log out', user_session_path, :method => :delete unless @current_user.nil?
+    = link_to 'Log in', new_user_session_path if @current_user.nil?
+    - if @current_user
+      .header_instances
+        .running_instances
+          Running Instances: #{@current_user.cloud_specific_hacks.instances_summary[:running]}
+        .managed_instances
+          Managed Instances: #{@current_user.cloud_specific_hacks.instances_summary[:managed]}
+        - runaway_instances = @current_user.cloud_specific_hacks.instances_summary[:runaway]
+        - if runaway_instances > 0
+          .runaway_instances
+            = link_to "Possible Runaway Instances: #{runaway_instances}", cloud_instances_path
+        - else
+          = link_to 'Details', cloud_instances_path
