@@ -1,3 +1,17 @@
+# Database
+
+SteamCannon uses PostgreSQL as its database and has only been tested with
+version 8.4.x. By default we expect steamcannon_dev, steamcannon_test, and
+steamcannon_production databases and a steamcannon user. Look at
+config/database.yml and modify as needed for your environment.
+
+1. Install Postgres 8.4
+2. Run bin/setup_db.sh  
+3. rake db:setup
+
+
+# Configuration
+
 Before running the app, first create RAILS_ROOT/config/steamcannon.yml
 
 The only required setting in steamcannon.yml is your deltacloud_url:
@@ -6,13 +20,7 @@ The only required setting in steamcannon.yml is your deltacloud_url:
 
 See RAILS_ROOT/config/steamcannon.yml.example for more options.
 
-SteamCannon uses PostgreSQL as its database and has only been tested with
-version 8.4.x. By default we expect steamcannon_dev, steamcannon_test, and
-steamcannon_production databases and a steamcannon user. Look at
-config/database.yml and modify as needed for your environment.
-
-Then setup the database schema and load seed data:
-  $ rake db:setup
+# Deltacloud
 
 Make sure you're running at least version 0.0.7.2 of steamcannon-deltacloud-core
 (the server to which steamcannon connects). It's recommended to deploy deltacloud
@@ -27,3 +35,8 @@ web:
 environment:
   API_DRIVER: ec2
 EOF
+
+
+# Deploy
+
+rake torquebox:deploy
