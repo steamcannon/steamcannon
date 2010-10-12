@@ -1,0 +1,20 @@
+$bar_background_color: #dddddf;
+
+#header-bar {
+  padding-top: 1em;
+  padding-bottom: 1ex;
+  margin-bottom: 3em;
+  background-color: $bar_background_color;
+  border-bottom: 1px solid $bar_background_color - #333; 
+  border-top: 1px solid $bar_background_color - #333; 
+}
+
+
+#footer-bar {
+  padding-top: .2em;
+  padding-bottom: .2em;
+  margin-bottom: 3em;
+  background-color: $bar_background_color;
+  border-bottom: 1px solid $bar_background_color - #333; 
+  border-top: 1px solid $bar_background_color - #333; 
+}

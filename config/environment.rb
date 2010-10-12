@@ -26,7 +26,7 @@ Rails::Initializer.run do |config|
   config.gem "aws", :version => "2.3.21"
   config.gem "s3", :version => "0.3.4"
   config.gem "haml", :version => "3.0.15"
-  config.gem "compass", :version => "0.10.2"
+  config.gem "compass", :version => "0.10.5"
   config.gem "compass-960-plugin", :version => "0.10.0", :lib=>"ninesixty"
   config.gem "steamcannon-deltacloud-client", :version => "0.0.9.7.2", :lib => "deltacloud"
   config.gem "paperclip", :version => "2.3.3"
