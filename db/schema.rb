@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101013195857) do
+ActiveRecord::Schema.define(:version => 20101013201415) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -117,7 +117,7 @@ ActiveRecord::Schema.define(:version => 20101013195857) do
     t.string   "cloud_id"
     t.string   "hardware_profile"
     t.string   "current_state"
-    t.string   "public_dns"
+    t.string   "public_address"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "started_at"

@@ -34,7 +34,7 @@ module AgentServices
 # since we currently onll manage an admin user, a connection string is useless
 =begin       
      def url_for_instance_service(instance_service)
-       host = instance_service.instance.public_dns
+       host = instance_service.instance.public_address
        admin_user = instance_service.metadata[:admin_user]
        "jdbc:postgresql://#{host}:5432/postgres?user=#{admin_user[:user]}&password=#{admin_user[:password]}" if !host.blank? and admin_user
      end

@@ -58,12 +58,12 @@ describe AgentServices::ModCluster do
       url.start_with?('http://').should be(true)
     end
 
-    it "should build url for instance's public_dns" do
+    it "should build url for instance's public_address" do
       instance = Factory(:instance)
       @instance_service.should_receive(:instance).and_return(instance)
-      instance.should_receive(:public_dns).and_return('public_dns')
+      instance.should_receive(:public_address).and_return('public_address')
       url = @agent_service.url_for_instance_service(@instance_service)
-      url.include?('public_dns').should be(true)
+      url.include?('public_address').should be(true)
     end
 
     it "should build url for mod_cluster_manager path" do

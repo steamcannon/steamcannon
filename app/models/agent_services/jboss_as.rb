@@ -26,7 +26,7 @@ module AgentServices
       proxies = environment.instance_services.not_pending.for_service(Service.by_name('mod_cluster'))
       if !proxies.empty?
         proxy_list = proxies.collect(&:instance).inject({}) do |list, proxy_instance|
-          dns = proxy_instance.public_dns
+          dns = proxy_instance.public_address
           list[dns] = {:host => dns, :port => 80} unless dns.blank?
           list
         end
@@ -43,7 +43,7 @@ module AgentServices
     end
 
     def url_for_instance_service(instance_service)
-      host = instance_service.instance.public_dns
+      host = instance_service.instance.public_address
       "http://#{host}:8080"
     end
 

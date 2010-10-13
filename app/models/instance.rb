@@ -210,7 +210,7 @@ class Instance < ActiveRecord::Base
 
   def running_in_cloud?
     update_addresses
-    cloud_instance.state.downcase == 'running' and !public_dns.blank?
+    cloud_instance.state.downcase == 'running' and !public_address.blank?
   end
 
   def has_storage_volume_and_is_running_in_cloud?
@@ -259,7 +259,7 @@ class Instance < ActiveRecord::Base
   end
 
   def generate_server_cert
-    unless public_dns.blank? or server_certificate
+    unless public_address.blank? or server_certificate
       self.server_certificate = Certificate.generate_server_certificate(self)
     end
   end
@@ -267,7 +267,7 @@ class Instance < ActiveRecord::Base
   def update_addresses(cloud_instance = self.cloud_instance,
                        additional_fields = {})
     update_attributes({
-                        :public_dns => cloud_instance.public_addresses.first,
+                        :public_address => cloud_instance.public_addresses.first,
                         :private_address => cloud_instance.private_addresses.first
                       }.merge(additional_fields))
   end

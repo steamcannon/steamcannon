@@ -33,7 +33,7 @@ module AgentServices
     end
 
     def url_for_instance_service(instance_service)
-      host = instance_service.instance.public_dns
+      host = instance_service.instance.public_address
       "http://#{host}/mod_cluster_manager"
     end
 

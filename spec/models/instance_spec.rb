@@ -30,7 +30,7 @@ describe Instance do
       :name => "value for name",
       :cloud_id => "value for cloud_id",
       :hardware_profile => "value for hardware_profile",
-      :public_dns => "value for public_dns"
+      :public_address => "value for public_address"
     }
 
     InstanceTask.stub(:async)
@@ -171,7 +171,7 @@ describe Instance do
       it "should not get set if the state does not change" do
         @instance.save
         @instance.should_not_receive(:state_change_timestamp=)
-        @instance.public_dns = 'something to trigger save'
+        @instance.public_address = 'something to trigger save'
         @instance.save
       end
     end
@@ -249,8 +249,8 @@ describe Instance do
         @instance.should be_starting
       end
 
-      it "should update public_dns from cloud" do
-        @instance.should_receive(:public_dns=).with('host')
+      it "should update public_address from cloud" do
+        @instance.should_receive(:public_address=).with('host')
         @instance.configure!
       end
 
@@ -505,7 +505,7 @@ describe Instance do
 
   describe "configure_agent" do
     before(:each) do
-      @instance = Factory(:instance, :current_state => 'configuring', :public_dns => 'hostname')
+      @instance = Factory(:instance, :current_state => 'configuring', :public_address => 'hostname')
     end
 
     it "should move to verifying state if agent is running" do
@@ -535,7 +535,7 @@ describe Instance do
 
   describe "generate_server_cert" do
     before(:each) do
-      @instance = Factory(:instance, :current_state => 'configuring', :public_dns => 'hostname')
+      @instance = Factory(:instance, :current_state => 'configuring', :public_address => 'hostname')
     end
 
     it "should generate a cert" do
@@ -543,8 +543,8 @@ describe Instance do
       @instance.send(:generate_server_cert)
     end
 
-    it "should not generate a cert if the public_dns is not set on the instance" do
-      @instance.public_dns = nil
+    it "should not generate a cert if the public_address is not set on the instance" do
+      @instance.public_address = nil
       Certificate.should_not_receive(:generate_server_certificate)
       @instance.send(:generate_server_cert)
     end
