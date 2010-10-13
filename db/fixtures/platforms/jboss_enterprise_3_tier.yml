@@ -2,11 +2,11 @@
 platforms:
   - name:  JBoss 3-Tier
     platform_versions:
-      - version_number: 1
+      - version_number: 2
         images:
           - name: Backend - JBoss
-            description: JBoss AS 6 SNAPSHOT.20100818 (w/TorqueBox 1.0.0.Beta22)
-            cloud_id: ami-68e51101
+            description: JBoss AS 6 m5 (w/TorqueBox 1.0.0.Beta22)
+            cloud_id: ami-38dd2951
             services:
               - jboss_as
           - name: Frontend - mod_cluster
