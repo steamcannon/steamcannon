@@ -1,15 +1,16 @@
 ---
 platforms:
-  - name: JBoss 2 Tier
+  - name: JBoss 2-Tier
     platform_versions:
-      - version_number:
+      - version_number: 1
         images:
-          - name: JBoss
-            cloud_id: ami-1c19ec75
+          - name: Backend - JBoss
+            description: JBoss AS 6 m5 (w/TorqueBox 1.0.0.Beta22)
+            cloud_id: ami-38dd2951
             services:
               - jboss_as
-          - name: mod_cluster
+          - name: Frontend - mod_cluster
+            description: Apache 2.2.16 (w/mod_cluster 1.1.0)
             cloud_id: ami-c017e2a9
             services:
               - mod_cluster
-

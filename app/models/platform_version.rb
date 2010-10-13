@@ -23,6 +23,8 @@ class PlatformVersion < ActiveRecord::Base
   has_many :images, :through => :platform_version_images
   accepts_nested_attributes_for :images, :allow_destroy => true
 
+  validates_presence_of :version_number
+  
   def to_s
     version = version_number.blank? ? '' : " v#{version_number}" 
     "#{platform}#{version}"
