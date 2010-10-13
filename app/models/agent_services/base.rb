@@ -94,6 +94,11 @@ module AgentServices
       []
     end
 
+    def url_for_instance(instance)
+      # Default to no url
+      nil
+    end
+
     def url_for_instance_service(instance_service)
       # Default to no url
       nil

@@ -60,7 +60,7 @@ body.ninesixty {
 
 }
 
-#artifacts_index {
+#artifacts_container {
   .name {
     @include alpha();
     @include grid(6);

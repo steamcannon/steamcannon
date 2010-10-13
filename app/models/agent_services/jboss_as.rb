@@ -42,9 +42,13 @@ module AgentServices
       [8080]
     end
 
-    def url_for_instance_service(instance_service)
-      host = instance_service.instance.public_address
+    def url_for_instance(instance)
+      host = instance.public_address
       "http://#{host}:8080"
+    end
+
+    def url_for_instance_service(instance_service)
+      url_for_instance(instance_service.instance)
     end
 
   end

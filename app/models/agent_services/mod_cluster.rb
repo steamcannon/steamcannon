@@ -32,9 +32,13 @@ module AgentServices
       [80]
     end
 
+    def url_for_instance(instance)
+      host = instance.public_address
+      "http://#{host}"
+    end
+
     def url_for_instance_service(instance_service)
-      host = instance_service.instance.public_address
-      "http://#{host}/mod_cluster_manager"
+      "#{url_for_instance(instance_service.instance)}/mod_cluster_manager"
     end
 
   end

@@ -37,8 +37,9 @@
       /.health
       /  &nbsp;&nbsp;
       /  = image_tag 'healthy.png'
-      .actions
-        = link_to 'Go To Artifact'
+      .deployment_visit
+        = link_to 'Go To Artifact', deployment.url
+      .deployment_delete
         - if deployment.deployed?
           = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
   - if deployments.empty?
