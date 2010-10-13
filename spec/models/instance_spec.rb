@@ -179,7 +179,8 @@ describe Instance do
     describe "start" do
       before(:each) do
         @cloud_instance = mock(Object, :id => 'i-123',
-                               :public_addresses => ['host'])
+                               :public_addresses => ['host'],
+                               :private_addresses => ['internal_host'])
         @cloud = mock(Object)
         @cloud.stub!(:launch).and_return(@cloud_instance)
         @instance.stub_chain(:image, :cloud_id).and_return('ami-123')
@@ -194,9 +195,9 @@ describe Instance do
         @instance.start!
       end
 
-      it "should update cloud_id and public_dns from cloud" do
-        @instance.should_receive(:update_attributes).
-          with(:cloud_id => 'i-123', :public_dns => 'host')
+      it "should update cloud_id and addresses from cloud" do
+        @instance.should_receive(:update_addresses).
+          with(@cloud_instance, :cloud_id => 'i-123')
         @instance.start!
       end
 
@@ -221,7 +222,9 @@ describe Instance do
 
     describe "configure" do
       before(:each) do
-        @cloud_instance = mock(Object, :public_addresses => ['host'])
+        @cloud_instance = mock(Object,
+                               :public_addresses => ['host'],
+                               :private_addresses => ['private_host']) 
         @instance.stub!(:cloud_instance).and_return(@cloud_instance)
         @environment = mock_model(Environment)
         @instance.stub!(:environment).and_return(@environment)

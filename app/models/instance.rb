@@ -188,8 +188,7 @@ class Instance < ActiveRecord::Base
   def start_instance
     cloud_instance = cloud.launch(image.cloud_id,
                                   instance_launch_options)
-    self.update_attributes(:cloud_id => cloud_instance.id,
-                           :public_dns => cloud_instance.public_addresses.first)
+    update_addresses(cloud_instance, :cloud_id => cloud_instance.id)
   end
 
   def instance_launch_options
@@ -210,7 +209,7 @@ class Instance < ActiveRecord::Base
   end
 
   def running_in_cloud?
-    update_attributes(:public_dns => cloud_instance.public_addresses.first)
+    update_addresses
     cloud_instance.state.downcase == 'running' and !public_dns.blank?
   end
 
@@ -219,7 +218,7 @@ class Instance < ActiveRecord::Base
   end
 
   def configure_instance
-    update_attributes(:public_dns => cloud_instance.public_addresses.first)
+    update_addresses
   end
 
   def after_run_instance
@@ -265,4 +264,11 @@ class Instance < ActiveRecord::Base
     end
   end
 
+  def update_addresses(cloud_instance = self.cloud_instance,
+                       additional_fields = {})
+    update_attributes({
+                        :public_dns => cloud_instance.public_addresses.first,
+                        :private_address => cloud_instance.private_addresses.first
+                      }.merge(additional_fields))
+  end
 end
