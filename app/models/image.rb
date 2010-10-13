@@ -31,6 +31,7 @@ class Image < ActiveRecord::Base
   def self.new_from_yaml(yaml)
     services = yaml.delete('services')
     image = Image.find_or_create_by_cloud_id(yaml)
+    image.update_attributes!(yaml)
     image_services = image.services
     services && services.each do |service_name|
       service = Service.find_or_create_by_name(service_name)

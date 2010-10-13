@@ -38,10 +38,15 @@ class Platform < ActiveRecord::Base
   #       - version_number: 123
   #         images:
   #           - name: Test Image 123
+  #             description: the versions and what not
   #             cloud_id: ami_123
   #             role: frontend
   #           - name: Test Image 234
+  #             description: the versions and what not
   #             cloud_id: ami_234
+  #             storage_volume_capacity: 10 #Gigs
+  #             #the device where the agent expects to find the volume
+  #             storage_volume_device: /dev/sdf 
   #             services:
   #               - jboss_as
   #       - version_number: 234
@@ -53,13 +58,15 @@ class Platform < ActiveRecord::Base
   # it will be used, otherwise a new Image will be created and any
   # extra Image attributes you pass will get used for the creation.
   #
-  def self.create_from_yaml_file(file_path)
+  def self.load_from_yaml_file(file_path)
     yaml = YAML::load_file(file_path)
     yaml['platforms'].each do |platform_yaml|
       platform_versions = platform_yaml.delete('platform_versions') || []
-      platform = Platform.new(platform_yaml)
+      platform = Platform.find_or_create_by_name(platform_yaml)
       platform_versions.each do |version_yaml|
-        platform.platform_versions << PlatformVersion.new_from_yaml(version_yaml)
+        if !platform.platform_versions.exists?(:version_number => version_yaml['version_number'].to_s)
+          platform.platform_versions << PlatformVersion.new_from_yaml(version_yaml)
+        end
       end
       platform.save!
     end
