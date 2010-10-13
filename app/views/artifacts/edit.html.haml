@@ -5,5 +5,4 @@
     = f.error_messages
     = render :partial => "form", :object => f
     = f.submit 'Save', :class => "submit"
-  %p
-    = link_to 'Cancel', artifacts_path, :class => "actionlink"
+    = link_to 'Cancel', :back, :class => "actionlink"

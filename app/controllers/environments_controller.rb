@@ -18,6 +18,10 @@
 
 
 class EnvironmentsController < ApplicationController
+  ARTIFACT_TYPES = [
+    :ear, :war, :jar, :rails, :rack, :datasource, :other 
+  ]
+
   navigation :environments
   before_filter :require_user
 
@@ -36,6 +40,13 @@ class EnvironmentsController < ApplicationController
   # GET /environments/1.xml
   def show
     @environment = current_user.environments.find(params[:id])
+
+    all_deployments = @environment.deployments
+    @deployments = {}
+    ARTIFACT_TYPES.each do |artifact_type|
+      @deployments[ artifact_type ] = all_deployments.select{|e| e.artifact_version.type_key == artifact_type }
+    end
+    
 
     respond_to do |format|
       format.html # show.html.erb

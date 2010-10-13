@@ -1,0 +1,4 @@
+
+#deployments
+  %h2 Deployments
+  = render :partial => "deployments/list_from_environments", :locals => { :deployments => @environment.deployments.deployed, :header_text => "Deployed Artifacts", :empty_text => "This environment has no deployments." }
