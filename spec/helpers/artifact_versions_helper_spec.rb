@@ -20,10 +20,24 @@ require 'spec_helper'
 
 describe ArtifactVersionsHelper do
 
-  #Delete this example and add some real ones or delete this file
-  it "is included in the helper object" do
-    included_modules = (class << helper; self; end).send :included_modules
-    included_modules.should include(ArtifactVersionsHelper)
+  describe "artifact_version_download_link" do
+    before(:each) do
+      @artifact_version = Factory.build(:artifact_version,
+                                        :archive_file_name => 'file_name')
+      @archive = mock('archive')
+      @artifact_version.stub!(:archive).and_return(@archive)
+    end
+
+    it "should link to public_url if non-nil" do
+      @archive.should_receive(:public_url).twice.and_return('public_url')
+      helper.should_receive(:link_to).with('file_name', 'public_url')
+      helper.artifact_version_download_link(@artifact_version)
+    end
+
+    it "should return file name if public_url is nil" do
+      @archive.should_receive(:public_url).and_return(nil)
+      helper.artifact_version_download_link(@artifact_version).should == 'file_name'
+    end
   end
 
 end

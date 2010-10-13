@@ -11,7 +11,7 @@
       .artifact_version_number
         = artifact_version.version_number
       .artifact_version_archive
-        = link_to artifact_version.archive_file_name, artifact_version.archive.url
+        = artifact_version_download_link(artifact_version)
       .artifact_version_deploy
         = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact_version.id)
       .artifact_version_delete
