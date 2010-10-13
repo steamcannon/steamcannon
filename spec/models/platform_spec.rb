@@ -47,7 +47,7 @@ describe Platform do
     end
 
     it "should support simple platforms" do
-      Platform.create_from_yaml_file(File.join(@yaml_path, 'simple_platform.yml'))
+      Platform.load_from_yaml_file(File.join(@yaml_path, 'simple_platform.yml'))
       Platform.find_by_name("Test Platform").should_not be_nil
       # platform = Platform.find_by_name("Test Platform")
       # platform.should_not be_nil
@@ -59,14 +59,14 @@ describe Platform do
     end
 
     it "should support platform versions" do
-      Platform.create_from_yaml_file(File.join(@yaml_path, 'platform_versions_support.yml'))
+      Platform.load_from_yaml_file(File.join(@yaml_path, 'platform_versions_support.yml'))
       platform = Platform.find_by_name("Test Platform")
       platform.platform_versions.should_not be_empty
       PlatformVersion.find_by_version_number('123').should_not be_nil
     end
 
     it "should support images" do
-      Platform.create_from_yaml_file(File.join(@yaml_path, 'images_support.yml'))
+      Platform.load_from_yaml_file(File.join(@yaml_path, 'images_support.yml'))
       version = PlatformVersion.find_by_version_number('123')
       version.should_not be_nil
       version.images.should_not be_empty

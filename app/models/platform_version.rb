@@ -24,7 +24,8 @@ class PlatformVersion < ActiveRecord::Base
   accepts_nested_attributes_for :images, :allow_destroy => true
 
   def to_s
-    "#{platform} #{version_number}"
+    version = version_number.blank? ? '' : " v#{version_number}" 
+    "#{platform}#{version}"
   end
 
   # See Platform.create_from_yaml_file
