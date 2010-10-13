@@ -6,3 +6,6 @@ services:
     full_name: Mod Cluster
     requires:
       - jboss_as
+  - name: postgresql
+    full_name: PostgreSQL
+
