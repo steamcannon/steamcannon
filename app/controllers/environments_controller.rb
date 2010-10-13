@@ -44,12 +44,6 @@ class EnvironmentsController < ApplicationController
       @deployments[ artifact_type ] = all_deployments.select{|e| e.artifact_version.type_key == artifact_type }
     end
 
-    puts "--"
-    puts @environment.deployments.inspect
-    puts "--"
-    puts @deployments[:war].inspect
-    
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @environment }
