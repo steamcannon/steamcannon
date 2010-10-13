@@ -18,9 +18,6 @@
 
 
 class EnvironmentsController < ApplicationController
-  ARTIFACT_TYPES = [
-    :ear, :war, :jar, :rails, :rack, :datasource, :other 
-  ]
 
   navigation :environments
   before_filter :require_user
@@ -41,11 +38,16 @@ class EnvironmentsController < ApplicationController
   def show
     @environment = current_user.environments.find(params[:id])
 
-    all_deployments = @environment.deployments
+    all_deployments = @environment.deployments.deployed
     @deployments = {}
-    ARTIFACT_TYPES.each do |artifact_type|
+    ArtifactVersion::TYPES.each do |artifact_type|
       @deployments[ artifact_type ] = all_deployments.select{|e| e.artifact_version.type_key == artifact_type }
     end
+
+    puts "--"
+    puts @environment.deployments.inspect
+    puts "--"
+    puts @deployments[:war].inspect
     
 
     respond_to do |format|

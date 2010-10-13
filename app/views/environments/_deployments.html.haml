@@ -1,4 +1,24 @@
 
 #deployments
   %h2 Deployments
-  = render :partial => "deployments/list_from_environments", :locals => { :deployments => @environment.deployments.deployed, :header_text => "Deployed Artifacts", :empty_text => "This environment has no deployments." }
+  - ArtifactVersion::TYPES.each do |artifact_type|
+    - deployments = @deployments[artifact_type]
+    - unless deployments.empty?
+      .artifact_type
+        = ArtifactVersion::TYPE_DESCRIPTIONS[artifact_type]
+        - for deployment in deployments
+          - div_for deployment do
+            .name
+              = link_to "#{deployment.artifact.name} (v#{deployment.artifact_version.version_number})", deployment.artifact
+            .status
+              Deployed to:
+              %ul
+                - if deployment.instance_services.empty?
+                  %li Pending Deployment
+                - else
+                  - deployment.instance_services.each do |instance_service|
+                    %li
+                      = instance_service.instance.name
+            .actions
+              - if deployment.deployed?
+                = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
