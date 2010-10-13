@@ -6,4 +6,4 @@
     = render :partial => "form", :object => f
     = f.submit 'Save', :class => "submit"
   %p
-    = link_to 'Cancel', environments_path, :class => "actionlink"
+    = link_to 'Cancel', back_or_default(environments_url), :class => "actionlink"

@@ -20,14 +20,14 @@ require 'spec_helper'
 
 describe ApplicationHelper do
   include ApplicationHelper
-  
+
   describe "content_for_superuser" do
     context "for a superuser" do
       before(:each) do
         @current_user = Factory.build(:superuser)
         stub!(:current_user).and_return(@current_user)
       end
-      
+
       it "should concat the given text" do
         should_receive(:concat).with('some text')
         content_for_superuser("some text")
@@ -46,7 +46,7 @@ describe ApplicationHelper do
         @current_user = Factory.build(:user)
         stub!(:current_user).and_return(@current_user)
       end
-      
+
       it "should not concat the given text" do
         should_not_receive(:concat)
         content_for_superuser("some text")
@@ -64,6 +64,18 @@ describe ApplicationHelper do
       lambda {
         content_for_superuser('text') { }
       }.should raise_error(ArgumentError)
+    end
+  end
+
+  describe "back_or_default" do
+    it "should return :back if there's a referer" do
+      request.env['HTTP_REFERER'] = 'referer'
+      back_or_default('default').should == :back
+    end
+
+    it "should return default if no referer" do
+      request.env['HTTP_REFERER'] = nil
+      back_or_default('default').should == 'default'
     end
   end
 
