@@ -1,14 +1,25 @@
 ---
 platforms:
-  - name: JBoss Enterprise 3-Tier
+  - name:  JBoss 3-Tier
     platform_versions:
-      - version_number:
+      - version_number: 1
         images:
-          - name: JBoss EWS (Apache)
-            cloud_id: ami-2749a54e
-          - name: JBoss Enterprise Application Platform 5.1
-            cloud_id: ami-5949a530
-          - name: JBoss Operations Network 2.4
-            cloud_id: ami-2741ad4e
-          - name: PostgreSQL 8.4
-            cloud_id: ami-12345
+          - name: Backend - JBoss
+            description: JBoss AS 6 SNAPSHOT.20100818 (w/TorqueBox 1.0.0.Beta22)
+            cloud_id: ami-68e51101
+            services:
+              - jboss_as
+          - name: Frontend - mod_cluster
+            description: Apache 2.2.16 (w/mod_cluster 1.1.0)
+            cloud_id: ami-c017e2a9
+            services:
+              - mod_cluster
+          - name: Database - PostgreSQL
+            description: PostgreSQL 8.4
+            cloud_id: ami-18e61271
+            storage_volume_capacity: 10 #Gigs
+            storage_volume_device: /dev/sdf #agent expects this, so don't change
+            services:
+              - postgresql
+
+            
