@@ -21,6 +21,7 @@ class EnvironmentImage < ActiveRecord::Base
   belongs_to :environment
   belongs_to :image
   has_many :storage_volumes
+  has_many :instances, :through=>:environment, :conditions=>[ 'image_id=? AND stopped_at IS NULL', '#{image_id}' ] 
   
   def start!(instance_number)
     instance = Instance.deploy!(image,

@@ -129,14 +129,9 @@ body.ninesixty {
 }
 
 #show_environment {
-  #detail {
-    @include grid(8);
-    @include alpha();
-  }
-
   #deployments {
     @include grid(16);
-    @include omega();
+    @include alpha();
 
     #deployments_container {
       .artifact {
@@ -151,6 +146,31 @@ body.ninesixty {
       }
       .actions {
         @include grid(2);
+        @include omega();
+      }
+    }
+  }
+
+  #images {
+    @include grid(8);
+    @include omega();
+    #environment_images_container {  
+      .name {
+        @include grid(8);
+        @include alpha();
+        @include omega();
+      }
+      .hardware_profile {
+        @include grid(8);
+        @include alpha();
+        @include omega();
+      }
+      .num_instances {
+        @include grid(2);
+        @include alpha();
+      }
+      .actions {
+        @include grid(6);
         @include omega();
       }
     }
