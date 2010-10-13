@@ -69,15 +69,19 @@ describe AgentServices::Postgresql do
     end
   end
   
+
+
 =begin
   describe "url_for_instance_service" do
     before(:each) do
       @instance_service = Factory(:instance_service)
+      @instance_service.metadata = { :admin_user => { }}
+      @instance_service.stub_chain(:instance, :public_dns).and_return('public dns')
     end
 
-    it "should build url for http" do
+    it "should build url for jdbc" do
       url = @agent_service.url_for_instance_service(@instance_service)
-      url.start_with?('http://').should be(true)
+      url.start_with?('jdbc:postgresql://').should be_true
     end
 
     it "should build url for instance's public_dns" do
@@ -85,15 +89,23 @@ describe AgentServices::Postgresql do
       @instance_service.should_receive(:instance).and_return(instance)
       instance.should_receive(:public_dns).and_return('public_dns')
       url = @agent_service.url_for_instance_service(@instance_service)
-      url.include?('public_dns').should be(true)
+      url.include?('public_dns').should be_true
     end
 
-    it "should build url for port 8080" do
+    it "should build url for port 5432" do
       url = @agent_service.url_for_instance_service(@instance_service)
-      url.end_with?(':8080').should be(true)
+      url.should match /:5432/
+    end
+
+    it "should include the username and password" do
+      @instance_service.metadata = { :admin_user => { :user => 'username', :password => 'userpassword' } }
+      url = @agent_service.url_for_instance_service(@instance_service)
+      url.should match /user=username&password=userpassword/
     end
   end
 =end
+
+
 
 
 end
