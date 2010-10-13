@@ -1,49 +1,36 @@
 
 - if form.object.new_record? or current_user.profile_complete?
-  = form.label :email
-  %br
-  = form.text_field :email
-  %br
-  %br
-  = form.label :password, form.object.new_record? ? nil : "Change password"
-  %br
-  = form.password_field :password
-  %br
-  %br
-  = form.label :password_confirmation
-  %br
-  = form.password_field :password_confirmation
+  %ul
+    %li
+      = form.label :email
+      = form.text_field :email
+    %li
+      = form.label :password, form.object.new_record? ? nil : "Change password"
+      = form.password_field :password
+    %li
+      = form.label :password_confirmation
+      = form.password_field :password_confirmation
 
 - unless form.object.new_record?
-  %br
-  %br
-  #amazon_keys_instructions
-    %h3 Amazon Credentials
+  %ul
     - unless form.object.profile_complete?
-      Before you can do anything else, you need to provide us with your Amazon credentials. If you're not sure what that means, login 
-      to your Amazon AWS account and read
-      = link_to 'this page', 'https://aws-portal.amazon.com/gp/aws/developer/account/index.html?ie=UTF8&action=access-key'
-      before continuing.
+      %li
+        = form.label :cloud_username, "Amazon Access Key"
+        = form.text_field :cloud_username
     - else
-      Your Amazon Secret Access Key is not shown, although it has already been set.  
-      #cloud_password_prompt
-        %br
-        = form.object.obfuscated_cloud_password        
-        %br
-        = link_to 'Change Secret Access Key', '#', :class=>'js-cloud_password_toggle'
-  = form.label :cloud_username, "Amazon Access Key"
-  %br
-  = form.text_field :cloud_username
-  %br
-  #cloud_password_field{:style=>form.object.profile_complete? ? 'display:none' : ''}
-    %br
-    = form.label :cloud_password, "Amazon Secret Access Key"
-    %br
-    = form.text_field :cloud_password, :value=>""
-    %br
-    = link_to 'Hide', '#', :class=>'js-cloud_password_toggle' if form.object.profile_complete?
-  %br
-  = form.label :ssh_key_name, "Amazon SSH Key Name (leave blank to disable SSH access)"
-  %br
-  = form.text_field :ssh_key_name
-  %br
+      %li
+        = form.label :cloud_username, "Amazon Access Key"
+        = form.text_field :cloud_username
+      %li#cloud_password_prompt
+        = form.label :cloud_password, "Amazon Secret Access Key"
+        = form.object.obfuscated_cloud_password 
+        .link
+          = link_to 'Change Secret Access Key', '#', :class=>'js-cloud_password_toggle'
+    %li#cloud_password_field{:style=>form.object.profile_complete? ? 'display:none' : ''}
+      = form.label :cloud_password, "Amazon Secret Access Key"
+      = form.text_field :cloud_password, :value=>""
+      .link
+        = link_to 'Hide', '#', :class=>'js-cloud_password_toggle' if form.object.profile_complete?
+    %li
+      = form.label :ssh_key_name, "Amazon SSH Key Name (leave blank to disable SSH access)"
+      = form.text_field :ssh_key_name

@@ -1,9 +1,11 @@
-%h1 Edit Your Profile
-.dcloud_form
-  - form_for @user, :url => account_path do |f|
-    = f.error_messages
-    = render :partial => "form", :object => f
-    = f.submit "Update Account"
-
-%p
-  = link_to 'Back', :back
+#edit_user
+  .page_header
+    %h1 Edit Your Profile
+  .left_column
+    - form_for @user, :url => account_path do |f|
+      = f.error_messages
+      = render :partial => "form", :object => f
+      = f.submit "Update Account"
+      = link_to 'Back', :back
+  .right_column
+    = render :partial=>'amazon_credentials_help'
