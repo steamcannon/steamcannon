@@ -1,22 +1,22 @@
-#environments_container.tabular
-  .header
-    .name
+%table#environments_container.header_top
+  %tr
+    %th.name
       Name
-    .platform
+    %th.platform
       Platform
-    .status
+    %th.status
       Status
-    .actions
+    %th.actions
       Actions
   - environments.each do |environment|
-    - div_for(environment, :class=>'row') do
-      .name
+    - content_tag_for(:tr, environment) do
+      %td.name
         = link_to environment.name, environment
-      .platform
+      %td.platform
         = environment.platform_version
-      .status
+      %td.status
         = environment.current_state.titleize
-      .actions
+      %td.actions
         - if environment.can_stop?
           = link_to 'Stop', stop_environment_path(environment), :method => :post, :confirm => "Are you sure you want to stop #{environment.name}?"
         - elsif environment.can_start?
@@ -29,10 +29,3 @@
     - javascript_tag do
       ="monitor_environment('#{status_environment_path(environment.id)}', '##{dom_id(environment)}');"
   
-  - if environments.empty?
-    .row
-      .name
-        = empty_text
-  - if defined?(action_link)
-    .action_link
-      = action_link

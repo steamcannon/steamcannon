@@ -60,23 +60,6 @@ body.ninesixty {
 
 }
 
-#artifacts_container {
-  .name {
-    @include alpha();
-    @include grid(6);
-  }
-  .service {
-    @include grid(4);
-  }
-  .latest_version {
-    @include grid(4);
-  }
-  .actions {
-    @include grid(4);
-    @include omega();
-  }
-}
-
 #environment_form {
   #environment_images_container {
     @include grid(16);
@@ -96,23 +79,6 @@ body.ninesixty {
       @include omega();
     }
   }
-}
-
-#environments_index {
-  .name {
-    @include grid(6);
-    @include alpha();
-  } 
-  .platform {
-    @include grid(6);
-  } 
-  .status {
-    @include grid(4);
-  } 
-  .actions {
-    @include grid(8);
-    @include omega();
-  } 
 }
 
 @mixin two-column-wide-left {
@@ -136,5 +102,25 @@ body.ninesixty {
 }
 
 #edit_user {
+  @include two-column-wide-left;
+}
+
+#artifacts_index {
+  @include two-column-wide-left;
+}
+
+#edit_user {
+  @include two-column-wide-left;
+}
+
+#edit_user {
+  @include two-column-wide-left;
+}
+
+#environments_index {
+  @include two-column-wide-left;
+}
+
+#cloud_instances_index {
   @include two-column-wide-left;
 }

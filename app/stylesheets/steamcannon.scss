@@ -334,3 +334,32 @@ form {
     }
   }
 }
+
+#sidebar {
+  h1 {
+    color: $color_light;
+    font-size: 120%;
+    font-weight: bold;
+    font-style: italic;
+    margin-bottom: 1ex;
+    padding-bottom: .5ex;
+    border-bottom: 1px solid $color_light;
+  }
+}
+
+table.header_top {
+  width: 100%;
+  th {
+    font-weight: bold;
+    color: $color_dark;
+    border-bottom: 1px solid $color_dark;
+  }
+}
+
+#cloud_instances_index {
+  table.cloud_instances {
+    .instance_id {
+      width: 40%;
+    }
+  }
+}
