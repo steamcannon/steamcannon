@@ -28,6 +28,8 @@
             = hidden_field_tag "environment[environment_images_attributes][#{index}][image_id]", image.id
             .name
               = image.name
+              .description
+                = image.description
             .hardware_profile
               = select_tag "environment[environment_images_attributes][#{index}][hardware_profile]", options_for_select(hardware_profile_options, environment_image.try(:hardware_profile))
             .num_instances
