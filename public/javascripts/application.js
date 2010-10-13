@@ -131,7 +131,7 @@ function monitor_artifact(url, selector) {
 
 function update_instance_status(url, selector) {
   $.post(url, function(data) {
-    $(selector).html(data.html);
+    $(selector).replaceWith(data.html);
   }, "json");
   setTimeout("update_instance_status('" + url + "', '" + selector + "')", 30000);
 }

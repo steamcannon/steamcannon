@@ -1,26 +1,13 @@
-#deployments_container.tabular
-  %h2
-    = header_text
-  .header.row
-    .artifact
-      Artifact
-    .environment
-      Environment
-    .actions
-      Actions
+#deployments_container
   - deployments.each do |deployment|
-    .row
-      .artifact
-        = link_to deployment.artifact_version.to_s, artifact_path(deployment.artifact_version.artifact)
-      .environment
-        = link_to deployment.environment.name, environment_path(deployment.environment)
+    - div_for( deployment ) do
       .actions
         - if deployment.deployed?
           = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
         - else
           .current_state
             = deployment.current_state.humanize
-  - if deployments.empty?
-    .row
+      %h3.environment
+        = link_to deployment.environment.name, environment_path(deployment.environment)
       .artifact
-        = empty_text
+        = link_to deployment.artifact_version.to_s, artifact_path(deployment.artifact_version.artifact)

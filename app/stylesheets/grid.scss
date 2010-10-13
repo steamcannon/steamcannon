@@ -57,37 +57,7 @@ body.ninesixty {
 }
 
 #show_artifact {
-  #artifact_versions_container {
-    @include grid(12);
-    @include alpha();
-    .version_number {
-      @include grid(2);
-      @include alpha();
-    }
-    .archive {
-      @include grid(6);
-    }
-    .actions {
-      @include grid(4);
-      @include omega();
-    }
-  }
 
-  #deployments_container {
-    @include grid(12);
-    @include omega();
-    .artifact {
-      @include grid(4);
-      @include alpha();
-    }
-    .environment {
-      @include grid(5);
-    }
-    .actions {
-      @include grid(3);
-      @include omega();
-    }
-  }
 }
 
 #artifacts_index {
@@ -128,87 +98,6 @@ body.ninesixty {
   }
 }
 
-#show_environment {
-  #deployments {
-    @include grid(16);
-    @include alpha();
-
-    #deployments_container {
-      .artifact {
-        @include grid(4);
-        @include alpha();
-      }
-      .environment {
-        @include grid(4);
-      }
-      .status {
-        @include grid(2);
-      }
-      .actions {
-        @include grid(2);
-        @include omega();
-      }
-    }
-  }
-
-  #images {
-    @include grid(8);
-    @include omega();
-    #environment_images_container {  
-      .name {
-        @include grid(8);
-        @include alpha();
-        @include omega();
-      }
-      .hardware_profile {
-        @include grid(8);
-        @include alpha();
-        @include omega();
-      }
-      .num_instances {
-        @include grid(2);
-        @include alpha();
-      }
-      .actions {
-        @include grid(6);
-        @include omega();
-      }
-    }
-  }
-
-  #instances {
-    @include grid(24);
-    @include alpha();
-    @include omega();
-
-    #environment_instances_container {
-      .name {
-        @include grid(7);
-        @include alpha();
-      }
-      .image_id {
-        @include grid(2);
-      }
-      .hardware_profile {
-        @include grid(3);
-      }
-      .services {
-        @include grid(3);
-      }
-      .image_status {
-        @include grid(3);
-      }
-      .image_health {
-        @include grid(2);
-      }
-      .actions {
-        @include grid(4);
-        @include omega();
-      }
-    }
-  }
-}
-
 #environments_index {
   .name {
     @include grid(6);
@@ -226,3 +115,22 @@ body.ninesixty {
   } 
 }
 
+@mixin two-column-wide-left {
+  .left_column {
+    @include grid(14);
+    @include grid-suffix(2);
+    @include alpha;
+  }
+  .right_column {
+    @include grid(8);
+    @include omega;
+  }
+}
+
+#show_environment {
+  @include two-column-wide-left;
+}
+
+#show_artifact {
+  @include two-column-wide-left;
+}

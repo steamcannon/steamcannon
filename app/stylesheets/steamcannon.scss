@@ -20,6 +20,7 @@ a {
 }
 
 .page_header {
+  margin-bottom: 2em;
   h1 {
     font-size: 200%;
     font-weight: bold;
@@ -32,6 +33,26 @@ a {
     font-weight: bold;
     color: $color_light - #555;
   }
+  .actions {
+    float: right;
+    a {
+      margin-left: 1em;
+      font-weight: bold;
+    }
+  }
+}
+
+h2 {
+  font-weight: bold;
+  font-size: 140%;
+  margin-bottom: .3ex;
+  color: $color_light - #555;
+}
+
+h3 {
+  font-size: 110%;
+  font-weight: bold;
+  margin: 0;
 }
 
 #top-links {
@@ -66,7 +87,7 @@ a {
 }
 
 #content {
-  margin-bottom: 2em;
+  margin-bottom: 4em;
 }
 
 #footer {
@@ -84,7 +105,7 @@ a {
     li {
       display: inline;
       margin: 0px;
-      margin-right: 1ex;
+      margin-right: 1em;
       padding: 0px;
       a {
         font-weight: bold;
@@ -173,21 +194,114 @@ form {
 #show_environment {
   .page_header {
   }
-  #actions {
-    float: right;
-    a {
-      margin-left: 1em;
-      font-weight: bold;
+  #topology {
+    table {
+      border-collapse: collapse;
+      tr {
+        width: 100%;
+      }
+      td {
+        vertical-align: top;
+        padding: .3ex;
+        padding-left: .8ex;
+        border: 1px solid #eee;
+      }
+      font-size: 90%;
+      width: 100%;
+      .summary {
+        width: 12em;
+        .name, .current_state {
+          font-weight: bold;
+        }
+        .current_state {
+          color: $color_light;
+        }
+      }
+      .services {
+        ul {
+          margin: 0;
+          list-style-type: none;
+          li {
+            margin: 0;
+          }
+        }
+      }
+      .actions {
+        width: 8em;
+      }
     }
   }
-  #environment_images_container {
-    font-size: 90%;
-    .row {
-       @include clearfix;
-       margin-bottom: 1em;
-      .name {
+}
+
+#show_artifact {
+
+  .description {
+    margin: 1em;
+    padding: 1em;
+    border: 1px solid $color_light;
+    font-size: 80%;
+  }
+
+  #artifact_versions_container {
+    .artifact_version {
+      border-bottom: 1px dashed $color_dark;
+      padding: 1ex 0;
+      margin-bottom: 1ex;
+      .version_number {
+        margin: 0 1ex 1ex 0;
+        font-weight: bold;
+        font-size: 200%;
+        float: left;
+      }
+      .created_at {
+        font-size: 90%;
         font-weight: bold;
       }
+      .actions {
+        font-size: 90%;
+      }
+    }
+  }
+
+  #deployments_container {
+    .deployment {
+      margin-bottom: 1em;
+      .actions {
+        float: right;
+      }
+    }
+  }
+}
+
+.start_another { float: right; }
+.start_another_dialog {
+  display: block; 
+  padding: 10px 15px 20px;
+  margin: 0 0 10px 0;
+  width: 210px;
+  border: 6px solid #ccc;
+  position: relative;
+  z-index: 10;
+  top: 0px;
+  left: 658px;
+  background-color: #fff;
+  input[type=text] {
+    width: 150px;
+  }
+  p {
+    margin: 0 0 15px;
+  }
+  .close {
+    float: right;
+    display: inline;
+    padding: 2px 4px;
+    border: 5px solid #ccc;
+    background-color: #eee;
+    position: relative;
+    top: -28px;
+    right: -18px;
+    a {
+      text-decoration: none;
     }
   }
 }
