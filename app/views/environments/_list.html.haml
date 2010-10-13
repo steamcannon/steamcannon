@@ -1,6 +1,4 @@
 #environments_container.tabular
-  %h2
-    = header_text
   .header
     .name
       Name
@@ -36,4 +34,5 @@
       .name
         = empty_text
   - if defined?(action_link)
-    = action_link
+    .action_link
+      = action_link

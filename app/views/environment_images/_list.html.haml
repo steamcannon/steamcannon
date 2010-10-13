@@ -1,24 +1,17 @@
 #environment_images_container
   %h2
     = header_text
-  #environment_images_header
-    .name
-      Name
-    .hardware_profile
-      Hardware Profile
-    .cloud_id
-      Cloud ID
-    .num_instances
-      Number of Instances
   - environment_images.each do |env_image|
-    .image_row
+    .row
       .name
         = env_image.image.name
       .hardware_profile
         = env_image.hardware_profile
-      .cloud_id
-        = env_image.cloud_id
+      -#.cloud_id
+        -#= env_image.cloud_id
       .num_instances
+        = env_image.instances.size
+        = '/'
         = env_image.num_instances
-      .image_actions
+      .actions
         = link_to 'Start Another'

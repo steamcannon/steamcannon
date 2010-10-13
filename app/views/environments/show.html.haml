@@ -1,14 +1,24 @@
 #show_environment
-  %h2
-    &= @environment.name
-  #detail
-    = render :partial=>'detail'
+  .page_header
+    #actions
+      - if @environment.can_stop?
+        = link_to 'Stop Environment', stop_environment_path(@environment), :method => :post, :confirm => "Are you sure you want to stop this environment?"
+      - elsif @environment.can_start?
+        = link_to 'Start Environment', start_environment_path(@environment), :method => :post
+      = link_to 'Edit Environment', edit_environment_path(@environment)
+
+    %h1
+      &= @environment.name
+    %h2
+      &= @environment.platform_version.platform.name
+
 
   #deployments
     = render :partial => "deployments/list_from_environments", :locals => { :deployments => @environment.deployments.deployed, :header_text => "Deployed Artifacts", :empty_text => "This environment has no deployments." }
 
+  #images
+    = render :partial=>'environment_images/list', :locals=>{ :header_text=>'Platform', :environment_images=>@environment.environment_images }
+
   #instances
     = render :partial => "instances/list", :locals => { :instances => @environment.instances.active, :header_text => "Instances" }
 
-  %p
-    = link_to 'View All Environments', environments_path

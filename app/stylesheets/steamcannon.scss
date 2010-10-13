@@ -19,6 +19,21 @@ a {
   }
 }
 
+.page_header {
+  h1 {
+    font-size: 200%;
+    font-weight: bold;
+    color: $color_light;
+    margin-bottom: 0;
+    line-height: 1.2em;
+  }
+  h2 {
+    font-size: 140%;
+    font-weight: bold;
+    color: $color_light - #555;
+  }
+}
+
 #top-links {
   font-size: 90%;
   font-weight: bold;
@@ -73,12 +88,12 @@ a {
       padding: 0px;
       a {
         font-weight: bold;
-        color: #555;
+        color: $color_dark;
         &:hover {
-          color: #955;
+          color: $color_light - #333;
         }
         &.selected {
-          color: #933;
+          color: $color_light;
         }
       }
     }
@@ -152,5 +167,27 @@ form {
   }
   .header .latest_version {
     text-align: left;
+  }
+}
+
+#show_environment {
+  .page_header {
+  }
+  #actions {
+    float: right;
+    a {
+      margin-left: 1em;
+      font-weight: bold;
+    }
+  }
+  #environment_images_container {
+    font-size: 90%;
+    .row {
+       @include clearfix;
+       margin-bottom: 1em;
+      .name {
+        font-weight: bold;
+      }
+    }
   }
 }
