@@ -48,26 +48,27 @@ describe AgentServices::ModCluster do
     end
   end
 
-  describe "url_for_instance_service" do
+  describe "url_for_instance" do
     before(:each) do
-      @instance_service = Factory(:instance_service)
+      @instance = Factory(:instance)
     end
 
     it "should build url for http" do
-      url = @agent_service.url_for_instance_service(@instance_service)
+      url = @agent_service.url_for_instance(@instance)
       url.start_with?('http://').should be(true)
     end
 
     it "should build url for instance's public_address" do
-      instance = Factory(:instance)
-      @instance_service.should_receive(:instance).and_return(instance)
-      instance.should_receive(:public_address).and_return('public_address')
-      url = @agent_service.url_for_instance_service(@instance_service)
+      @instance.should_receive(:public_address).and_return('public_address')
+      url = @agent_service.url_for_instance(@instance)
       url.include?('public_address').should be(true)
     end
+  end
 
-    it "should build url for mod_cluster_manager path" do
-      url = @agent_service.url_for_instance_service(@instance_service)
+  describe "url_for_instance_service" do
+    it "should should append mod_cluster_manager path to url_for_instance" do
+      instance_service = Factory(:instance_service)
+      url = @agent_service.url_for_instance_service(instance_service)
       url.end_with?('mod_cluster_manager').should be(true)
     end
   end

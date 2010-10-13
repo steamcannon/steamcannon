@@ -95,5 +95,50 @@ describe Deployment do
 
   end
 
+  describe "simple_name" do
+    it "should strip war suffix" do
+      @deployment.should_receive(:artifact_identifier).and_return('app.war')
+      @deployment.simple_name.should == 'app'
+    end
+
+    it "should strip ear suffix" do
+      @deployment.should_receive(:artifact_identifier).and_return('app.ear')
+      @deployment.simple_name.should == 'app'
+    end
+
+    it "should strip rails suffix" do
+      @deployment.should_receive(:artifact_identifier).and_return('app.rails')
+      @deployment.simple_name.should == 'app'
+    end
+
+    it "should strip rack suffix" do
+      @deployment.should_receive(:artifact_identifier).and_return('app.rack')
+      @deployment.simple_name.should == 'app'
+    end
+
+    it "should return .xml as-is" do
+      @deployment.should_receive(:artifact_identifier).and_return('app.xml')
+      @deployment.simple_name.should == 'app.xml'
+    end
+  end
+
+  describe "url" do
+    before(:each) do
+      @environment = Factory(:environment)
+      @deployment.stub!(:environment).and_return(@environment)
+    end
+
+    it "should return nil if environment's deployment_base_url is nil" do
+      @environment.should_receive(:deployment_base_url).and_return(nil)
+      @deployment.url.should be_nil
+    end
+
+    it "should concatenate environment's deployment_base_url and simple_name" do
+      @environment.should_receive(:deployment_base_url).at_least(:once).and_return('base_url')
+      @deployment.should_receive(:simple_name).and_return('simple_name')
+      @deployment.url.should == 'base_url/simple_name'
+    end
+  end
+
 
 end
