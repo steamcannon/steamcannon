@@ -20,7 +20,7 @@
 class ArtifactVersion < ActiveRecord::Base
 
   TYPES = [
-    :ear, :war, :jar, :rails, :rack, :datasource, :other 
+    :ear, :war, :jar, :rails, :rack, :datasource, :other
   ]
 
   TYPE_DESCRIPTIONS = {
@@ -78,11 +78,15 @@ class ArtifactVersion < ActiveRecord::Base
         :datasource
       else
         :other
-    end 
+    end
   end
 
   def type_description
     TYPE_DESCRIPTIONS[type_key]
+  end
+
+  def application?
+    [ :ear, :war, :rails, :rack ].include?(type_key)
   end
 
 end

@@ -55,7 +55,11 @@ class Deployment < ActiveRecord::Base
 
   def url
     base_url = environment.deployment_base_url
-    base_url.nil? ? nil : "#{environment.deployment_base_url}/#{simple_name}"
+    if !base_url.nil? and artifact_version.application?
+      "#{environment.deployment_base_url}/#{simple_name}"
+    else
+      nil
+    end
   end
 
   protected
