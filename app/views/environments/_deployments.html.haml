@@ -14,7 +14,7 @@
                 = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
             .name
               = link_to "#{deployment.artifact.name} (v#{deployment.artifact_version.version_number})", deployment.artifact
-            - if ( [ :ear, :war, :rails, :rack ].include?( deployment.artifact_version.type_key ) )
+            - unless deployment.url.nil?
               .url
                 = link_to 'Link', deployment.url 
             .status
