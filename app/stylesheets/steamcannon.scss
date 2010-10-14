@@ -55,6 +55,12 @@ h3 {
   margin: 0;
 }
 
+h1, h2, h3 {
+  a {
+    color: inherit;
+  }
+}
+
 #top-links {
   font-size: 90%;
   font-weight: bold;
@@ -319,11 +325,33 @@ form {
 }
 
 table.header_top {
+  font-size: 90%;
   width: 100%;
+  border-bottom: 1px solid $color_dark;
+  margin-bottom: 1em;
   th {
     font-weight: bold;
     color: $color_dark;
     border-bottom: 1px solid $color_dark;
+  }
+  th, td {
+    padding: .2ex;
+  }
+
+  td.actions {
+    a {
+      font-weight: bold;
+      margin-right: 1ex;
+      color: $color_light;
+    }
+  }
+
+  td.empty {
+    color: $color_light;
+    font-size: 110%;
+    font-style: italic;
+    text-align: center;
+    padding: 1em 0;
   }
 }
 
@@ -336,6 +364,11 @@ table.header_top {
 }
 
 #dashboard {
+  .links {
+    a {
+      font-weight: bold;
+    }
+  }
   #artifacts {
     td.deployments {
       ul {

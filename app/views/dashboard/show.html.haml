@@ -1,12 +1,18 @@
 
 #dashboard
   .left_column
-    %h2 Artifacts
+    %h2 
+      = link_to 'Artifacts', artifacts_path
     = render :partial=>'artifacts'
+    .links
+      = link_to '+ Create a new artifact', new_artifact_path
           
   .center_column
-    %h2 Environments
+    %h2 
+      = link_to 'Environments', environments_path
     = render :partial=>'environments'
+    .links
+      = link_to '+ Create a new environment', new_environment_path
 
   .right_column
     = render :partial=>'dashboard_help'

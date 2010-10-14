@@ -5,15 +5,20 @@
       Artifact
     %th.deployments
       Deployments
-  - for artifact in @artifacts
-    - content_tag_for( :tr, artifact) do
-      %td.artifact
-        = link_to artifact.name, artifact
-      %td.deployments
-        %ul
-          - for deployment in artifact.deployments.deployed
-            %li
-              = link_to deployment.environment.name, deployment.environment
-              = "(#{deployment.current_state})"
-      - javascript_tag do
-        ="monitor_artifact('#{status_artifact_path(artifact.id)}', '##{dom_id(artifact)}');"
+  - if @artifacts.empty?
+    %tr
+      %td.empty{:colspan=>2}
+        You have not created any artifacts yet.
+  - else
+    - for artifact in @artifacts
+      - content_tag_for( :tr, artifact) do
+        %td.artifact
+          = link_to artifact.name, artifact
+        %td.deployments
+          %ul
+            - for deployment in artifact.deployments.deployed
+              %li
+                = link_to deployment.environment.name, deployment.environment
+                = "(#{deployment.current_state})"
+        - javascript_tag do
+          ="monitor_artifact('#{status_artifact_path(artifact.id)}', '##{dom_id(artifact)}');"
