@@ -65,7 +65,7 @@ module Cloud
 
 
       def bucket
-        bucket_suffix = Digest::SHA1.hexdigest(@access_key)
+        bucket_suffix = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
         bucket_name = "SteamCannonArtifacts_#{bucket_suffix}"
 
         # Ensure our bucket exists and has correct permissions
