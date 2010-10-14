@@ -39,6 +39,12 @@ jQuery.fn.pulsate = function() {
     this.pulse({opacity: [1,.2]}, 500, 10);
 };
 
+function handle_js_popup_dialogs() {
+    $('.js-popup_dialog').each(function(idx, el) {
+        $(el).jqm({trigger: $(el).attr('rel'), overlay:0})
+    })
+}
+
 jQuery(document).ready(function($) {
     $('#environment_form #environment_platform_version_id').change(function() {
         $('.content_row').hide()
@@ -55,9 +61,7 @@ jQuery(document).ready(function($) {
     $('body.environments_controller form').submit(function() {
         $('.content_row:hidden').remove()
     })
-})
 
-jQuery(document).ready(function($) {
     $('body.users_controller form .js-cloud_password_toggle').click(function() {
         $("#cloud_password_field").slideToggle();
         $("#cloud_password_prompt").slideToggle();
@@ -70,6 +74,8 @@ jQuery(document).ready(function($) {
     $('#environment_images_container .image_row .start_another_dialog .close a').click(function() {
         $($(this).closest('.start_another_dialog')).hide();
     })
+
+    handle_js_popup_dialogs()
 })
 
 
@@ -127,7 +133,8 @@ function monitor_content(url, selector) {
 
 function update_instance_status(url, selector) {
   $.post(url, function(data) {
-    $(selector).replaceWith(data.html);
+      $(selector).replaceWith(data.html);
+      handle_js_popup_dialogs()
   }, "json");
   setTimeout("update_instance_status('" + url + "', '" + selector + "')", 30000);
 }
@@ -158,8 +165,3 @@ function tail_log(url, num_lines, offset, tailing) {
 }
 
 
-jQuery(document).ready(function($) {
-    $('.stop_environment_confirmation').each(function(idx, el) {
-        $(el).jqm({trigger: $(el).attr('rel'), overlay:0})
-    })
-})

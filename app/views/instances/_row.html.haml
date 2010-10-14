@@ -19,5 +19,6 @@
             %span.current_state
               #{instance_service.current_state.titleize}
             = link_to "Logs", logs_environment_instance_instance_service_path(instance.environment, instance, instance_service)
+            = additional_instance_service_actions(instance_service)
   %td.actions
     = link_to_function "Stop", "remote_stop_instance('#{stop_environment_instance_path(instance.environment.id, instance.id)}')"
