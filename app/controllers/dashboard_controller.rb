@@ -24,5 +24,9 @@ class DashboardController < ApplicationController
   def show
     @artifacts = current_user.artifacts.all
     @environments = current_user.environments.all
+    respond_to do |format|
+      format.html
+      format.js { render :layout => false }
+    end
   end
 end

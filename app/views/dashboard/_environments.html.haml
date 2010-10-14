@@ -19,6 +19,5 @@
             Running
           - else
             Off
-        - javascript_tag do
-          ="monitor_environment('#{status_environment_path(environment.id)}', '##{dom_id(environment)}');"
-    
+- javascript_tag do
+  monitor_content('#{dashboard_path}', 'table#environments');    

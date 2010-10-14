@@ -112,20 +112,16 @@ function monitor_deployment(url, selector) {
   });
 }
 
-function update_artifact_status(url, selector) {
-  $.post(url, function(data) {
-    deployments = "<ul class='deployments'>";
-    $.each(data.deployments, function(index, value){ if (value != undeployed) {deployments += "<li>" + value + "</li>"}; });
-    deployments += "</ul>";
-    $(selector + ' ul.deployments').replaceWith(deployments);
-    $(selector + ' .status').text(data.message)
-  }, "json");
-  setTimeout("update_artifact_status('" + url + "', '" + selector + "')", 30000);
+function update_content(url, selector) {
+  $.get(url, function(data) {
+    $(selector).html($(data).find(selector).html());
+  });
+  setTimeout("update_content('" + url + "', '" + selector + "')", 30000);
 }
 
-function monitor_artifact(url, selector) {
-  jQuery(document).ready(function($) {
-    update_artifact_status(url, selector);
+function monitor_content(url, selector) {
+  $(function () {
+    update_content(url, selector);
   });
 }
 

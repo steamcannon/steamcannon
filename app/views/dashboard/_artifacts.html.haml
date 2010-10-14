@@ -20,5 +20,5 @@
               %li
                 = link_to deployment.environment.name, deployment.environment
                 = "(#{deployment.current_state})"
-        - javascript_tag do
-          ="monitor_artifact('#{status_artifact_path(artifact.id)}', '##{dom_id(artifact)}');"
+- javascript_tag do
+  monitor_content('#{dashboard_path}', 'table#artifacts');
