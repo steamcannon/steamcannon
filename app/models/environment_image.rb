@@ -22,6 +22,8 @@ class EnvironmentImage < ActiveRecord::Base
   belongs_to :image
   has_many :storage_volumes
   has_many :instances, :through=>:environment, :conditions=>[ 'image_id=? AND stopped_at IS NULL', '#{image_id}' ]
+  validates_presence_of :num_instances
+  before_validation :enforce_num_instances
 
   def start!(instance_number)
     instance = Instance.deploy!(image,
@@ -44,5 +46,11 @@ class EnvironmentImage < ActiveRecord::Base
   def start_another!
     instance_number = instances.count + 1
     start!(instance_number)
+  end
+
+  protected
+
+  def enforce_num_instances
+    self.num_instances = 1 unless image and image.can_scale_out?
   end
 end

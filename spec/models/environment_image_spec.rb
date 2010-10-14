@@ -31,7 +31,7 @@ describe EnvironmentImage do
   it { should belong_to :environment }
   it { should belong_to :image }
   it { should have_many :storage_volumes }
-  
+
   it "should create a new instance given valid attributes" do
     EnvironmentImage.create!(@valid_attributes)
   end
@@ -44,25 +44,25 @@ describe EnvironmentImage do
       @image = Factory(:image)
       @environment_image = Factory(:environment_image, :image => @image)
     end
-    
+
     it "should be able to deploy an instance" do
       Instance.should_receive(:deploy!).and_return(@instance)
       @environment_image.start!(1)
     end
-    
+
     context "storage volumes" do
       context "with an image that needs a volume" do
         before(:each) do
           @image.should_receive(:needs_storage_volume?).and_return(true)
           @storage_volume = mock(StorageVolume)
-          @storage_volume.stub(:prepare).with(@instance) 
+          @storage_volume.stub(:prepare).with(@instance)
         end
-        
+
         it "should create storage_volumes when the image needs one" do
           @environment_image.storage_volumes.should_receive(:create).and_return(@storage_volume)
           @environment_image.start!(1)
         end
-        
+
         it "should not create a storage_volume if it already exists" do
           @environment_image.stub(:storage_volumes).and_return([@storage_volume])
           @environment_image.storage_volumes.should_not_receive(:create)
@@ -74,9 +74,9 @@ describe EnvironmentImage do
           @environment_image.storage_volumes.should_receive(:create).and_return(@storage_volume)
           @environment_image.start!(2)
         end
-        
+
         it "should trigger the storage_volume to prepare" do
-          @storage_volume.should_receive(:prepare).with(@instance) 
+          @storage_volume.should_receive(:prepare).with(@instance)
           @environment_image.stub!(:storage_volumes).and_return([@storage_volume])
           @environment_image.start!(1)
         end
@@ -88,6 +88,27 @@ describe EnvironmentImage do
       end
 
 
+    end
+  end
+
+  describe "enforce_num_instances" do
+    before(:each) do
+      @image = Factory(:image)
+      @environment_image = Factory(:environment_image, :image => @image)
+    end
+
+    it "should force num_instances to 1 if image can't scale out" do
+      @image.should_receive(:can_scale_out?).and_return(false)
+      @environment_image.num_instances = 3
+      @environment_image.send(:enforce_num_instances)
+      @environment_image.num_instances.should == 1
+    end
+
+    it "should leave num_instances alone if image can scale out" do
+      @image.should_receive(:can_scale_out?).and_return(true)
+      @environment_image.num_instances = 3
+      @environment_image.send(:enforce_num_instances)
+      @environment_image.num_instances.should == 3
     end
   end
 end
