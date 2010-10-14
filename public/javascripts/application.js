@@ -156,3 +156,10 @@ function tail_log(url, num_lines, offset, tailing) {
     }
   }, "json");
 }
+
+
+jQuery(document).ready(function($) {
+    $('.stop_environment_confirmation').each(function(idx, el) {
+        $(el).jqm({trigger: $(el).attr('rel')})
+    })
+})

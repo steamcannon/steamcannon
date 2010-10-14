@@ -1,0 +1,28 @@
+.stop_environment_confirmation.jqmWindow{style_display_none.merge(:rel => trigger)}
+  - form_tag stop_environment_path(environment) do
+    .message
+      %p
+        Are you sure you want to stop the 
+        == #{environment.name} environment? 
+        - if !environment.storage_volumes.exists?
+          All instances will be stopped, and any data on those instances will be lost.
+        - else
+          All instances will be stopped, and any data not stored on a preserved volume will be lost.
+      - if environment.storage_volumes.exists?   
+        %p 
+          == This environment has #{pluralize(environment.storage_volumes.count, 'storage volume')}
+          attached to the following images:
+          %ul
+            - environment.storage_volumes.each do |volume|
+              %li= volume.instance.name
+        %p
+          You can preserve these volume(s), and they will be reattached the next time you start the
+          environment. If you choose not to preserve them, all data on them will be lost.
+        %p
+          = check_box_tag :preserve_storage_volumes, 1, environment.preserve_storage_volumes?
+          Preserve storage volumes  
+        
+      
+    .controls
+      %button{:class => 'jqmClose'}Cancel
+      = submit_tag "Stop Environment"

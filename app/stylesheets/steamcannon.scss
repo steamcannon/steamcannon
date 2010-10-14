@@ -413,3 +413,31 @@ table.header_top {
     }
   }
 }
+
+/* positioning and overlay for jquery.modal (jqm) */
+.jqmWindow {
+    display: none;
+    
+    position: fixed;
+    top: 17%;
+    left: 50%;
+    
+    margin-left: -300px;
+    width: 600px;
+    
+    background-color: #EEE;
+    color: #333;
+    border: 1px solid black;
+    padding: 12px;
+}
+
+.jqmOverlay { background-color: #000; }
+
+.stop_environment_confirmation {
+    .message {
+        font-weight: bold;
+    }
+    .controls {
+        text-align: right;
+    }
+}

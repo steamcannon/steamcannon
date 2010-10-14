@@ -125,6 +125,7 @@ class EnvironmentsController < ApplicationController
   # POST /environments/1/stop.xml
   def stop
     @environment = current_user.environments.find(params[:id])
+    @environment.preserve_storage_volumes = params[:preserve_storage_volumes]
     @environment.stop!
     respond_to do |format|
       format.html { redirect_back_or_default(environments_url, :notice => 'Environment is stopping.') }

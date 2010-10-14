@@ -188,7 +188,15 @@ describe EnvironmentsController do
     it "stops the requested environment" do
       Environment.should_receive(:find).with("37").and_return(mock_environment)
       mock_environment.should_receive(:stop!)
+      mock_environment.stub!(:preserve_storage_volumes=)
       post :stop, :id => "37"
+    end
+
+    it "should update the preserve_storage_volumes field" do
+      Environment.should_receive(:find).with("37").and_return(mock_environment)
+      mock_environment.should_receive(:preserve_storage_volumes=).with('1')
+      mock_environment.stub!(:stop!)
+      post :stop, :id => "37", :preserve_storage_volumes => '1'
     end
   end
 
