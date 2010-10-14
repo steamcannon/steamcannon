@@ -50,7 +50,12 @@ module Cloud
     end
 
     def hardware_profiles
-      @hardware_profiles ||= client.hardware_profiles.map(&:name)
+      Rails.cache.fetch('DeltacloudHardwareProfiles') do
+        supported = client.hardware_profiles.select do |hardware_profile|
+          hardware_profile.architecture.value == "i386"
+        end
+        supported.map(&:name)
+      end
     end
 
     def name

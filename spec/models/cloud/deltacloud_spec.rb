@@ -82,6 +82,9 @@ describe Cloud::Deltacloud do
       @client = mock(Object,
                      :hardware_profiles => [])
       @deltacloud.stub!(:client).and_return(@client)
+      @profile = mock('hardware_profile',
+                      :name => "small")
+      @profile.stub_chain(:architecture, :value).and_return("i386")
     end
 
     it "should fetch from cloud" do
@@ -89,16 +92,21 @@ describe Cloud::Deltacloud do
       @deltacloud.hardware_profiles
     end
 
-    it "should only fetch once" do
-      @client.should_receive(:hardware_profiles).once.and_return([])
-      @deltacloud.hardware_profiles
+    it "should fetch from cache first" do
+      Rails.cache.should_receive(:fetch).and_yield
       @deltacloud.hardware_profiles
     end
 
     it "should only return profile names" do
-      profile = mock(Object, :name => "small")
-      @client.should_receive(:hardware_profiles).and_return([profile])
+      @profile.should_receive(:name).and_return("small")
+      @client.should_receive(:hardware_profiles).and_return([@profile])
       @deltacloud.hardware_profiles.should eql(["small"])
+    end
+
+    it "should only return i386 profiles" do
+      @profile.stub_chain(:architecture, :value).and_return("x86_64")
+      @client.should_receive(:hardware_profiles).and_return([@profile])
+      @deltacloud.hardware_profiles.should be_empty
     end
   end
 
