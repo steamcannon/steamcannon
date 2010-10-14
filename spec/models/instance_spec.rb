@@ -224,7 +224,7 @@ describe Instance do
       before(:each) do
         @cloud_instance = mock(Object,
                                :public_addresses => ['host'],
-                               :private_addresses => ['private_host']) 
+                               :private_addresses => ['private_host'])
         @instance.stub!(:cloud_instance).and_return(@cloud_instance)
         @environment = mock_model(Environment)
         @instance.stub!(:environment).and_return(@environment)
@@ -378,6 +378,7 @@ describe Instance do
         @environment = mock_model(Environment)
         @instance.stub!(:environment).and_return(@environment)
         @environment.stub!(:stopped!)
+        @environment.stub!(:stopping?).and_return(true)
       end
 
       it "should be inactive" do

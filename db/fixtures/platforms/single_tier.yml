@@ -7,6 +7,7 @@ platforms:
           - name: Backend - JBoss
             description: JBoss AS 6 m5 (w/TorqueBox 1.0.0.Beta22)
             cloud_id: ami-38dd2951
+            can_scale_out: true
             services:
               - jboss_as
 

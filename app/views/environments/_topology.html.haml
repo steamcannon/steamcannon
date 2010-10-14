@@ -4,15 +4,8 @@
     - div_for( image ) do
       %h3
         = image.image.name
-        = link_to 'Add', '#'
-        .start_another_dialog{:style=>'display:none'}
-          .close
-            = link_to "Close", '#', :title=>'Close this dialog'
-          %p How many additional instances would you like to add to this environment?
-          = label_tag "Number of instances"
-          = text_field_tag :new_instances, 1
-          &raquo;
-          = link_to 'Start'
+        - if image.can_start_more?
+          = link_to 'Add', environment_instances_path(@environment.id, :environment_image_id => image.id), :method => :post
       %table
         - image.instances.each_with_index do |instance, i|
           = render :partial=>'/instances/row', :locals=>{ :instance=>instance }

@@ -21,18 +21,28 @@ class EnvironmentImage < ActiveRecord::Base
   belongs_to :environment
   belongs_to :image
   has_many :storage_volumes
-  has_many :instances, :through=>:environment, :conditions=>[ 'image_id=? AND stopped_at IS NULL', '#{image_id}' ] 
-  
+  has_many :instances, :through=>:environment, :conditions=>[ 'image_id=? AND stopped_at IS NULL', '#{image_id}' ]
+
   def start!(instance_number)
     instance = Instance.deploy!(image,
                                 environment,
                                 "#{image.name} ##{instance_number}",
                                 hardware_profile)
-    
+
     if image.needs_storage_volume?
       storage_volume = storage_volumes[instance_number - 1] || storage_volumes.create
       storage_volume.prepare(instance)
     end
 
+    instance
+  end
+
+  def can_start_more?
+    image.can_scale_out?
+  end
+
+  def start_another!
+    instance_number = instances.count + 1
+    start!(instance_number)
   end
 end

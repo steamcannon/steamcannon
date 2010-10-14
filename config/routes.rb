@@ -21,7 +21,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :artifact_versions
   map.resources :platforms
   map.resources :environments, :member => {:start => :post, :stop => :post, :clone => :post, :status => :post} do |environment|
-    environment.resources :instances, :member => {:stop => :post, :status => :post, :clone => :post}, :only => [:show, :index] do |instance|
+    environment.resources :instances, :member => {:stop => :post, :status => :post, :clone => :post}, :only => [:show, :index, :create] do |instance|
       instance.resources :instance_services, :member => {:logs => :get}, :only => []
     end
   end

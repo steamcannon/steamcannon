@@ -7,16 +7,19 @@ platforms:
           - name: Backend - JBoss
             description: JBoss AS 6 m5 (w/TorqueBox 1.0.0.Beta22)
             cloud_id: ami-38dd2951
+            can_scale_out: true
             services:
               - jboss_as
           - name: Frontend - mod_cluster
             description: Apache 2.2.16 (w/mod_cluster 1.1.0)
             cloud_id: ami-c017e2a9
+            can_scale_out: false
             services:
               - mod_cluster
           - name: Database - PostgreSQL
             description: PostgreSQL 8.4
             cloud_id: ami-18e61271
+            can_scale_out: false
             storage_volume_capacity: 10 #Gigs
             storage_volume_device: /dev/sdf #agent expects this, so don't change
             services:

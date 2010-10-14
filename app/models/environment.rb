@@ -46,7 +46,7 @@ class Environment < ActiveRecord::Base
   end
 
   aasm_event :run do
-    transitions :to => :running, :from => :starting, :guard => :running_all_instances?
+    transitions :to => :running, :from => [:starting, :running], :guard => :running_all_instances?
   end
 
   aasm_event :stop do

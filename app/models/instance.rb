@@ -245,7 +245,7 @@ class Instance < ActiveRecord::Base
 
   def after_stopped_instance
     instance_services.each(&:destroy)
-    environment.stopped!
+    environment.stopped! if environment.stopping?
   end
 
   def error_raised(error)

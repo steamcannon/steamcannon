@@ -24,6 +24,13 @@ class InstancesController < ApplicationController
     end
   end
 
+  # POST /environments/:environment_id/instances
+  def create
+    environment_image = EnvironmentImage.find(params[:environment_image_id])
+    instance = environment_image.start_another!
+    redirect_to(@environment, :notice => "Instance #{instance.name} is starting")
+  end
+
   # POST /environments/:environment_id/instances/1/stop.json
   def stop
     get_instance
