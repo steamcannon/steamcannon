@@ -53,7 +53,7 @@ describe DashboardController do
         get :show
       end
 
-      it "should render the account user dashboard" do
+      it "should render the dashboard" do
         get :show
         response.should render_template('dashboard/show')
       end
@@ -69,9 +69,9 @@ describe DashboardController do
         response.should be_success
       end
 
-      it "should render the superuser dashboard" do
+      it "should render the dashboard" do
         get :show
-        response.should render_template('dashboard/superuser_show')
+        response.should render_template('dashboard/show')
       end
     end
   end
