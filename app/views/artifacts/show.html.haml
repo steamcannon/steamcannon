@@ -2,16 +2,20 @@
 
   .page_header
     .actions
+      - unless @artifact.artifact_versions.empty?
+        = link_to 'Deploy Latest Version', new_deployment_path('deployment[artifact_version_id]' => @artifact.artifact_versions.first.id)
       = link_to 'Edit Details', edit_artifact_path( @artifact )
     %h1 
       = @artifact.name
     %h2 
       = @artifact.service.full_name
-    .description
-      = @artifact.description
 
 
   .left_column
+    .description
+      = @artifact.description
+      &nbsp;
+  .center_column
     %h2 Deployments
     = render :partial => "deployments/list", :locals => { :deployments => @artifact.deployments.deployed, :header_text => "Deployments", :empty_text => "This artifact has no deployments." }
   .right_column

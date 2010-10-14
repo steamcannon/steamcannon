@@ -18,7 +18,6 @@
 
 class CloudInstancesController < ApplicationController
 
-  navigation :instances
   before_filter :require_user
 
   def index

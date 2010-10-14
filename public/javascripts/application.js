@@ -41,8 +41,8 @@ jQuery.fn.pulsate = function() {
 
 jQuery(document).ready(function($) {
     $('#environment_form #environment_platform_version_id').change(function() {
-        $('.platform_version_block').hide()
-        $('#platform_version_' + this.value).show()
+        $('.content_row').hide()
+        $('.row_for_platform_version_' + this.value).show()
     })
 
     //show the correct data on load
@@ -53,7 +53,7 @@ jQuery(document).ready(function($) {
      * will still submit form fields within hidden content.
      */
     $('body.environments_controller form').submit(function() {
-        $('.platform_version_block:hidden').remove()
+        $('.content_row:hidden').remove()
     })
 })
 

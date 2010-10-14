@@ -265,10 +265,8 @@ form {
 #show_artifact {
 
   .description {
-    margin: 1em;
-    padding: 1em;
-    border: 1px solid $color_light;
-    font-size: 80%;
+    padding-right: 1em;
+    border-right: 1px dashed $color_dark;
   }
 
   #artifact_versions_container {
@@ -345,6 +343,12 @@ form {
     padding-bottom: .5ex;
     border-bottom: 1px solid $color_light;
   }
+  p {
+    margin-bottom: 1em;
+  }
+  .section {
+    margin-bottom: 2em;
+  }
 }
 
 table.header_top {
@@ -360,6 +364,43 @@ table.header_top {
   table.cloud_instances {
     .instance_id {
       width: 40%;
+    }
+  }
+}
+
+#dashboard {
+  #artifacts {
+    td.deployments {
+      ul {
+        list-style-type: none;
+        margin: 0;
+        li {
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+#new_environment, #edit_environment {
+  table#environment_images {
+    margin-top: 1em;
+    td {
+      font-size: 90%;
+      padding-bottom: 1ex;
+    }
+    .name {
+      font-weight: bold;
+      .description {
+        font-weight: normal;
+        color: $color_light;
+      }
+    }
+    .num_instances {
+      text-align: right;
+      input {
+        text-align: right;
+      }
     }
   }
 }

@@ -1,8 +1,12 @@
 #edit_environment
-  %h2
-    Edit Environment
-  - form_for(@environment) do |f|
-    = f.error_messages
-    = render :partial => "form", :object => f
-    = f.submit 'Save', :class => "submit"
-    = link_to 'Cancel', back_or_default(environments_url), :class => "actionlink"
+  .page_header
+    %h1
+      = @environment.name
+  .left_column
+    - form_for(@environment) do |f|
+      = f.error_messages
+      = render :partial => "form", :object => f
+      = f.submit 'Save', :class => "submit"
+      = link_to 'Cancel', back_or_default(environments_url), :class => "actionlink"
+  .right_column
+    = render :partial=>'form_edit_help'

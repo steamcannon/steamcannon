@@ -62,7 +62,6 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :environments, 'Environments', environments_path
     primary.item :users, 'Users', users_path, :if => lambda { current_user and current_user.superuser? }
     primary.item :platforms, 'Platforms', platforms_path, :if => lambda { current_user and current_user.superuser? }
-    primary.item :instances, 'Instances', cloud_instances_path
   end
 
 end

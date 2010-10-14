@@ -44,22 +44,6 @@ body.ninesixty {
   }
 }
 
-
-#dashboard {
-  #artifacts {
-    @include grid(12);
-  }
-
-  #environments {
-    @include grid(12);
-
-  }
-}
-
-#show_artifact {
-
-}
-
 #environment_form {
   #environment_images_container {
     @include grid(16);
@@ -93,12 +77,53 @@ body.ninesixty {
   }
 }
 
+@mixin three-column-narrow-right {
+  .left_column {
+    @include grid(9);
+    @include alpha();
+  }
+  .center_column {
+    @include grid(9);
+    @include grid-suffix(1);
+  }
+  .right_column {
+    @include grid(5);
+    @include omega();
+  }
+
+}
+
+@mixin three-column-narrow-left {
+  .left_column {
+    @include grid(5);
+    @include grid-suffix(1);
+    @include alpha();
+  }
+  .center_column {
+    @include grid(9);
+  }
+  .right_column {
+    @include grid(9);
+    @include omega();
+  }
+
+}
+
+#dashboard {
+  @include three-column-narrow-right;
+}
+
+
 #show_environment {
   @include two-column-wide-left;
 }
 
-#show_artifact {
+#new_environment, #edit_environment {
   @include two-column-wide-left;
+}
+
+#show_artifact {
+  @include three-column-narrow-left;
 }
 
 #edit_user {
@@ -124,3 +149,5 @@ body.ninesixty {
 #cloud_instances_index {
   @include two-column-wide-left;
 }
+
+
