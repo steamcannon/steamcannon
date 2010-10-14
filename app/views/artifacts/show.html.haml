@@ -3,21 +3,40 @@
   .page_header
     .actions
       - unless @artifact.artifact_versions.empty?
-        = link_to 'Deploy Latest Version', new_deployment_path('deployment[artifact_version_id]' => @artifact.artifact_versions.first.id)
+        = link_to 'Deploy Latest Version', new_deployment_path('deployment[artifact_version_id]' => @artifact.latest_version.id)
       = link_to 'Edit Details', edit_artifact_path( @artifact )
     %h1 
       = @artifact.name
     %h2 
-      = @artifact.service.full_name
+      = @artifact.service.full_name 
+      - unless @artifact.latest_version.nil?
+        \:
+        = @artifact.latest_version.type_description
 
 
   .left_column
-    .description
-      = @artifact.description
-      &nbsp;
+    %table.overview 
+      %tr
+        %th.created_at
+          Created
+        %td.created_at
+          = @artifact.created_at.to_s(:short)
+      %tr
+        %th.created_at
+          Versions
+        %td.created_at
+          = @artifact.artifact_versions.size
+    - unless @artifact.description.nil? || @artifact.description.strip == ''
+      .description
+        .header
+          Description
+        .content
+          = @artifact.description
   .center_column
     %h2 Deployments
     = render :partial => "deployments/list", :locals => { :deployments => @artifact.deployments.deployed, :header_text => "Deployments", :empty_text => "This artifact has no deployments." }
   .right_column
     %h2 Versions
-    = render :partial => "artifact_versions/list", :locals => { :artifact_versions => @artifact.artifact_versions, :header_text => "Versions", :empty_text => "This artifact has no versions.", :action_link => link_to('Upload New Version', new_artifact_version_path(:artifact_id => @artifact.id), :class => "actionlink") }
+    = render :partial => "artifact_versions/list", :locals => { :artifact_versions => @artifact.artifact_versions }
+    .actions
+      = link_to('Upload New Version', new_artifact_version_path(:artifact_id => @artifact.id) )

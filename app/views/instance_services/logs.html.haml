@@ -1,18 +1,27 @@
 #show_logs
-  %h2 #{@instance.name} #{@instance_service.full_name} Logs
-  %p
-    = link_to "Return to #{@environment.name} Environment", environment_path(@environment)
-  %br
-  .log_options
-    - @logs.each do |log|
-      = link_to_unless(@log == log, log, :log => log, :type => @type)
-  .log_options
-    = link_to_unless(@type == 'tail', 'Tail', :type => 'tail', :log => @log)
-    = link_to_unless(@type == 'all', 'All messages', :type => 'all', :log => @log)
+  .page_header
+    .actions
+      %ul#available_logs
+        - @logs.each do |log|
+          %li
+            - unless (@log == log )
+              = link_to(log, :log => log, :type => @type)
+            - else
+              %span.action_like.selected
+                = log
+
+    %h1
+      = link_to @environment.name, @environment
+    %h2 #{@instance.name} #{@instance_service.full_name}
 
   #logs_container
-    %h2 #{@log}
-    #log_output
+    #log_options
+      .option
+        = link_to_unless(@type == 'tail', 'Tail', :type => 'tail', :log => @log)
+      .option
+        = link_to_unless(@type == 'all', 'All messages', :type => 'all', :log => @log)
+    %h3 #{@log}
+    %pre#log_output
       Fetching log...
       
   - if @type == 'tail'
@@ -22,13 +31,3 @@
     :javascript
       tail_log('#{raw url_for(:log => @log, :type => @type, :escape => false)}', 2048, 0, false);
 
-  %br
-  .log_options
-    - @logs.each do |log|
-      = link_to_unless(@log == log, log, :log => log, :type => @type)
-  .log_options
-    = link_to_unless(@type == 'tail', 'Tail', :type => 'tail', :log => @log)
-    = link_to_unless(@type == 'all', 'All messages', :type => 'all', :log => @log)
-  %br
-  %p
-    = link_to "Return to #{@environment.name} Environment", environment_path(@environment)

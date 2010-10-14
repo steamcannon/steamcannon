@@ -1,14 +1,16 @@
 #artifact_versions_container
-  - artifact_versions.each do |artifact_version|
-    - div_for( artifact_version ) do
-      .version_number
-        = artifact_version.version_number
-      .created_at
-        = artifact_version.created_at.to_s(:long)
-      .archive
-        = artifact_version_download_link(artifact_version)
-      .actions
-        = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact_version.id)
-        = link_to 'Delete', artifact_version_path(artifact_version, :artifact_id => artifact_version.artifact.id), :method => :delete, :confirm => "Are you sure you want to delete version #{artifact_version.version_number}?"
-  - if defined?(action_link)
-    = action_link
+  - if artifact_versions.empty?
+    .empty
+      You have not added any versions yet
+  - else
+    - artifact_versions.each do |artifact_version|
+      - div_for( artifact_version ) do
+        .version_number
+          = artifact_version.version_number
+        .created_at
+          = artifact_version.created_at.to_s(:long)
+        .archive
+          = artifact_version_download_link(artifact_version)
+        .actions
+          = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact_version.id)
+          = link_to 'Delete', artifact_version_path(artifact_version, :artifact_id => artifact_version.artifact.id), :method => :delete, :confirm => "Are you sure you want to delete version #{artifact_version.version_number}?"

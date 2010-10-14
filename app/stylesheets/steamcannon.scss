@@ -36,7 +36,7 @@ a {
   }
   .actions {
     float: right;
-    a {
+    a, .action_like {
       display: block;
       float: left;
       padding: .5ex 1ex; 
@@ -68,6 +68,14 @@ h1, h2, h3 {
   a {
     color: inherit;
   }
+}
+
+
+.empty {
+  color: $color_light;
+  font-size: 110%;
+  font-style: italic;
+  padding: 1em 0;
 }
 
 #top-links {
@@ -111,9 +119,9 @@ h1, h2, h3 {
 }
 
 #main-navigation {
-  font-size: 120%;
-  border-bottom: 1px solid $bar_background_color;
-  margin-bottom: 1em;
+  font-size: 130%;
+  border-bottom: 2px solid $bar_background_color;
+  margin-bottom: 1.5em;
   ul.nav {
     list-style-type: none;
     margin: 0px;
@@ -130,6 +138,7 @@ h1, h2, h3 {
         }
         &.selected {
           color: $color_light;
+          border-bottom: 4px solid $bar_background_color - #333;
         }
       }
     }
@@ -198,12 +207,6 @@ form {
 }
 
 #artifacts_container {
-  .latest_version {
-    text-align: center;
-  }
-  .header .latest_version {
-    text-align: left;
-  }
 }
 
 #show_environment {
@@ -279,9 +282,33 @@ form {
 
 #show_artifact {
 
+  .overview {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 90%;
+
+    th {
+      font-weight: bold;
+    }
+    td {
+      text-align: center;
+    }
+    th, td {
+      border-bottom: 1px solid #999;
+      padding: .5ex;
+    }
+  }
+
   .description {
-    padding-right: 1em;
-    border-right: 1px dashed $color_dark;
+    .header {
+      font-weight: bold;
+      margin-bottom: .5ex;
+    }
+    .content {
+      font-size: 90%;
+      line-height: 1.4em;
+    }
+    
   }
 
   #artifact_versions_container {
@@ -355,13 +382,10 @@ table.header_top {
     }
   }
 
-  td.empty {
-    color: $color_light;
-    font-size: 110%;
-    font-style: italic;
+  .empty {
     text-align: center;
-    padding: 1em 0;
   }
+
 }
 
 #cloud_instances_index {
@@ -370,6 +394,10 @@ table.header_top {
       width: 40%;
     }
   }
+}
+
+#artifacts_index {
+
 }
 
 #dashboard {
@@ -440,4 +468,44 @@ table.header_top {
     .controls {
         text-align: right;
     }
+}
+
+#show_logs {
+  ul#available_logs {
+    font-weight: bold;
+    list-style-type: none;
+    margin: 0;
+    li {
+      display: inline;
+      margin: 0;
+      margin-right: 1em
+    }
+    .selected {
+      background-color: #eee;
+    }
+  }
+  #log_options {
+    float: right;
+    font-weight: bold;
+    .option {
+      display: inline;
+      margin-left: 1em;
+      color: $color_light;
+    }
+    a {
+      color: #999;
+    }
+  }
+  #logs_container {
+    margin-top: 2em;
+  }
+  #log_output {
+    padding: 4px;
+    font-family: Courier;
+    font-size: 85%;
+    width: 950px;
+    height: 400px;
+    overflow: auto;
+    border: 1px solid #777;
+  }
 }

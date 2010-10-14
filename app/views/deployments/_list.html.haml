@@ -1,13 +1,17 @@
 #deployments_container
-  - deployments.each do |deployment|
-    - div_for( deployment ) do
-      .actions
-        - if deployment.deployed?
-          = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
-        - else
-          .current_state
-            = deployment.current_state.humanize
-      %h3.environment
-        = link_to deployment.environment.name, environment_path(deployment.environment)
-      .artifact
-        = link_to deployment.artifact_version.to_s, artifact_path(deployment.artifact_version.artifact)
+  - if deployments.empty?
+    .empty
+      No current deployments
+  -else
+    - deployments.each do |deployment|
+      - div_for( deployment ) do
+        .actions
+          - if deployment.deployed?
+            = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
+          - else
+            .current_state
+              = deployment.current_state.humanize
+        %h3.environment
+          = link_to deployment.environment.name, environment_path(deployment.environment)
+        .artifact
+          = link_to deployment.artifact_version.to_s, artifact_path(deployment.artifact_version.artifact)

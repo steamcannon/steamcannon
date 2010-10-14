@@ -1,29 +1,36 @@
 
 #deployments
   %h2 Deployments
-  - ArtifactVersion::TYPES.each do |artifact_type|
-    - deployments = @deployments[artifact_type]
-    - unless deployments.empty?
-      .artifact_type
-        %h3
-          = ArtifactVersion::TYPE_DESCRIPTIONS[artifact_type]
-        - for deployment in deployments
-          - div_for deployment do
-            .actions
-              - if deployment.deployed?
-                = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
-            .name
-              = link_to "#{deployment.artifact.name} (v#{deployment.artifact_version.version_number})", deployment.artifact
-            - unless deployment.url.nil?
-              .url
-                = link_to 'Link', deployment.url 
-            .status
-              %ul
-                - if deployment.instance_services.empty?
-                  %li Pending Deployment
-                - else
-                  - deployment.instance_services.each do |instance_service|
-                    %li
+  - if ( @deployments.values.flatten.empty? )
+    .empty
+      No current deployments
+  - else
+    - ArtifactVersion::TYPES.each do |artifact_type|
+      - deployments = @deployments[artifact_type]
+      - unless deployments.empty?
+        .artifact_type
+          %h3
+            = ArtifactVersion::TYPE_DESCRIPTIONS[artifact_type]
+          - for deployment in deployments
+            - div_for deployment do
+              .actions
+                - if deployment.deployed?
+                  = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
+              .name
+                = link_to "#{deployment.artifact.name} (v#{deployment.artifact_version.version_number})", deployment.artifact
+              - unless deployment.url.nil?
+                .url
+                  = link_to 'Link', deployment.url 
+              .status
+                %ul
+                  - if deployment.instance_services.empty?
+                    %li Pending Deployment
+                  - else
+                    - deployment.instance_services.each do |instance_service|
+                      %li
                       = instance_service.instance.name
-            - javascript_tag do
-              ="monitor_deployment('#{status_deployment_path(deployment.id)}', '##{dom_id(deployment)}');"
+              - javascript_tag do
+                ="monitor_deployment('#{status_deployment_path(deployment.id)}', '##{dom_id(deployment)}');"
+
+  .actions
+    = link_to 'Deploy an artifact', new_deployment_path('deployment[environment_id]' => @environment.id)
