@@ -23,7 +23,7 @@
           = environment.current_state.titleize
         %td.actions
           - if environment.can_stop?
-            = link_to 'Stop', stop_environment_path(environment), :method => :post, :confirm => "Are you sure you want to stop #{environment.name}?"
+            = stop_environment_link(environment, 'Stop')
           - elsif environment.can_start?
             = link_to 'Start', start_environment_path(environment), :method => :post
           - else
