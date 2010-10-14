@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101014172425) do
+ActiveRecord::Schema.define(:version => 20101014215254) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -102,13 +102,6 @@ ActiveRecord::Schema.define(:version => 20101014172425) do
     t.boolean  "can_scale_out",           :default => false
   end
 
-  create_table "instance_deployments", :force => true do |t|
-    t.integer  "instance_id"
-    t.integer  "deployment_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "instance_services", :force => true do |t|
     t.integer  "instance_id"
     t.integer  "service_id"
@@ -135,6 +128,7 @@ ActiveRecord::Schema.define(:version => 20101014172425) do
     t.integer  "stopped_by"
     t.datetime "state_change_timestamp"
     t.string   "private_address"
+    t.integer  "number"
   end
 
   add_index "instances", ["current_state"], :name => "index_instances_on_current_state"

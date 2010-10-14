@@ -105,10 +105,10 @@ class Instance < ActiveRecord::Base
     aasm_events_for_current_state.include?(:stop)
   end
 
-  def self.deploy!(image, environment, name, hardware_profile)
+  def self.deploy!(image, environment, number, hardware_profile)
     instance = Instance.new(:image_id => image.id,
                             :environment_id => environment.id,
-                            :name => name,
+                            :number => number,
                             :hardware_profile => hardware_profile)
     instance.audit_action :started
     instance.save!
@@ -116,6 +116,10 @@ class Instance < ActiveRecord::Base
     instance
   end
 
+  def name
+    "#{image.name} ##{number}"
+  end
+  
   def cloud
     user.cloud
   end

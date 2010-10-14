@@ -1,7 +1,7 @@
 - content_tag_for( :tr, instance ) do
   %td.summary
     .name
-      = instance.name
+      == ##{instance.number}
     .current_state
       = instance.current_state.titleize
     .hardware_profile

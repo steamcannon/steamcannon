@@ -28,7 +28,7 @@ class EnvironmentImage < ActiveRecord::Base
   def start!(instance_number)
     instance = Instance.deploy!(image,
                                 environment,
-                                "#{image.name} ##{instance_number}",
+                                instance_number,
                                 hardware_profile)
 
     if image.needs_storage_volume?

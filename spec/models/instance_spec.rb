@@ -704,4 +704,15 @@ describe Instance do
       @instance.attach_volume
     end
   end
+
+  describe 'name' do
+    it "should return the image name along with the number" do
+      instance = Instance.new(:number => 77)
+      image = mock(Image)
+      image.should_receive(:name).and_return("The Image")
+      instance.should_receive(:image).and_return(image)
+      instance.name.should == "The Image #77"
+    end
+    
+  end
 end
