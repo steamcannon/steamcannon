@@ -36,6 +36,10 @@ a {
   .actions {
     float: right;
     a {
+      display: block;
+      float: left;
+      padding: .5ex; 
+      border: 1px solid $color_dark;
       margin-left: 1em;
       font-weight: bold;
     }

@@ -8,6 +8,6 @@
       = f.error_messages
       = render :partial => "form", :object => f
       = f.submit 'Create', :class => "submit"
-      = link_to 'Cancel', environments_path, :class => "actionlink"
+      = link_to 'Cancel', back_or_default( environments_path ), :class => "actionlink"
   .right_column
     = render :partial=>'form_new_help'
