@@ -159,6 +159,21 @@ describe Environment do
       instance.should_receive(:stop!)
       @environment.stop!
     end
+
+    it "should destroy the storage volumes if environment is not marked to preserve" do
+      @environment.should_receive(:preserve_storage_volumes?).and_return(false)
+      storage_volume = mock(StorageVolume)
+      storage_volume.should_receive(:destroy)
+      @environment.should_receive(:storage_volumes).and_return([storage_volume])
+      @environment.stop!
+    end
+
+      
+    it "should not destroy the storage volumes if environment is marked to preserve" do
+      @environment.should_receive(:preserve_storage_volumes?).and_return(true)
+      @environment.should_not_receive(:storage_volumes)
+      @environment.stop!
+    end
   end
 
   describe "stopped" do

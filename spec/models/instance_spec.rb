@@ -379,38 +379,35 @@ describe Instance do
         @instance.stub!(:environment).and_return(@environment)
         @environment.stub!(:stopped!)
         @environment.stub!(:stopping?).and_return(true)
+        @environment.stub!(:preserve_storage_volumes?).and_return(true)
+        @instance.current_state = 'terminating'
+        @instance.stub!(:stopped_in_cloud?).and_return(true)
       end
 
       it "should be inactive" do
-        @instance.stub!(:stopped_in_cloud?).and_return(true)
-        @instance.current_state = 'terminating'
         @instance.stopped!
         Instance.inactive.first.should eql(@instance)
         Instance.active.count.should be(0)
       end
 
       it "should call stopped! event on environment" do
-        @instance.stub!(:stopped_in_cloud?).and_return(true)
-        @instance.current_state = 'terminating'
         @environment.should_receive(:stopped!)
         @instance.stopped!
       end
 
       it "should be stopped_in_cloud if terminated in cloud" do
+        @instance.unstub(:stopped_in_cloud?)
         @cloud_instance.stub!(:state).and_return('terminated')
         @instance.should be_stopped_in_cloud
       end
 
       it "should be stopped if stopped_in_cloud" do
-        @instance.stub!(:stopped_in_cloud?).and_return(true)
-        @instance.current_state = 'terminating'
         @instance.stopped!
         @instance.should be_stopped
       end
 
       it "should be terminating if not stopped_in_cloud" do
         @instance.stub!(:stopped_in_cloud?).and_return(false)
-        @instance.current_state = 'terminating'
         @instance.stopped!
         @instance.should be_terminating
       end
@@ -419,8 +416,6 @@ describe Instance do
         instance_service = mock(InstanceService)
         instance_service.should_receive(:destroy)
         @instance.should_receive(:instance_services).and_return([instance_service])
-        @instance.stub!(:stopped_in_cloud?).and_return(true)
-        @instance.current_state = 'terminating'
         @instance.stopped!
       end
     end

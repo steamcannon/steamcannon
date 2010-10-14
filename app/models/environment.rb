@@ -92,6 +92,7 @@ class Environment < ActiveRecord::Base
   def stop_environment
     deployments.deployed.each(&:undeploy!)
     instances.active.each(&:stop!)
+    storage_volumes.each(&:destroy) unless preserve_storage_volumes?
   end
 
   def running_all_instances?

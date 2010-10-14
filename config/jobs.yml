@@ -1,11 +1,15 @@
 instance.watcher:
   job: InstanceWatcher
-  cron: '*/15 * * * * ?'
+  cron: '*/15 * * * * ?' #every 15 seconds
 
 instance.service.watcher:
   job: InstanceServiceWatcher
-  cron: '*/15 * * * * ?'
+  cron: '*/15 * * * * ?' #every 15 seconds
   
 instance.reaper:
   job: InstanceReaper
-  cron: '0 */5 * * * ?'
+  cron: '0 */5 * * * ?' #every 5 minutes
+
+storage.volume.watcher:
+  job: StorageVolumeWatcher
+  cron: '0 * * * * ?' #every minute

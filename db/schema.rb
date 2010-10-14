@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101014133702) do
+ActiveRecord::Schema.define(:version => 20101014172425) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -78,7 +78,8 @@ ActiveRecord::Schema.define(:version => 20101014133702) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.string   "current_state",       :default => "stopped"
+    t.string   "current_state",            :default => "stopped"
+    t.boolean  "preserve_storage_volumes", :default => true
   end
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
@@ -99,13 +100,6 @@ ActiveRecord::Schema.define(:version => 20101014133702) do
     t.string   "storage_volume_device"
     t.string   "description"
     t.boolean  "can_scale_out",           :default => false
-  end
-
-  create_table "instance_deployments", :force => true do |t|
-    t.integer  "instance_id"
-    t.integer  "deployment_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
   end
 
   create_table "instance_services", :force => true do |t|
@@ -178,6 +172,7 @@ ActiveRecord::Schema.define(:version => 20101014133702) do
     t.integer  "instance_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "pending_destroy"
   end
 
   create_table "users", :force => true do |t|
