@@ -116,7 +116,7 @@ class EnvironmentsController < ApplicationController
     @environment = current_user.environments.find(params[:id])
     @environment.start!
     respond_to do |format|
-      format.html { redirect_back_or_default(environments_url, :notice => 'Environment was successfully started.') }
+      format.html { redirect_back_or_default(environments_url, :notice => 'Environment is starting.') }
       format.xml  { head :ok }
     end
   end
@@ -127,11 +127,11 @@ class EnvironmentsController < ApplicationController
     @environment = current_user.environments.find(params[:id])
     @environment.stop!
     respond_to do |format|
-      format.html { redirect_back_or_default(environments_url, :notice => 'Environment was successfully stopped.') }
+      format.html { redirect_back_or_default(environments_url, :notice => 'Environment is stopping.') }
       format.xml  { head :ok }
     end
   end
-  
+
   # POST /environments/1/clone
   # POST /environments/1/clone.xml
   def clone
@@ -150,7 +150,7 @@ class EnvironmentsController < ApplicationController
       end
     end
   end
-  
+
   # POST /environments/:id/status.json
   def status
     @environment = current_user.environments.find(params[:id])
@@ -158,12 +158,12 @@ class EnvironmentsController < ApplicationController
       respond_to do |format|
         format.js { render(generate_json_response(:ok, :message=>@environment.current_state.titleize)) }
       end
-    else      
+    else
       respond_to do |format|
         format.js { render(generate_json_response(:error, :message=>"Cannot find requested environment")) }
       end
     end
   end
-  
-  
+
+
 end
