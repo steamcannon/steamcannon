@@ -21,6 +21,8 @@ class InstanceServicesController < ApplicationController
   before_filter :load_environment
   before_filter :load_instance
 
+  navigation :environments
+
   def logs
     @instance_service = @instance.instance_services.find(params[:id])
     @type = params[:type] || 'tail'
