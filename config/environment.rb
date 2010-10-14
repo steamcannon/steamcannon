@@ -35,7 +35,7 @@ Rails::Initializer.run do |config|
   config.gem "rest-client", :version => '>= 1.6.0'
   config.gem "json", :version => '1.4.6'
   config.gem "maruku", :version => '0.6.0'
-  config.gem "jruby-openssl", :version => '0.7.1'
+  config.gem "jruby-openssl", :version => '0.7.1', :lib => false
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
