@@ -32,3 +32,17 @@ config.gem "rcov", :version => "0.9.8", :lib => false
 config.gem "factory_girl", :version => '1.3.2'
 config.gem "shoulda", :version => '2.11.3', :lib => false
 config.gem "awesome_print", :lib => false
+
+
+# Disable all caching for test environment by using
+# a fake cache store
+class DummyStore
+  def logger; Rails.logger; end
+  def fetch(*args); yield; end
+  def read(*args); end
+  def write(*args); end
+  def delete(*args); end
+  def increment(*args); end
+  def decrement(*args); end
+end
+config.cache_store = DummyStore.new
