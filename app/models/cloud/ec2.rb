@@ -100,7 +100,7 @@ module Cloud
     end
 
     def multicast_bucket
-      bucket_suffix = Digest::SHA1.hexdigest(access_key)
+      bucket_suffix = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
       bucket_name = "SteamCannonEnvironments_#{bucket_suffix}"
 
       s3 = Aws::S3.new(access_key, secret_access_key, :multi_thread => true)
