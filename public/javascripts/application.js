@@ -157,7 +157,7 @@ function tail_log(url, num_lines, offset, tailing) {
       //logs.html(logs.html() + "\n" + data.lines.join("\n"));
       logs.html(logs.html() + data.lines.join(""));
       if (tailing) {
-        $("html, body").animate({scrollTop: $(document).height()}, 10);
+        logs.animate({scrollTop: logs.attr("scrollHeight")}, 10);
       }
     }
     if (tailing || data.lines.length > 0) {
