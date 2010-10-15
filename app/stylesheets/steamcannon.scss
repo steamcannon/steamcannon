@@ -3,6 +3,10 @@
 
 @import "colors";
 
+body {
+  color: $text_color;
+}
+
 
 a {
   text-decoration: none;

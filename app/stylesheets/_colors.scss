@@ -5,21 +5,22 @@ $color_dark: #000000;
 $color_light: #999999;
 $color_mid: #444444;
 
+$text_color: #333;
 
 $link_color:       #777777;
 $link_hover_color: #777777;
 
-$page_header1_color: black;
-$page_header2_color: black;
+$page_header1_color: #99B2B7 - #444;
+$page_header2_color: #948C75;
 
-$content_header2_color: black;
-$content_header3_color: black;
+$content_header2_color: #99B2B7 - #333;
+$content_header3_color: #D9CEB2 - #333;
 
-$sidebar_header1_color: black;
-$sidebar_header2_color: black;
+$sidebar_header1_color: #777;
+$sidebar_header2_color: #777;
 
-$minor_accent_color: black;
-$major_accent_color: black;
+$major_accent_color: #C28600;
+$minor_accent_color: $major_accent_color - #420;
 
 $separator_color: black;
 
