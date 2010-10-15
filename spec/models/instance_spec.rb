@@ -27,7 +27,7 @@ describe Instance do
     @valid_attributes = {
       :environment => @environment,
       :image => @image,
-      :name => "value for name",
+      :number => 2,
       :cloud_id => "value for cloud_id",
       :hardware_profile => "value for hardware_profile",
       :public_address => "value for public_address"
