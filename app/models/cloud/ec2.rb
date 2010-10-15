@@ -48,7 +48,7 @@ module Cloud
 
     def running_instances
       return [] if access_key.blank? or secret_access_key.blank?
-      ec2 = Aws::Ec2.new(access_key, secret_access_key, :multi_thread => true)
+      ec2 = Aws::Ec2.new(access_key, secret_access_key)
       all = ec2.describe_instances.map { |i| i.merge(:id => i[:aws_instance_id]) }
       all.select { |i| i[:aws_state] == 'running' }
     rescue Aws::AwsError => e
@@ -103,7 +103,7 @@ module Cloud
       bucket_suffix = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
       bucket_name = "SteamCannonEnvironments_#{bucket_suffix}"
 
-      s3 = Aws::S3.new(access_key, secret_access_key, :multi_thread => true)
+      s3 = Aws::S3.new(access_key, secret_access_key)
 
       # Ensure our bucket exists and has correct permissions
       bucket = Aws::S3::Bucket.create(s3, bucket_name, true, 'public-read')

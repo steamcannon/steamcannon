@@ -69,8 +69,7 @@ module Cloud
 
       def bucket
         # Ensure our bucket exists and has correct permissions
-        s3 = Aws::S3.new(@access_key, @secret_access_key,
-                         :multi_thread => true)
+        s3 = Aws::S3.new(@access_key, @secret_access_key)
         bucket = Aws::S3::Bucket.create(s3, bucket_name, true, 'private')
         bucket
       end

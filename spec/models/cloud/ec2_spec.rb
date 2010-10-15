@@ -179,7 +179,7 @@ describe Cloud::Ec2 do
     end
 
     it "should create a new s3 object" do
-      @s3.should_receive(:new).with('username', 'password', anything)
+      @s3.should_receive(:new).with('username', 'password')
       @ec2.send(:multicast_bucket)
     end
 
