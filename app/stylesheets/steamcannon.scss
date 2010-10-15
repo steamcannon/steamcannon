@@ -1,15 +1,8 @@
 @import "compass/utilities/general/clearfix";
 @import "compass/css3/border-radius";
 
-$bar_background_color: #dddddf;
+@import "colors";
 
-$color_dark: #2B435A;
-$color_light: #C28600;
-$page_title_color: #897F64;
-
-$link_color:         $color_dark;
-$link_visited_color: $color_dark;
-$link_hover_color:   $color_dark + #222;
 
 a {
   text-decoration: none;
@@ -25,28 +18,22 @@ a {
   h1 {
     font-size: 200%;
     font-weight: bold;
-    color: $color_light;
+    color: $page_header1_color;
     margin-bottom: 0;
     line-height: 1.2em;
   }
   h2 {
     font-size: 140%;
     font-weight: bold;
-    color: $color_light - #555;
+    color: $page_header2_color;
   }
   .actions {
     float: right;
     a, .action_like {
       display: block;
       float: left;
-      padding: .5ex 1ex; 
-      border: 2px solid $color_dark + #333;
-      margin-left: 1ex;
+      margin-left: 1em;
       font-weight: bold;
-      color: $color_light - #333;
-      &:hover {
-        border-color: $color_light;
-      }
     }
   }
 }
@@ -55,13 +42,14 @@ h2 {
   font-weight: bold;
   font-size: 140%;
   margin-bottom: .3ex;
-  color: $color_light - #555;
+  color: $content_header2_color;
 }
 
 h3 {
   font-size: 110%;
   font-weight: bold;
   margin: 0;
+  color: $content_header3_color;
 }
 
 h1, h2, h3 {
@@ -70,9 +58,8 @@ h1, h2, h3 {
   }
 }
 
-
 .empty {
-  color: $color_light;
+  color: $minor_accent_color;
   font-size: 110%;
   font-style: italic;
   padding: 1em 0;
@@ -92,7 +79,7 @@ h1, h2, h3 {
 }
 
 #header-bar {
-  padding-top: 1em;
+  padding-top: 1ex;
   padding-bottom: 1ex;
   margin-bottom: 1ex;
   background-color: $bar_background_color;
@@ -107,6 +94,11 @@ h1, h2, h3 {
   background-color: $bar_background_color;
   border-bottom: 1px solid $bar_background_color - #333; 
   border-top: 1px solid $bar_background_color - #333; 
+}
+
+#user-header {
+  font-size: 90%;
+  color: $bar_background_color - #555;
 }
 
 #content {
@@ -132,12 +124,12 @@ h1, h2, h3 {
       padding: 0px;
       a {
         font-weight: bold;
-        color: $color_dark;
+        color: $navigation_color;
         &:hover {
-          color: $color_light - #333;
+          color: $navigation_hover_color;
         }
         &.selected {
-          color: $color_light;
+          color: $navigation_selected_color;
           border-bottom: 4px solid $bar_background_color - #333;
         }
       }
@@ -161,28 +153,11 @@ form {
       }
 
       input, textarea {
-        border: 1px solid $color_light;
-        background-color: #f0f0f0;
+        border: 1px solid $form_input_border_color;
+        background-color: $form_input_background_color;
       }
     }
   }
-}
-
-
-.tabular {
-  margin-bottom: 1em;
-  .header {
-    border-bottom: 1px solid $color_dark;
-    margin-bottom: 1ex;
-    div {
-      font-weight: bold;
-    } 
-    @include clearfix;
-  }
-  .row {
-    @include clearfix;
-  }
-  @include clearfix;
 }
 
 #artifact_versions_container {
@@ -232,12 +207,12 @@ form {
           font-weight: bold;
         }
         .current_state {
-          color: $color_light;
+          color: $minor_accent_color;
         }
       }
       .services {
         .current_state {
-          color: $color_light;
+          color: $minor_accent_color;
           font-weight: bold;
         }
         ul {
@@ -259,12 +234,12 @@ form {
         float: right;
       }
       font-size: 90%;
-      border-bottom: 1px dashed $color_dark;
+      border-bottom: 1px dashed $separator_color;
       .name {
         font-weight: bold;
       }
       .name * {
-        color: $color_light;
+        color: $major_accent_color;
       }
       .status {
         font-weight: bold;
@@ -315,7 +290,7 @@ form {
 
   #artifact_versions_container {
     .artifact_version {
-      border-bottom: 1px dashed $color_dark;
+      border-bottom: 1px dashed $separator_color;
       padding: 1ex 0;
       margin-bottom: 1ex;
       .version_number {
@@ -346,13 +321,13 @@ form {
 
 #sidebar {
   h1 {
-    color: $color_light;
+    color: $sidebar_header1_color;
     font-size: 120%;
     font-weight: bold;
     font-style: italic;
     margin-bottom: 1ex;
     padding-bottom: .5ex;
-    border-bottom: 1px solid $color_light;
+    border-bottom: 1px solid $sidebar_header1_color;
   }
   p {
     margin-bottom: 1em;
@@ -370,7 +345,7 @@ table.header_top {
   th {
     font-weight: bold;
     color: $color_dark;
-    border-bottom: 1px solid $color_dark;
+    border-bottom: 1px solid $table_header_border_color;
   }
   th, td {
     padding: .2ex;
@@ -380,7 +355,7 @@ table.header_top {
     a {
       font-weight: bold;
       margin-right: 1ex;
-      color: $color_light;
+      color: $major_accent_color;
     }
   }
 
@@ -432,7 +407,7 @@ table.header_top {
       font-weight: bold;
       .description {
         font-weight: normal;
-        color: $color_light;
+        color: $minor_accent_color;
       }
     }
     .num_instances {
@@ -482,9 +457,6 @@ table.header_top {
       margin: 0;
       margin-right: 1em
     }
-    .selected {
-      background-color: #eee;
-    }
   }
   #log_options {
     float: right;
@@ -492,10 +464,6 @@ table.header_top {
     .option {
       display: inline;
       margin-left: 1em;
-      color: $color_light;
-    }
-    a {
-      color: #999;
     }
   }
   #logs_container {
