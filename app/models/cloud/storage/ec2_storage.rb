@@ -24,8 +24,6 @@ module Cloud
       def initialize(access_key, secret_access_key)
         @access_key = access_key
         @secret_access_key = secret_access_key
-        @s3 = Aws::S3.new(@access_key, @secret_access_key,
-                          :multi_thread => true)
       end
 
       def exists?(path)
@@ -56,7 +54,7 @@ module Cloud
           :access_key => @access_key,
           :secret_access_key => @secret_access_key,
           :method => :get,
-          :bucket => bucket.name,
+          :bucket => bucket_name,
           :resource => path,
           :expires_at => expires_at
         }
@@ -64,12 +62,16 @@ module Cloud
       end
 
 
-      def bucket
+      def bucket_name
         bucket_suffix = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
-        bucket_name = "SteamCannonArtifacts_#{bucket_suffix}"
+        "SteamCannonArtifacts_#{bucket_suffix}"
+      end
 
+      def bucket
         # Ensure our bucket exists and has correct permissions
-        bucket = Aws::S3::Bucket.create(@s3, bucket_name, true, 'private')
+        s3 = Aws::S3.new(@access_key, @secret_access_key,
+                         :multi_thread => true)
+        bucket = Aws::S3::Bucket.create(s3, bucket_name, true, 'private')
         bucket
       end
       memoize :bucket
