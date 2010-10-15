@@ -372,7 +372,13 @@ table.header_top {
 #cloud_instances_index {
   table.cloud_instances {
     .instance_id {
-      width: 40%;
+      width: 20%;
+    }
+    .instance_image {
+      width: 30%;
+    }
+    .instance_environment {
+      width: 30%;
     }
   }
 }

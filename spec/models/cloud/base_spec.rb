@@ -39,6 +39,12 @@ describe Cloud::Base do
   end
 
   describe "running_instances" do
+    def mock_instance(attributes)
+      image = mock('image', :name => 'image_name')
+      mock('instance', attributes.merge(:image => image,
+                                        :public_addresses => []))
+    end
+
     before(:each) do
       @cloud = mock('cloud')
       @user.should_receive(:cloud).and_return(@cloud)
@@ -50,8 +56,8 @@ describe Cloud::Base do
     end
 
     it "should filter out stopped" do
-      started = mock('instance', :id => 1, :state => 'started')
-      stopped = mock('instance', :id => 2, :state => 'stopped')
+      started = mock_instance(:id => 1, :state => 'started')
+      stopped = mock_instance(:id => 2, :state => 'stopped')
       @cloud.stub(:instances).and_return([started, stopped])
       running = @base.running_instances
       running.size.should == 1
@@ -59,7 +65,7 @@ describe Cloud::Base do
     end
 
     it "should return a hash containing :id" do
-      instance = mock('instance', :id => 1, :state => 'started')
+      instance = mock_instance(:id => 1, :state => 'started')
       @cloud.stub(:instances).and_return([instance])
       @base.running_instances.first[:id].should_not be_nil
     end

@@ -49,7 +49,11 @@ module Cloud
     def running_instances
       return [] if access_key.blank? or secret_access_key.blank?
       ec2 = Aws::Ec2.new(access_key, secret_access_key)
-      all = ec2.describe_instances.map { |i| i.merge(:id => i[:aws_instance_id]) }
+      all = ec2.describe_instances.map do |instance|
+        instance.merge(:id => instance[:aws_instance_id],
+                       :image => instance[:aws_image_id],
+                       :address => instance[:dns_name])
+      end
       all.select { |i| i[:aws_state] == 'running' }
     rescue Aws::AwsError => e
       # If we encounter any Amazon errors, log them and pretend we have no

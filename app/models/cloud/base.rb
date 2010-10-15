@@ -54,7 +54,12 @@ module Cloud
       instances = @user.cloud.instances.select do |instance|
         instance.state.upcase != 'STOPPED'
       end
-      instances.map { |i| {:id => i.id} }
+      instances.map do |instance|
+        { :id => instance.id,
+          :image => instance.image.name,
+          :address => instance.public_addresses.first
+        }
+      end
     rescue => e
       # If we encounter any errors, log them and pretend there are
       # no running instances for now
@@ -64,9 +69,16 @@ module Cloud
     end
 
     def managed_instances
-      running_instances.select do |instance|
-        !Instance.find_by_cloud_id(instance[:id]).nil?
-      end
+      running_instances.map do |cloud_instance|
+        instance = Instance.find_by_cloud_id(cloud_instance[:id])
+        if instance.nil?
+          nil
+        else
+          cloud_instance.merge(:image => instance.image.name,
+                               :environment => instance.environment.name,
+                               :user => instance.user.email)
+        end
+      end.compact
     end
 
     def runaway_instances
