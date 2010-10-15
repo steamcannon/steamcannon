@@ -263,8 +263,10 @@ form {
       .name {
         font-weight: bold;
       }
-      .status {
+      .name * {
         color: $color_light;
+      }
+      .status {
         font-weight: bold;
         ul {
           margin: 0;
