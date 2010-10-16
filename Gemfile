@@ -7,14 +7,17 @@ gem "org.torquebox.rake-support", "1.0.0.Beta22"
 gem "org.torquebox.torquebox-messaging-client", "1.0.0.Beta22"
 gem "org.torquebox.vfs", "1.0.0.Beta22"
 
-# ActiveRecord-JDBC gems
+# JRuby specific gems
 gem "activerecord-jdbcpostgresql-adapter", "0.9.7"
+gem "jruby-openssl", "0.7.1"
 
 gem "authlogic", "2.1.5"
 gem "aws", "2.3.21"
 gem "s3", "0.3.4"
 gem "haml", "3.0.15"
-gem "compass", "0.10.2"
+gem "compass", "0.10.5"
+gem "compass-960-plugin", "0.10.0", :require => "ninesixty"
+gem "maruku", "0.6.0"
 gem "steamcannon-deltacloud-client", "0.0.9.7.2", :require => "deltacloud"
 gem "paperclip", "2.3.3"
 gem "simple-navigation", "2.6.0"

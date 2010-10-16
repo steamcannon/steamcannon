@@ -7,8 +7,6 @@ RAILS_GEM_VERSION = '2.3.8' unless defined? RAILS_GEM_VERSION
 require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
-  config.gem 'activerecord-jdbc-adapter', :lib => 'jdbc_adapter'
-  config.gem 'org.torquebox.torquebox-messaging-client'
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -16,23 +14,6 @@ Rails::Initializer.run do |config|
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
   config.load_paths += %W( #{RAILS_ROOT}/app/tasks #{RAILS_ROOT}/app/jobs )
-
-  # Specify gems that this application depends on and have them installed with rake gems:install
-  # config.gem "bj"
-  # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
-  # config.gem "sqlite3-ruby", :lib => "sqlite3"
-  # config.gem "aws-s3", :lib => "aws/s3"
-  config.gem "authlogic", :version => "2.1.5"
-  config.gem "aws", :version => "2.3.21"
-  config.gem "s3", :version => "0.3.4"
-  config.gem "haml", :version => "3.0.15"
-  config.gem "compass", :version => "0.10.2"
-  config.gem "steamcannon-deltacloud-client", :version => "0.0.9.7.2", :lib => "deltacloud"
-  config.gem "paperclip", :version => "2.3.3"
-  config.gem "simple-navigation", :version => "2.6.0"
-  config.gem "aasm", :version => "2.1.5"
-  config.gem "rest-client", :version => '>= 1.6.0'
-  config.gem "json", :version => '1.4.6'
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
