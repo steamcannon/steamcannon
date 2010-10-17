@@ -303,6 +303,7 @@ describe Instance do
         @instance.stub!(:cloud_instance).and_return(@cloud_instance)
         @environment = mock_model(Environment)
         @instance.stub!(:environment).and_return(@environment)
+        @instance.stub!(:update_cluster_member_addresses)
         @instance.current_state = 'verifying'
         @environment.stub!(:run!)
       end
@@ -317,6 +318,11 @@ describe Instance do
 
       it "should call run! event on environment" do
         @environment.should_receive(:run!)
+        @instance.run!
+      end
+
+      it "should call update_cluster_member_addresses" do
+        @instance.should_receive(:update_cluster_member_addresses)
         @instance.run!
       end
 
@@ -714,5 +720,16 @@ describe Instance do
       instance.name.should == "The Image #77"
     end
     
+  end
+
+  describe 'update_cluster_member_addresses' do
+    it 'should have all running instance_services update their addresses' do
+      instance_service = mock(InstanceService)
+      instance_service.should_receive(:distribute_cluster_member_address)
+      @environment.stub_chain(:instance_services, :running).and_return([instance_service])
+      instance = Instance.new
+      instance.should_receive(:environment).and_return(@environment)
+      instance.send(:update_cluster_member_addresses)
+    end
   end
 end

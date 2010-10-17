@@ -68,6 +68,15 @@ describe InstanceService do
         end
       end
     end
+
+    describe 'run!' do
+      it "should call handle_pending_deployments and update_cluster_member_address" do
+        @instance_service.should_receive(:handle_pending_deployments)
+        @instance_service.should_receive(:distribute_cluster_member_address)
+        @instance_service.current_state = 'verifying'
+        @instance_service.run!
+      end
+    end
   end
 
   describe 'configure_service' do
@@ -217,5 +226,58 @@ describe InstanceService do
         @instance_service.metadata.should == { }
       end
     end
+  end
+
+  describe 'internal_hostname' do
+    it "should use the service name" do
+      @instance_service.should_receive(:name).and_return('servicename')
+      @instance_service.internal_hostname.should match /^servicename/
+    end
+
+    it "should turn the service name in to a legal hostname" do
+      @instance_service.should_receive(:name).and_return('service Name_with!stuff')
+      @instance_service.internal_hostname.should match /^service-name-with-stuff/
+    end
+
+    it "should include the instance number as digits" do
+      @instance_service.should_receive(:name).and_return('servicename')
+      @instance_service.should_receive(:instance_number).and_return(7)
+      @instance_service.internal_hostname.should == 'servicename07.local'
+    end
+  end
+
+  context 'cluster member addresses' do
+    before(:each) do
+      @agent_client = mock(AgentClient)
+      @instance = Factory.build(:instance)
+      @instance.stub!(:agent_client).and_return(@agent_client)
+      @instance_service.stub(:instance).and_return(@instance)
+      @address = '1234'
+      @instance.stub!(:private_address).and_return(@address)
+      @host = 'the-host'
+      @instance_service.stub!(:internal_hostname).and_return(@host)
+      @environment = mock(Environment)
+      @instance_service.stub!(:environment).and_return(@environment)
+      @environment.stub_chain(:instances, :running).and_return([@instance])
+    end
+    
+    describe 'distribute_cluster_member_address' do
+      it "should distribute the address to all running instances in the environment" do
+        @agent_client.should_receive(:create_cluster_member_address).with(@host, @address)
+        @instance_service.send(:distribute_cluster_member_address)
+      end
+    end
+    
+    describe 'remove_cluster_member_address' do
+      it "should delete the address from all running instances in the environment" do
+        @agent_client.should_receive(:delete_cluster_member_address).with(@host)
+        @instance_service.send(:remove_cluster_member_address)
+      end
+    end
+  end
+  
+  it "should call remove_cluster_member_address on destroy" do
+    @instance_service.should_receive(:remove_cluster_member_address)
+    @instance_service.destroy
   end
 end

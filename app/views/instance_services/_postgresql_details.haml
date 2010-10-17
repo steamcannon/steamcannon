@@ -6,9 +6,9 @@
     .row
       Admin password: #{instance_service.metadata[:admin_user][:password]}
     .row
-      External address: #{instance_service.instance.public_address}
+      External hostname: #{instance_service.instance.public_address}
     .row
-      Internal address: #{instance_service.instance.private_address}
+      Internal hostname: #{instance_service.internal_hostname}
     .row
       Port: 5432
 

@@ -227,6 +227,7 @@ class Instance < ActiveRecord::Base
 
   def after_run_instance
     environment.run!
+    update_cluster_member_addresses
   end
 
   def stop_instance
@@ -275,4 +276,9 @@ class Instance < ActiveRecord::Base
                         :private_address => cloud_instance.private_addresses.first
                       }.merge(additional_fields))
   end
+
+  def update_cluster_member_addresses
+    environment.instance_services.running.each &:distribute_cluster_member_address
+  end
+  
 end
