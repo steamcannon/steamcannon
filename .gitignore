@@ -16,3 +16,6 @@ coverage/*
 .rvmrc
 TAGS
 .bundle
+vendor/bundle
+vendor/cache
+steamcannon.rails
