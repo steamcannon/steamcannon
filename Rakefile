@@ -1,6 +1,14 @@
 # Add your own tasks in files placed in lib/tasks ending in .rake,
 # for example lib/tasks/capistrano.rake, and they will automatically be available to Rake.
 
+# Install latest gems before running Rake tasks on CI server
+if ENV['TEAMCITY']
+  require 'bundler'
+  require 'bundler/cli'
+  bundler = Bundler::CLI.new
+  bundler.invoke(:install)
+end
+
 require(File.join(File.dirname(__FILE__), 'config', 'boot'))
 
 require 'rake'
