@@ -16,17 +16,27 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-namespace :ci do
-  desc 'Run RSpecs and generate RCov report'
-  task :specs => ['db:test:load', 'spec:rcov'] do
+namespace :bundle do
+  task :base do
+    require 'bundler/cli'
   end
 
-  desc 'Package SteamCannon'
-  task :package => ['bundle:package', 'bundle:local_deployment',
-                    'torquebox:archive', 'bundle:delete_config'] do
+  desc "Delete bundler config file"
+  task :delete_config do
+    config_file = File.join(File.dirname(__FILE__), '..', '..', '.bundle', 'config')
+    `rm -f #{config_file}`
   end
 
-  desc 'Run CI Build'
-  task :run => [:specs, :package] do
+  desc "bundle package"
+  task :package => :base do
+    bundler = Bundler::CLI.new
+    bundler.invoke(:package)
+  end
+
+  desc "bundle install --deployment --local"
+  task :local_deployment => :base do
+    options = { :deployment => true, :local => true }
+    bundler = Bundler::CLI.new([], options)
+    bundler.invoke(:package)
   end
 end
