@@ -37,6 +37,6 @@ namespace :bundle do
   task :local_deployment => :base do
     options = { :deployment => true, :local => true }
     bundler = Bundler::CLI.new([], options)
-    bundler.invoke(:package)
+    bundler.invoke(:install)
   end
 end
