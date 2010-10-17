@@ -17,6 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class CloudInstancesController < ApplicationController
+
   before_filter :require_user
 
   def index

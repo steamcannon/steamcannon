@@ -6,32 +6,29 @@
     %li
       = form.label :platform_version, "Platform"
       = form.select :platform_version_id, platform_version_options(PlatformVersion.all)
-  %br
-  %br
-  %h3
-    Images
-  #environment_images_container
-    #environment_images_header
-      .name
-        Name
-      .hardware_profile
-        Hardware Profile
-      .num_instances
-        Number of Instances
-    - PlatformVersion.all.each do |platform_version|
-      .platform_version_block{style_display_none.merge(:id => "platform_version_#{platform_version.id}")}
-        - platform_version.images.each_with_index do |image, index|
-        - environment_image = @environment.environment_images.find_by_image_id(image.id)
-          .image_row
-            - if environment_image_id = environment_image.try(:id) 
-              = hidden_field_tag "environment[environment_images_attributes][#{index}][id]", environment_image_id
-            = hidden_field_tag "environment[environment_images_attributes][#{index}][image_id]", image.id
-            .name
-              = image.name
-            .hardware_profile
-              = select_tag "environment[environment_images_attributes][#{index}][hardware_profile]", options_for_select(hardware_profile_options, environment_image.try(:hardware_profile))
-            .num_instances
-              = text_field_tag "environment[environment_images_attributes][#{index}][num_instances]", environment_image.try(:num_instances) || 1, :size => "2"
+      %table#environment_images.header_top
+        %tr
+          %th.name
+            Name
+          %th.hardware_profile
+            Hardware Profile
+          %th.num_instances
+            Number of Instances
+        - PlatformVersion.all.each do |platform_version|
+          - platform_version.images.each_with_index do |image, index|
+            - content_tag_for( :tr, platform_version, :class=>"row_for_platform_version_#{platform_version.id} content_row" ) do 
+              - environment_image = @environment.environment_images.find_by_image_id(image.id)
+              - if environment_image_id = environment_image.try(:id) 
+                = hidden_field_tag "environment[environment_images_attributes][#{index}][id]", environment_image_id
+              = hidden_field_tag "environment[environment_images_attributes][#{index}][image_id]", image.id
+              %td.name
+                = image.name
+                .description
+                  = image.description
+              %td.hardware_profile
+                = select_tag "environment[environment_images_attributes][#{index}][hardware_profile]", options_for_select(hardware_profile_options, environment_image.try(:hardware_profile))
+              %td.num_instances
+                = text_field_tag "environment[environment_images_attributes][#{index}][num_instances]", environment_image.try(:num_instances) || 1, :size => "2", :disabled => !image.can_scale_out?
   
   
   

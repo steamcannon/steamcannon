@@ -27,10 +27,10 @@ describe Instance do
     @valid_attributes = {
       :environment => @environment,
       :image => @image,
-      :name => "value for name",
+      :number => 2,
       :cloud_id => "value for cloud_id",
       :hardware_profile => "value for hardware_profile",
-      :public_dns => "value for public_dns"
+      :public_address => "value for public_address"
     }
 
     InstanceTask.stub(:async)
@@ -171,7 +171,7 @@ describe Instance do
       it "should not get set if the state does not change" do
         @instance.save
         @instance.should_not_receive(:state_change_timestamp=)
-        @instance.public_dns = 'something to trigger save'
+        @instance.public_address = 'something to trigger save'
         @instance.save
       end
     end
@@ -179,7 +179,8 @@ describe Instance do
     describe "start" do
       before(:each) do
         @cloud_instance = mock(Object, :id => 'i-123',
-                               :public_addresses => ['host'])
+                               :public_addresses => ['host'],
+                               :private_addresses => ['internal_host'])
         @cloud = mock(Object)
         @cloud.stub!(:launch).and_return(@cloud_instance)
         @instance.stub_chain(:image, :cloud_id).and_return('ami-123')
@@ -194,9 +195,9 @@ describe Instance do
         @instance.start!
       end
 
-      it "should update cloud_id and public_dns from cloud" do
-        @instance.should_receive(:update_attributes).
-          with(:cloud_id => 'i-123', :public_dns => 'host')
+      it "should update cloud_id and addresses from cloud" do
+        @instance.should_receive(:update_addresses).
+          with(@cloud_instance, :cloud_id => 'i-123')
         @instance.start!
       end
 
@@ -221,7 +222,9 @@ describe Instance do
 
     describe "configure" do
       before(:each) do
-        @cloud_instance = mock(Object, :public_addresses => ['host'])
+        @cloud_instance = mock(Object,
+                               :public_addresses => ['host'],
+                               :private_addresses => ['private_host'])
         @instance.stub!(:cloud_instance).and_return(@cloud_instance)
         @environment = mock_model(Environment)
         @instance.stub!(:environment).and_return(@environment)
@@ -246,8 +249,8 @@ describe Instance do
         @instance.should be_starting
       end
 
-      it "should update public_dns from cloud" do
-        @instance.should_receive(:public_dns=).with('host')
+      it "should update public_address from cloud" do
+        @instance.should_receive(:public_address=).with('host')
         @instance.configure!
       end
 
@@ -375,38 +378,36 @@ describe Instance do
         @environment = mock_model(Environment)
         @instance.stub!(:environment).and_return(@environment)
         @environment.stub!(:stopped!)
+        @environment.stub!(:stopping?).and_return(true)
+        @environment.stub!(:preserve_storage_volumes?).and_return(true)
+        @instance.current_state = 'terminating'
+        @instance.stub!(:stopped_in_cloud?).and_return(true)
       end
 
       it "should be inactive" do
-        @instance.stub!(:stopped_in_cloud?).and_return(true)
-        @instance.current_state = 'terminating'
         @instance.stopped!
         Instance.inactive.first.should eql(@instance)
         Instance.active.count.should be(0)
       end
 
       it "should call stopped! event on environment" do
-        @instance.stub!(:stopped_in_cloud?).and_return(true)
-        @instance.current_state = 'terminating'
         @environment.should_receive(:stopped!)
         @instance.stopped!
       end
 
       it "should be stopped_in_cloud if terminated in cloud" do
+        @instance.unstub(:stopped_in_cloud?)
         @cloud_instance.stub!(:state).and_return('terminated')
         @instance.should be_stopped_in_cloud
       end
 
       it "should be stopped if stopped_in_cloud" do
-        @instance.stub!(:stopped_in_cloud?).and_return(true)
-        @instance.current_state = 'terminating'
         @instance.stopped!
         @instance.should be_stopped
       end
 
       it "should be terminating if not stopped_in_cloud" do
         @instance.stub!(:stopped_in_cloud?).and_return(false)
-        @instance.current_state = 'terminating'
         @instance.stopped!
         @instance.should be_terminating
       end
@@ -415,8 +416,6 @@ describe Instance do
         instance_service = mock(InstanceService)
         instance_service.should_receive(:destroy)
         @instance.should_receive(:instance_services).and_return([instance_service])
-        @instance.stub!(:stopped_in_cloud?).and_return(true)
-        @instance.current_state = 'terminating'
         @instance.stopped!
       end
     end
@@ -502,7 +501,7 @@ describe Instance do
 
   describe "configure_agent" do
     before(:each) do
-      @instance = Factory(:instance, :current_state => 'configuring', :public_dns => 'hostname')
+      @instance = Factory(:instance, :current_state => 'configuring', :public_address => 'hostname')
     end
 
     it "should move to verifying state if agent is running" do
@@ -532,7 +531,7 @@ describe Instance do
 
   describe "generate_server_cert" do
     before(:each) do
-      @instance = Factory(:instance, :current_state => 'configuring', :public_dns => 'hostname')
+      @instance = Factory(:instance, :current_state => 'configuring', :public_address => 'hostname')
     end
 
     it "should generate a cert" do
@@ -540,8 +539,8 @@ describe Instance do
       @instance.send(:generate_server_cert)
     end
 
-    it "should not generate a cert if the public_dns is not set on the instance" do
-      @instance.public_dns = nil
+    it "should not generate a cert if the public_address is not set on the instance" do
+      @instance.public_address = nil
       Certificate.should_not_receive(:generate_server_certificate)
       @instance.send(:generate_server_cert)
     end
@@ -625,104 +624,6 @@ describe Instance do
 
   end
 
-
-=begin
-  describe "configure_services" do
-    before(:each) do
-      @instance = Factory(:instance)
-      @instance.current_state = 'configuring_services'
-      @instance.stub!(:verify_services!)
-      @logger = mock(Object)
-      @instance.stub!(:logger).and_return(@logger)
-      @instance_service = Factory(:instance_service)
-      @instance_service.stub!(:configure)
-      @instance.stub!(:instance_services).and_return([@instance_service])
-    end
-
-    it "should configure each instance_service" do
-      @instance_service.should_receive(:configure)
-      @instance.configure_services
-    end
-
-    it "should verify_services! after configuring services if all instance_services are :configured" do
-      @instance_service.should_receive(:configured?).and_return(true)
-      @instance.should_receive(:verify_services!)
-      @instance.configure_services
-    end
-
-    it "should not verify_services! after configuring services if all instance_services are not :configured" do
-      @instance_service.should_receive(:configured?).and_return(false)
-      @instance.should_not_receive(:verify_services!)
-      @instance.configure_services
-    end
-
-    it "should configure_failed! if it has been stuck too long even when no configure raises" do
-      @instance_service.should_receive(:configured?).and_return(false)
-      @instance.should_receive(:stuck_in_state_for_too_long?).and_return(true)
-      @instance.should_receive(:configure_failed!)
-      @instance.configure_services
-    end
-
-    it "should log any agent client errors" do
-      error = AgentClient::RequestFailedError.new("test error")
-      @instance_service.should_receive(:configure).and_raise(error)
-      @logger.should_receive(:error).at_least(:once)
-      @instance.configure_services
-    end
-  end
-
-
-
-
-  describe "verify_services" do
-    before(:each) do
-      @instance = Factory(:instance)
-      @instance.current_state = 'verifying_services'
-      @instance.stub!(:run!)
-      @logger = mock(Object)
-      @instance.stub!(:logger).and_return(@logger)
-    end
-
-    it "should verify each instance_service" do
-      instance_service = Factory.build(:instance_service)
-      instance_service.should_receive(:verify)
-      @instance.stub!(:instance_services).and_return([instance_service])
-      @instance.verify_services
-    end
-
-    it "should run! after verifying services" do
-      @instance.should_receive(:run!)
-      @instance.verify_services
-    end
-
-    it "should not run if verify returns false" do
-      instance_service = Factory.build(:instance_service)
-      instance_service.should_receive(:verify).and_return(false)
-      @instance.stub!(:instance_services).and_return([instance_service])
-      @instance.should_not_receive(:run!)
-      @instance.verify_services
-    end
-
-    it "should configure_failed! if it has been stuck too long even when no verify raises" do
-      instance_service = Factory.build(:instance_service)
-      instance_service.should_receive(:verify).and_return(false)
-      @instance.stub!(:instance_services).and_return([instance_service])
-      @instance.should_receive(:stuck_in_state_for_too_long?).and_return(true)
-      @instance.should_receive(:configure_failed!)
-      @instance.verify_services
-    end
-
-    it "should log any agent client errors" do
-      error = AgentClient::RequestFailedError.new("test error")
-      instance_service = Factory(:instance_service)
-      instance_service.should_receive(:verify).and_raise(error)
-      @instance.stub!(:instance_services).and_return([instance_service])
-      @logger.should_receive(:error).at_least(:once)
-      @instance.verify_services
-    end
-  end
-=end
-
   describe "reachable?" do
 
     before(:each) do
@@ -802,5 +703,16 @@ describe Instance do
       @instance.should_receive(:start_failed!)
       @instance.attach_volume
     end
+  end
+
+  describe 'name' do
+    it "should return the image name along with the number" do
+      instance = Instance.new(:number => 77)
+      image = mock(Image)
+      image.should_receive(:name).and_return("The Image")
+      instance.should_receive(:image).and_return(image)
+      instance.name.should == "The Image #77"
+    end
+    
   end
 end

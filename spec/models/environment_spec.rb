@@ -89,7 +89,7 @@ describe Environment do
         @environment_image.should_receive(:start!)
         @environment.start!
       end
-      
+
     end
   end
 
@@ -157,6 +157,21 @@ describe Environment do
       instance = Instance.new
       @environment.stub_chain(:instances, :active).and_return([instance])
       instance.should_receive(:stop!)
+      @environment.stop!
+    end
+
+    it "should destroy the storage volumes if environment is not marked to preserve" do
+      @environment.should_receive(:preserve_storage_volumes?).and_return(false)
+      storage_volume = mock(StorageVolume)
+      storage_volume.should_receive(:destroy)
+      @environment.should_receive(:storage_volumes).and_return([storage_volume])
+      @environment.stop!
+    end
+
+      
+    it "should not destroy the storage volumes if environment is marked to preserve" do
+      @environment.should_receive(:preserve_storage_volumes?).and_return(true)
+      @environment.should_not_receive(:storage_volumes)
       @environment.stop!
     end
   end
@@ -241,6 +256,64 @@ describe Environment do
           @environment.images.should =~ [@image, @other_image]
         end
       end
+    end
+  end
+
+  context "deployment_base_url" do
+    before(:each) do
+      @environment = Factory(:environment)
+    end
+
+    it "should try mod_cluster first" do
+      @environment.should_receive(:first_service_base_url).with('mod_cluster').and_return('mod_cluster')
+      @environment.deployment_base_url.should == 'mod_cluster'
+    end
+
+    it "should try jboss_as second" do
+      @environment.should_receive(:first_service_base_url).with('mod_cluster').and_return(nil)
+      @environment.should_receive(:first_service_base_url).with('jboss_as').and_return('jboss_as')
+      @environment.deployment_base_url.should == 'jboss_as'
+    end
+
+    it "should return nil if no mod_cluster or jboss_as" do
+      @environment.should_receive(:first_service_base_url).with('mod_cluster').and_return(nil)
+      @environment.should_receive(:first_service_base_url).with('jboss_as').and_return(nil)
+      @environment.deployment_base_url.should be_nil
+    end
+  end
+
+  context "first_service_base_url" do
+    before(:each) do
+      @environment = Factory(:environment)
+      @environment.stub!(:instance_services).and_return(InstanceService)
+      InstanceService.stub!(:for_service).and_return([])
+      @service = Factory(:service)
+      Service.stub!(:find_by_name).and_return(@service)
+    end
+
+    it "should lookup the service by name" do
+      Service.should_receive(:find_by_name).with('service_name').and_return(@service)
+      @environment.send(:first_service_base_url, 'service_name')
+    end
+
+    it "should lookup instance services for service" do
+      @environment.should_receive(:instance_services).and_return(InstanceService)
+      InstanceService.should_receive(:for_service)
+      @environment.send(:first_service_base_url, 'service_name')
+    end
+
+    it "should return nil if no instance services" do
+      InstanceService.should_receive(:for_service).and_return([])
+      @environment.send(:first_service_base_url, 'service_name').should be_nil
+    end
+
+    it "should return agent service's url_for_instance if instance_service found" do
+      instance_service = Factory(:instance_service)
+      InstanceService.should_receive(:for_service).and_return([instance_service])
+      agent_service = mock('agent_service')
+      instance_service.should_receive(:agent_service).and_return(agent_service)
+      agent_service.should_receive(:url_for_instance).and_return('url_for_instance')
+      @environment.send(:first_service_base_url, 'service_name').should == 'url_for_instance'
     end
   end
 

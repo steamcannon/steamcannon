@@ -1,12 +1,16 @@
-%h2
-  Account
+#show_user
+  .page_header
+    .actions
+      = link_to('Edit', edit_account_path)
+    %h1
+      Account
+    %h2 
+      = @user.email
 
-%p
-  %b Email:
-  &= @user.email
-%p
-  %b Cloud username:
-  &= @user.cloud_username
-
-%p
-  = link_to('Edit', edit_account_path)
+  %p
+    %b Email:
+    &= @user.email
+  %p
+    %b Cloud username:
+    &= @user.cloud_username
+  

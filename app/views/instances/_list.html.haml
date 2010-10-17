@@ -1,8 +1,8 @@
-#environment_images_container
+#environment_instances_container.tabular
   .box_header
     %h2
       = header_text
-  #environment_images_header
+  .header
     .name
       Name
     .image_id
@@ -15,12 +15,14 @@
       Status
     .image_health
       Health
+    .actions
+      Actions
   - instances.each do |instance|
-    - div_for(instance, :class=>'image_row') do
+    - div_for(instance, :class=>'row') do
       = render :partial => 'instances/row', :locals => { :instance => instance }
     - javascript_tag do
       ="monitor_instance('#{status_environment_instance_path(instance.environment.id, instance.id)}', '##{dom_id(instance)}');"
     - if instances.empty?
-      .image_row
+      .row
         .name
           This environment has no running instances.

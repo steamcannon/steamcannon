@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101007194055) do
+ActiveRecord::Schema.define(:version => 20101014215254) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -78,7 +78,8 @@ ActiveRecord::Schema.define(:version => 20101007194055) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
-    t.string   "current_state",       :default => "stopped"
+    t.string   "current_state",            :default => "stopped"
+    t.boolean  "preserve_storage_volumes", :default => true
   end
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
@@ -97,13 +98,8 @@ ActiveRecord::Schema.define(:version => 20101007194055) do
     t.datetime "updated_at"
     t.string   "storage_volume_capacity"
     t.string   "storage_volume_device"
-  end
-
-  create_table "instance_deployments", :force => true do |t|
-    t.integer  "instance_id"
-    t.integer  "deployment_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string   "description"
+    t.boolean  "can_scale_out",           :default => false
   end
 
   create_table "instance_services", :force => true do |t|
@@ -113,16 +109,16 @@ ActiveRecord::Schema.define(:version => 20101007194055) do
     t.datetime "updated_at"
     t.string   "current_state"
     t.datetime "state_change_timestamp"
+    t.text     "metadata"
   end
 
   create_table "instances", :force => true do |t|
     t.integer  "environment_id"
     t.integer  "image_id"
-    t.string   "name"
     t.string   "cloud_id"
     t.string   "hardware_profile"
     t.string   "current_state"
-    t.string   "public_dns"
+    t.string   "public_address"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "started_at"
@@ -130,6 +126,8 @@ ActiveRecord::Schema.define(:version => 20101007194055) do
     t.datetime "stopped_at"
     t.integer  "stopped_by"
     t.datetime "state_change_timestamp"
+    t.string   "private_address"
+    t.integer  "number"
   end
 
   add_index "instances", ["current_state"], :name => "index_instances_on_current_state"
@@ -174,6 +172,7 @@ ActiveRecord::Schema.define(:version => 20101007194055) do
     t.integer  "instance_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "pending_destroy"
   end
 
   create_table "users", :force => true do |t|

@@ -1,1 +1,10 @@
-= render :partial => "list", :locals => { :artifacts => @artifacts, :header_text => "Artifacts", :empty_text => "You have no artifacts.", :action_link => (link_to 'Add Artifact', new_artifact_path, :class => "actionlink") }
+#artifacts_index
+  .left_column
+    .page_header
+      .actions
+        = link_to '+ Add Artifact', new_artifact_path
+      %h1 Artifacts
+    = render :partial => "list", :locals => { :artifacts => @artifacts, :empty_text => "You have no artifacts." }
+  .right_column
+    = render :partial=>'index_help'
+

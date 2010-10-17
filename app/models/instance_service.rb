@@ -52,6 +52,16 @@ class InstanceService < ActiveRecord::Base
     transitions :to => :running, :from => :verifying
   end
 
+  def metadata=(metadata)
+    super((metadata || { }).to_json)
+  end
+
+  def metadata
+    JSON.parse(super || "{}", :symbolize_names => true)
+  rescue JSON::ParserError => ex
+    { }
+  end
+  
   def name
     service.name
   end

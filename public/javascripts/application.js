@@ -39,10 +39,16 @@ jQuery.fn.pulsate = function() {
     this.pulse({opacity: [1,.2]}, 500, 10);
 };
 
+function handle_js_popup_dialogs() {
+    $('.js-popup_dialog').each(function(idx, el) {
+        $(el).jqm({trigger: $(el).attr('rel'), overlay:0})
+    })
+}
+
 jQuery(document).ready(function($) {
     $('#environment_form #environment_platform_version_id').change(function() {
-        $('.platform_version_block').hide()
-        $('#platform_version_' + this.value).show()
+        $('.content_row').hide()
+        $('.row_for_platform_version_' + this.value).show()
     })
 
     //show the correct data on load
@@ -53,11 +59,9 @@ jQuery(document).ready(function($) {
      * will still submit form fields within hidden content.
      */
     $('body.environments_controller form').submit(function() {
-        $('.platform_version_block:hidden').remove()
+        $('.content_row:hidden').remove()
     })
-})
 
-jQuery(document).ready(function($) {
     $('body.users_controller form .js-cloud_password_toggle').click(function() {
         $("#cloud_password_field").slideToggle();
         $("#cloud_password_prompt").slideToggle();
@@ -70,6 +74,8 @@ jQuery(document).ready(function($) {
     $('#environment_images_container .image_row .start_another_dialog .close a').click(function() {
         $($(this).closest('.start_another_dialog')).hide();
     })
+
+    handle_js_popup_dialogs()
 })
 
 
@@ -112,26 +118,23 @@ function monitor_deployment(url, selector) {
   });
 }
 
-function update_artifact_status(url, selector) {
-  $.post(url, function(data) {
-    deployments = "<ul class='deployments'>";
-    $.each(data.deployments, function(index, value){ if (value != undeployed) {deployments += "<li>" + value + "</li>"}; });
-    deployments += "</ul>";
-    $(selector + ' ul.deployments').replaceWith(deployments);
-    $(selector + ' .status').text(data.message)
-  }, "json");
-  setTimeout("update_artifact_status('" + url + "', '" + selector + "')", 30000);
+function update_content(url, selector) {
+  $.get(url, function(data) {
+    $(selector).html($(data).find(selector).html());
+  });
+  setTimeout("update_content('" + url + "', '" + selector + "')", 30000);
 }
 
-function monitor_artifact(url, selector) {
-  jQuery(document).ready(function($) {
-    update_artifact_status(url, selector);
+function monitor_content(url, selector) {
+  $(function () {
+    update_content(url, selector);
   });
 }
 
 function update_instance_status(url, selector) {
   $.post(url, function(data) {
-    $(selector).html(data.html);
+      $(selector).replaceWith(data.html);
+      handle_js_popup_dialogs()
   }, "json");
   setTimeout("update_instance_status('" + url + "', '" + selector + "')", 30000);
 }
@@ -150,9 +153,11 @@ function tail_log(url, num_lines, offset, tailing) {
       logs.html('');
     }
     if (data.lines.length > 0) {
-      logs.html(logs.html() + "<br />" + data.lines.join("<br />"));
+      //logs.html(logs.html() + "<br />" + data.lines.join("<br />"));
+      //logs.html(logs.html() + "\n" + data.lines.join("\n"));
+      logs.html(logs.html() + data.lines.join(""));
       if (tailing) {
-        $("html, body").animate({scrollTop: $(document).height()}, 10);
+        logs.animate({scrollTop: logs.attr("scrollHeight")}, 10);
       }
     }
     if (tailing || data.lines.length > 0) {
@@ -160,3 +165,5 @@ function tail_log(url, num_lines, offset, tailing) {
     }
   }, "json");
 }
+
+

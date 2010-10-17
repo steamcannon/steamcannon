@@ -3,37 +3,31 @@
   %head
     %meta(http-equiv="content-type" content="text/html; charset=UTF-8")
     %title #{controller.controller_name}: #{controller.action_name}
-    = stylesheet_link_tag 'compiled/screen.css', :media => 'screen, projection'
-    = stylesheet_link_tag 'compiled/print.css', :media => 'print'
-    /[if IE]
-      = stylesheet_link_tag 'compiled/ie.css', :media => 'screen, projection'
+    = stylesheet_link_tag 'compiled/grid.css', :media => 'screen, projection'
+    = stylesheet_link_tag 'compiled/text.css', :media => 'screen, print'
+    = stylesheet_link_tag 'compiled/steamcannon.css', :media => 'screen, print'
 
     = stylesheet_link_tag 'jquery.ui-1.8.1/jquery-ui-1.8.1.custom.css'
 
     = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js'
     = javascript_include_tag 'jquery.pulse.js'
     = javascript_include_tag 'jquery.sparkline.min.js'
+    = javascript_include_tag 'jquery.modal.js'
     = javascript_include_tag 'application'
 
-  %body.main-body{:class => dom_class_for_body}
-    #header
-      =render :partial=>'/layouts/header'
+  %body.ninesixty{:class => dom_class_for_body}
+
+    = render :partial=>'/layouts/top_links'
+    = render :partial=>'/layouts/header'
+    = render :partial=>'/layouts/navigation'
+
     #content
-      #main
-        #container_grey
-          #main-contentwrapper
-            #menu
-              - if current_user
-            .formcontainer
-              - if flash[:notice]
-                %p.callout_success= flash[:notice]
-              - if flash[:error]
-                %p.callout_fail= flash[:error]
+      .formcontainer
+        - if flash[:notice]
+          %p.callout_success= flash[:notice]
+        - if flash[:error]
+          %p.callout_fail= flash[:error]
+        = yield
+    .clearfix
 
-              = yield
-
-          #one-col-corners
-    .footer
-      %p
-        Powered by
-        %a(href="http://github.com/steamcannon/steamcannon") SteamCannon
+    = render :partial=>'/layouts/footer'

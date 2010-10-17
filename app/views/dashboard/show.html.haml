@@ -1,34 +1,18 @@
 
 #dashboard
-  #artifacts
-    %h2 Artifacts
-    - for artifact in @artifacts
-      - div_for(artifact) do
-        .status
-          - unless artifact.deployments.deployed.empty? 
-            Running
-        %h3
-          = link_to artifact.name, artifact
-        %ul.deployments
-          - for deployment in artifact.deployments.deployed
-            %li
-              = deployment.environment.name
-              = "(#{deployment.current_state})"
-        - javascript_tag do
-          ="monitor_artifact('#{status_artifact_path(artifact.id)}', '##{dom_id(artifact)}');"
-    .actions
-      = link_to 'Add artifact', new_artifact_url 
+  .left_column
+    %h2 
+      = link_to 'Artifacts', artifacts_path
+    = render :partial=>'artifacts'
+    .links
+      = link_to '+ Create a new artifact', new_artifact_path
           
-  #environments
-    %h2 Environments
-    - for environment in @environments
-      - div_for(environment, :class=>'environment') do
-        = link_to environment.name, environment
-        %span.environment_status
-          - if environment.running?
-            [Running]
-          - else
-            &nbsp;
-        - javascript_tag do
-          ="monitor_environment('#{status_environment_path(environment.id)}', '##{dom_id(environment)}');"
-    
+  .center_column
+    %h2 
+      = link_to 'Environments', environments_path
+    = render :partial=>'environments'
+    .links
+      = link_to '+ Create a new environment', new_environment_path
+
+  .right_column
+    = render :partial=>'dashboard_help'

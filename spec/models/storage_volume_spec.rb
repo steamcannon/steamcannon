@@ -5,18 +5,18 @@ describe StorageVolume do
   it { should belong_to :instance }
   it { should have_one :image }
   it { should have_one :environment }
-  
+
   before(:each) do
     @storage_volume = Factory(:storage_volume)
     @cloud = mock('cloud')
     @storage_volume.stub!(:cloud).and_return(@cloud)
   end
-  
+
   describe 'prepare' do
     before(:each) do
       @instance = Factory(:instance)
     end
-    
+
     it "should associate the instance" do
       @storage_volume.should_receive(:update_attribute).with(:instance, @instance)
       @storage_volume.stub!(:create_in_cloud)
@@ -29,7 +29,7 @@ describe StorageVolume do
       @storage_volume.should_receive(:create_in_cloud)
       @storage_volume.prepare(@instance)
     end
-    
+
   end
 
   describe "cloud_volume_exists?" do
@@ -43,7 +43,7 @@ describe StorageVolume do
       @storage_volume.cloud_volume_exists?.should_not be_true
     end
   end
-  
+
   describe 'cloud_volume_is_available?' do
     it "should be true if the cloud_volume exists with a status of 'available'" do
       cloud_volume = mock('cloud_volume')
@@ -118,7 +118,7 @@ describe StorageVolume do
       @image.stub!(:storage_volume_device).and_return('/dev/sdh')
       @storage_volume.stub!(:image).and_return(@image)
     end
-    
+
     it "should attach" do
       @cloud_volume.should_receive(:attach!).with(:instance_id => 'i-1234', :device => '/dev/sdh')
       @storage_volume.attach
@@ -138,7 +138,7 @@ describe StorageVolume do
     end
   end
 
-    
+
   describe 'cloud_volume_is_attached?' do
     before(:each) do
       @cloud_volume = mock('cloud_volume')
@@ -146,7 +146,7 @@ describe StorageVolume do
       @instance = mock(Instance, :cloud_id => 'i-1234')
       @storage_volume.stub!(:instance).and_return(@instance)
     end
-    
+
     it "should be true if the cloud_volume exists, is in use, and is attached to the instance" do
       @cloud_volume.should_receive(:state).and_return('IN-USE')
       @cloud_volume.should_receive(:instance_id).and_return('i-1234')
@@ -174,12 +174,54 @@ describe StorageVolume do
   end
 
 
-  it "should destroy from deltacloud on destroy" do
-    cloud_volume = mock('cloud_volume')
-    @storage_volume.stub!(:cloud_volume).and_return(cloud_volume)
-    cloud_volume.should_receive(:destroy!)
-    @storage_volume.stub!(:cloud_volume_exists?).and_return(true)
-    @storage_volume.destroy
+  context 'destroy' do
+    before(:each) do
+      @cloud_volume = mock('cloud_volume')
+    end
+
+    describe '#destroy' do
+      it "should set the pending_destroy flag" do
+        @storage_volume.destroy
+        @storage_volume.reload.should be_pending_destroy
+      end
+    end
+
+    describe "#real_destroy" do
+      context 'when the cloud volume exists' do
+        before(:each) do
+          @storage_volume.stub!(:cloud_volume_exists?).and_return(true)
+        end
+
+        it "should destroy from deltacloud on destroy if the cloud volume is available" do
+          @storage_volume.stub!(:cloud_volume_is_available?).and_return(true)
+          @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
+          @cloud_volume.should_receive(:destroy!)
+          @storage_volume.real_destroy
+        end
+
+        it "should not destroy the cloud volume if it is not available" do
+          @storage_volume.stub!(:cloud_volume_is_available?).and_return(false)
+          @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
+          @cloud_volume.should_not_receive(:destroy!)
+          @storage_volume.real_destroy
+        end
+
+        it "should delete the storage_volume if the cloud volume is in a state to be deleted" do
+          @storage_volume.stub!(:cloud_volume_is_available?).and_return(true)
+          @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
+          @cloud_volume.should_receive(:destroy!)
+          @storage_volume.real_destroy
+          lambda { @storage_volume.reload }.should raise_error(ActiveRecord::RecordNotFound)
+        end
+
+        it "should not delete the storage_volume if the cloud volume is not in a state to be deleted" do
+          @storage_volume.stub!(:cloud_volume_is_available?).and_return(false)
+          @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
+          @cloud_volume.should_not_receive(:destroy!)
+          @storage_volume.real_destroy
+          lambda { @storage_volume.reload }.should_not raise_error
+        end
+      end
+    end
   end
-  
 end

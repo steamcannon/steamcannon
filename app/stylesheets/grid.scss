@@ -1,0 +1,153 @@
+/* 960 Grid System ~ Core CSS.
+ * Learn more ~ http://960.gs/
+ * *
+ * Licensed under GPL and MIT. */
+
+@import "compass/utilities/general/clearfix";
+@import "compass/reset";
+@import "960/grid";
+
+@include global-reset;
+
+$ninesixty-columns: 24;
+
+
+body.ninesixty {
+
+  #top-links {
+    @include grid-container;
+  }
+
+  #header {
+    @include grid-container;
+    @include clearfix;
+    #logos {
+      @include grid(12);
+    }
+    #user-header {
+      @include grid-prefix(4);
+      @include grid(8);
+    }
+  }
+
+  #main-navigation {
+    @include grid-container;
+  }
+
+  #content {
+    @include grid-container;
+    @include clearfix;
+  }
+
+  #footer {
+    @include grid-container;
+  }
+}
+
+#environment_form {
+  #environment_images_container {
+    @include grid(16);
+    @include grid-suffix(8);
+    .row {
+      margin-bottom: 1ex;
+    }
+    .name {
+      @include grid(8);
+      @include alpha();
+    }
+    .hardware_profile {
+      @include grid(4);
+    }
+    .num_instances {
+      @include grid(4);
+      @include omega();
+    }
+  }
+}
+
+@mixin two-column-wide-left {
+  .left_column {
+    @include grid(14);
+    @include grid-suffix(2);
+    @include alpha;
+  }
+  .right_column {
+    @include grid(8);
+    @include omega;
+  }
+}
+
+@mixin three-column-narrow-right {
+  .left_column {
+    @include grid(9);
+    @include alpha();
+  }
+  .center_column {
+    @include grid(9);
+    @include grid-suffix(1);
+  }
+  .right_column {
+    @include grid(5);
+    @include omega();
+  }
+
+}
+
+@mixin three-column-narrow-left {
+  .left_column {
+    @include grid(5);
+    @include grid-suffix(1);
+    @include alpha();
+  }
+  .center_column {
+    @include grid(9);
+  }
+  .right_column {
+    @include grid(9);
+    @include omega();
+  }
+
+}
+
+#dashboard {
+  @include three-column-narrow-right;
+}
+
+
+#show_environment {
+  @include two-column-wide-left;
+}
+
+#new_environment, #edit_environment {
+  @include two-column-wide-left;
+}
+
+#show_artifact {
+  @include three-column-narrow-left;
+}
+
+#edit_user {
+  @include two-column-wide-left;
+}
+
+#artifacts_index {
+  @include two-column-wide-left;
+}
+
+#edit_user {
+  @include two-column-wide-left;
+}
+
+#edit_user {
+  @include two-column-wide-left;
+}
+
+#environments_index {
+  @include two-column-wide-left;
+}
+
+#cloud_instances_index {
+  @include two-column-wide-left;
+}
+
+

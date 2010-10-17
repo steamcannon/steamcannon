@@ -26,7 +26,7 @@ class Environment < ActiveRecord::Base
   has_many :storage_volumes, :through => :environment_images
   has_many :instances
   has_many :instance_services, :through => :instances
-  
+
   belongs_to :platform_version
   belongs_to :user
   attr_protected :user_id
@@ -46,7 +46,7 @@ class Environment < ActiveRecord::Base
   end
 
   aasm_event :run do
-    transitions :to => :running, :from => :starting, :guard => :running_all_instances?
+    transitions :to => :running, :from => [:starting, :running], :guard => :running_all_instances?
   end
 
   aasm_event :stop do
@@ -75,6 +75,10 @@ class Environment < ActiveRecord::Base
     aasm_events_for_current_state.include?(:stop)
   end
 
+  def deployment_base_url
+    first_service_base_url('mod_cluster') or first_service_base_url('jboss_as')
+  end
+
   protected
 
   def start_environment
@@ -88,6 +92,7 @@ class Environment < ActiveRecord::Base
   def stop_environment
     deployments.deployed.each(&:undeploy!)
     instances.active.each(&:stop!)
+    storage_volumes.each(&:destroy) unless preserve_storage_volumes?
   end
 
   def running_all_instances?
@@ -110,5 +115,14 @@ class Environment < ActiveRecord::Base
 
   def move_instance_services_to_configuring
     instance_services.pending.each(&:configure!)
+  end
+
+  def first_service_base_url(service_name)
+    service = Service.find_by_name(service_name)
+    services = instance_services.for_service(service)
+    unless services.empty?
+      instance_service = services.first
+      instance_service.agent_service.url_for_instance(instance_service.instance)
+    end
   end
 end

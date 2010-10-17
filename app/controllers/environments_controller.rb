@@ -18,6 +18,7 @@
 
 
 class EnvironmentsController < ApplicationController
+
   navigation :environments
   before_filter :require_user
 
@@ -36,6 +37,12 @@ class EnvironmentsController < ApplicationController
   # GET /environments/1.xml
   def show
     @environment = current_user.environments.find(params[:id])
+
+    all_deployments = @environment.deployments.deployed
+    @deployments = {}
+    ArtifactVersion::TYPES.each do |artifact_type|
+      @deployments[ artifact_type ] = all_deployments.select{|e| e.artifact_version.type_key == artifact_type }
+    end
 
     respond_to do |format|
       format.html # show.html.erb
@@ -109,7 +116,7 @@ class EnvironmentsController < ApplicationController
     @environment = current_user.environments.find(params[:id])
     @environment.start!
     respond_to do |format|
-      format.html { redirect_back_or_default(environments_url, :notice => 'Environment was successfully started.') }
+      format.html { redirect_back_or_default(environments_url, :notice => 'Environment is starting.') }
       format.xml  { head :ok }
     end
   end
@@ -118,13 +125,14 @@ class EnvironmentsController < ApplicationController
   # POST /environments/1/stop.xml
   def stop
     @environment = current_user.environments.find(params[:id])
+    @environment.preserve_storage_volumes = params[:preserve_storage_volumes]
     @environment.stop!
     respond_to do |format|
-      format.html { redirect_back_or_default(environments_url, :notice => 'Environment was successfully stopped.') }
+      format.html { redirect_back_or_default(environments_url, :notice => 'Environment is stopping.') }
       format.xml  { head :ok }
     end
   end
-  
+
   # POST /environments/1/clone
   # POST /environments/1/clone.xml
   def clone
@@ -143,7 +151,7 @@ class EnvironmentsController < ApplicationController
       end
     end
   end
-  
+
   # POST /environments/:id/status.json
   def status
     @environment = current_user.environments.find(params[:id])
@@ -151,12 +159,12 @@ class EnvironmentsController < ApplicationController
       respond_to do |format|
         format.js { render(generate_json_response(:ok, :message=>@environment.current_state.titleize)) }
       end
-    else      
+    else
       respond_to do |format|
         format.js { render(generate_json_response(:error, :message=>"Cannot find requested environment")) }
       end
     end
   end
-  
-  
+
+
 end

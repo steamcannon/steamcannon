@@ -105,10 +105,10 @@ class Instance < ActiveRecord::Base
     aasm_events_for_current_state.include?(:stop)
   end
 
-  def self.deploy!(image, environment, name, hardware_profile)
+  def self.deploy!(image, environment, number, hardware_profile)
     instance = Instance.new(:image_id => image.id,
                             :environment_id => environment.id,
-                            :name => name,
+                            :number => number,
                             :hardware_profile => hardware_profile)
     instance.audit_action :started
     instance.save!
@@ -116,6 +116,10 @@ class Instance < ActiveRecord::Base
     instance
   end
 
+  def name
+    "#{image.name} ##{number}"
+  end
+  
   def cloud
     user.cloud
   end
@@ -188,8 +192,7 @@ class Instance < ActiveRecord::Base
   def start_instance
     cloud_instance = cloud.launch(image.cloud_id,
                                   instance_launch_options)
-    self.update_attributes(:cloud_id => cloud_instance.id,
-                           :public_dns => cloud_instance.public_addresses.first)
+    update_addresses(cloud_instance, :cloud_id => cloud_instance.id)
   end
 
   def instance_launch_options
@@ -210,8 +213,8 @@ class Instance < ActiveRecord::Base
   end
 
   def running_in_cloud?
-    update_attributes(:public_dns => cloud_instance.public_addresses.first)
-    cloud_instance.state.downcase == 'running' and !public_dns.blank?
+    update_addresses
+    cloud_instance.state.downcase == 'running' and !public_address.blank?
   end
 
   def has_storage_volume_and_is_running_in_cloud?
@@ -219,7 +222,7 @@ class Instance < ActiveRecord::Base
   end
 
   def configure_instance
-    update_attributes(:public_dns => cloud_instance.public_addresses.first)
+    update_addresses
   end
 
   def after_run_instance
@@ -246,7 +249,7 @@ class Instance < ActiveRecord::Base
 
   def after_stopped_instance
     instance_services.each(&:destroy)
-    environment.stopped!
+    environment.stopped! if environment.stopping?
   end
 
   def error_raised(error)
@@ -260,9 +263,16 @@ class Instance < ActiveRecord::Base
   end
 
   def generate_server_cert
-    unless public_dns.blank? or server_certificate
+    unless public_address.blank? or server_certificate
       self.server_certificate = Certificate.generate_server_certificate(self)
     end
   end
 
+  def update_addresses(cloud_instance = self.cloud_instance,
+                       additional_fields = {})
+    update_attributes({
+                        :public_address => cloud_instance.public_addresses.first,
+                        :private_address => cloud_instance.private_addresses.first
+                      }.merge(additional_fields))
+  end
 end

@@ -48,8 +48,12 @@ module Cloud
 
     def running_instances
       return [] if access_key.blank? or secret_access_key.blank?
-      ec2 = Aws::Ec2.new(access_key, secret_access_key, :multi_thread => true)
-      all = ec2.describe_instances.map { |i| i.merge(:id => i[:aws_instance_id]) }
+      ec2 = Aws::Ec2.new(access_key, secret_access_key)
+      all = ec2.describe_instances.map do |instance|
+        instance.merge(:id => instance[:aws_instance_id],
+                       :image => instance[:aws_image_id],
+                       :address => instance[:dns_name])
+      end
       all.select { |i| i[:aws_state] == 'running' }
     rescue Aws::AwsError => e
       # If we encounter any Amazon errors, log them and pretend we have no
@@ -100,10 +104,10 @@ module Cloud
     end
 
     def multicast_bucket
-      bucket_suffix = Digest::SHA1.hexdigest(access_key)
+      bucket_suffix = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
       bucket_name = "SteamCannonEnvironments_#{bucket_suffix}"
 
-      s3 = Aws::S3.new(access_key, secret_access_key, :multi_thread => true)
+      s3 = Aws::S3.new(access_key, secret_access_key)
 
       # Ensure our bucket exists and has correct permissions
       bucket = Aws::S3::Bucket.create(s3, bucket_name, true, 'public-read')

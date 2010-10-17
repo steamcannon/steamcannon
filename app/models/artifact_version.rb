@@ -18,6 +18,21 @@
 
 
 class ArtifactVersion < ActiveRecord::Base
+
+  TYPES = [
+    :ear, :war, :jar, :rails, :rack, :datasource, :other
+  ]
+
+  TYPE_DESCRIPTIONS = {
+    :ear => 'Java Enterprise Application Archive',
+    :war => 'Java Web Application Archive',
+    :jar => 'Java Archive',
+    :rails => 'Rails Archive',
+    :rack => 'Rack Archive',
+    :datasource => 'Datasource',
+    :other => 'Other',
+  }
+
   belongs_to :artifact
   has_many :deployments
   has_attached_file(:archive,
@@ -45,6 +60,33 @@ class ArtifactVersion < ActiveRecord::Base
 
   def deployment_file
     archive.to_file
+  end
+
+  def type_key
+    case ( archive_file_name )
+      when /\.ear$/
+        :ear
+      when /\.war$/
+        :war
+      when /\.jar$/
+        :jar
+      when /\.rails$/
+        :rails
+      when /\.rack$/
+        :rack
+      when /\-ds.xml$/
+        :datasource
+      else
+        :other
+    end
+  end
+
+  def type_description
+    TYPE_DESCRIPTIONS[type_key]
+  end
+
+  def application?
+    [ :ear, :war, :rails, :rack ].include?(type_key)
   end
 
 end

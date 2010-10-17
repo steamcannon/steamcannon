@@ -102,8 +102,7 @@ describe Cloud::Storage::Ec2Storage do
   describe "public_url" do
     before(:each) do
       @sig = S3::Signature
-      @bucket = mock('bucket', :name => 'name')
-      @ec2.stub!(:bucket).and_return(@bucket)
+      @ec2.stub!(:bucket_name).and_return('name')
     end
 
     it "should generate url for cloud credentials" do

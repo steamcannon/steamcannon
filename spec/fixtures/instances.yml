@@ -6,7 +6,7 @@ one:
   cloud_id: MyString
   hardware_profile: MyString
   status: MyString
-  public_dns: MyString
+  public_address: MyString
 
 two:
   environment: 
@@ -14,4 +14,4 @@ two:
   cloud_id: MyString
   hardware_profile: MyString
   status: MyString
-  public_dns: MyString
+  public_address: MyString

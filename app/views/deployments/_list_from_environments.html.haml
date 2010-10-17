@@ -1,27 +1,28 @@
-#deployments_container
-  %h2
-    = header_text
-  #deployments_header
-    .deployment_artifact
+#deployments_container.tabular
+  .header
+    .artifact
       Artifact
-    /.deployment_chart
-    /  Activity
-    .deployment_environment
+    /.chart
+    /  Chart
+    .environment
       Version
-    .deployment_status
+    .status
       Status
-    /.deployment_health
+    /.health
     /  Health
+    .actions
+      Actions
+    /.health
   - deployments.each do |deployment|
-    - div_for(deployment, :class=>'deployment_row') do
-      .deployment_artifact
+    - div_for(deployment, :class=>'row') do
+      .artifact
         = link_to deployment.artifact.name, artifact_path(deployment.artifact_version.artifact)
-      /.deployment_chart
+      /.chart
       /  %span.dynamicsparkline
       /    Loading...
-      .deployment_environment
+      .environment
         = deployment.artifact_version.version_number
-      .deployment_status
+      .status
         Deployed to:
         %ul
           - if deployment.instance_services.empty?
@@ -33,11 +34,11 @@
       - javascript_tag do
         ="monitor_deployment('#{status_deployment_path(deployment.id)}', '##{dom_id(deployment)}');"
       
-      /.deployment_health
+      /.health
       /  &nbsp;&nbsp;
       /  = image_tag 'healthy.png'
       .deployment_visit
-        = link_to 'Go To Artifact'
+        = link_to 'Go To Artifact', deployment.url
       .deployment_delete
         - if deployment.deployed?
           = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"

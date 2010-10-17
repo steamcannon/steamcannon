@@ -43,4 +43,11 @@ module EnvironmentsHelper
     current_user.cloud.hardware_profiles
   end
 
+  def stop_environment_link(environment, title = "Stop Environment")
+    trigger_id = "stop_environment_trigger_#{environment.id}"
+    accum = link_to title, '#', :id => trigger_id
+    accum << render('environments/confirm_stop', :environment => environment, :trigger => "##{trigger_id}").html_safe
+    accum
+  end
+  
 end

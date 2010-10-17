@@ -18,4 +18,13 @@
 
 
 module ArtifactVersionsHelper
+
+  def artifact_version_download_link(artifact_version)
+    archive = artifact_version.archive
+    if archive.public_url
+      link_to(artifact_version.archive_file_name, archive.public_url)
+    else
+      artifact_version.archive_file_name
+    end
+  end
 end

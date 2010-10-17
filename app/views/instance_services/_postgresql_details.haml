@@ -1,0 +1,17 @@
+.postgresql_details.jqmWindow.js-popup_dialog{style_display_none.merge(:rel => trigger)}
+  .message
+    Details for the PostgreSQL service on #{instance_service.instance.name}
+    .row
+      Admin user: #{instance_service.metadata[:admin_user][:user]}
+    .row
+      Admin password: #{instance_service.metadata[:admin_user][:password]}
+    .row
+      External address: #{instance_service.instance.public_address}
+    .row
+      Internal address: #{instance_service.instance.private_address}
+    .row
+      Port: 5432
+
+  .controls
+    %button{:class => 'jqmClose'}Close
+    

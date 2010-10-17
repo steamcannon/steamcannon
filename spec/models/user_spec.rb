@@ -134,7 +134,7 @@ describe User do
     end
 
     it "should include all users for a superuser" do
-      User.visible_to_user(@superuser).should == [@superuser, @account_user]
+      Set.new(User.visible_to_user(@superuser)).should == Set.new([@superuser, @account_user])
     end
 
     it "should only include the given user for an account_user" do

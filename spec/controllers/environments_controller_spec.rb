@@ -42,8 +42,12 @@ describe EnvironmentsController do
   end
 
   describe "GET show" do
-    it "assigns the requested environment as @environment" do
+    before(:each) do
       Environment.stub(:find).with("37").and_return(mock_environment)
+      mock_environment.stub!(:deployments).and_return(Deployment)
+    end
+
+    it "assigns the requested environment as @environment" do
       get :show, :id => "37"
       assigns[:environment].should equal(mock_environment)
     end
@@ -184,10 +188,18 @@ describe EnvironmentsController do
     it "stops the requested environment" do
       Environment.should_receive(:find).with("37").and_return(mock_environment)
       mock_environment.should_receive(:stop!)
+      mock_environment.stub!(:preserve_storage_volumes=)
       post :stop, :id => "37"
     end
+
+    it "should update the preserve_storage_volumes field" do
+      Environment.should_receive(:find).with("37").and_return(mock_environment)
+      mock_environment.should_receive(:preserve_storage_volumes=).with('1')
+      mock_environment.stub!(:stop!)
+      post :stop, :id => "37", :preserve_storage_volumes => '1'
+    end
   end
-  
+
   describe "POST status" do
     before(:each) do
       Environment.stub!(:find).with("13").and_return( mock_environment )
@@ -205,8 +217,8 @@ describe EnvironmentsController do
     end
   end
 
-  
-  
+
+
   describe "POST clone" do
     describe "with valid params" do
       before(:each) do
@@ -214,33 +226,33 @@ describe EnvironmentsController do
       end
 
       it "should clone the requested environment" do
-        clone_environment = mock_model( Environment, {:save => true, :current_state= => :stopped, :can_stop? => false} ) 
+        clone_environment = mock_model( Environment, {:save => true, :current_state= => :stopped, :can_stop? => false} )
         mock_environment.should_receive( :clone ).and_return( clone_environment )
         post :clone, :id => "37"
       end
-      
+
       it "should put the cloned environment in the stopped state" do
-        clone_environment = mock_model( Environment, {:save => true, :current_state= => :running, :can_stop? => true} ) 
+        clone_environment = mock_model( Environment, {:save => true, :current_state= => :running, :can_stop? => true} )
         mock_environment.should_receive( :clone ).and_return( clone_environment )
         clone_environment.should_receive( :stop )
         post :clone, :id => "37"
       end
 
       it "assigns a newly created environment as @environment" do
-        clone_environment = mock_model( Environment, {:save => true, :current_state= => :stopped, :can_stop? => false} ) 
+        clone_environment = mock_model( Environment, {:save => true, :current_state= => :stopped, :can_stop? => false} )
         mock_environment.should_receive( :clone ).and_return( clone_environment )
         post :clone, :id => "37"
         assigns[:environment].should equal( clone_environment )
       end
 
       it "redirects to the environment" do
-        clone_environment = mock_model( Environment, {:save => true, :current_state= => :stopped, :can_stop? => false} ) 
+        clone_environment = mock_model( Environment, {:save => true, :current_state= => :stopped, :can_stop? => false} )
         mock_environment.should_receive( :clone ).and_return( clone_environment )
         post :clone, :id => "37"
         response.should redirect_to( environment_path( clone_environment ) )
       end
     end
-    
+
     describe "with invalid params" do
       before(:each) do
         Environment.should_receive( :find ).with( "37" ).and_return( nil )

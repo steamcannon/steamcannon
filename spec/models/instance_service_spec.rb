@@ -185,12 +185,37 @@ describe InstanceService do
     end
   end
 
-  describe 'handle_pending_deployments' do
+  context "metadata" do
     before(:each) do
+      @metadata = { :x => "y" }
+    end
+    describe "metadata=" do
+      it "should convert to json to save" do
+        @instance_service.metadata = @metadata
+        @instance_service.read_attribute(:metadata).should == @metadata.to_json
+      end
+
+      it "should properly handle nil" do
+        @instance_service.metadata = nil
+        @instance_service.read_attribute(:metadata).should == { }.to_json
+      end
     end
 
-    it "should deploy any deployed deployments from the environment for the service"
+    describe "metadata" do
+      it "should convert from json on read" do
+        @instance_service.stub!(:read_attribute).and_return(@metadata.to_json)
+        @instance_service.metadata.should == @metadata
+      end
 
+      it "should properly handle nil" do
+        @instance_service.stub!(:read_attribute).and_return(nil)
+        @instance_service.metadata.should == { }
+      end
 
+      it "should properly handle malformed json" do
+        @instance_service.stub!(:read_attribute).and_return("this is junk")
+        @instance_service.metadata.should == { }
+      end
+    end
   end
 end

@@ -1,1 +1,9 @@
-= render :partial => "list", :locals => { :environments => @environments, :header_text => "Environments", :empty_text => "You have no environments.", :action_link => (link_to 'Create New Environment', new_environment_path, :class => "actionlink") }
+#environments_index
+  .left_column
+    .page_header
+      .actions 
+        = link_to '+ Create New Environment', new_environment_path
+      %h1 Environments
+    = render :partial => "list", :locals => { :environments => @environments } 
+  .right_column
+    = render :partial => 'index_help'

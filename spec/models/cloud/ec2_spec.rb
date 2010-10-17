@@ -170,13 +170,16 @@ describe Cloud::Ec2 do
       @s3::Bucket.stub(:create)
     end
 
-    it "should generate suffix from cloud username" do
-      Digest::SHA1.should_receive(:hexdigest).with('username')
+    it "should generate suffix from ca certificate" do
+      ca_certificate = Factory(:certificate)
+      Certificate.should_receive(:ca_certificate).and_return(ca_certificate)
+      ca_certificate.should_receive(:certificate).and_return('certificate')
+      Digest::SHA1.should_receive(:hexdigest).with('certificate')
       @ec2.send(:multicast_bucket)
     end
 
     it "should create a new s3 object" do
-      @s3.should_receive(:new).with('username', 'password', anything)
+      @s3.should_receive(:new).with('username', 'password')
       @ec2.send(:multicast_bucket)
     end
 

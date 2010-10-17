@@ -26,6 +26,8 @@ describe PlatformVersion do
     }
   end
 
+  it { should validate_presence_of :version_number }
+  
   it "should create a new instance given valid attributes" do
     PlatformVersion.create!(@valid_attributes)
   end
@@ -50,6 +52,14 @@ describe PlatformVersion do
     platform = Platform.new(:name => "test platform")
     platform_version = PlatformVersion.new(:version_number => "0.1",
                                            :platform => platform)
-    platform_version.to_s.should eql("test platform 0.1")
+    platform_version.to_s.should eql("test platform v0.1")
   end
+
+  it "should not show the version if none exists" do
+    platform = Platform.new(:name => "test platform")
+    platform_version = PlatformVersion.new(:version_number => nil,
+                                           :platform => platform)
+    platform_version.to_s.should eql("test platform")
+  end
+
 end

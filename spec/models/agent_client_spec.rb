@@ -21,7 +21,7 @@ require 'spec_helper'
 describe AgentClient do
   before(:each) do
     @instance = Factory.build(:instance)
-    @instance.stub!(:public_dns).and_return('1.2.3.4')
+    @instance.stub!(:public_address).and_return('1.2.3.4')
     @client = AgentClient.new(@instance, :mock)
   end
 
@@ -31,7 +31,7 @@ describe AgentClient do
 
   describe "agent_url" do
     it "should create the proper url for the agent" do
-      @client.send(:agent_url).should == "https://#{@instance.public_dns}:#{AgentClient::AGENT_PORT}"
+      @client.send(:agent_url).should == "https://#{@instance.public_address}:#{AgentClient::AGENT_PORT}"
     end
 
     it "should create a secure url when ssl is enabled" do

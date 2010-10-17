@@ -27,7 +27,7 @@ class Deployment < ActiveRecord::Base
 
   has_many :deployment_instance_services, :dependent => :destroy
   has_many :instance_services, :through => :deployment_instance_services
-  
+
   aasm_column :current_state
   aasm_initial_state :deployed
   aasm_state :deployed, :after_enter => :perform_deploy
@@ -49,13 +49,26 @@ class Deployment < ActiveRecord::Base
     !agent_artifact_identifier.blank? ? agent_artifact_identifier : artifact_version.archive_file_name
   end
 
+  def simple_name
+    artifact_identifier.gsub(/^(.+)\.(war|ear|rails|rack)$/, '\1')
+  end
+
+  def url
+    base_url = environment.deployment_base_url
+    if !base_url.nil? and artifact_version.application?
+      "#{environment.deployment_base_url}/#{simple_name}"
+    else
+      nil
+    end
+  end
+
   protected
-  
+
   def perform_deploy
     environment.instance_services.running.for_service(service).each { |is| is.deploy(self) }
     audit_action :deployed
   end
-  
+
   def perform_undeploy
     instance_services.each { |is| is.undeploy(self) }
     audit_action :undeployed

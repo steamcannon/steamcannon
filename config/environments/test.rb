@@ -26,3 +26,16 @@ config.action_mailer.delivery_method = :test
 # This is necessary if your schema can't be completely dumped by the schema dumper,
 # like if you have constraints or database-specific column types
 # config.active_record.schema_format = :sql
+
+# Disable all caching for test environment by using
+# a fake cache store
+class DummyStore
+  def logger; Rails.logger; end
+  def fetch(*args); yield; end
+  def read(*args); end
+  def write(*args); end
+  def delete(*args); end
+  def increment(*args); end
+  def decrement(*args); end
+end
+config.cache_store = DummyStore.new

@@ -1,24 +1,16 @@
 #artifact_versions_container
-  %h2
-    = header_text
-  #artifact_versions_header
-    .artifact_version_number
-      Version
-    .artifact_version_archive
-      Archive
-  - artifact_versions.each do |artifact_version|
-    .artifact_version_row
-      .artifact_version_number
-        = artifact_version.version_number
-      .artifact_version_archive
-        = link_to artifact_version.archive_file_name, artifact_version.archive.url
-      .artifact_version_deploy
-        = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact_version.id)
-      .artifact_version_delete
-        = link_to 'Delete', artifact_version_path(artifact_version, :artifact_id => artifact_version.artifact.id), :method => :delete, :confirm => "Are you sure you want to delete version #{artifact_version.version_number}?"
   - if artifact_versions.empty?
-    .artifact_version_row
-      .artifact_version_number
-        = empty_text
-  - if defined?(action_link)
-    = action_link
+    .empty
+      You have not added any versions yet
+  - else
+    - artifact_versions.each do |artifact_version|
+      - div_for( artifact_version ) do
+        .version_number
+          = artifact_version.version_number
+        .created_at
+          = artifact_version.created_at.to_s(:long)
+        .archive
+          = artifact_version_download_link(artifact_version)
+        .actions
+          = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact_version.id)
+          = link_to 'Delete', artifact_version_path(artifact_version, :artifact_id => artifact_version.artifact.id), :method => :delete, :confirm => "Are you sure you want to delete version #{artifact_version.version_number}?"

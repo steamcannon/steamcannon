@@ -24,6 +24,8 @@ class StorageVolume < ActiveRecord::Base
   has_one :environment, :through => :environment_image
 
   before_destroy :destroy_cloud_volume
+
+  named_scope :pending_destroy, { :conditions => { :pending_destroy => true } }
   
   def prepare(instance)
     update_attribute(:instance, instance)
@@ -60,6 +62,11 @@ class StorageVolume < ActiveRecord::Base
   def cloud_volume_exists?
     !cloud_volume.nil?
   end
+
+  alias_method :real_destroy, :destroy
+  def destroy
+    update_attribute(:pending_destroy, true)
+  end
   
  protected
   def cloud
@@ -73,8 +80,18 @@ class StorageVolume < ActiveRecord::Base
     update_attribute(:volume_identifier, @cloud_volume.id) if @cloud_volume
     @cloud_volume
   end
-
+  
   def destroy_cloud_volume
-    cloud_volume.destroy! if cloud_volume_exists?
+    if cloud_volume_exists?
+      if cloud_volume_is_available?
+        cloud_volume.destroy!
+        true
+      else
+        false
+      end
+    else
+      true
+    end
   end
+  
 end

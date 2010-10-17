@@ -203,6 +203,13 @@ describe AgentServices::Base do
     end
   end
 
+  describe "url_for_instance" do
+    it "should default to nil" do
+      instance = Factory(:instance)
+      @agent_service.url_for_instance(instance).should be_nil
+    end
+  end
+
   describe "url_for_instance_service" do
     it "should default to nil" do
       instance_service = Factory(:instance_service)

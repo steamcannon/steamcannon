@@ -17,5 +17,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 Factory.define :platform_version do |version|
+  version.version_number '1'
   version.association :platform
 end

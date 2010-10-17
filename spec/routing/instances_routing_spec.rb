@@ -27,23 +27,23 @@ describe InstancesController do
     it "recognizes and generates #show" do
       { :get => "/environments/1/instances/2" }.should route_to(:controller => "instances", :action => "show", :environment_id => "1", :id => "2")
     end
-    
+
     it "recognizes and generates #stop" do
-      { :post => "/environments/1/instances/2/stop" }.should route_to(:controller => "instances", :action => "stop", :environment_id => "1", :id => "2") 
+      { :post => "/environments/1/instances/2/stop" }.should route_to(:controller => "instances", :action => "stop", :environment_id => "1", :id => "2")
     end
 
-    # TODO: These are failing in spite of the fact that 
+    # TODO: These are failing in spite of the fact that
     # they're truly unroutable
     # it "does not route #new" do
     #   { :get => "/environments/1/instances/new" }.should_not be_routable
     # end
-    # 
+    #
     # it "does not route #edit" do
     #   { :get => "/environments/1/instances/edit" }.should_not be_routable
     # end
 
-    it "does not route #create" do
-      { :post => "/environments/1/instances" }.should_not be_routable
+    it "recognizes and generates #create" do
+      { :post => "/environments/1/instances" }.should route_to(:controller => "instances", :action => "create", :environment_id => "1")
     end
 
     it "does not route #update" do
@@ -53,10 +53,10 @@ describe InstancesController do
     it "does not route #destroy" do
       { :delete => "/environments/1/instances/2" }.should_not be_routable
     end
-    
+
     it "recognizes and generates #clone" do
       { :post => '/environments/1/instances/2/clone' }.should route_to(:controller => 'instances', :action => 'clone', :environment_id => '1', :id => '2')
     end
-    
+
   end
 end

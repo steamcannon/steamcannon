@@ -1,0 +1,16 @@
+#sidebar
+  .section
+    %h1 Artifacts
+    %p
+      An artifact is any application asset, such as a WAR, EAR or datasource XML file.
+  
+    = link_to 'Create a new artifact', new_artifact_path
+
+  .section
+    %h1 Environments
+
+    %p
+      An environment is a distinct, concrete named instance of a PaaS
+      to receive your application artifacts.
+
+    = link_to 'Set up a new environment', new_environment_path

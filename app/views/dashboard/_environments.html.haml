@@ -1,0 +1,23 @@
+
+%table#environments.header_top
+  %tr
+    %th.environment
+      Environment
+    %th.status
+      Status
+  - if @environments.empty?
+    %tr
+      %td.empty{:span=>2}
+        You have not created any environments yet.
+  - else
+    - for environment in @environments
+      - content_tag_for(:tr, environment) do
+        %td.environment
+          = link_to environment.name, environment
+        %td.status
+          - if environment.running?
+            Running
+          - else
+            Off
+- javascript_tag do
+  monitor_content('#{dashboard_path}', 'table#environments');    

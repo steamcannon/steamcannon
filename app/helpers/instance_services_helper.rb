@@ -28,4 +28,13 @@ module InstanceServicesHelper
       full_name
     end
   end
+
+  def additional_instance_service_actions(instance_service)
+    if instance_service.name == 'postgresql' and
+        instance_service.metadata[:admin_user]
+      id = "postgresql_details_trigger_#{instance_service.id}"
+      accum = link_to 'Details', '#', :id => id
+      accum << render('instance_services/postgresql_details', :instance_service => instance_service, :trigger => "##{id}").html_safe
+    end
+  end
 end

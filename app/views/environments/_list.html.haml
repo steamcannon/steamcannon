@@ -1,39 +1,36 @@
-#environments_container
-  %h2
-    = header_text
-  #environments_header
-    .environment_name
+%table#environments_container.header_top
+  %tr
+    %th.name
       Name
-    .environment_platform
+    %th.platform
       Platform
-    .environment_status
+    %th.status
       Status
-  - environments.each do |environment|
-    - div_for(environment, :class=>'environment_row') do
-      .environment_name
-        = link_to environment.name, environment
-      .environment_platform
-        = environment.platform_version
-      .environment_status
-        = environment.current_state.titleize
-      .environment_action
-        - if environment.can_stop?
-          = link_to 'Stop', stop_environment_path(environment), :method => :post, :confirm => "Are you sure you want to stop #{environment.name}?"
-        - elsif environment.can_start?
-          = link_to 'Start', start_environment_path(environment), :method => :post
-        - else
-          &nbsp;
-        = link_to 'Clone', clone_environment_path(environment), :method => :post
-      .environment_edit
-        = link_to 'Edit', edit_environment_path(environment)
-      .environment_delete
-        = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?"
-    - javascript_tag do
-      ="monitor_environment('#{status_environment_path(environment.id)}', '##{dom_id(environment)}');"
-  
+    %th.actions
+      Actions
   - if environments.empty?
-    .environment_row
-      .environment_name
-        = empty_text
-  - if defined?(action_link)
-    = action_link
+    %tr
+      %td.empty{:colspan=>4}
+        You have not created any environments yet
+  - else
+    - environments.each do |environment|
+      - content_tag_for(:tr, environment) do
+        %td.name
+          = link_to environment.name, environment
+        %td.platform
+          = environment.platform_version
+        %td.status
+          = environment.current_state.titleize
+        %td.actions
+          - if environment.can_stop?
+            = stop_environment_link(environment, 'Stop')
+          - elsif environment.can_start?
+            = link_to 'Start', start_environment_path(environment), :method => :post
+          - else
+            &nbsp;
+          = link_to 'Clone', clone_environment_path(environment), :method => :post
+          = link_to 'Edit', edit_environment_path(environment)
+          = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?"
+      - javascript_tag do
+        ="monitor_environment('#{status_environment_path(environment.id)}', '##{dom_id(environment)}');"
+  

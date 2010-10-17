@@ -1,35 +1,24 @@
-.name
-  = instance.name
-.image_id
-  = instance.cloud_id or '&nbsp;'
-.hardware_profile
-  = instance.hardware_profile
-.services
-  %ul
-    - if instance.services.blank?
-      %li None
-    - else
-      - instance.instance_services.each do |instance_service|
-        %li
-          = instance_service_link(instance_service)
-          %br
-          State: #{instance_service.current_state}
-          %br
-          = link_to "View Logs", logs_environment_instance_instance_service_path(instance.environment, instance, instance_service)
-.image_status
-  = instance.current_state
-.image_health
-  &nbsp;&nbsp;
-  = image_tag 'healthy.png'
-.image_actions
-  = link_to_function "Stop", "remote_stop_instance('#{stop_environment_instance_path(instance.environment.id, instance.id)}')"
-.start_another
-  = link_to 'Add', '#'
-  .start_another_dialog{:style=>'display:none'}
-    .close
-      = link_to "Close", '#', :title=>'Close this dialog'
-    %p How many additional instances would you like to add to this environment?
-    = label_tag "Number of instances"
-    = text_field_tag :new_instances, 1
-    &raquo;
-    = link_to 'Start'
+- content_tag_for( :tr, instance ) do
+  %td.summary
+    .name
+      == ##{instance.number}
+    .current_state
+      = instance.current_state.titleize
+    .hardware_profile
+      = instance.hardware_profile
+    .cloud_id
+      = instance.cloud_id
+  %td.services
+    %ul
+      - if instance.services.blank?
+        %li None
+      - else
+        - instance.instance_services.each do |instance_service|
+          %li
+            = instance_service_link(instance_service)
+            %span.current_state
+              #{instance_service.current_state.titleize}
+            = link_to "Logs", logs_environment_instance_instance_service_path(instance.environment, instance, instance_service)
+            = additional_instance_service_actions(instance_service)
+  %td.actions
+    = link_to_function "Stop", "remote_stop_instance('#{stop_environment_instance_path(instance.environment.id, instance.id)}')"
