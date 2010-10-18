@@ -1,0 +1,8 @@
+#new-account-request
+%h2 Request a SteamCannon Account
+- form_for(@account_request) do |f|
+  = f.error_messages
+  = render :partial => "form", :object => f
+
+  = f.submit 'Submit Request'
+  = link_to 'Cancel', new_user_session_path

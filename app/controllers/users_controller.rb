@@ -21,6 +21,7 @@ class UsersController < ResourceController::Base
   navigation :users
 
   before_filter :require_no_user, :only => [:new, :create]
+  before_filter :require_open_signup_mode, :only => [:new, :create]
   before_filter :require_user, :only => [:show, :edit, :update]
   before_filter :require_superuser, :only => [:assume_user]
   before_filter :require_superuser_to_edit_other_user, :only => [:edit, :update]
@@ -77,6 +78,13 @@ class UsersController < ResourceController::Base
   def require_superuser_to_edit_other_user
     if !current_user.superuser? and current_user != object
       flash[:error] = "You don't have the proper rights to edit that user."
+      redirect_to new_user_session_path
+    end
+  end
+
+  def require_open_signup_mode
+    if !open_signup_mode?
+      flash[:error] = "You can't create a new user."
       redirect_to new_user_session_path
     end
   end

@@ -1,0 +1,20 @@
+#account_requests_index
+  .page_header
+    .actions
+  %h1 
+    Account Requests
+  %table#account_requests_container.header_top
+    %tr
+      %th Email
+      %th Reason
+      %th.actions
+        Actions
+    - @account_requests.each do |account_request|
+      %tr
+        %td= h account_request.email
+        %td= h account_request.reason
+        %td
+          = link_to 'Edit', edit_account_request_path(account_request)
+          = link_to 'Destroy', account_request, :confirm => 'Are you sure?', :method => :delete
+
+

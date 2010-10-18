@@ -34,6 +34,12 @@ describe UsersController do
         get :new
         response.should render_template(:new)
       end
+
+      it "should redirect to login if signup_mode is not open_signup" do
+        APP_CONFIG[:signup_mode] = 'invite_only'
+        get :new
+        response.should redirect_to(new_user_session_url)
+      end
     end
 
     describe "when logged in" do
@@ -71,6 +77,12 @@ describe UsersController do
       it "should have a flash notice" do
         post :create
         flash[:notice].should_not be_blank
+      end
+
+      it "should redirect to login if signup_mode is not open_signup" do
+        APP_CONFIG[:signup_mode] = 'invite_only'
+        post :create
+        response.should redirect_to(new_user_session_url)
       end
     end
 

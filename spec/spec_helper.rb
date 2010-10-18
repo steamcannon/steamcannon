@@ -96,5 +96,7 @@ Spec::Runner.configure do |config|
     end
 
     ModelTask.stub!(:async)
+     # force signup_mode here to override whatever is set in config/steamcannon.yml
+    APP_CONFIG[:signup_mode] = 'open_signup'
   end
 end
