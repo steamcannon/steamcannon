@@ -17,16 +17,13 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 
-class InstanceTask < TorqueBox::Messaging::Task
+class ModelTask < TorqueBox::Messaging::Task
 
-  def launch_instance(payload)
-    instance = Instance.find(payload[:instance_id])
-    instance.start!
+  def perform(payload)
+    payload[:class_name].constantize.find(payload[:id]).send(payload[:method])
   end
 
-  def stop_instance(payload)
-    instance = Instance.find(payload[:instance_id])
-    instance.terminate!
+  def self.async(model, method)
+    super(:perform, :method => method, :class_name => model.class.name, :id => model.id)
   end
-
 end
