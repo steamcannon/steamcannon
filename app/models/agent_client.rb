@@ -41,6 +41,14 @@ class AgentClient
     get 'services'
   end
 
+  def create_cluster_member_address(host, address)
+    post 'cluster_member_addresses', :hostname => host, :address => address
+  end
+
+  def delete_cluster_member_address(host)
+    delete "cluster_member_addresses/#{host}"
+  end
+  
   ##
   # Service methods
   ##

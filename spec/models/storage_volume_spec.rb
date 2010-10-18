@@ -19,14 +19,12 @@ describe StorageVolume do
 
     it "should associate the instance" do
       @storage_volume.should_receive(:update_attribute).with(:instance, @instance)
-      @storage_volume.stub!(:create_in_cloud)
       @storage_volume.prepare(@instance)
     end
 
 
-    it "should try to create the volume if the cloud_volume is unavailable" do
-      @storage_volume.should_receive(:cloud_volume_is_available?).and_return(false)
-      @storage_volume.should_receive(:create_in_cloud)
+    it "should try to create the volume as a task" do
+      ModelTask.should_receive(:async).with(@storage_volume, :create_in_cloud)
       @storage_volume.prepare(@instance)
     end
 
@@ -89,6 +87,12 @@ describe StorageVolume do
       @cloud_volume.stub!(:id).and_return("vol-1234")
       @image = Factory.build(:image, :storage_volume_capacity => '77')
       @storage_volume.stub!(:image).and_return(@image)
+    end
+
+    it "should return immediately if the cloud volume is available" do
+      @storage_volume.should_receive(:cloud_volume_is_available?).and_return(true)
+      @cloud.should_not_receive(:create_storage_volume)
+      @storage_volume.send(:create_in_cloud)
     end
 
     it "should try to create" do

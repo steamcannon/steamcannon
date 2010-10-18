@@ -95,5 +95,6 @@ Spec::Runner.configure do |config|
       AuditColumns::Base.stub!(:controller).and_return(nil)
     end
 
+    ModelTask.stub!(:async)
   end
 end

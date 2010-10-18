@@ -38,6 +38,7 @@ describe AgentServices::Postgresql do
       @agent_client = mock(AgentClient, :configure => nil)
       @instance_service = Factory(:instance_service)
       @instance_service.stub!(:agent_client).and_return(@agent_client)
+      @instance_service.stub!(:environment).and_return(@environment)
       @username_password = { :user => 'username', :pasword => 'password' }
       @agent_service.stub!(:generate_username_and_password).and_return(@username_password)
     end
@@ -47,6 +48,12 @@ describe AgentServices::Postgresql do
       @agent_service.configure_instance_service(@instance_service)
     end
 
+    it "should not generate the username and password if we have one stored on the environment" do
+      @environment.metadata = { :postgresql_admin_user => @username_password }
+      @agent_service.should_not_receive(:generate_username_and_password)
+      @agent_service.configure_instance_service(@instance_service)
+    end
+    
     it "should configure the service" do
       @agent_client.should_receive(:configure).with({ :create_admin => @username_password }.to_json)
       @agent_service.configure_instance_service(@instance_service)
@@ -56,9 +63,9 @@ describe AgentServices::Postgresql do
       @agent_service.configure_instance_service(@instance_service).should be_true
     end
 
-    it "should update the metadata for the instance_service" do
+    it "should update the metadata for the environment" do
       @agent_service.configure_instance_service(@instance_service)
-      @instance_service.reload.metadata.should == { :admin_user => @username_password }
+      @instance_service.environment.reload.metadata.should == { :postgresql_admin_user => @username_password }
     end
   end
 

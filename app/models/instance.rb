@@ -112,7 +112,7 @@ class Instance < ActiveRecord::Base
                             :hardware_profile => hardware_profile)
     instance.audit_action :started
     instance.save!
-    InstanceTask.async(:launch_instance, :instance_id => instance.id)
+    ModelTask.async(instance, :start!)
     instance
   end
 
@@ -227,6 +227,7 @@ class Instance < ActiveRecord::Base
 
   def after_run_instance
     environment.run!
+    update_cluster_member_addresses
   end
 
   def stop_instance
@@ -235,7 +236,7 @@ class Instance < ActiveRecord::Base
   end
 
   def after_stop_instance
-    InstanceTask.async(:stop_instance, :instance_id => self.id)
+    ModelTask.async(self, :terminate!)
   end
 
   def terminate_instance
@@ -275,4 +276,9 @@ class Instance < ActiveRecord::Base
                         :private_address => cloud_instance.private_addresses.first
                       }.merge(additional_fields))
   end
+
+  def update_cluster_member_addresses
+    environment.instance_services.running.each &:distribute_cluster_member_address
+  end
+  
 end

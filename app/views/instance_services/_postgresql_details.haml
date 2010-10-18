@@ -2,13 +2,13 @@
   .message
     Details for the PostgreSQL service on #{instance_service.instance.name}
     .row
-      Admin user: #{instance_service.metadata[:admin_user][:user]}
+      Admin user: #{instance_service.environment.metadata[:postgresql_admin_user][:user]}
     .row
-      Admin password: #{instance_service.metadata[:admin_user][:password]}
+      Admin password: #{instance_service.environment.metadata[:postgresql_admin_user][:password]}
     .row
-      External address: #{instance_service.instance.public_address}
+      External hostname: #{instance_service.instance.public_address}
     .row
-      Internal address: #{instance_service.instance.private_address}
+      Internal hostname: #{instance_service.internal_hostname}
     .row
       Port: 5432
 

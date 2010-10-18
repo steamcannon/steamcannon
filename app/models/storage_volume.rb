@@ -29,8 +29,7 @@ class StorageVolume < ActiveRecord::Base
   
   def prepare(instance)
     update_attribute(:instance, instance)
-    #TODO: this should be in a task
-    create_in_cloud unless cloud_volume_is_available?
+    ModelTask.async(self, :create_in_cloud)
   end
   
   def attach
@@ -74,11 +73,11 @@ class StorageVolume < ActiveRecord::Base
   end
 
   def create_in_cloud
+    return if cloud_volume_is_available?
     #TODO: handle errors here
     @cloud_volume = cloud.create_storage_volume(:realm => instance.cloud_specific_hacks.default_realm,
                                                 :capacity => image.storage_volume_capacity)
     update_attribute(:volume_identifier, @cloud_volume.id) if @cloud_volume
-    @cloud_volume
   end
   
   def destroy_cloud_volume

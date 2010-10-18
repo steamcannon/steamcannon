@@ -19,7 +19,8 @@
 class InstanceService < ActiveRecord::Base
   include AASM
   include StuckState
-
+  include HasMetadata
+  
   belongs_to :instance
   belongs_to :service
   has_many :deployment_instance_services, :dependent => :destroy
@@ -34,7 +35,7 @@ class InstanceService < ActiveRecord::Base
   aasm_state :configuring
   aasm_state :configure_failed
   aasm_state :verifying
-  aasm_state :running, :after_enter => :handle_pending_deployments
+  aasm_state :running, :after_enter => :running_entered
 
   aasm_event :configure do
     transitions :to => :configuring, :from => [:pending, :configuring, :verifying, :running]
@@ -52,15 +53,7 @@ class InstanceService < ActiveRecord::Base
     transitions :to => :running, :from => :verifying
   end
 
-  def metadata=(metadata)
-    super((metadata || { }).to_json)
-  end
-
-  def metadata
-    JSON.parse(super || "{}", :symbolize_names => true)
-  rescue JSON::ParserError => ex
-    { }
-  end
+  before_destroy :remove_cluster_member_address
   
   def name
     service.name
@@ -74,6 +67,10 @@ class InstanceService < ActiveRecord::Base
     instance.environment
   end
 
+  def instance_number
+    instance.number
+  end
+  
   def agent_service
     @agent_service ||= AgentServices::Base.instance_for_service(service, instance.environment)
   end
@@ -115,7 +112,35 @@ class InstanceService < ActiveRecord::Base
     agent_service.url_for_instance_service(self)
   end
 
+  def internal_hostname
+    @internal_hostname ||= "#{name.downcase.gsub(/[^a-z0-9-]/, '-')}#{sprintf('%02d', instance_number)}.local"
+  end
+
+  def cluster_member_address_data
+    [internal_hostname, instance.private_address]
+  end
+
+  def distribute_cluster_member_address
+    environment.instances.running.each do |i|
+      logger.debug "sending hostname #{internal_hostname} to #{i.name}"
+      i.agent_client.create_cluster_member_address(*cluster_member_address_data)
+    end
+  end
+
+  def remove_cluster_member_address
+    #TODO: deal with errors
+    environment.instances.running.each do |i|
+      logger.debug "deleting hostname #{internal_hostname} from #{i.name}"
+      i.agent_client.delete_cluster_member_address(internal_hostname)
+    end
+  end
+  
   protected
+  def running_entered
+    handle_pending_deployments
+    distribute_cluster_member_address
+  end
+  
   def handle_pending_deployments
     environment.deployments.deployed.select do |deployment|
       deployment.service == service
@@ -123,4 +148,5 @@ class InstanceService < ActiveRecord::Base
       deploy(deployment)
     end
   end
+
 end

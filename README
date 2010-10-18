@@ -6,7 +6,7 @@ steamcannon_production databases and a steamcannon user. Look at
 config/database.yml and modify as needed for your environment.
 
 1. Install Postgres 8.4
-2. Run bin/setup_db.sh  
+2. Run bin/create_db.sh
 3. rake db:setup
 
 

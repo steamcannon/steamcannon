@@ -29,14 +29,21 @@ class Deployment < ActiveRecord::Base
   has_many :instance_services, :through => :deployment_instance_services
 
   aasm_column :current_state
-  aasm_initial_state :deployed
-  aasm_state :deployed, :after_enter => :perform_deploy
-  aasm_state :undeployed, :after_enter => :perform_undeploy
+  aasm_initial_state :pending
+  aasm_state :pending
+  aasm_state :deployed, :after_enter => :perform_deploy_async
+  aasm_state :undeployed, :after_enter => :perform_undeploy_async
+
+  aasm_event :deploy do
+    transitions :to => :deployed, :from => :pending
+  end
 
   aasm_event :undeploy do
     transitions :to => :undeployed, :from => :deployed
   end
 
+  after_create :deploy!
+  
   def artifact
     artifact_version.artifact
   end
@@ -64,14 +71,22 @@ class Deployment < ActiveRecord::Base
 
   protected
 
+  def perform_deploy_async
+    audit_action :deployed
+    ModelTask.async(self, :perform_deploy)
+  end
+
+  def perform_undeploy_async
+    audit_action :undeployed
+    ModelTask.async(self, :perform_undeploy)
+  end
+
   def perform_deploy
     environment.instance_services.running.for_service(service).each { |is| is.deploy(self) }
-    audit_action :deployed
+
   end
 
   def perform_undeploy
     instance_services.each { |is| is.undeploy(self) }
-    audit_action :undeployed
   end
-
 end

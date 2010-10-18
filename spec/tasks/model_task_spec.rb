@@ -16,26 +16,29 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'spec_helper'
 
-module InstanceServicesHelper
-
-  def instance_service_link(instance_service)
-    url = instance_service.url
-    full_name = instance_service.full_name
-    if instance_service.running? and url
-      link_to(full_name, url)
-    else
-      full_name
-    end
+describe ModelTask do
+  before(:each) do
+    @model_task = ModelTask.new
+    @payload = { :class_name => 'AModel', :id => 123, :method => :a_method }
+    @model = mock('model')
+    @model.stub!(:a_method)
+    AModel = mock('AModel')
+    AModel.stub!(:find).and_return(@model)
   end
 
-  def additional_instance_service_actions(instance_service)
-    if instance_service.name == 'postgresql' and
-        instance_service.running? and
-        instance_service.environment.metadata[:postgresql_admin_user]
-      id = "postgresql_details_trigger_#{instance_service.id}"
-      accum = link_to 'Details', '#', :id => id
-      accum << render('instance_services/postgresql_details', :instance_service => instance_service, :trigger => "##{id}").html_safe
+  describe "perform" do
+    it "should lookup the model by id" do
+      AModel.should_receive(:find).with(123).and_return(@model)
+      @model_task.perform(@payload)
     end
+
+    it "should call the method" do
+      @model.should_receive(:a_method)
+      @model_task.perform(@payload)
+    end
+    
   end
+
 end

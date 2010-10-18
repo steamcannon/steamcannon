@@ -19,7 +19,8 @@
 
 class Environment < ActiveRecord::Base
   include AASM
-
+  include HasMetadata
+  
   has_many :deployments, :dependent => :destroy
   has_many :environment_images, :dependent => :destroy
   has_many :images, :through => :environment_images

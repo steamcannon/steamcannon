@@ -2,10 +2,13 @@
 services:
   - name: jboss_as
     full_name: JBoss AS
+    display_order: 2
   - name: mod_cluster
     full_name: Mod Cluster
+    display_order: 1
     requires:
       - jboss_as
   - name: postgresql
     full_name: PostgreSQL
+    display_order: 3
 

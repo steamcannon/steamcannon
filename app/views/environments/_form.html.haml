@@ -15,7 +15,7 @@
           %th.num_instances
             Number of Instances
         - PlatformVersion.all.each do |platform_version|
-          - platform_version.images.each_with_index do |image, index|
+          - sort_images_by_service_display_order(platform_version.images).each_with_index do |image, index|
             - content_tag_for( :tr, platform_version, :class=>"row_for_platform_version_#{platform_version.id} content_row" ) do 
               - environment_image = @environment.environment_images.find_by_image_id(image.id)
               - if environment_image_id = environment_image.try(:id) 

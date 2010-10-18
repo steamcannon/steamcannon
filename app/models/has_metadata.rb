@@ -16,26 +16,16 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+module HasMetadata
 
-module InstanceServicesHelper
-
-  def instance_service_link(instance_service)
-    url = instance_service.url
-    full_name = instance_service.full_name
-    if instance_service.running? and url
-      link_to(full_name, url)
-    else
-      full_name
-    end
+  def metadata=(metadata)
+    super((metadata || { }).to_json)
   end
 
-  def additional_instance_service_actions(instance_service)
-    if instance_service.name == 'postgresql' and
-        instance_service.running? and
-        instance_service.environment.metadata[:postgresql_admin_user]
-      id = "postgresql_details_trigger_#{instance_service.id}"
-      accum = link_to 'Details', '#', :id => id
-      accum << render('instance_services/postgresql_details', :instance_service => instance_service, :trigger => "##{id}").html_safe
-    end
+  def metadata
+    JSON.parse(super || "{}", :symbolize_names => true)
+  rescue JSON::ParserError => ex
+    { }
   end
+
 end
