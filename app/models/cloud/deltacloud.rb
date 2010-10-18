@@ -65,11 +65,11 @@ module Cloud
     end
 
     def client
-      @client ||= DeltaCloud.new(@cloud_username, @cloud_password, APP_CONFIG['deltacloud_url'])
+      @client ||= DeltaCloud.new(@cloud_username, @cloud_password, APP_CONFIG[:deltacloud_url])
     end
 
     def valid_credentials?
-      DeltaCloud.valid_credentials?(@cloud_username, @cloud_password, APP_CONFIG['deltacloud_url'])
+      DeltaCloud.valid_credentials?(@cloud_username, @cloud_password, APP_CONFIG[:deltacloud_url])
     end
 
     def valid_key_name?(key_name)
