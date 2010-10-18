@@ -23,7 +23,8 @@ namespace :ci do
 
   desc 'Package SteamCannon'
   task :package => ['bundle:package', 'bundle:local_deployment',
-                    'torquebox:archive', 'bundle:delete_config'] do
+                    'torquebox:archive', 'bundle:delete_config',
+                    'bundle:delete_vendor_bundle'] do
   end
 
   desc 'Run CI Build'

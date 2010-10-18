@@ -18,7 +18,13 @@
 
 namespace :bundle do
   task :base do
-    require 'bundler/cli'
+    require 'rbconfig'
+    bindir = RbConfig::CONFIG['bindir']
+    ruby = RbConfig::CONFIG['ruby_install_name']
+    @bundle_exec = lambda { |arguments|
+      puts "#{File.join(bindir, ruby)} -S bundle #{arguments}"
+      `#{File.join(bindir, ruby)} -S bundle #{arguments}`
+    }
   end
 
   desc "Delete bundler config file"
@@ -27,16 +33,19 @@ namespace :bundle do
     `rm -f #{config_file}`
   end
 
+  desc "Delete vendor/bundle directory"
+  task :delete_vendor_bundle do
+    bundle_dir = File.join(File.dirname(__FILE__), '..', '..', 'vendor', 'bundle')
+    ` rm -rf #{bundle_dir}`
+  end
+
   desc "bundle package"
   task :package => :base do
-    bundler = Bundler::CLI.new
-    bundler.invoke(:package)
+    @bundle_exec.call('package')
   end
 
   desc "bundle install --deployment --local"
   task :local_deployment => :base do
-    options = { :deployment => true, :local => true }
-    bundler = Bundler::CLI.new([], options)
-    bundler.invoke(:install)
+    @bundle_exec.call('install --deployment --local --without torquebox')
   end
 end
