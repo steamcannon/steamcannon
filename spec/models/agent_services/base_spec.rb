@@ -26,7 +26,7 @@ describe AgentServices::Base do
     @environment.stub!(:trigger_deployments)
     @agent_service = AgentServices::Base.new(@service, @environment)
     @instance_service = Factory.build(:instance_service)
-    @deployment = Factory.build(:deployment, :environment => @environment)
+    @deployment = Factory(:deployment, :environment => @environment)
     @deployment.stub!(:artifact_identifier).and_return('art_id')
     @deployment.stub!(:perform_deploy)
     @deployment.stub!(:mark_as_deployed!)

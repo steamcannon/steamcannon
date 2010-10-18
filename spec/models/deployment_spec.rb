@@ -55,10 +55,7 @@ describe Deployment do
 
   describe 'creation' do
     before(:each) do
-      @environment = Factory(:environment)
-      @environment.stub_chain(:instance_services, :running, :for_service).and_return([@instance_service])
-      @instance_service.should_receive(:deploy)
-      @deployment = Factory(:deployment, :environment => @environment)
+      @deployment = Factory(:deployment)
     end
 
     it "should populate deployed_at after moving to :deployed" do
@@ -68,11 +65,16 @@ describe Deployment do
     it "should populate deployed_by after deploy" do
       @deployment.deployed_by.should be(@current_user.id)
     end
+
+    it "should fire off a task to deploy" do
+      ModelTask.should_receive(:async).with(an_instance_of(Deployment), :perform_deploy)
+      Factory(:deployment)
+    end
   end
 
   describe 'undeploy!' do
     before(:each) do
-      @deployment = Factory.build(:deployment)
+      @deployment = Factory(:deployment)
       @deployment.current_state = 'deployed'
       @instance_service.stub!(:undeploy)
       @deployment.stub!(:instance_services).and_return([@instance_service])
@@ -88,11 +90,37 @@ describe Deployment do
       @deployment.undeployed_by.should be(@current_user.id)
     end
 
-    it "should undeploy from the instance_services" do
-      @instance_service.should_receive(:undeploy).with(@deployment)
+    it "should fire off a task to undeploy" do
+      ModelTask.should_receive(:async).with(@deployment, :perform_undeploy)
       @deployment.undeploy!
     end
+  end
 
+  describe 'perform_deploy' do
+    before(:each) do
+      @environment = Factory(:environment)
+      @environment.stub_chain(:instance_services, :running, :for_service).and_return([@instance_service])
+      @deployment = Factory(:deployment, :environment => @environment)
+    end
+
+    it "should deploy to the running instance services for the service" do
+      @instance_service.should_receive(:deploy)
+      @deployment.send(:perform_deploy)
+    end
+  end
+
+  describe 'perform_undeploy' do
+    before(:each) do
+      @deployment = Factory.build(:deployment)
+      @deployment.current_state = 'deployed'
+      @instance_service.stub!(:undeploy)
+      @deployment.stub!(:instance_services).and_return([@instance_service])
+    end
+
+    it "should undeploy from the instance services for the deployment" do
+      @instance_service.should_receive(:undeploy).with(@deployment)
+      @deployment.send(:perform_undeploy)
+    end
   end
 
   describe "simple_name" do

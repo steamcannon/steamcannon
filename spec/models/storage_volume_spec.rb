@@ -10,7 +10,6 @@ describe StorageVolume do
     @storage_volume = Factory(:storage_volume)
     @cloud = mock('cloud')
     @storage_volume.stub!(:cloud).and_return(@cloud)
-    ModelTask.stub!(:async)
   end
 
   describe 'prepare' do

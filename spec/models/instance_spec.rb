@@ -33,7 +33,6 @@ describe Instance do
       :public_address => "value for public_address"
     }
 
-    ModelTask.stub(:async)
   end
 
   it { should have_one :server_certificate }
