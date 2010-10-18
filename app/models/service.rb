@@ -51,6 +51,7 @@ class Service < ActiveRecord::Base
       yaml['services'].each do |service_yaml|
         requires = service_yaml.delete('requires')
         service = Service.find_or_create_by_name(service_yaml)
+        service.update_attributes(service_yaml) unless service.new_record?
         service_requirements = service.required_services
         requires && requires.each do |required_service_name|
           required_service = Service.find_or_create_by_name(required_service_name)

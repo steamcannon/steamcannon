@@ -1,6 +1,6 @@
 #topology
   %h2 Topology
-  - for image in @environment.environment_images
+  - for image in sort_images_by_service_display_order(@environment.environment_images)
     - div_for( image ) do
       %h3
         = image.image.name

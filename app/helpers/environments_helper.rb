@@ -49,5 +49,11 @@ module EnvironmentsHelper
     accum << render('environments/confirm_stop', :environment => environment, :trigger => "##{trigger_id}").html_safe
     accum
   end
-  
+
+  def sort_images_by_service_display_order(images)
+    images.sort_by do |image|
+      image = image.image if image.respond_to?(:image)
+      image.services.collect(&:display_order).sort.first
+    end
+  end
 end

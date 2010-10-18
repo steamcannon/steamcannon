@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101018140032) do
+ActiveRecord::Schema.define(:version => 20101018150628) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(:version => 20101018140032) do
     t.string   "full_name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "display_order"
   end
 
   create_table "storage_volumes", :force => true do |t|
