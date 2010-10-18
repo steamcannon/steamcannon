@@ -2,9 +2,9 @@
   .message
     Details for the PostgreSQL service on #{instance_service.instance.name}
     .row
-      Admin user: #{instance_service.metadata[:admin_user][:user]}
+      Admin user: #{instance_service.environment.metadata[:postgresql_admin_user][:user]}
     .row
-      Admin password: #{instance_service.metadata[:admin_user][:password]}
+      Admin password: #{instance_service.environment.metadata[:postgresql_admin_user][:password]}
     .row
       External hostname: #{instance_service.instance.public_address}
     .row

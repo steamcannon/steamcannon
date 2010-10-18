@@ -19,7 +19,8 @@
 class InstanceService < ActiveRecord::Base
   include AASM
   include StuckState
-
+  include HasMetadata
+  
   belongs_to :instance
   belongs_to :service
   has_many :deployment_instance_services, :dependent => :destroy
@@ -53,16 +54,6 @@ class InstanceService < ActiveRecord::Base
   end
 
   before_destroy :remove_cluster_member_address
-  
-  def metadata=(metadata)
-    super((metadata || { }).to_json)
-  end
-
-  def metadata
-    JSON.parse(super || "{}", :symbolize_names => true)
-  rescue JSON::ParserError => ex
-    { }
-  end
   
   def name
     service.name

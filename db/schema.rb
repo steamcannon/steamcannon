@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101014215254) do
+ActiveRecord::Schema.define(:version => 20101018140032) do
 
   create_table "artifact_versions", :force => true do |t|
     t.integer  "artifact_id"
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(:version => 20101014215254) do
     t.integer  "user_id"
     t.string   "current_state",            :default => "stopped"
     t.boolean  "preserve_storage_volumes", :default => true
+    t.text     "metadata"
   end
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
