@@ -3,9 +3,11 @@ source "http://rubygems.org"
 gem "rails", "2.3.8"
 
 # TorqueBox gems
-gem "org.torquebox.rake-support", "1.0.0.Beta22"
-gem "org.torquebox.torquebox-messaging-client", "1.0.0.Beta22"
-gem "org.torquebox.vfs", "1.0.0.Beta22"
+group :torquebox do
+  gem "org.torquebox.rake-support"
+  gem "org.torquebox.torquebox-messaging-client"
+  gem "org.torquebox.vfs"
+end
 
 # JRuby specific gems
 gem "activerecord-jdbcpostgresql-adapter", "0.9.7"

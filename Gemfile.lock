@@ -91,9 +91,9 @@ DEPENDENCIES
   jruby-openssl (= 0.7.1)
   json (= 1.4.6)
   maruku (= 0.6.0)
-  org.torquebox.rake-support (= 1.0.0.Beta22)
-  org.torquebox.torquebox-messaging-client (= 1.0.0.Beta22)
-  org.torquebox.vfs (= 1.0.0.Beta22)
+  org.torquebox.rake-support
+  org.torquebox.torquebox-messaging-client
+  org.torquebox.vfs
   paperclip (= 2.3.3)
   rails (= 2.3.8)
   rcov (= 0.9.8)
