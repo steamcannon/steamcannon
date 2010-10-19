@@ -106,7 +106,7 @@ describe UsersController do
         before(:each) do
           APP_CONFIG[:signup_mode] = 'invite_only'
           @account_request = mock_model(AccountRequest)
-          @account_request.stub!(:destroy)
+          @account_request.stub!(:accept!)
         end
         
         it "should redirect to login if signup_mode when no token provided" do
@@ -115,7 +115,9 @@ describe UsersController do
         end
 
         it "should execute action if a valid token is provided" do
-          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          mock_association = mock("invited")
+          mock_association.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          AccountRequest.should_receive(:invited).and_return(mock_association)
           User.should_receive(:new)
           post :create, :token => '1234'
         end
@@ -131,9 +133,9 @@ describe UsersController do
           assigns[:account_request].should == @account_request
         end
         
-        it "should destroy the account_request" do
+        it "should accept! the account_request" do
           AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
-          @account_request.should_receive(:destroy)
+          @account_request.should_receive(:accept!)
           post :create, :token => '1234'
         end
       end

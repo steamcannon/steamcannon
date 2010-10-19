@@ -12,7 +12,8 @@ describe AccountRequestsController do
   
   context "as a superuser" do
     before(:each) do
-      login_with_user(mock_model(User, { :superuser? => true, :profile_complete? => true }))
+      @logged_in_user = mock_model(User, { :superuser? => true, :profile_complete? => true, :email => 'admin@example.com' })
+      login_with_user(@logged_in_user)
     end
 
     describe "GET index" do
@@ -97,6 +98,38 @@ describe AccountRequestsController do
       end
     end
 
+    describe "POST invite" do
+      before(:each) do
+        @account_request = mock_model(AccountRequest)
+        @account_request.stub!(:send_invitation)
+        AccountRequest.stub!(:find).and_return([@account_request])
+      end
+      
+      it "should accept an array of account_request ids" do
+        AccountRequest.should_receive(:find).with([1]).and_return([@account_request])
+        post :invite, :account_request_ids => [1]
+      end
+
+      it "should accept a single account_request id" do
+        AccountRequest.should_receive(:find).with([2]).and_return([@account_request])
+        post :invite, :account_request_id => 2
+      end
+      
+      it "should call send_invitation on the account_requests, passing the current hostname from the request and the email of the currently logged in user" do
+
+        request.should_receive(:host).at_least(:once).and_return('the_host')
+        @logged_in_user.should_receive(:email).and_return('admin@example.com')
+        @account_request.should_receive(:send_invitation).with('the_host', 'admin@example.com')
+        post :invite, :account_request_ids => [1]
+      end
+
+      it "should redirect back to the index" do
+        post :invite, :account_request_ids => [1]
+        response.should redirect_to(account_requests_url)
+      end
+      
+      it "should set the flash"
+    end
   end
 
   context 'when not logged in' do

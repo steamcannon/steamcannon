@@ -17,7 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 ActionController::Routing::Routes.draw do |map|
-  map.resources :account_requests
+  map.resources :account_requests, :collection => { :invite => :post }
 
   map.resources :artifacts, :member => { :status => :post }
   map.resources :artifact_versions

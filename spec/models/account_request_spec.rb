@@ -19,6 +19,11 @@ describe AccountRequest do
       ModelTask.should_receive(:async).with(@account_request, :_send_invitation, @host, @from)
       @account_request.send_invitation(@host, @from)
     end
+    
+    it "should mark the account_request as invited" do
+      @account_request.should_receive(:invite!)
+      @account_request.send_invitation(@host, @from)
+    end
 
     it "actual send method should send the email with the proper arguments" do
       AccountRequestMailer.should_receive(:deliver_invitation).with(@host, @from, @account_request.email, @account_request.token)

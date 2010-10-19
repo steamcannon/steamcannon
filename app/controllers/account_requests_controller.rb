@@ -7,6 +7,15 @@ class AccountRequestsController < ResourceController::Base
     flash[:notice] = "Your request for an account has been received. If you are accepted, we'll send a signup code to #{object.email}."
     redirect_to new_user_session_url
   end
+
+  def invite
+    ids = params[:account_request_ids] ? params[:account_request_ids] : [params[:account_request_id].to_i]
+    AccountRequest.find(ids).each do |account_request|
+      account_request.send_invitation(request.host, current_user.email)
+    end
+    
+    redirect_to account_requests_url
+  end
   
   protected
   def require_invite_only_mode
