@@ -3,10 +3,13 @@
     Account Requests
   
   - form_tag invite_account_requests_path, :method => :post do 
-    = submit_tag "Invite Checked Requests", :confirm => "Are you sure you want to invite these requests?"
-    Show: 
-    - AccountRequest.aasm_states.collect(&:name).each do |state|
-      = link_to state, '', :class => "js-state_display_toggle #{state}", :rel => state
+    .controls
+      .actions
+        = submit_tag "Invite Checked Requests", :confirm => "Are you sure you want to invite these requests?"
+      .filter
+        - AccountRequest.aasm_states.collect(&:name).each do |state|
+          = link_to state, '', :class => "js-state_display_toggle #{state}", :rel => state
+
 
     %table#account_requests_container.header_top
       %tr
@@ -27,6 +30,6 @@
             == #{time_ago_in_words(account_request.created_at)} ago
           %td= account_request.current_state
           %td
-            = link_to 'Invite', invite_account_requests_path(:account_request_id => account_request.id), :confirm => "Are you sure you want to invite #{account_request.email}?", :method => :post
-
+            = link_to 'Invite', invite_account_requests_path(:account_request_id => account_request.id), :confirm => "Are you sure you want to invite #{account_request.email}?", :method => :post unless account_request.ignored? or account_request.accepted?
+            = link_to 'Ignore', ignore_account_requests_path(:account_request_id => account_request.id), :confirm => "Are you sure you want to ignore #{account_request.email}?", :method => :post if account_request.pending?
 

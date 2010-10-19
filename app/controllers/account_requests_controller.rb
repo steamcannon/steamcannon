@@ -9,11 +9,18 @@ class AccountRequestsController < ResourceController::Base
   end
 
   def invite
-    ids = params[:account_request_ids] ? params[:account_request_ids] : [params[:account_request_id].to_i]
-    AccountRequest.find(ids).each do |account_request|
+    AccountRequest.find(ids_from_params).each do |account_request|
       account_request.send_invitation(request.host, current_user.email)
     end
-    
+    flash[:notice] = "#{ids_from_params.size} invitations queued to be sent."
+    redirect_to account_requests_url
+  end
+
+  def ignore
+    AccountRequest.find(ids_from_params).each do |account_request|
+      account_request.ignore!
+    end
+    flash[:notice] = "#{ids_from_params.size} invitations ignored."
     redirect_to account_requests_url
   end
   
@@ -23,5 +30,9 @@ class AccountRequestsController < ResourceController::Base
       flash[:error] = "You can't create an account request."
       redirect_to new_user_session_path
     end
+  end
+
+  def ids_from_params
+    @ids_from_params ||= params[:account_request_ids] ? params[:account_request_ids] : [params[:account_request_id].to_i]
   end
 end

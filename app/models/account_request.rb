@@ -17,7 +17,7 @@ class AccountRequest < ActiveRecord::Base
   end
 
   aasm_event :ignore do
-    transitions :to => :ignored, :from => :invited
+    transitions :to => :ignored, :from => :pending
   end
   
   aasm_event :accept do

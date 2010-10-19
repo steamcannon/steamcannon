@@ -30,7 +30,6 @@ describe AccountRequest do
       @account_request.send(:_send_invitation, @host, @from)
     end
 
-    it "should mark the request as invited"
   end
 end
 

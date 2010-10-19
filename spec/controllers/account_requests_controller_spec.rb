@@ -128,7 +128,35 @@ describe AccountRequestsController do
         response.should redirect_to(account_requests_url)
       end
       
-      it "should set the flash"
+    end
+
+    describe "POST ignore" do
+      before(:each) do
+        @account_request = mock_model(AccountRequest)
+        @account_request.stub!(:ignore!)
+        AccountRequest.stub!(:find).and_return([@account_request])
+      end
+      
+      it "should accept an array of account_request ids" do
+        AccountRequest.should_receive(:find).with([1]).and_return([@account_request])
+        post :ignore, :account_request_ids => [1]
+      end
+
+      it "should accept a single account_request id" do
+        AccountRequest.should_receive(:find).with([2]).and_return([@account_request])
+        post :ignore, :account_request_id => 2
+      end
+      
+      it "should ignore the account requests" do
+        @account_request.should_receive(:ignore!)
+        post :ignore, :account_request_ids => [1]
+      end
+
+      it "should redirect back to the index" do
+        post :ignore, :account_request_ids => [1]
+        response.should redirect_to(account_requests_url)
+      end
+      
     end
   end
 

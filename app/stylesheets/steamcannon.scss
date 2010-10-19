@@ -511,4 +511,13 @@ table.header_top {
     @include show_account_request_state("invited");
     @include show_account_request_state("ignored");
     @include show_account_request_state("accepted");
+    .controls {
+        @include clearfix;
+        .actions {
+            float: left;
+        }
+        .filter {
+            float: right;
+        }
+    }
 }
