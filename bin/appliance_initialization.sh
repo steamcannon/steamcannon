@@ -16,5 +16,5 @@ echo "GRANT ALL ON DATABASE steamcannon_production TO steamcannon" | $SU_CMD pos
 echo "Initializing and seeding database schema"
 cd /opt/steamcannon
 export RAILS_ENV=production
-/opt/jruby/bin/jruby -S rake db:setup
+$SU_CMD jboss-as6 -c '/opt/jruby/bin/jruby -S rake db:setup'
 
