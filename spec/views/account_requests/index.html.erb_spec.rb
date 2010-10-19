@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "/account_requests/index.html.erb" do
+describe "/account_requests/index.html.haml" do
   include AccountRequestsHelper
 
   before(:each) do

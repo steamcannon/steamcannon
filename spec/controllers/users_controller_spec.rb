@@ -35,10 +35,33 @@ describe UsersController do
         response.should render_template(:new)
       end
 
-      it "should redirect to login if signup_mode is not open_signup" do
-        APP_CONFIG[:signup_mode] = 'invite_only'
-        get :new
-        response.should redirect_to(new_user_session_url)
+      context 'in invite_only mode' do
+        before(:each) do
+          APP_CONFIG[:signup_mode] = 'invite_only'
+        end
+        
+        it "should redirect to login if signup_mode when no token provided" do
+          get :new
+          response.should redirect_to(new_user_session_url)
+        end
+
+        it "should execute action if a valid token is provided" do
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(mock_model(AccountRequest))
+          User.should_receive(:new)
+          get :new, :token => '1234'
+        end
+
+        it "should redirect to login if signup_mode when an invalid token provided" do
+          get :new, :token => 'bad token'
+          response.should redirect_to(new_user_session_url)
+        end
+
+        it "should store the account_request in an ivar" do
+          account_request = mock_model(AccountRequest)
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(account_request)
+          get :new, :token => '1234'
+          assigns[:account_request].should == account_request
+        end
       end
     end
 
@@ -79,10 +102,40 @@ describe UsersController do
         flash[:notice].should_not be_blank
       end
 
-      it "should redirect to login if signup_mode is not open_signup" do
-        APP_CONFIG[:signup_mode] = 'invite_only'
-        post :create
-        response.should redirect_to(new_user_session_url)
+      context 'in invite_only mode' do
+        before(:each) do
+          APP_CONFIG[:signup_mode] = 'invite_only'
+          @account_request = mock_model(AccountRequest)
+          @account_request.stub!(:destroy)
+        end
+        
+        it "should redirect to login if signup_mode when no token provided" do
+          post :create
+          response.should redirect_to(new_user_session_url)
+        end
+
+        it "should execute action if a valid token is provided" do
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          User.should_receive(:new)
+          post :create, :token => '1234'
+        end
+
+        it "should redirect to login if signup_mode when an invalid token provided" do
+          post :create, :token => 'bad token'
+          response.should redirect_to(new_user_session_url)
+        end
+
+        it "should store the account_request in an ivar" do
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          post :create, :token => '1234'
+          assigns[:account_request].should == @account_request
+        end
+        
+        it "should destroy the account_request" do
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          @account_request.should_receive(:destroy)
+          post :create, :token => '1234'
+        end
       end
     end
 
