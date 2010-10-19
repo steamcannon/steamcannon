@@ -22,6 +22,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path(File.join(File.dirname(__FILE__),'..','config','environment'))
 require 'spec/autorun'
 require 'spec/rails'
+require 'email_spec'
 require 'shoulda'
 require 'ap'
 

@@ -18,31 +18,24 @@
 
 require 'spec_helper'
 
-describe ModelTask do
+describe MailerTask do
   before(:each) do
-    @model_task = ModelTask.new
-    @payload = { :class_name => 'AModel', :id => 123, :method => :a_method }
-    @model = mock('model')
-    @model.stub!(:a_method)
-    AModel = mock('AModel')
-    AModel.stub!(:find).and_return(@model)
+    @mailer_task = MailerTask.new
+    @payload = { :class_name => 'AMailer', :method => :a_method, :args => [1,2] }
+    AMailer = mock('AMailer')
+    AMailer.stub!(:deliver_a_method)
   end
 
   describe "perform" do
-    it "should lookup the model by id" do
-      AModel.should_receive(:find).with(123).and_return(@model)
-      @model_task.perform(@payload)
+    it "should call the deliver method" do
+      AMailer.should_receive(:deliver_a_method).with(1,2)
+      @mailer_task.perform(@payload)
     end
 
-    it "should call the method" do
-      @model.should_receive(:a_method)
-      @model_task.perform(@payload)
-    end
-
-    it "should pass along any args" do
-      @payload[:args] = [1,2]
-      @model.should_receive(:a_method).with(1,2)
-      @model_task.perform(@payload)
+    it "should send no arguments if none given" do
+      @payload.delete(:args)
+      AMailer.should_receive(:deliver_a_method).with(no_args())
+      @mailer_task.perform(@payload)
     end
   end
 

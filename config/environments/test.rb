@@ -32,7 +32,7 @@ config.gem "rcov", :version => "0.9.8", :lib => false
 config.gem "factory_girl", :version => '1.3.2'
 config.gem "shoulda", :version => '2.11.3', :lib => false
 config.gem "awesome_print", :lib => false
-
+config.gem "email_spec", :version => '0.6.3', :lib => false
 
 # Disable all caching for test environment by using
 # a fake cache store

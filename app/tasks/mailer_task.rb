@@ -16,34 +16,16 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'spec_helper'
 
-describe ModelTask do
-  before(:each) do
-    @model_task = ModelTask.new
-    @payload = { :class_name => 'AModel', :id => 123, :method => :a_method }
-    @model = mock('model')
-    @model.stub!(:a_method)
-    AModel = mock('AModel')
-    AModel.stub!(:find).and_return(@model)
+class MailerTask < TorqueBox::Messaging::Task
+
+  # FIXME: this won't handle active_record objects in the args. We
+  # should fix if we need that.
+  def perform(payload)
+    payload[:class_name].constantize.send("deliver_#{payload[:method]}", *(payload[:args] || []))
   end
 
-  describe "perform" do
-    it "should lookup the model by id" do
-      AModel.should_receive(:find).with(123).and_return(@model)
-      @model_task.perform(@payload)
-    end
-
-    it "should call the method" do
-      @model.should_receive(:a_method)
-      @model_task.perform(@payload)
-    end
-
-    it "should pass along any args" do
-      @payload[:args] = [1,2]
-      @model.should_receive(:a_method).with(1,2)
-      @model_task.perform(@payload)
-    end
+  def self.async(mailer, method, *args)
+    super(:perform, :method => method, :class_name => mailer.class.name, :args => args)
   end
-
 end

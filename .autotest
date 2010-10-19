@@ -3,16 +3,15 @@
 require 'active_support/core_ext'
 
 Autotest.add_hook(:initialize) {|at|
-   at.add_mapping(%r{^spec/(jobs|tasks)/.*\.rb$}) { |filename, _|
+   at.add_mapping(%r{^spec/(jobs|tasks|mailers)/.*\.rb$}) { |filename, _|
     filename
   }
-  at.add_mapping(%r{^jobs/(.*)\.rb$}) { |_, m|
-    ["spec/jobs/#{m[1]}_spec.rb"]
-  }
 
-  at.add_mapping(%r{^tasks/(.*)\.rb$}) { |_, m|
-    ["spec/tasks/#{m[1]}_spec.rb"]
-  }
+  %w{ jobs mailers tasks }.each do |type|
+    at.add_mapping(%r{^#{type}/(.*)\.rb$}) { |_, m|
+      ["spec/#{type}/#{m[1]}_spec.rb"]
+    }
+  end
 }
 
 Autotest.add_hook(:died) { |_, ex|
