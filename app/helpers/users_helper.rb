@@ -22,4 +22,9 @@ module UsersHelper
   def cloud_ssh_key_select_options(user)
     options_for_select([nil] + user.cloud.keys.collect(&:id), user.ssh_key_name)
   end
+  
+  def cloud_realm_select_options(user)
+    options_for_select(user.cloud.realms.collect(&:id), user.default_realm)
+  end
+  
 end

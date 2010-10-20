@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101019185935) do
+ActiveRecord::Schema.define(:version => 20101020212559) do
 
   create_table "account_requests", :force => true do |t|
     t.string   "email"
@@ -206,6 +206,7 @@ ActiveRecord::Schema.define(:version => 20101019185935) do
     t.boolean  "superuser",              :default => false
     t.string   "crypted_cloud_password"
     t.string   "ssh_key_name",           :default => ""
+    t.string   "default_realm"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

@@ -38,12 +38,8 @@ module Cloud
       end
       {
         :security_group => groups.map { |group| group[:name] },
-        :realm_id => default_realm
+        :realm_id => instance.environment.default_realm
       }
-    end
-
-    def default_realm
-      'us-east-1d'
     end
 
     def running_instances

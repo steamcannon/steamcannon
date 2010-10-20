@@ -82,9 +82,6 @@ describe Cloud::Ec2 do
       @ec2.launch_options(@instance)[:security_group].should == expected
     end
 
-    it "should return the default realm" do
-      @ec2.launch_options(@instance)[:realm_id].should == 'us-east-1d'
-    end
   end
 
   describe "running_instances" do

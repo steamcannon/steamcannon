@@ -34,10 +34,6 @@ describe Cloud::Base do
     @base.launch_options(instance).should be_empty
   end
 
-  it "should have blank default realm" do
-    @base.default_realm.should be_blank
-  end
-
   describe "running_instances" do
     def mock_instance(attributes)
       image = mock('image', :name => 'image_name')

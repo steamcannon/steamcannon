@@ -39,7 +39,7 @@ describe EnvironmentImage do
   describe 'start!' do
     before(:each) do
       @instance = Factory(:instance)
-      @instance.stub_chain(:cloud_specific_hacks, :default_realm).and_return('def realm')
+      @instance.stub!(:default_realm).and_return('def realm')
       Instance.stub!(:deploy!).and_return(@instance)
       @image = Factory(:image)
       @environment_image = Factory(:environment_image, :image => @image)

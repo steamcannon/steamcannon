@@ -75,7 +75,7 @@ class StorageVolume < ActiveRecord::Base
   def create_in_cloud
     return if cloud_volume_is_available?
     #TODO: handle errors here
-    @cloud_volume = cloud.create_storage_volume(:realm => instance.cloud_specific_hacks.default_realm,
+    @cloud_volume = cloud.create_storage_volume(:realm => environment.default_realm,
                                                 :capacity => image.storage_volume_capacity)
     update_attribute(:volume_identifier, @cloud_volume.id) if @cloud_volume
   end
