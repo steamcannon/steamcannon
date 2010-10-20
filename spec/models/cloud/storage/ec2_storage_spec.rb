@@ -20,7 +20,8 @@ require 'spec_helper'
 
 describe Cloud::Storage::Ec2Storage do
   before(:each) do
-    @ec2 = Cloud::Storage::Ec2Storage.new('access_key', 'secret_access_key')
+    @cloud_specific_hacks = mock('hacks')
+    @ec2 = Cloud::Storage::Ec2Storage.new('access_key', 'secret_access_key', @cloud_specific_hacks)
     @path = 'path/to/file.war'
     @s3_object = mock('s3_object')
   end
@@ -132,11 +133,13 @@ describe Cloud::Storage::Ec2Storage do
     before(:each) do
       @bucket = Aws::S3::Bucket
       @bucket.stub!(:create)
+      @cloud_specific_hacks.stub!(:unique_bucket_name).and_return('')
     end
 
     it "should create with correct prefix" do
-      prefix = /^SteamCannonArtifacts_/
-      @bucket.should_receive(:create).with(anything, prefix, anything, anything)
+      prefix = "SteamCannonArtifacts_"
+      @cloud_specific_hacks.should_receive(:unique_bucket_name).with(prefix).and_return(prefix)
+      @bucket.should_receive(:create).with(anything, /^#{prefix}/, anything, anything)
       @ec2.bucket
     end
 
@@ -147,6 +150,13 @@ describe Cloud::Storage::Ec2Storage do
 
     it "should create with private permissions" do
       @bucket.should_receive(:create).with(anything, anything, anything, 'private')
+      @ec2.bucket
+    end
+
+    it "should create a unique bucket name" do
+      suffix = /unique_bucket_name$/
+      @cloud_specific_hacks.should_receive(:unique_bucket_name).and_return('unique_bucket_name')
+      @bucket.should_receive(:create).with(anything, suffix, anything, anything)
       @ec2.bucket
     end
   end

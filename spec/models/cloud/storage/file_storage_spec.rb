@@ -20,7 +20,7 @@ require 'spec_helper'
 
 describe Cloud::Storage::FileStorage do
   before(:each) do
-    @storage = Cloud::Storage::FileStorage.new(nil, nil)
+    @storage = Cloud::Storage::FileStorage.new(nil, nil, nil)
     @path = 'path/to/file.war'
   end
 
