@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
   end
 
   def obfuscated_cloud_password
-    obfuscated = cloud_password.dup
+    obfuscated = cloud_password ? cloud_password.dup : ''
     if obfuscated.length < 6
       obfuscated = '******'
     else
