@@ -66,8 +66,8 @@ module Cloud
 
     def runaway_instances
       candidates = running_instances.select { |i| i[:aws_groups].include?('steamcannon') }
-      managed = managed_instances
-      candidates.reject { |i| managed.include?(i) }
+      managed_ids = managed_instances.map { |i| i[:id] }
+      candidates.reject { |i| managed_ids.include?(i[:id]) }
     end
 
     protected
