@@ -31,8 +31,8 @@ GEM
     email_spec (0.6.3)
     factory_girl (1.3.2)
     haml (3.0.15)
-    http_connection (1.3.1)
-    jdbc-postgres (8.4.701-java)
+    http_connection (1.4.0)
+    jdbc-postgres (8.4.702-java)
     jruby-openssl (0.7.1)
       bouncy-castle-java
     json (1.4.6-java)
@@ -40,11 +40,11 @@ GEM
       syntax (>= 1.0.0)
     mime-types (1.16)
     nokogiri (1.5.0.beta.2-java)
-    org.torquebox.rake-support (1.0.0.Beta22)
-    org.torquebox.torquebox-messaging-client (1.0.0.Beta22-java)
-      org.torquebox.torquebox-naming-client (= 1.0.0.Beta22)
-    org.torquebox.torquebox-naming-client (1.0.0.Beta22-java)
-    org.torquebox.vfs (1.0.0.Beta22)
+    org.torquebox.rake-support (1.0.0.Beta23)
+    org.torquebox.torquebox-messaging-client (1.0.0.Beta23-java)
+      org.torquebox.torquebox-naming-client (= 1.0.0.Beta23)
+    org.torquebox.torquebox-naming-client (1.0.0.Beta23-java)
+    org.torquebox.vfs (1.0.0.Beta23)
     paperclip (2.3.3)
       activerecord
       activesupport
