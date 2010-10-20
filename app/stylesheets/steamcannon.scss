@@ -521,3 +521,27 @@ table.header_top {
         }
     }
 }
+
+#edit_user {
+    #verification_status {
+      div {
+        display: none;
+        font-weight: bold;
+      }
+      #verifying {
+          font-style: italic;
+      }
+      #valid {
+          color: $green;
+      }
+      #invalid {
+          color: $red;
+      }
+    }
+    
+    &.verifying_credentials #verification_status #verifying,
+    &.credentials_valid #verification_status #valid,
+    &.credentials_invalid #verification_status #invalid {
+        display: block;
+    }
+}

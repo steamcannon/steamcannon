@@ -22,10 +22,10 @@ class UsersController < ResourceController::Base
 
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_open_signup_mode_or_token, :only => [:new, :create]
-  before_filter :require_user, :only => [:show, :edit, :update]
+  before_filter :require_user, :only => [:show, :edit, :update, :validate_cloud_credentials, :cloud_defaults_block]
   before_filter :require_superuser, :only => [:assume_user]
   before_filter :require_superuser_to_edit_other_user, :only => [:edit, :update]
-  before_filter :require_complete_profile, :only => [:show]
+  skip_before_filter :require_complete_profile, :except => [:show]
 
   edit.before do
     flash[:error] = "Please complete your profile before continuing." unless current_user.profile_complete?
@@ -67,6 +67,17 @@ class UsersController < ResourceController::Base
     redirect_to root_path
   end
 
+  def validate_cloud_credentials
+    update_cloud_credentials_from_params
+    valid = object.cloud.valid_credentials?
+    render(generate_json_response(valid ? :ok : :error))
+  end
+
+  def cloud_defaults_block
+    update_cloud_credentials_from_params
+    render(:partial => 'users/cloud_defaults', :locals => { :user => object })
+  end
+
   protected
   def object
     super || current_user
@@ -93,5 +104,10 @@ class UsersController < ResourceController::Base
         redirect_to new_user_session_path
       end
     end
+  end
+
+  def update_cloud_credentials_from_params
+    object.cloud_username = params[:cloud_username] if params[:cloud_username]
+    object.cloud_password = params[:cloud_password] if params[:cloud_password]
   end
 end

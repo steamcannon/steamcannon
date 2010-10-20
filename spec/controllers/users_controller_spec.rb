@@ -309,4 +309,40 @@ describe UsersController do
 
     end
   end
+
+  describe 'validate_cloud_credentials' do
+    before(:each) do
+      @user = login
+      @client = mock(Cloud::Deltacloud)
+      @user.stub!(:cloud).and_return(@client)
+      @client.stub!(:valid_credentials?).and_return(true)
+    end
+
+    it "should validate" do
+      @client.should_receive(:valid_credentials?)
+      get :validate_cloud_credentials
+    end
+
+    context "returned json" do
+      it "should have a status of :ok if the credentials are valid" do
+        @client.should_receive(:valid_credentials?).and_return(true)
+        get :validate_cloud_credentials
+        JSON.parse(response.body)['status'].should == 'ok'
+      end
+      
+      it "should have a status of :error if the credentials are not valid" do
+        @client.should_receive(:valid_credentials?).and_return(false)
+        get :validate_cloud_credentials
+        JSON.parse(response.body)['status'].should == 'error'
+      end
+    end
+
+    it "should use provided cloud credentials" do
+      @user.should_receive(:cloud_password=).with("pw")
+      @user.should_receive(:cloud_username=).with("uname")
+      get :validate_cloud_credentials, :cloud_password => 'pw', :cloud_username => 'uname'
+    end
+
+    
+  end
 end

@@ -81,8 +81,38 @@ jQuery(document).ready(function($) {
         $('#account_requests_index').toggleClass($(this).attr('rel'))
         return false
     })
+
+    $('#edit_user .js-verify_credential').change(function() {
+        $('#edit_user').addClass('verifying_credentials')
+        $('#edit_user').removeClass('credentials_valid')
+        $('#edit_user').removeClass('credentials_invalid')
+        get_with_cloud_credentials('/account/validate_cloud_credentials', function(data) {
+            $('#edit_user').removeClass('verifying_credentials')
+            $('#edit_user').removeClass('credentials_valid')
+            $('#edit_user').removeClass('credentials_invalid')
+            if (data.status == 'ok') {
+                $('#edit_user').addClass('credentials_valid')
+                load_account_cloud_defaults()
+            } else {
+                $('#edit_user').addClass('credentials_invalid')
+            }
+        })
+    })
 })
 
+function get_with_cloud_credentials(url, callback) {
+    params = 'cloud_username=' + $('#user_cloud_username').val() + '&cloud_password=' + $('#user_cloud_password').val()
+    $.get(url + '?' + params, callback);
+}
+
+function load_account_cloud_defaults() {
+    get_with_cloud_credentials('/account/cloud_defaults_block', function(data) {
+        elem = $('#cloud_defaults')
+        if (elem.html() != data) {
+            elem.html(data);
+        }
+    })
+}
 
 function remote_stop_instance(url) {
   $.post(url, function(data){

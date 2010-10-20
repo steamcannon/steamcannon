@@ -95,7 +95,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def generate_json_response(type, hash)
+  def generate_json_response(type, hash = {})
     unless [ :ok, :redirect, :error ].include?(type)
       raise "Invalid json response type: #{type}"
     end
@@ -105,7 +105,6 @@ class ApplicationController < ActionController::Base
       :message => nil, 
       :to => nil }.merge(hash)
   
-    render_options = {:json => response}  
-    render_options
+    {:json => response}  
   end
 end

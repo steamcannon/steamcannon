@@ -1,0 +1,3 @@
+%li
+  %label{:for => :ssh_key_name} Amazon SSH Key Name (leave blank to disable SSH access)
+  = select_tag 'user[ssh_key_name]', cloud_ssh_key_select_options(user)

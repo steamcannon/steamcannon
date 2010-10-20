@@ -18,4 +18,8 @@
 
 
 module UsersHelper
+
+  def cloud_ssh_key_select_options(user)
+    options_for_select([nil] + user.cloud.keys.collect(&:id), user.ssh_key_name)
+  end
 end
