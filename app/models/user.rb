@@ -87,4 +87,12 @@ class User < ActiveRecord::Base
     @cloud_hacks ||= "Cloud::#{cloud.name.camelize}".constantize.new(self)
   end
 
+  def environment_bucket_name
+    cloud_specific_hacks.unique_bucket_name("SteamCannonEnvironments_")
+  end
+
+  def artifact_bucket_name
+    cloud_specific_hacks.unique_bucket_name("SteamCannonArtifacts_")
+  end
+
 end
