@@ -32,10 +32,6 @@ module Cloud
       {}
     end
 
-    def default_realm
-      nil
-    end
-
     def instances_cache_key
       "User#{@user.id}InstancesCache"
     end

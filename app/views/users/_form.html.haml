@@ -17,11 +17,11 @@
     - unless form.object.profile_complete?
       %li
         = form.label :cloud_username, "Amazon Access Key"
-        = form.text_field :cloud_username
+        = form.text_field :cloud_username, :class => 'js-verify_credential'
     - else
       %li
         = form.label :cloud_username, "Amazon Access Key"
-        = form.text_field :cloud_username
+        = form.text_field :cloud_username, :class => 'js-verify_credential'
       %li#cloud_password_prompt
         = form.label :cloud_password, "Amazon Secret Access Key"
         = form.object.obfuscated_cloud_password 
@@ -29,9 +29,15 @@
           = link_to 'Change Secret Access Key', '#', :class=>'js-cloud_password_toggle'
     %li#cloud_password_field{:style=>form.object.profile_complete? ? 'display:none' : ''}
       = form.label :cloud_password, "Amazon Secret Access Key"
-      = form.text_field :cloud_password, :value=>""
+      = form.text_field :cloud_password, :value=>"", :class => 'js-verify_credential'
       .link
         = link_to 'Hide', '#', :class=>'js-cloud_password_toggle' if form.object.profile_complete?
-    %li
-      = form.label :ssh_key_name, "Amazon SSH Key Name (leave blank to disable SSH access)"
-      = form.text_field :ssh_key_name
+    %li#verification_status
+      #verifying
+        Verifying cloud credentials...
+      #valid
+        Cloud credentials are valid.
+      #invalid
+        Cloud credentials are invalid. Please make sure you have entered them correctly.
+  %ul#cloud_defaults
+    = render 'users/cloud_defaults', :user => form.object

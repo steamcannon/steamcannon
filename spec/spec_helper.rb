@@ -88,6 +88,7 @@ Spec::Runner.configure do |config|
       UserSession.stub!(:find).and_return(@current_user_session)
       controller = mock(ActionController, :current_user => @current_user)
       AuditColumns::Base.stub!(:controller).and_return(controller)
+      user
     end
     
     def logout

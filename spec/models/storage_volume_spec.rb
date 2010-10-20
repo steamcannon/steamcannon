@@ -98,9 +98,9 @@ describe StorageVolume do
 
   describe 'create_in_cloud' do
     before(:each) do
-      @instance = Factory(:instance)
-      @instance.stub_chain(:cloud_specific_hacks, :default_realm).and_return('def realm')
-      @storage_volume.stub!(:instance).and_return(@instance)
+      @environment = mock(Environment)
+      @environment.stub!(:default_realm).and_return('def realm')
+      @storage_volume.stub!(:environment).and_return(@environment)
       @cloud_volume = mock('cloud_volume')
       @cloud_volume.stub!(:id).and_return("vol-1234")
       @image = Factory.build(:image, :storage_volume_capacity => '77')
@@ -115,7 +115,7 @@ describe StorageVolume do
 
     it "should try to create" do
       @cloud.should_receive(:create_storage_volume).
-        with(:realm => @instance.cloud_specific_hacks.default_realm,
+        with(:realm => @environment.default_realm,
              :capacity => '77').
         and_return(@cloud_volume)
       @storage_volume.send(:create_in_cloud)

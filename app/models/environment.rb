@@ -80,6 +80,10 @@ class Environment < ActiveRecord::Base
     first_service_base_url('mod_cluster') or first_service_base_url('jboss_as')
   end
 
+  def default_realm
+    user.default_realm
+  end
+  
   protected
 
   def start_environment

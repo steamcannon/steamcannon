@@ -11,6 +11,19 @@
     %b Email:
     &= @user.email
   %p
-    %b Cloud username:
+    %b Amazon Access Key:
     &= @user.cloud_username
+  %p
+    %b Amazon SSH Key Name:
+    &= @user.ssh_key_name
+  %p
+    %b Cloud realm:
+    &= @user.default_realm
+  %p
+    %b Amazon S3 Artifact Bucket:
+    &= @user.artifact_bucket_name
+  %p
+    %b Amazon Environment Clustering Bucket:
+    &= @user.environment_bucket_name
+
   
