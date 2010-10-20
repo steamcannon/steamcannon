@@ -12,7 +12,6 @@ end
 
 begin
   # Set up load paths for all bundled gems
-  require 'vfs'
   ENV["BUNDLE_GEMFILE"] = File.expand_path("../../Gemfile", __FILE__)
   Bundler.setup
 rescue Bundler::GemNotFound
