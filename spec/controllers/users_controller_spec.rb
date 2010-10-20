@@ -34,6 +34,35 @@ describe UsersController do
         get :new
         response.should render_template(:new)
       end
+
+      context 'in invite_only mode' do
+        before(:each) do
+          APP_CONFIG[:signup_mode] = 'invite_only'
+        end
+        
+        it "should redirect to login if signup_mode when no token provided" do
+          get :new
+          response.should redirect_to(new_user_session_url)
+        end
+
+        it "should execute action if a valid token is provided" do
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(mock_model(AccountRequest))
+          User.should_receive(:new)
+          get :new, :token => '1234'
+        end
+
+        it "should redirect to login if signup_mode when an invalid token provided" do
+          get :new, :token => 'bad token'
+          response.should redirect_to(new_user_session_url)
+        end
+
+        it "should store the account_request in an ivar" do
+          account_request = mock_model(AccountRequest)
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(account_request)
+          get :new, :token => '1234'
+          assigns[:account_request].should == account_request
+        end
+      end
     end
 
     describe "when logged in" do
@@ -71,6 +100,44 @@ describe UsersController do
       it "should have a flash notice" do
         post :create
         flash[:notice].should_not be_blank
+      end
+
+      context 'in invite_only mode' do
+        before(:each) do
+          APP_CONFIG[:signup_mode] = 'invite_only'
+          @account_request = mock_model(AccountRequest)
+          @account_request.stub!(:accept!)
+        end
+        
+        it "should redirect to login if signup_mode when no token provided" do
+          post :create
+          response.should redirect_to(new_user_session_url)
+        end
+
+        it "should execute action if a valid token is provided" do
+          mock_association = mock("invited")
+          mock_association.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          AccountRequest.should_receive(:invited).and_return(mock_association)
+          User.should_receive(:new)
+          post :create, :token => '1234'
+        end
+
+        it "should redirect to login if signup_mode when an invalid token provided" do
+          post :create, :token => 'bad token'
+          response.should redirect_to(new_user_session_url)
+        end
+
+        it "should store the account_request in an ivar" do
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          post :create, :token => '1234'
+          assigns[:account_request].should == @account_request
+        end
+        
+        it "should accept! the account_request" do
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          @account_request.should_receive(:accept!)
+          post :create, :token => '1234'
+        end
       end
     end
 

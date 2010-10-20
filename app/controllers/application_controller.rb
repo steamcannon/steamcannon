@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   # Export to views
-  helper_method :current_user_session, :current_user
+  helper_method :current_user_session, :current_user, :open_signup_mode?, :invite_only_mode?
 
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password, :password_confirmation
@@ -40,6 +40,14 @@ class ApplicationController < ActionController::Base
   def current_user
     return @current_user if defined?(@current_user)
     @current_user = current_user_session && current_user_session.record
+  end
+  
+  def open_signup_mode?
+    APP_CONFIG[:signup_mode].to_s == 'open_signup'
+  end
+
+  def invite_only_mode?
+    !open_signup_mode?
   end
   
   def require_complete_profile

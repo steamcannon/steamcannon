@@ -1,0 +1,16 @@
+%h1 Editing account_request
+- form_for(@account_request) do |f|
+  = f.error_messages
+  %p
+    = f.label :email
+    %br/
+    = f.text_field :email
+  %p
+    = f.label :reason
+    %br/
+    = f.text_area :reason
+  %p
+    = f.submit 'Update'
+= link_to 'Show', @account_request
+|
+\#{link_to 'Back', account_requests_path}

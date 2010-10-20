@@ -12,4 +12,8 @@
         = f.password_field :password
     = f.submit "Login", :class => "submit"
   %p
-    Don't have an account? #{link_to 'Register', new_account_path}
+    Don't have an account? 
+    - if open_signup_mode?
+      = link_to 'Register', new_account_path
+    - else 
+      = link_to 'Request one', new_account_request_path

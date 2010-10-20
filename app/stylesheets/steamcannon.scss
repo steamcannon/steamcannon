@@ -489,3 +489,35 @@ table.header_top {
     border: 1px solid #777;
   }
 }
+
+
+@mixin show_account_request_state($state) {
+    &.#{$state} {
+        a.#{$state} {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        tr.#{$state} {
+            display: table-row;
+        }
+    }
+    tr.#{$state} {
+        display: none;
+    }
+}
+
+#account_requests_index {
+    @include show_account_request_state("pending");
+    @include show_account_request_state("invited");
+    @include show_account_request_state("ignored");
+    @include show_account_request_state("accepted");
+    .controls {
+        @include clearfix;
+        .actions {
+            float: left;
+        }
+        .filter {
+            float: right;
+        }
+    }
+}

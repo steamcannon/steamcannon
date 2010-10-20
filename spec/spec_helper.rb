@@ -22,6 +22,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path(File.join(File.dirname(__FILE__),'..','config','environment'))
 require 'spec/autorun'
 require 'spec/rails'
+require 'email_spec'
 require 'shoulda'
 require 'ap'
 
@@ -96,5 +97,7 @@ Spec::Runner.configure do |config|
     end
 
     ModelTask.stub!(:async)
+     # force signup_mode here to override whatever is set in config/steamcannon.yml
+    APP_CONFIG[:signup_mode] = 'open_signup'
   end
 end

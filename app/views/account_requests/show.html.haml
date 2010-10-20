@@ -1,0 +1,9 @@
+%p
+  %b Email:
+  = h @account_request.email
+%p
+  %b Reason:
+  = h @account_request.reason
+= link_to 'Edit', edit_account_request_path(@account_request)
+|
+\#{link_to 'Back', account_requests_path}

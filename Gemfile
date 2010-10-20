@@ -34,4 +34,5 @@ group :test do
   gem "factory_girl", "1.3.2"
   gem "shoulda", "2.11.3"
   gem "awesome_print", "0.2.1"
+  gem "email_spec", "0.6.3"
 end

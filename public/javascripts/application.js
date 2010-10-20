@@ -76,6 +76,11 @@ jQuery(document).ready(function($) {
     })
 
     handle_js_popup_dialogs()
+
+    $('#account_requests_index .js-state_display_toggle').click(function() {
+        $('#account_requests_index').toggleClass($(this).attr('rel'))
+        return false
+    })
 })
 
 

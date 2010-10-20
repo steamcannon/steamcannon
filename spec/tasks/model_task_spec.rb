@@ -38,7 +38,12 @@ describe ModelTask do
       @model.should_receive(:a_method)
       @model_task.perform(@payload)
     end
-    
+
+    it "should pass along any args" do
+      @payload[:args] = [1,2]
+      @model.should_receive(:a_method).with(1,2)
+      @model_task.perform(@payload)
+    end
   end
 
 end

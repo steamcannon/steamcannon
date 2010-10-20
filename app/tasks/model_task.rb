@@ -19,11 +19,13 @@
 
 class ModelTask < TorqueBox::Messaging::Task
 
+  # FIXME: this won't handle active_record objects in the args. We
+  # should fix if we need that.
   def perform(payload)
-    payload[:class_name].constantize.find(payload[:id]).send(payload[:method])
+    payload[:class_name].constantize.find(payload[:id]).send(payload[:method], *(payload[:args] || []))
   end
 
-  def self.async(model, method)
-    super(:perform, :method => method, :class_name => model.class.name, :id => model.id)
+  def self.async(model, method, *args)
+    super(:perform, :method => method, :class_name => model.class.name, :id => model.id, :args => args)
   end
 end

@@ -10,7 +10,8 @@
     %li
       = form.label :password_confirmation
       = form.password_field :password_confirmation
-
+  - if params[:token]
+    = hidden_field_tag :token, params[:token]
 - unless form.object.new_record?
   %ul
     - unless form.object.profile_complete?
