@@ -63,7 +63,8 @@ module Cloud
     def cloud_storage
       storage_class = "Cloud::Storage::#{cloud_name.camelize}Storage".constantize
       @cloud_storage ||= storage_class.new(user.cloud_username,
-                                           user.cloud_password)
+                                           user.cloud_password,
+                                           user.cloud_specific_hacks)
     end
 
   end

@@ -24,6 +24,7 @@ describe Cloud::Storage do
     @storage.extend(Cloud::Storage)
 
     @user = Factory.build(:user)
+    @user.stub!(:cloud_specific_hacks).and_return(nil)
   end
 
   it "should find user from artifact" do
@@ -57,7 +58,8 @@ describe Cloud::Storage do
     it "should initialize storage class with cloud credentials" do
       @user.cloud_username = 'user'
       @user.cloud_password = 'pass'
-      Cloud::Storage::TestStorage.should_receive(:new).with('user', 'pass')
+      @user.should_receive(:cloud_specific_hacks).and_return('hacks')
+      Cloud::Storage::TestStorage.should_receive(:new).with('user', 'pass', 'hacks')
       @storage.cloud_storage
     end
   end

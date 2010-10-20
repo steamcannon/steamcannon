@@ -21,9 +21,10 @@ module Cloud
     class Ec2Storage
       extend ActiveSupport::Memoizable
 
-      def initialize(access_key, secret_access_key)
+      def initialize(access_key, secret_access_key, cloud_specific_hacks)
         @access_key = access_key
         @secret_access_key = secret_access_key
+        @cloud_specific_hacks = cloud_specific_hacks
       end
 
       def exists?(path)
@@ -63,8 +64,8 @@ module Cloud
 
 
       def bucket_name
-        bucket_suffix = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
-        "SteamCannonArtifacts_#{bucket_suffix}"
+        prefix = "SteamCannonArtifacts_"
+        @cloud_specific_hacks.unique_bucket_name(prefix)
       end
 
       def bucket

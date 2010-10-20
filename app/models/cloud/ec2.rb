@@ -70,6 +70,13 @@ module Cloud
       candidates.reject { |i| managed_ids.include?(i[:id]) }
     end
 
+    def unique_bucket_name(prefix)
+      sc_salt = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
+      creds_salt = Digest::SHA1.hexdigest(@user.cloud_username)
+      suffix = Digest::SHA1.hexdigest("#{sc_salt} #{creds_salt}")
+      "#{prefix}#{suffix}"
+    end
+
     protected
 
     def access_key
@@ -104,8 +111,7 @@ module Cloud
     end
 
     def multicast_bucket
-      bucket_suffix = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
-      bucket_name = "SteamCannonEnvironments_#{bucket_suffix}"
+      bucket_name = unique_bucket_name("SteamCannonEnvironments_")
 
       s3 = Aws::S3.new(access_key, secret_access_key)
 

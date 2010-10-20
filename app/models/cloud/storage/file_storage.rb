@@ -22,7 +22,7 @@ module Cloud
     # Adapted from lib/paperclip/storage/filesystem.rb
     class FileStorage
 
-      def initialize(ignored_username, ignored_password)
+      def initialize(ignored_username, ignored_password, cloud_specific_hacks)
         # No credentials needed for file-based storage
       end
 
