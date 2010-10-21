@@ -26,3 +26,10 @@ config.action_view.cache_template_loading            = true
 
 # Enable threaded mode
 # config.threadsafe!
+
+# Copy of options from config.threadsafe! except leave
+# automatic dependency loading enabled
+config.preload_frameworks = true
+config.cache_classes = true
+# config.dependency_loading = false
+config.action_controller.allow_concurrency = true
