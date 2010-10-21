@@ -114,10 +114,12 @@ function load_account_cloud_defaults() {
     })
 }
 
-function remote_stop_instance(url) {
-  $.post(url, function(data){
-    alert(data.message);
-  }, "json");
+function remote_stop_instance(instance_name, url) {
+    if (confirm("Are you sure you want to stop " + instance_name + "?")) {
+        $.post(url, function(data){
+            alert(data.message);
+        }, "json");
+    }
 }
 
 function update_environment_status(url, selector) {
