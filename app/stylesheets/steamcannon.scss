@@ -116,6 +116,7 @@ h1, h2, h3 {
 }
 
 #main-navigation {
+  position: relative;
   font-size: 130%;
   border-bottom: 2px solid $bar_background_color;
   margin-bottom: 1.5em;
@@ -141,6 +142,11 @@ h1, h2, h3 {
         }
       }
     }
+  }
+  #ajax-spinner {
+      position: absolute;
+      top: 2px;
+      right: 2px;
   }
 }
 
@@ -195,6 +201,9 @@ form {
   .page_header {
   }
   #topology {
+    h3 a {
+      font-size: .8em;
+    }
     table {
       border-collapse: collapse;
       tr {

@@ -46,6 +46,14 @@ function handle_js_popup_dialogs() {
 }
 
 jQuery(document).ready(function($) {
+    $(document).ajaxStart(function() {
+        $('#ajax-spinner').show()
+    })
+
+    $(document).ajaxStop(function() {
+        $('#ajax-spinner').hide()
+    })
+
     $('#environment_form #environment_platform_version_id').change(function() {
         $('.content_row').hide()
         $('.row_for_platform_version_' + this.value).show()
