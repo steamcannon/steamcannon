@@ -26,8 +26,6 @@
             = stop_environment_link(environment, 'Stop')
           - elsif environment.can_start?
             = link_to 'Start', start_environment_path(environment), :method => :post
-          - else
-            &nbsp;
           = link_to 'Clone', clone_environment_path(environment), :method => :post
           = link_to 'Edit', edit_environment_path(environment)
           = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?"

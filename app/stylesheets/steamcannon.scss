@@ -452,9 +452,9 @@ table.header_top {
     margin-left: -300px;
     width: 600px;
     
-    background-color: #EEE;
+    background-color: $bar_background_color;
     color: #333;
-    border: 1px solid black;
+    border: 1px solid $bar_background_color - #333; 
     padding: 12px;
 }
 
@@ -462,7 +462,7 @@ table.header_top {
 
 .stop_environment_confirmation {
     .message {
-        font-weight: bold;
+        font-size: 120%;
     }
     .controls {
         text-align: right;
