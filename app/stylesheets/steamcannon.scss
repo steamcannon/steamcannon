@@ -557,3 +557,16 @@ table.header_top {
         display: block;
     }
 }
+
+.callout {
+    padding: 0.5em;
+    border: 1px solid $color_light;
+    font-weight: bold;
+    &.fail {
+        background-color: $failure_color;
+        color: white;
+    }
+    &.success {
+        background-color: $highlight_color;
+    }    
+}

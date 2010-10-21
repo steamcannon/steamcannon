@@ -54,6 +54,8 @@ jQuery(document).ready(function($) {
         $('#ajax-spinner').hide()
     })
 
+    $('.callout').delay(10000).slideUp()
+
     $('#environment_form #environment_platform_version_id').change(function() {
         $('.content_row').hide()
         $('.row_for_platform_version_' + this.value).show()

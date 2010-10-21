@@ -23,10 +23,10 @@
 
     #content
       .formcontainer
-        - if flash[:notice]
-          %p.callout_success= flash[:notice]
         - if flash[:error]
-          %p.callout_fail= flash[:error]
+          %p.callout.fail= flash[:error]
+        - if flash[:notice]
+          %p.callout.success= flash[:notice]
         = yield
     .clearfix
 
