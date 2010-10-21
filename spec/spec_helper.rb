@@ -100,5 +100,6 @@ Spec::Runner.configure do |config|
     ModelTask.stub!(:async)
      # force signup_mode here to override whatever is set in config/steamcannon.yml
     APP_CONFIG[:signup_mode] = 'open_signup'
+    APP_CONFIG.delete(:certificate_password)
   end
 end
