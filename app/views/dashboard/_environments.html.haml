@@ -15,9 +15,9 @@
         %td.environment
           = link_to environment.name, environment
         %td.status
-          - if environment.running?
-            Running
-          - else
+          - if environment.stopped?
             Off
+          - else
+            = environment.current_state.humanize
 - javascript_tag do
   monitor_content('#{dashboard_path}', 'table#environments');    
