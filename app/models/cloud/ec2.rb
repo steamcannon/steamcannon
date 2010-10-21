@@ -37,8 +37,7 @@ module Cloud
         ensure_security_group(group)
       end
       {
-        :security_group => groups.map { |group| group[:name] },
-        :realm_id => instance.environment.default_realm
+        :security_group => groups.map { |group| group[:name] }
       }
     end
 

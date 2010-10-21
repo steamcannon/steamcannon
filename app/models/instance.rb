@@ -199,7 +199,8 @@ class Instance < ActiveRecord::Base
     {
       :hardware_profile => hardware_profile,
       :key_name => cloud_keyname,
-      :user_data => instance_user_data
+      :user_data => instance_user_data,
+      :realm => environment.default_realm
     }.merge(cloud_specific_hacks.launch_options(self))
   end
 
