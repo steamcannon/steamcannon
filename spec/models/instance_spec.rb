@@ -52,10 +52,9 @@ describe Instance do
     Instance.new.should respond_to(:image)
   end
 
-  it "should be active after creation" do
+  it "should be not_stoped after creation" do
     instance = Instance.create!(@valid_attributes)
-    Instance.active.first.should eql(instance)
-    Instance.inactive.count.should be(0)
+    Instance.not_stopped.first.should eql(instance)
   end
 
   describe "deploy" do
@@ -392,12 +391,6 @@ describe Instance do
         @environment.stub!(:preserve_storage_volumes?).and_return(true)
         @instance.current_state = 'terminating'
         @instance.stub!(:stopped_in_cloud?).and_return(true)
-      end
-
-      it "should be inactive" do
-        @instance.stopped!
-        Instance.inactive.first.should eql(@instance)
-        Instance.active.count.should be(0)
       end
 
       it "should call stopped! event on environment" do

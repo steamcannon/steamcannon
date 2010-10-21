@@ -96,7 +96,7 @@ class Environment < ActiveRecord::Base
 
   def stop_environment
     deployments.deployed.each(&:undeploy!)
-    instances.active.each(&:stop!)
+    instances.not_stopped.not_stopping.each(&:stop!)
     storage_volumes.each(&:destroy) unless preserve_storage_volumes?
     # try to move to stopped here - state won't change if there are still
     # running instances, but this catches the case where all instances
@@ -105,11 +105,11 @@ class Environment < ActiveRecord::Base
   end
 
   def running_all_instances?
-    instances.active.all?(&:running?)
+    instances.not_stopped.all?(&:running?)
   end
 
   def stopped_all_instances?
-    instances.active.count == 0
+    instances.not_stopped.count == 0
   end
 
   def remove_images_from_prior_platform_version

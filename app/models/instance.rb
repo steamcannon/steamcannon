@@ -31,8 +31,8 @@ class Instance < ActiveRecord::Base
   has_many :instance_services, :dependent => :destroy
   has_many :services, :through => :instance_services
 
-  named_scope :active, :conditions => "instances.current_state <> 'stopped'"
-  named_scope :inactive, :conditions => "instances.current_state = 'stopped'"
+  named_scope :not_stopped, :conditions => "instances.current_state <> 'stopped'"
+  named_scope :not_stopping, :conditions => "instances.current_state <> 'stopping' AND instances.current_state <> 'terminating'"
   named_scope :not_failed, :conditions => "instances.current_state not in ('start_failed', 'configure_failed')"
   named_scope :in_environment, lambda { |env| { :conditions => { :environment_id => env.id } } }
 

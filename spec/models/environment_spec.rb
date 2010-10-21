@@ -139,6 +139,7 @@ describe Environment do
       @environment = Factory(:environment)
       @environment.current_state = 'running'
       @environment.stub!(:service).and_return(Factory.build(:service))
+      @environment.stub!(:stopped_all_instances?).and_return(false)
     end
 
     it "should be stopping if there are active instances" do
@@ -162,7 +163,7 @@ describe Environment do
 
     it "should stop all instances" do
       instance = Instance.new
-      @environment.stub_chain(:instances, :active).and_return([instance])
+      @environment.stub_chain(:instances, :not_stopped, :not_stopping).and_return([instance])
       instance.should_receive(:stop!)
       @environment.stop!
     end
