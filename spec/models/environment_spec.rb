@@ -141,9 +141,16 @@ describe Environment do
       @environment.stub!(:service).and_return(Factory.build(:service))
     end
 
-    it "should be stopping" do
+    it "should be stopping if there are active instances" do
+      @environment.should_receive(:stopped_all_instances?).and_return(false)
       @environment.stop!
       @environment.should be_stopping
+    end
+
+    it "should be stopped if there are no active instances" do
+      @environment.should_receive(:stopped_all_instances?).and_return(true)
+      @environment.stop!
+      @environment.should be_stopped
     end
 
     it "should undeploy all deployments" do
