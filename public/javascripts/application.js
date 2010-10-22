@@ -150,12 +150,8 @@ function monitor_environment(url, selector) {
 
 function update_deployment_status(url, selector) {
   $.post(url, function(data) {
-    services = "<ul>";
-    if (data.services.length == 0) { data.services.push("Pending Deployment"); }
-    $.each(data.services, function(index, value){ services += "<li>" + value + "</li>"; });
-    services += "</ul>";
-    $(selector + ' .deployment_status ul').replaceWith(services);
-  }, "json");
+      $(selector + ' .status ul').replaceWith(data)
+  });
   setTimeout("update_deployment_status('" + url + "', '" + selector + "')", 30000);
 }
 
