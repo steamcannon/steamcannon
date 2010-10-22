@@ -11,7 +11,7 @@ end
 
 # Install latest gems before running Rake tasks on CI server
 if ENV['TEAMCITY']
-  ruby_exec("bundler install")
+  ruby_exec("bundle install")
 end
 
 require(File.join(File.dirname(__FILE__), 'config', 'boot'))
