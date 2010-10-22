@@ -28,7 +28,8 @@ class AccountRequestsController < ResourceController::Base
 
   def invite
     AccountRequest.find(ids_from_params).each do |account_request|
-      account_request.send_invitation(request.host, current_user.email)
+      from = APP_CONFIG[:default_reply_to_address] || current_user.email
+      account_request.send_invitation(request.host, from)
     end
     flash[:notice] = "#{ids_from_params.size} invitations queued to be sent."
     redirect_to account_requests_url

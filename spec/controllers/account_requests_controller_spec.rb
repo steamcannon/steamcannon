@@ -141,6 +141,14 @@ describe AccountRequestsController do
         post :invite, :account_request_ids => [1]
       end
 
+      it "should use the default_reply_to_address if specified" do
+        APP_CONFIG.should_receive(:[]).with(:default_reply_to_address).and_return('anemail@example.com')
+        request.should_receive(:host).at_least(:once).and_return('the_host')
+        @logged_in_user.should_not_receive(:email)
+        @account_request.should_receive(:send_invitation).with('the_host', 'anemail@example.com')
+        post :invite, :account_request_ids => [1]
+      end
+      
       it "should redirect back to the index" do
         post :invite, :account_request_ids => [1]
         response.should redirect_to(account_requests_url)
