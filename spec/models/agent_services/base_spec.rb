@@ -102,9 +102,32 @@ describe AgentServices::Base do
         @agent_service.deploy(@instance_service, @deployment).should be_true
       end
 
-      it "should create an deployment_istance_service record" do
+      it "should create an deployment_instance_service record" do
         @agent_service.deploy(@instance_service, @deployment)
         @instance_service.deployments.first.should == @deployment
+      end
+
+
+      context "with a returned status" do
+        it "should move the deployment_instance_service to deployed if the deploy finished" do
+          @agent_client.stub!(:deploy_artifact).and_return({ 'status' => 'deployed' })
+          @agent_service.deploy(@instance_service, @deployment)
+          @instance_service.deployment_instance_services.first.should be_deployed
+        end
+
+        it "should leave the deployment_instance_service in pending if the deploy is still pending" do
+          @agent_client.stub!(:deploy_artifact).and_return({ 'status' => 'pending' })
+          @agent_service.deploy(@instance_service, @deployment)
+          @instance_service.deployment_instance_services.first.should be_pending
+        end
+
+      end
+
+      context "with no returned status" do
+        it "should move the deployment_instance_service to deployed" do
+          @agent_service.deploy(@instance_service, @deployment)
+          @instance_service.deployment_instance_services.first.should be_deployed
+        end
       end
     end
 
@@ -113,9 +136,9 @@ describe AgentServices::Base do
         @agent_client.stub!(:deploy_artifact).and_raise(AgentClient::RequestFailedError.new('msg'))
       end
 
-      it "should not create an deployment_instance_service record" do
+      it "should create an deployment_instance_service record with a state of :deploy_failed" do
         @agent_service.deploy(@instance_service, @deployment)
-        @instance_service.deployments.should be_empty
+        @instance_service.deployment_instance_services.first.should be_deploy_failed
       end
 
       it "should not raise"  do

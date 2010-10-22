@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101020212559) do
+ActiveRecord::Schema.define(:version => 20101022163044) do
 
   create_table "account_requests", :force => true do |t|
     t.string   "email"
@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(:version => 20101020212559) do
     t.integer  "instance_service_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "current_state"
+    t.datetime "state_change_timestamp"
   end
 
   create_table "deployments", :force => true do |t|

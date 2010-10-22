@@ -26,9 +26,10 @@
                   - if deployment.instance_services.empty?
                     %li Pending Deployment
                   - else
-                    - deployment.instance_services.each do |instance_service|
+                    - deployment.deployment_instance_services.each do |deployment_instance_service|
                       %li
-                      = instance_service.instance.name
+                        == #{deployment_instance_service.instance_service.instance.name} - #{deployment_instance_service.current_state.humanize}
+                      
               - javascript_tag do
                 ="monitor_deployment('#{status_deployment_path(deployment.id)}', '##{dom_id(deployment)}');"
 

@@ -104,6 +104,10 @@ class InstanceService < ActiveRecord::Base
     agent_service.deploy(self, deployment)
   end
 
+  def artifact_metadata(deployment)
+    agent_client.artifact(deployment.artifact_identifier)
+  end
+  
   def undeploy(deployment)
     agent_service.undeploy(self, deployment)
   end

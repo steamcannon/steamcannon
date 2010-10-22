@@ -1,0 +1,16 @@
+---
+platforms:
+  - name: PostgreSQL instance
+    platform_versions:
+      - version_number: 1
+        images:
+          - name: Database - PostgreSQL
+            description: PostgreSQL 8.4
+            cloud_id: ami-18e61271
+            can_scale_out: false
+            storage_volume_capacity: 3 #Gigs
+            storage_volume_device: /dev/sdf #agent expects this, so don't change
+            services:
+              - postgresql
+
+

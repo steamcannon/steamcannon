@@ -52,13 +52,19 @@ module AgentServices
       #FIXME: this currently ignores the result of the undeploy operation
       other_deployment = deployment.artifact.deployment_for_instance_service(instance_service)
       other_deployment.undeploy! if other_deployment
+      deployment_instance_service = instance_service.deployment_instance_services.create(:deployment => deployment)
 
       begin
         result = instance_service.agent_client.deploy_artifact(deployment.artifact_version)
-        deployment.update_attribute(:agent_artifact_identifier, result['artifact_id']) if result.respond_to?(:[])
-        instance_service.deployments << deployment
+        status = 'deployed'
+        if result.respond_to?(:[])
+          deployment.update_attribute(:agent_artifact_identifier, result['artifact_id']) 
+          status = result['status']
+        end
+        deployment_instance_service.deployed! unless status == 'pending'
         return true
       rescue AgentClient::RequestFailedError => ex
+        deployment_instance_service.fail!
         #TODO: store the failure reason?
         Rails.logger.info "deploying artifact failed: #{ex}"
         Rails.logger.info ex.backtrace.join("\n")
