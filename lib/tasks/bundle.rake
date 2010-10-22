@@ -17,16 +17,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 namespace :bundle do
-  task :base do
-    require 'rbconfig'
-    bindir = RbConfig::CONFIG['bindir']
-    ruby = RbConfig::CONFIG['ruby_install_name']
-    @bundle_exec = lambda { |arguments|
-      puts "#{File.join(bindir, ruby)} -S bundle #{arguments}"
-      `#{File.join(bindir, ruby)} -S bundle #{arguments}`
-    }
-  end
-
   desc "Delete bundler config file"
   task :delete_config do
     config_file = File.join(File.dirname(__FILE__), '..', '..', '.bundle', 'config')
@@ -36,16 +26,16 @@ namespace :bundle do
   desc "Delete vendor/bundle directory"
   task :delete_vendor_bundle do
     bundle_dir = File.join(File.dirname(__FILE__), '..', '..', 'vendor', 'bundle')
-    ` rm -rf #{bundle_dir}`
+    `rm -rf #{bundle_dir}`
   end
 
   desc "bundle package"
-  task :package => :base do
-    @bundle_exec.call('package')
+  task :package do
+    ruby_exec 'bundle package'
   end
 
   desc "bundle install --deployment --local"
-  task :local_deployment => :base do
-    @bundle_exec.call('install --deployment --local --without torquebox')
+  task :local_deployment do
+    ruby_exec 'bundle install --deployment --local --without torquebox'
   end
 end

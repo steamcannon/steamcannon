@@ -23,8 +23,29 @@ namespace :ci do
 
   desc 'Package SteamCannon'
   task :package => ['bundle:package', 'bundle:local_deployment',
-                    'torquebox:archive', 'bundle:delete_config',
-                    'bundle:delete_vendor_bundle'] do
+                    'compile_css', 'create_archive',
+                    'bundle:delete_config', 'bundle:delete_vendor_bundle'] do
+  end
+
+  task :compile_css do
+    ruby_exec("compass compile -c config/compass.rb -r ninesixty")
+  end
+
+  task :create_archive do
+    Rake::Task['torquebox:archive'].invoke
+
+    # Add bundler config to archive
+    `jar uf steamcannon.rails .bundle/config`
+
+    # Add steamcannon.yml to archive
+    require 'fileutils'
+    FileUtils.mkdir_p('/tmp/config')
+    File.open('/tmp/config/steamcannon.yml', 'w') do |file|
+      file.write <<-EOF
+        deltacloud_url: http://localhost:8080/deltacloud/api
+      EOF
+    end
+    `jar uf steamcannon.rails -C /tmp config/steamcannon.yml`
   end
 
   desc 'Run CI Build'
