@@ -14,6 +14,7 @@ a {
 
   &:hover {
     color: $link_hover_color;
+    text-decoration: underline;
   }
 }
 
@@ -115,6 +116,7 @@ h1, h2, h3 {
 }
 
 #main-navigation {
+  position: relative;
   font-size: 130%;
   border-bottom: 2px solid $bar_background_color;
   margin-bottom: 1.5em;
@@ -132,12 +134,19 @@ h1, h2, h3 {
         &:hover {
           color: $navigation_hover_color;
         }
-        &.selected {
+        &.selected, 
+        &:hover {
+          text-decoration: none;
           color: $navigation_selected_color;
           border-bottom: 4px solid $bar_background_color - #333;
         }
       }
     }
+  }
+  #ajax-spinner {
+      position: absolute;
+      top: 2px;
+      right: 2px;
   }
 }
 
@@ -192,6 +201,9 @@ form {
   .page_header {
   }
   #topology {
+    h3 a {
+      font-size: .8em;
+    }
     table {
       border-collapse: collapse;
       tr {
@@ -440,9 +452,9 @@ table.header_top {
     margin-left: -300px;
     width: 600px;
     
-    background-color: #EEE;
+    background-color: $bar_background_color;
     color: #333;
-    border: 1px solid black;
+    border: 1px solid $bar_background_color - #333; 
     padding: 12px;
 }
 
@@ -450,7 +462,7 @@ table.header_top {
 
 .stop_environment_confirmation {
     .message {
-        font-weight: bold;
+        font-size: 120%;
     }
     .controls {
         text-align: right;
@@ -544,4 +556,17 @@ table.header_top {
     &.credentials_invalid #verification_status #invalid {
         display: block;
     }
+}
+
+.callout {
+    padding: 0.5em;
+    border: 1px solid $color_light;
+    font-weight: bold;
+    &.fail {
+        background-color: $failure_color;
+        color: white;
+    }
+    &.success {
+        background-color: $highlight_color;
+    }    
 }

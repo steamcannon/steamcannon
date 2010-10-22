@@ -22,6 +22,7 @@ class InstanceServiceWatcher
   def run
     verify_verifying_instance_services
     configure_configuring_instance_services
+    confirm_pending_deployment_instance_services
   end
 
   def configure_configuring_instance_services
@@ -32,5 +33,9 @@ class InstanceServiceWatcher
   def verify_verifying_instance_services
     # TODO: This is a bit inefficient to do one at a time
     InstanceService.verifying.each { |i| i.verify_service }
+  end
+  
+  def confirm_pending_deployment_instance_services
+    DeploymentInstanceService.pending.each(&:confirm_deploy)
   end
 end

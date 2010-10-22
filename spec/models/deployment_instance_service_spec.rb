@@ -21,4 +21,41 @@ require 'spec_helper'
 describe DeploymentInstanceService do
   it { should belong_to :deployment }
   it { should belong_to :instance_service }
+
+  describe "confirm_deploy" do
+    before(:each) do
+      @deployment_instance_service = DeploymentInstanceService.create
+      @instance_service = mock(InstanceService)
+      @deployment = mock(Deployment)
+      @deployment.stub!(:artifact_identifier)
+      @deployment_instance_service.stub!(:instance_service).and_return(@instance_service)
+      @deployment_instance_service.stub!(:deployment).and_return(@deployment)
+    end
+    
+    it "should move to deployed if the deployment can be confirmed" do
+      @instance_service.should_receive(:artifact_metadata).with(@deployment).and_return({ 'name' => 'blah' })
+      @deployment_instance_service.confirm_deploy
+      @deployment_instance_service.should be_deployed
+    end
+    
+    it "should stay in pending if the deployment can not confirmed" do
+      @instance_service.should_receive(:artifact_metadata).with(@deployment).and_return(nil)
+      @deployment_instance_service.confirm_deploy
+      @deployment_instance_service.should be_pending
+    end
+
+    it "should stay in pending if the deployment can not confirmed (and raises)" do
+      @instance_service.should_receive(:artifact_metadata).with(@deployment).and_raise(AgentClient::RequestFailedError.new('boom'))
+      @deployment_instance_service.confirm_deploy
+      @deployment_instance_service.should be_pending
+    end
+
+    it "should move to fail if confirmation took too long" do
+      @instance_service.should_receive(:artifact_metadata).with(@deployment).and_return(nil)
+      @deployment_instance_service.should_receive(:stuck_in_state_for_too_long?).and_return(true)
+      @deployment_instance_service.confirm_deploy
+      @deployment_instance_service.should be_deploy_failed
+    end
+  end
+  
 end

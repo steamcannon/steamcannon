@@ -65,11 +65,8 @@ class AgentClient
     end
   end
 
-  #TODO: store the artifact_id on the artifact_version locally, and pass the
-  #artifact_version AR here
   def artifact(artifact_id)
     service_get "artifacts/#{artifact_id}"
-    #service_get "artifacts/#{artifact_version.agent_artifact_id}"
   end
 
   def deploy_artifact(artifact_version)

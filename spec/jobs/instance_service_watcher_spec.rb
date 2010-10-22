@@ -26,6 +26,7 @@ describe InstanceServiceWatcher do
   it "should update configuring and verifying instances" do
     @instance_watcher.should_receive(:configure_configuring_instance_services)
     @instance_watcher.should_receive(:verify_verifying_instance_services)
+    @instance_watcher.should_receive(:confirm_pending_deployment_instance_services)
     @instance_watcher.run
   end
 
@@ -41,6 +42,13 @@ describe InstanceServiceWatcher do
     instance_service.should_receive(:verify_service)
     InstanceService.stub!(:verifying).and_return([instance_service])
     @instance_watcher.verify_verifying_instance_services
+  end
+
+  it "should attempt to confirm any pending deployment_instance_services" do
+    deployment_instance_service = mock_model(DeploymentInstanceService)
+    deployment_instance_service.should_receive(:confirm_deploy)
+    DeploymentInstanceService.stub!(:pending).and_return([deployment_instance_service])
+    @instance_watcher.confirm_pending_deployment_instance_services
   end
 
 end

@@ -2,11 +2,11 @@
 platforms:
   - name: JBoss Single Tier
     platform_versions:
-      - version_number: 2
+      - version_number: 3
         images:
           - name: Backend - JBoss
             description: JBoss AS 6 m5 (w/TorqueBox 1.0.0.Beta23-SNAPSHOT)
-            cloud_id: ami-1e3cc877
+            cloud_id: ami-4a03f723
             can_scale_out: true
             services:
               - jboss_as

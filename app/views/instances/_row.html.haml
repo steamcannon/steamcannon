@@ -6,8 +6,8 @@
       = instance.current_state.titleize
     .hardware_profile
       = instance.hardware_profile
-    .cloud_id
-      = instance.cloud_id
+      - unless instance.cloud_id.blank?
+        == - #{instance.cloud_id}
   %td.services
     %ul
       - if instance.services.blank?
@@ -21,4 +21,4 @@
             = link_to "Logs", logs_environment_instance_instance_service_path(instance.environment, instance, instance_service)
             = additional_instance_service_actions(instance_service)
   %td.actions
-    = link_to_function "Stop", "remote_stop_instance('#{stop_environment_instance_path(instance.environment.id, instance.id)}')"
+    = link_to_function "Stop", "remote_stop_instance('#{instance.name}', '#{stop_environment_instance_path(instance.environment.id, instance.id)}')"

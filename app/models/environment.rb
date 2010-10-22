@@ -38,7 +38,7 @@ class Environment < ActiveRecord::Base
   aasm_initial_state :stopped
   aasm_state :starting, :enter => :start_environment
   aasm_state :running, :after_enter => :move_instance_services_to_configuring
-  aasm_state :stopping, :enter => :stop_environment
+  aasm_state :stopping, :after_enter => :stop_environment
   aasm_state :stopped
   aasm_state :start_failed
 
@@ -96,16 +96,20 @@ class Environment < ActiveRecord::Base
 
   def stop_environment
     deployments.deployed.each(&:undeploy!)
-    instances.active.each(&:stop!)
+    instances.not_stopped.not_stopping.each(&:stop!)
     storage_volumes.each(&:destroy) unless preserve_storage_volumes?
+    # try to move to stopped here - state won't change if there are still
+    # running instances, but this catches the case where all instances
+    # are stopped individually [STEAM-153]
+    stopped! 
   end
 
   def running_all_instances?
-    instances.active.all?(&:running?)
+    instances.not_stopped.all?(&:running?)
   end
 
   def stopped_all_instances?
-    instances.active.count == 0
+    instances.not_stopped.count == 0
   end
 
   def remove_images_from_prior_platform_version

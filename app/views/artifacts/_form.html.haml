@@ -4,7 +4,7 @@
     = form.text_field :name
   %li
     = form.label :service
-    = form.select :service_id, options_for_service_select(@artifact.service_id)
+    = form.select :service_id, options_for_service_select(@artifact.service_id, &:allow_artifacts)
   %li
     = form.label :description
     = form.text_area :description, :rows => 5

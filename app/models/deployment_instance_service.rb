@@ -17,6 +17,34 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class DeploymentInstanceService < ActiveRecord::Base
+  include AASM
+  include StuckState
+  
   belongs_to :deployment
   belongs_to :instance_service
+
+  aasm_column :current_state
+  aasm_initial_state :pending
+  aasm_state :pending
+  aasm_state :deployed
+  aasm_state :deploy_failed
+
+  aasm_event :deployed do
+    transitions :to => :deployed, :from => :pending
+  end
+
+  aasm_event :fail do
+    transitions :to => :deploy_failed, :from => :pending
+  end
+  
+  def confirm_deploy
+    begin
+      metadata = instance_service.artifact_metadata(deployment)
+      deployed! if metadata and metadata['name']
+    rescue AgentClient::RequestFailedError => ex
+      Rails.logger.info "deploy confirmation failed for '#{deployment.artifact_identifier}': #{ex}"
+      Rails.logger.info ex.backtrace.join("\n")
+    end
+    fail! if stuck_in_state_for_too_long?
+  end
 end

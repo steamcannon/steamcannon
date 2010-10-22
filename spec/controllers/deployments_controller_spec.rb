@@ -136,11 +136,6 @@ describe DeploymentsController do
       post :status, :id => "13"
       assigns[:deployment].should equal(mock_deployment)
     end
-
-    it "should get the deployment's current instances" do
-      mock_deployment.should_receive(:instance_services)
-      post :status, :id => "13"
-    end
   end
 
 end

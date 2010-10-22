@@ -17,7 +17,9 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module ServicesHelper
-  def options_for_service_select(selected = nil)
-    options_from_collection_for_select(Service.all, :id, :full_name, selected)
+  def options_for_service_select(selected = nil, &selector)
+    services = Service.all
+    services = services.select(&selector) if selector
+    options_from_collection_for_select(services, :id, :full_name, selected)
   end
 end

@@ -22,13 +22,8 @@
                 .url
                   = link_to 'Link', deployment.url 
               .status
-                %ul
-                  - if deployment.instance_services.empty?
-                    %li Pending Deployment
-                  - else
-                    - deployment.instance_services.each do |instance_service|
-                      %li
-                      = instance_service.instance.name
+                = render 'deployments/service_list', :deployment => deployment
+
               - javascript_tag do
                 ="monitor_deployment('#{status_deployment_path(deployment.id)}', '##{dom_id(deployment)}');"
 

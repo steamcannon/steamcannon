@@ -46,6 +46,16 @@ function handle_js_popup_dialogs() {
 }
 
 jQuery(document).ready(function($) {
+    $(document).ajaxStart(function() {
+        $('#ajax-spinner').show()
+    })
+
+    $(document).ajaxStop(function() {
+        $('#ajax-spinner').hide()
+    })
+
+    $('.callout').delay(10000).slideUp()
+
     $('#environment_form #environment_platform_version_id').change(function() {
         $('.content_row').hide()
         $('.row_for_platform_version_' + this.value).show()
@@ -114,10 +124,12 @@ function load_account_cloud_defaults() {
     })
 }
 
-function remote_stop_instance(url) {
-  $.post(url, function(data){
-    alert(data.message);
-  }, "json");
+function remote_stop_instance(instance_name, url) {
+    if (confirm("Are you sure you want to stop " + instance_name + "?")) {
+        $.post(url, function(data){
+            alert(data.message);
+        }, "json");
+    }
 }
 
 function update_environment_status(url, selector) {
@@ -138,12 +150,8 @@ function monitor_environment(url, selector) {
 
 function update_deployment_status(url, selector) {
   $.post(url, function(data) {
-    services = "<ul>";
-    if (data.services.length == 0) { data.services.push("Pending Deployment"); }
-    $.each(data.services, function(index, value){ services += "<li>" + value + "</li>"; });
-    services += "</ul>";
-    $(selector + ' .deployment_status ul').replaceWith(services);
-  }, "json");
+      $(selector + ' .status ul').replaceWith(data)
+  });
   setTimeout("update_deployment_status('" + url + "', '" + selector + "')", 30000);
 }
 
