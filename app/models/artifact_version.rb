@@ -89,4 +89,7 @@ class ArtifactVersion < ActiveRecord::Base
     [ :ear, :war, :rails, :rack ].include?(type_key)
   end
 
+  def is_deployed?
+    deployments.any?(&:is_deployed?)
+  end
 end

@@ -19,6 +19,5 @@
             - for deployment in artifact.deployments.deployed
               %li
                 = link_to deployment.environment.name, deployment.environment
-                = "(#{deployment.current_state})"
 - javascript_tag do
   monitor_content('#{dashboard_path}', 'table#artifacts');

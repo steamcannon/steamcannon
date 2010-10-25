@@ -93,4 +93,23 @@ describe ArtifactVersion do
     artifact_version.deployment_file.should == 'the_file'
   end
 
+  describe "is_deployed?" do
+    before(:each) do
+      @artifact_version = ArtifactVersion.new
+      @deployment = mock(Deployment)
+      @artifact_version.stub!(:deployments).and_return([@deployment])
+    end
+    
+    it "should return true if any deployments claim to be deployed" do
+      @deployment.should_receive(:is_deployed?).and_return(true)
+      @artifact_version.is_deployed?.should be_true
+    end
+
+    it "should return false if no deployments claim to be deployed" do
+      @deployment.should_receive(:is_deployed?).and_return(false)
+      @artifact_version.is_deployed?.should_not be_true
+    end
+
+
+  end
 end

@@ -69,6 +69,10 @@ class Deployment < ActiveRecord::Base
     end
   end
 
+  def is_deployed?
+    instance_services.exists?
+  end
+  
   protected
 
   def perform_deploy_async

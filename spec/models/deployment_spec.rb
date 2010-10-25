@@ -168,5 +168,16 @@ describe Deployment do
     end
   end
 
+  describe 'is_deployed?' do
+    it "should return true if it has any instance_services" do
+      @deployment.stub_chain(:instance_services, :exists?).and_return(true)
+      @deployment.is_deployed?.should be_true
+    end
+
+    it "should return false if it has no instance_services" do
+      @deployment.stub_chain(:instance_services, :exists?).and_return(false)
+      @deployment.is_deployed?.should_not be_true
+    end
+  end
 
 end

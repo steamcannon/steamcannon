@@ -43,5 +43,9 @@ class Artifact < ActiveRecord::Base
   def deployment_for_instance_service(instance_service)
     deployments.deployed.detect { |d| d.instance_services.exists?(instance_service.id) }
   end
+
+  def is_deployed?
+    artifact_versions.any?(&:is_deployed?)
+  end
 end
 

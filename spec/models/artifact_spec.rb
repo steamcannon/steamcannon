@@ -64,4 +64,24 @@ describe Artifact do
       @artifact.deployment_for_instance_service(@instance).should == nil
     end
   end
+
+  describe "is_deployed?" do
+    before(:each) do
+      @artifact = Artifact.new
+      @artifact_version = mock(ArtifactVersion)
+      @artifact.stub!(:artifact_versions).and_return([@artifact_version])
+    end
+    
+    it "should return true if any artifact_versions claim to be deployed" do
+      @artifact_version.should_receive(:is_deployed?).and_return(true)
+      @artifact.is_deployed?.should be_true
+    end
+
+    it "should return false if no artifact_versions claim to be deployed" do
+      @artifact_version.should_receive(:is_deployed?).and_return(false)
+      @artifact.is_deployed?.should_not be_true
+    end
+
+  end
 end
+
