@@ -33,7 +33,7 @@ module InstanceServicesHelper
     if instance_service.name == 'postgresql' and
         instance_service.running? and
         instance_service.environment.metadata[:postgresql_admin_user]
-      details = render('instance_services/postgresql_details', :instance_service => instance_service, :trigger => "##{id}").html_safe.to_json
+      details = render('instance_services/postgresql_details', :instance_service => instance_service).html_safe.to_json
       link_to_function('Details', "update_instance_message(#{instance_service.instance.id}, #{details})")
     end
   end
