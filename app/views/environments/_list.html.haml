@@ -28,7 +28,7 @@
             = link_to 'Start', start_environment_path(environment), :method => :post
           = link_to 'Clone', clone_environment_path(environment), :method => :post
           = link_to 'Edit', edit_environment_path(environment)
-          = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?"
+          = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?" if environment.stopped?
       - javascript_tag do
         ="monitor_environment('#{status_environment_path(environment.id)}', '##{dom_id(environment)}');"
   
