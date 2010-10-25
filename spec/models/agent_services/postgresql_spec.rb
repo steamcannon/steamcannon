@@ -27,8 +27,8 @@ describe AgentServices::Postgresql do
   end
 
   describe "open_ports" do
-    it "should have port 5432" do
-      @agent_service.open_ports.should include(5432)
+    it "should have no open ports" do
+      @agent_service.open_ports.should be_empty
     end
   end
 
@@ -42,7 +42,7 @@ describe AgentServices::Postgresql do
       @username_password = { :user => 'username', :pasword => 'password' }
       @agent_service.stub!(:generate_username_and_password).and_return(@username_password)
     end
-    
+
     it "should generate a username and password" do
       @agent_service.should_receive(:generate_username_and_password).and_return(@username_password)
       @agent_service.configure_instance_service(@instance_service)
@@ -53,7 +53,7 @@ describe AgentServices::Postgresql do
       @agent_service.should_not_receive(:generate_username_and_password)
       @agent_service.configure_instance_service(@instance_service)
     end
-    
+
     it "should configure the service" do
       @agent_client.should_receive(:configure).with({ :create_admin => @username_password }.to_json)
       @agent_service.configure_instance_service(@instance_service)
@@ -75,7 +75,7 @@ describe AgentServices::Postgresql do
       @agent_service.send(:generate_username_and_password).should == { :user => '_1234', :password => 'abcd' }
     end
   end
-  
+
 
 
 =begin

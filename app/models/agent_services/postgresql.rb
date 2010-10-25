@@ -28,11 +28,11 @@ module AgentServices
     end
 
     def open_ports
-      [5432]
+      []
     end
 
 # since we currently onll manage an admin user, a connection string is useless
-=begin       
+=begin
      def url_for_instance_service(instance_service)
        host = instance_service.instance.public_address
        admin_user = instance_service.metadata[:admin_user]
