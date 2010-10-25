@@ -1,17 +1,25 @@
-.postgresql_details.jqmWindow.js-popup_dialog{style_display_none.merge(:rel => trigger)}
-  .message
-    Details for the PostgreSQL service on #{instance_service.instance.name}
-    .row
-      Admin user: #{instance_service.environment.metadata[:postgresql_admin_user][:user]}
-    .row
-      Admin password: #{instance_service.environment.metadata[:postgresql_admin_user][:password]}
-    .row
-      External hostname: #{instance_service.instance.public_address}
-    .row
-      Internal hostname: #{instance_service.internal_hostname}
-    .row
-      Port: 5432
+.postgresql_details
+  Details for the PostgreSQL service:
+  %ul
+    %li
+      %label
+        Admin user: 
+      #{instance_service.environment.metadata[:postgresql_admin_user][:user]}
+    %li
+      %label
+        Admin password: 
+      #{instance_service.environment.metadata[:postgresql_admin_user][:password]}
+    %li
+      %label
+        External hostname: 
+      #{instance_service.instance.public_address}
+    %li
+      %label
+        Internal hostname: 
+      #{instance_service.internal_hostname}
+    %li
+      %label
+        Port: 
+      5432
 
-  .controls
-    %button{:class => 'jqmClose'}Close
     

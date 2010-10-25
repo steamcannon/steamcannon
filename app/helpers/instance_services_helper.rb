@@ -33,9 +33,8 @@ module InstanceServicesHelper
     if instance_service.name == 'postgresql' and
         instance_service.running? and
         instance_service.environment.metadata[:postgresql_admin_user]
-      id = "postgresql_details_trigger_#{instance_service.id}"
-      accum = link_to 'Details', '#', :id => id
-      accum << render('instance_services/postgresql_details', :instance_service => instance_service, :trigger => "##{id}").html_safe
+      details = render('instance_services/postgresql_details', :instance_service => instance_service, :trigger => "##{id}").html_safe.to_json
+      link_to_function('Details', "update_instance_message(#{instance_service.instance.id}, #{details})")
     end
   end
 end

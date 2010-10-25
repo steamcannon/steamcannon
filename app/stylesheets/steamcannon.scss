@@ -574,7 +574,14 @@ table.header_top {
 tr.instance_message {
     background-color: $highlight_color;     
     border-bottom: 3px solid #eee;     
-    td {
-
+    ul {
+        list-style-type: none;
+        margin-bottom: 0;
+        li {
+            margin-left: 0;
+        }
+        label {
+            font-weight: bold;
+        }
     }
 }
