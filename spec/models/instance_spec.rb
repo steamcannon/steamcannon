@@ -209,6 +209,12 @@ describe Instance do
         @instance.should_receive(:start_failed!)
         @instance.start!
       end
+
+      it "should call start_failed! event if returned instance is nil" do
+        @cloud.stub!(:launch).and_return(nil)
+        @instance.should_receive(:start_failed!)
+        @instance.start!
+      end
     end
 
     describe 'attach_volume' do

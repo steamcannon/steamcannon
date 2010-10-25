@@ -570,3 +570,11 @@ table.header_top {
         background-color: $highlight_color;
     }    
 }
+
+tr.instance_message {
+    background-color: $highlight_color;     
+    border-bottom: 3px solid #eee;     
+    td {
+
+    }
+}

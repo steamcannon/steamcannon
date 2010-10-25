@@ -39,11 +39,19 @@ jQuery.fn.pulsate = function() {
     this.pulse({opacity: [1,.2]}, 500, 10);
 };
 
-function handle_js_popup_dialogs() {
+function update_instance_message(instance_id, message) {
+    message_id = '#instance_' + instance_id + '_message'
+     $(message_id + ' td').first().html(message)
+    $(message_id).show()
+}
+
+function apply_rules_to_instance_status_load() {
     $('.js-popup_dialog').each(function(idx, el) {
         $(el).jqm({trigger: $(el).attr('rel'), overlay:0})
     })
+        
 }
+
 
 jQuery(document).ready(function($) {
     $(document).ajaxStart(function() {
@@ -85,7 +93,7 @@ jQuery(document).ready(function($) {
         $($(this).closest('.start_another_dialog')).hide();
     })
 
-    handle_js_popup_dialogs()
+    apply_rules_to_instance_status_load()
 
     $('#account_requests_index .js-state_display_toggle').click(function() {
         $('#account_requests_index').toggleClass($(this).attr('rel'))
@@ -108,6 +116,7 @@ jQuery(document).ready(function($) {
             }
         })
     })
+
 })
 
 function get_with_cloud_credentials(url, callback) {
@@ -177,7 +186,7 @@ function monitor_content(url, selector) {
 function update_instance_status(url, selector) {
   $.post(url, function(data) {
       $(selector).replaceWith(data.html);
-      handle_js_popup_dialogs()
+      apply_rules_to_instance_status_load()
   }, "json");
   setTimeout("update_instance_status('" + url + "', '" + selector + "')", 30000);
 }

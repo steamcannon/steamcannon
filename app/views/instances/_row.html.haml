@@ -3,7 +3,7 @@
     .name
       == ##{instance.number}
     .current_state
-      = instance.current_state.titleize
+      = instance_status_for_environment_row(instance)
     .hardware_profile
       = instance.hardware_profile
       - unless instance.cloud_id.blank?
@@ -22,3 +22,4 @@
             = additional_instance_service_actions(instance_service)
   %td.actions
     = link_to_function "Stop", "remote_stop_instance('#{instance.name}', '#{stop_environment_instance_path(instance.environment.id, instance.id)}')"
+

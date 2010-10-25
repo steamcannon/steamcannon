@@ -12,5 +12,8 @@
       %table
         - image.instances.each_with_index do |instance, i|
           = render :partial=>'/instances/row', :locals=>{ :instance=>instance }
+          %tr.instance_message{style_display_none.merge(:id => "instance_#{instance.id}_message")}
+            %td(colspan="3")
+
           - javascript_tag do
             ="monitor_instance('#{status_environment_instance_path(instance.environment.id, instance.id)}', '##{dom_id(instance)}');"

@@ -192,6 +192,9 @@ class Instance < ActiveRecord::Base
   def start_instance
     cloud_instance = cloud.launch(image.cloud_id,
                                   instance_launch_options)
+    # this will cause the instance to go to start_failed, and is the
+    # first step in fixing STEAM-162.
+    raise RuntimeError.new("Instance failed to start!") unless cloud_instance
     update_addresses(cloud_instance, :cloud_id => cloud_instance.id)
   end
 
