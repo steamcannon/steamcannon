@@ -34,6 +34,8 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password, :password_confirmation
 
+  protected
+
   def ssl_required?
     APP_CONFIG[:require_ssl_for_web]
   end
