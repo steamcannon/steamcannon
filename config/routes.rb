@@ -35,6 +35,10 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :account, :controller => "users", :member => { :validate_cloud_credentials => :get, :cloud_defaults_block => :get }
   map.resource :dashboard, :controller => "dashboard"
 
+  if APP_CONFIG[:signup_mode] == 'invite_only' 
+    map.new_user_from_token '/signup/:token', :controller => "users", :action => "new"
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:

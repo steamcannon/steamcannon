@@ -40,7 +40,7 @@ describe "AccountRequestMailer" do
     end
 
     it "should include the host and token in the url" do
-      @email.should have_body_text("http://#{@host}/users/new?token=#{@token}")
+      @email.should have_body_text("http://#{@host}/signup/#{@token}")
     end
   end
 

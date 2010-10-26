@@ -24,7 +24,7 @@ class AccountRequestMailer < ActionMailer::Base
     recipients to
     from       sender
     
-    body       :url => new_user_url(:host => host, :token => token)
+    body       :url => new_user_from_token_url(:host => host, :token => token)
   end
 
   def request_notification(host, request, to)
