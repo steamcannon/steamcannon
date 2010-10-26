@@ -57,10 +57,12 @@ class AccountRequest < ActiveRecord::Base
   end
 
   def _send_invitation(host, from)
+    logger.info "Sending account invitation to #{from}"
     AccountRequestMailer.deliver_invitation(host, from, email, token)
   end
   
   def _send_request_notification(host, to)
+    logger.info "Sending account request notification to #{to}"
     AccountRequestMailer.deliver_request_notification(host, self, to)
   end
 
