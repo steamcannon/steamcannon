@@ -11,6 +11,8 @@
           Superuser? 
       %th.lastlogin
         Last Login
+      %th.lastrequest
+        Last Activity
       %th.actions
         Actions
     - collection.each do |user|
@@ -23,8 +25,9 @@
         %td.lastlogin
           - if user.current_login_at
             == #{time_ago_in_words(user.current_login_at)} ago
-          - else
-            &nbsp;
+        %td.lastrequest
+          - if user.last_request_at
+            == #{time_ago_in_words(user.last_request_at)} ago
         %td.actions
           - content_for_superuser do
             = link_to 'Assume User', assume_user_user_path(user)
