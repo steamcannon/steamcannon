@@ -26,7 +26,7 @@ require 'email_spec'
 require 'shoulda'
 require 'ap'
 
-  
+
 # Uncomment the next line to use webrat's matchers
 #require 'webrat/integrations/rspec-rails'
 
@@ -90,7 +90,7 @@ Spec::Runner.configure do |config|
       AuditColumns::Base.stub!(:controller).and_return(controller)
       user
     end
-    
+
     def logout
       @current_user_session = nil
       UserSession.stub!(:find).and_return(nil)
@@ -101,5 +101,7 @@ Spec::Runner.configure do |config|
      # force signup_mode here to override whatever is set in config/steamcannon.yml
     APP_CONFIG[:signup_mode] = 'open_signup'
     APP_CONFIG.delete(:certificate_password)
+    # Don't require SSL for anything
+    APP_CONFIG[:require_ssl_for_web] = false
   end
 end

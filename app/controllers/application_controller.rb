@@ -21,8 +21,10 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  include SslRequirement
+
   before_filter :require_complete_profile
-  
+
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
@@ -31,6 +33,10 @@ class ApplicationController < ActionController::Base
 
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password, :password_confirmation
+
+  def ssl_required?
+    APP_CONFIG[:require_ssl_for_web]
+  end
 
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
@@ -41,7 +47,7 @@ class ApplicationController < ActionController::Base
     return @current_user if defined?(@current_user)
     @current_user = current_user_session && current_user_session.record
   end
-  
+
   def open_signup_mode?
     APP_CONFIG[:signup_mode].to_s == 'open_signup'
   end
@@ -49,7 +55,7 @@ class ApplicationController < ActionController::Base
   def invite_only_mode?
     !open_signup_mode?
   end
-  
+
   def require_complete_profile
     return false unless current_user
     store_location and redirect_to edit_account_path unless current_user.profile_complete?
@@ -77,7 +83,7 @@ class ApplicationController < ActionController::Base
       return false
     end
   end
-  
+
   def store_location
     session[:return_to] = request.request_uri
   end
@@ -99,12 +105,12 @@ class ApplicationController < ActionController::Base
     unless [ :ok, :redirect, :error ].include?(type)
       raise "Invalid json response type: #{type}"
     end
-    response = { 
-      :status => type, 
-      :html => nil, 
-      :message => nil, 
+    response = {
+      :status => type,
+      :html => nil,
+      :message => nil,
       :to => nil }.merge(hash)
-  
-    {:json => response}  
+
+    {:json => response}
   end
 end

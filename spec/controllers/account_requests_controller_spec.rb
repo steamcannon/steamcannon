@@ -27,7 +27,7 @@ describe AccountRequestsController do
   before(:each) do
     APP_CONFIG[:signup_mode] = 'invite_only'
   end
-  
+
   context "as a superuser" do
     before(:each) do
       @logged_in_user = mock_model(User, { :superuser? => true, :profile_complete? => true, :email => 'admin@example.com' })
@@ -123,7 +123,7 @@ describe AccountRequestsController do
         @account_request.stub!(:send_request_notification)
         AccountRequest.stub!(:find).and_return([@account_request])
       end
-      
+
       it "should accept an array of account_request ids" do
         AccountRequest.should_receive(:find).with([1]).and_return([@account_request])
         post :invite, :account_request_ids => [1]
@@ -144,6 +144,7 @@ describe AccountRequestsController do
         end
 
         it "should use the default_reply_to_address if specified" do
+          APP_CONFIG.stub!(:[]).and_return(false)
           APP_CONFIG.should_receive(:[]).with(:default_reply_to_address).and_return('anemail@example.com')
           request.should_receive(:host).at_least(:once).and_return('the_host')
           @logged_in_user.should_not_receive(:email)
@@ -152,12 +153,11 @@ describe AccountRequestsController do
         end
       end
 
-
       it "should redirect back to the index" do
         post :invite, :account_request_ids => [1]
         response.should redirect_to(account_requests_url)
       end
-      
+
     end
 
     describe "POST ignore" do
@@ -166,7 +166,7 @@ describe AccountRequestsController do
         @account_request.stub!(:ignore!)
         AccountRequest.stub!(:find).and_return([@account_request])
       end
-      
+
       it "should accept an array of account_request ids" do
         AccountRequest.should_receive(:find).with([1]).and_return([@account_request])
         post :ignore, :account_request_ids => [1]
@@ -176,7 +176,7 @@ describe AccountRequestsController do
         AccountRequest.should_receive(:find).with([2]).and_return([@account_request])
         post :ignore, :account_request_id => 2
       end
-      
+
       it "should ignore the account requests" do
         @account_request.should_receive(:ignore!)
         post :ignore, :account_request_ids => [1]
@@ -186,7 +186,7 @@ describe AccountRequestsController do
         post :ignore, :account_request_ids => [1]
         response.should redirect_to(account_requests_url)
       end
-      
+
     end
   end
 
@@ -210,7 +210,7 @@ describe AccountRequestsController do
         before(:each) do
           @account_request = mock_account_request(:save => true, :send_request_notification => nil)
         end
-        
+
         it "assigns a newly created account_request as @account_request" do
           AccountRequest.stub(:new).with({'these' => 'params'}).and_return(@account_request)
           post :create, :account_request => {:these => 'params'}
@@ -223,8 +223,9 @@ describe AccountRequestsController do
           response.should redirect_to(new_user_session_url)
         end
 
-        
+
         it "should call send_request_notification on the account_request, passing the current hostname from the request" do
+          APP_CONFIG.stub!(:[]).and_return(false)
           APP_CONFIG.should_receive(:[]).with(:signup_mode).and_return('invite_only')
           APP_CONFIG.should_receive(:[]).with(:account_request_notification_address).and_return('admin@example.com')
           request.should_receive(:host).at_least(:once).and_return('the_host')

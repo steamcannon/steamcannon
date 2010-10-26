@@ -11,6 +11,10 @@
 # in development mode.
 #use_ssl_with_agents: true
 
+# Optional, defaults to false. Determines whether SteamCannon requires ssl
+# for the web interface.
+#require_ssl_for_web: false
+
 # Optional, defaults to open_signup. Options are:
 # * open_signup: any user can create an account 
 # * invite_only: people can request an account, which goes in to a queue 

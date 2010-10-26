@@ -1,7 +1,8 @@
-# set defaults 
+# set defaults
 APP_CONFIG = {
   :use_ssl_with_agents => true,
-  :signup_mode => 'open_signup'
+  :signup_mode => 'open_signup',
+  :require_ssl_for_web => false
 }
 
 APP_CONFIG.merge!(begin

@@ -24,8 +24,9 @@ gem "steamcannon-deltacloud-client", "0.0.9.7.2", :require => "deltacloud"
 gem "paperclip", "2.3.3"
 gem "simple-navigation", "2.6.0"
 gem "aasm", "2.1.5"
-gem "rest-client", '~> 1.6.0'
-gem "json", '1.4.6'
+gem "rest-client", "~> 1.6.0"
+gem "json", "1.4.6"
+gem "ssl_requirement", "0.1.0"
 
 group :test do
   gem "rspec", "1.3.0"

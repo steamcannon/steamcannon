@@ -69,6 +69,7 @@ GEM
       proxies
     shoulda (2.11.3)
     simple-navigation (2.6.0)
+    ssl_requirement (0.1.0)
     steamcannon-deltacloud-client (0.0.9.7.2-java)
       nokogiri (>= 1.5.0.beta.2)
       rest-client (>= 1.4.2)
@@ -105,4 +106,5 @@ DEPENDENCIES
   s3 (= 0.3.4)
   shoulda (= 2.11.3)
   simple-navigation (= 2.6.0)
+  ssl_requirement (= 0.1.0)
   steamcannon-deltacloud-client (= 0.0.9.7.2)
