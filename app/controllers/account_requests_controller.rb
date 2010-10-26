@@ -23,6 +23,7 @@ class AccountRequestsController < ResourceController::Base
 
   create.wants.html do
     flash[:notice] = "Your request for an account has been received. If you are accepted, we'll send a signup code to #{object.email}."
+    object.send_request_notification(request.host, APP_CONFIG[:account_request_notification_address])
     redirect_to new_user_session_url
   end
 

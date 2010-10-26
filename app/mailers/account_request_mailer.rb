@@ -27,4 +27,12 @@ class AccountRequestMailer < ActionMailer::Base
     body       :url => new_user_url(:host => host, :token => token)
   end
 
+  def request_notification(host, request, to)
+    subject    "[SteamCannon] #{request.email} is requesting an account"
+    recipients to
+    from       to
+    
+    body       :url => account_requests_url(:host => host), :request => request
+  end
+
 end

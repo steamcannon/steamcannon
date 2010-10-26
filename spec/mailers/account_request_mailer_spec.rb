@@ -43,4 +43,34 @@ describe "AccountRequestMailer" do
       @email.should have_body_text("http://#{@host}/users/new?token=#{@token}")
     end
   end
+
+  describe 'request_notification' do
+    before(:each) do
+      @host = 'localhost:1234'
+      @to = 'to@example.com'
+      @request = mock(AccountRequest, :email => 'request@example.com', :reason => 'the reason')
+      @email = AccountRequestMailer.create_request_notification(@host, @request, @to)
+    end
+
+    it "should be to the given to" do
+      @email.should deliver_to(@to)
+    end
+
+    it "should be from the given to" do
+      @email.should deliver_from(@to)
+    end
+
+    it "should include the host in the url" do
+      @email.should have_body_text("http://#{@host}/account_requests")
+    end
+    
+    it "should include the request email in the body" do
+      @email.should have_body_text(@request.email)
+    end
+
+    it "should include the request reason in the body" do
+      @email.should have_body_text(@request.reason)
+    end
+
+  end
 end

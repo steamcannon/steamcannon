@@ -20,5 +20,10 @@
 ## The remaining options are currently only useful in invite_only signup mode 
 ## (see above).
 
+# Required in invite_only mode. Each account request that is created will send
+# a notification to this address.
+#account_request_notification_address: admin@example.com
+
 # Optional, defaults to the email of the current user. 
-# default_reply_to_address: email@example.com
+#default_reply_to_address: email@example.com
+

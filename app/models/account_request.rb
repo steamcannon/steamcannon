@@ -22,7 +22,7 @@ class AccountRequest < ActiveRecord::Base
   validates_presence_of :email
 
   before_create :create_token
-
+  
   aasm_column :current_state
   aasm_initial_state :pending
   aasm_state :pending
@@ -46,7 +46,11 @@ class AccountRequest < ActiveRecord::Base
     ModelTask.async(self, :_send_invitation, host, from)
     invite!
   end
-  
+
+  def send_request_notification(host, to)
+    ModelTask.async(self, :_send_request_notification, host, to)
+  end
+
   protected
   def create_token
     self.token = ActiveSupport::SecureRandom::hex(8) 
@@ -54,6 +58,10 @@ class AccountRequest < ActiveRecord::Base
 
   def _send_invitation(host, from)
     AccountRequestMailer.deliver_invitation(host, from, email, token)
+  end
+  
+  def _send_request_notification(host, to)
+    AccountRequestMailer.deliver_request_notification(host, self, to)
   end
 
 end
