@@ -19,3 +19,4 @@ TAGS
 vendor/bundle
 vendor/cache
 steamcannon.rails
+Capfile
