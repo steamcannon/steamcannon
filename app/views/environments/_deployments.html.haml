@@ -17,7 +17,7 @@
                 - if deployment.deployed?
                   = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
               .name
-                = link_to "#{deployment.artifact.name} (v#{deployment.artifact_version.version_number})", deployment.artifact
+                = link_to "#{h deployment.artifact.name} (v#{h deployment.artifact_version.version_number})", deployment.artifact
               - unless deployment.url.nil?
                 .url
                   = link_to 'Link', deployment.url 

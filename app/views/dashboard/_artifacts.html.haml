@@ -13,11 +13,11 @@
     - for artifact in @artifacts
       - content_tag_for( :tr, artifact) do
         %td.artifact
-          = link_to artifact.name, artifact
+          = link_to h(artifact.name), artifact
         %td.deployments
           %ul
             - for deployment in artifact.deployments.deployed
               %li
-                = link_to deployment.environment.name, deployment.environment
+                = link_to h(deployment.environment.name), deployment.environment
 - javascript_tag do
   monitor_content('#{dashboard_path}', 'table#artifacts');

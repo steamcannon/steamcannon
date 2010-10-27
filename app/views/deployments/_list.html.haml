@@ -12,6 +12,6 @@
             .current_state
               = deployment.current_state.humanize
         %h3.environment
-          = link_to deployment.environment.name, environment_path(deployment.environment)
+          = link_to h(deployment.environment.name), environment_path(deployment.environment)
         .artifact
-          = link_to deployment.artifact_version.to_s, artifact_path(deployment.artifact_version.artifact)
+          = link_to h(deployment.artifact_version.to_s), artifact_path(deployment.artifact_version.artifact)

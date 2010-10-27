@@ -16,9 +16,9 @@
     - environments.each do |environment|
       - content_tag_for(:tr, environment) do
         %td.name
-          = link_to environment.name, environment
+          = link_to h(environment.name), environment
         %td.platform
-          = environment.platform_version
+          &= environment.platform_version
         %td.status
           = environment.current_state.titleize
         %td.actions

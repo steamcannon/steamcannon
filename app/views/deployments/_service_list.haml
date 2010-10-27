@@ -4,4 +4,4 @@
   - else
     - deployment.deployment_instance_services.each do |deployment_instance_service|
       %li
-        == #{deployment_instance_service.instance_service.instance.name} - #{deployment_instance_service.current_state.humanize}
+        == #{h deployment_instance_service.instance_service.instance.name} - #{deployment_instance_service.current_state.humanize}

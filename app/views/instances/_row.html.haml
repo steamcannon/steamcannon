@@ -5,7 +5,7 @@
     .current_state
       = instance_status_for_environment_row(instance)
     .hardware_profile
-      = instance.hardware_profile
+      &= instance.hardware_profile
       - unless instance.cloud_id.blank?
         == - #{instance.cloud_id}
   %td.services

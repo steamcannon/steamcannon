@@ -11,7 +11,7 @@
   - artifacts.each do |artifact|
     - content_tag_for( :tr, artifact ) do
       %td.name
-        = link_to artifact.name, artifact_path(artifact)
+        = link_to h(artifact.name), artifact_path(artifact)
       %td.service
         = artifact.service_name
       %td.latest_version
