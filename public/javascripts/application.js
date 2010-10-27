@@ -101,13 +101,16 @@ jQuery(document).ready(function($) {
     })
 
     $('#edit_user .js-verify_credential').change(function() {
+        if ($('#user_cloud_username').val() === '' ||
+            $('#user_cloud_password').val() === '') {
+            return
+        }
+
+        $('#edit_user').removeClass('credentials_valid credentials_invalid')
         $('#edit_user').addClass('verifying_credentials')
-        $('#edit_user').removeClass('credentials_valid')
-        $('#edit_user').removeClass('credentials_invalid')
+
         get_with_cloud_credentials('/account/validate_cloud_credentials', function(data) {
-            $('#edit_user').removeClass('verifying_credentials')
-            $('#edit_user').removeClass('credentials_valid')
-            $('#edit_user').removeClass('credentials_invalid')
+            $('#edit_user').removeClass('verifying_credentials credentials_valid credentials_invalid')
             if (data.status == 'ok') {
                 $('#edit_user').addClass('credentials_valid')
                 load_account_cloud_defaults()
