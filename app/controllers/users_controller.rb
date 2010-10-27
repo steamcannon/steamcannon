@@ -102,7 +102,7 @@ class UsersController < ResourceController::Base
     if !open_signup_mode?
       if params[:token] and
           @account_request = AccountRequest.invited.find_by_token(params[:token])
-        flash[:notice] = "Please create an account to continue."
+        flash.now[:notice] = "Please create an account to continue."
       else
         flash[:error] = "You can't create a new user."
         redirect_to new_user_session_path
