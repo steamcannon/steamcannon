@@ -4,10 +4,19 @@
   :markdown
     ## Running Instances
     
-    All instances running under your credentials.
+    All instances running under your AWS credentials, including ones
+    not started by SteamCannon.
 
     ## Managed Instances
 
-    All instances managed by this SteamCannon.
+    All instances running under your AWS credentials that are managed
+    by this SteamCannon. This may include instances started by other
+    users if you share the same AWS credentials.
 
     ## Potentially Runaway Instances
+
+    Instances that were started by a SteamCannon and still running but
+    are not managed by this SteamCannon. This could be instances
+    started by a different SteamCannon under the same AWS credentials
+    or an error happened during instance startup or shutdown that
+    SteamCannon wasn't able to recover from.
