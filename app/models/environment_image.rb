@@ -22,7 +22,10 @@ class EnvironmentImage < ActiveRecord::Base
   belongs_to :image
   has_many :storage_volumes
   has_many :instances, :through=>:environment, :conditions=>[ 'image_id=? AND stopped_at IS NULL', '#{image_id}' ]
+  
   validates_presence_of :num_instances
+  validates_numericality_of :num_instances, :greater_than => 0, :only_integer => true
+  
   before_validation :enforce_num_instances
 
   def start!(instance_number)
