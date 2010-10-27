@@ -27,6 +27,10 @@ class UsersController < ResourceController::Base
   before_filter :require_superuser_to_edit_other_user, :only => [:edit, :update]
   skip_before_filter :require_complete_profile, :except => [:show]
 
+  new_action.before do
+    object.email = @account_request.email if @account_request
+  end
+  
   edit.before do
     flash[:error] = "Please complete your profile before continuing." unless current_user.profile_complete?
   end
@@ -98,7 +102,7 @@ class UsersController < ResourceController::Base
     if !open_signup_mode?
       if params[:token] and
           @account_request = AccountRequest.invited.find_by_token(params[:token])
-        #TODO: a flash notice here?
+        flash[:notice] = "Please create an account to continue."
       else
         flash[:error] = "You can't create a new user."
         redirect_to new_user_session_path

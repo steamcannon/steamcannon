@@ -38,6 +38,8 @@ describe UsersController do
       context 'in invite_only mode' do
         before(:each) do
           APP_CONFIG[:signup_mode] = 'invite_only'
+          @account_request = mock_model(AccountRequest, :email => 'blah@example.com')
+          @user = mock_model(User, :'email=' => nil)
         end
         
         it "should redirect to login if signup_mode when no token provided" do
@@ -46,8 +48,8 @@ describe UsersController do
         end
 
         it "should execute action if a valid token is provided" do
-          AccountRequest.should_receive(:find_by_token).with('1234').and_return(mock_model(AccountRequest))
-          User.should_receive(:new)
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          User.should_receive(:new).and_return(@user)
           get :new, :token => '1234'
         end
 
@@ -57,10 +59,9 @@ describe UsersController do
         end
 
         it "should store the account_request in an ivar" do
-          account_request = mock_model(AccountRequest)
-          AccountRequest.should_receive(:find_by_token).with('1234').and_return(account_request)
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
           get :new, :token => '1234'
-          assigns[:account_request].should == account_request
+          assigns[:account_request].should == @account_request
         end
       end
     end
