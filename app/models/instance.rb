@@ -144,7 +144,7 @@ class Instance < ActiveRecord::Base
 
   def move_to_configure
     configure!
-    start_failed! if stuck_in_state_for_too_long?
+    start_failed! if stuck_in_state_for_too_long?(5.minutes)
   end
   
   def configure_agent
