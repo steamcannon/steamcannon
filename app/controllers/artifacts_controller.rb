@@ -93,7 +93,7 @@ class ArtifactsController < ApplicationController
   def destroy
     @artifact = current_user.artifacts.find(params[:id])
     @artifact.destroy
-    flash[:notice] = "The #{@artifact.name} artifact was successfully deleted"
+    flash[:notice] = "The artifact was successfully deleted"
     respond_to do |format|
       format.html { redirect_to artifacts_path }
       format.xml  { head :ok }
@@ -109,11 +109,11 @@ class ArtifactsController < ApplicationController
       respond_to do |format|
         format.js { render(generate_json_response(:ok, :message=>status, :deployments=>deployments)) }
       end
-    else      
+    else
       respond_to do |format|
         format.js { render(generate_json_response(:error, :message=>"Cannot find requested artifact")) }
       end
     end
   end
-  
+
 end
