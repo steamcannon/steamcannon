@@ -39,7 +39,7 @@ class User < ActiveRecord::Base
 
   attr_accessor_with_default :cloud_password_dirty, false
   attr_accessor_with_default( :cloud_password ) do
-    self.crypted_cloud_password.blank? ? @cloud_password : Certificate.decrypt(self.crypted_cloud_password)
+    (@cloud_password_dirty or self.crypted_cloud_password.blank?) ? @cloud_password : Certificate.decrypt(self.crypted_cloud_password)
   end
 
   def obfuscated_cloud_password
