@@ -47,13 +47,13 @@ describe InstanceWatcher do
     
     it "should transition each starting instance to configuring if it did not move to attaching_volume" do
       @instance.should_receive(:attaching_volume?).and_return(false)
-      @instance.should_receive(:configure!)
+      @instance.should_receive(:move_to_configure)
       @instance_watcher.update_starting
     end
 
     it "should not transition each starting instance to configuring if it did move to attaching_volume" do
       @instance.should_receive(:attaching_volume?).and_return(true)
-      @instance.should_not_receive(:configure!)
+      @instance.should_not_receive(:move_to_configure)
       @instance_watcher.update_starting
     end
   end
