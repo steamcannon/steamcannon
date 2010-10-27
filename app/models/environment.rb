@@ -34,6 +34,8 @@ class Environment < ActiveRecord::Base
   accepts_nested_attributes_for :environment_images
   validates_presence_of :name, :user
 
+  default_scope :order => 'name ASC'
+  
   aasm_column :current_state
   aasm_initial_state :stopped
   aasm_state :starting, :enter => :start_environment
