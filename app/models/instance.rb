@@ -92,7 +92,7 @@ class Instance < ActiveRecord::Base
   end
 
   aasm_event :start_failed do
-    transitions :to => :start_failed, :from => [:pending, :attaching_volume]
+    transitions :to => :start_failed, :from => [:pending, :starting, :attaching_volume]
   end
 
   aasm_event :unreachable do
@@ -142,6 +142,11 @@ class Instance < ActiveRecord::Base
     end
   end
 
+  def move_to_configure
+    configure!
+    start_failed! if stuck_in_state_for_too_long?
+  end
+  
   def configure_agent
     generate_server_cert
     if agent_running?

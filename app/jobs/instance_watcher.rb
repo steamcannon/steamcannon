@@ -37,7 +37,7 @@ class InstanceWatcher
     # TODO: This is a bit inefficient to do one at a time
     Instance.starting.each do |i|
       i.attach_volume!
-      i.configure! unless i.attaching_volume?
+      i.move_to_configure unless i.attaching_volume?
     end
   end
 
