@@ -1,0 +1,15 @@
+---
+platforms:
+  - name: JBoss Developer Instance
+    platform_versions:
+      - version_number: 1
+        images:
+          - name: Developer Instance
+            description: JBoss AS 6 m5 (w/TorqueBox 1.0.0.Beta23-SNAPSHOT), PostgreSQL 8.4
+            cloud_id: ami-8657a3ef
+            can_scale_out: false
+            storage_volume_capacity: 3 #Gigs
+            storage_volume_device: /dev/sdf #agent expects this, so don't change
+            services:
+              - jboss_as
+              - postgresql
