@@ -9,13 +9,17 @@ body {
 
 
 a {
-  text-decoration: none;
   color: $link_color;
 
   &:hover {
     color: $link_hover_color;
-    text-decoration: underline;
+    background-color: $link_hover_background_color;
+    text-decoration: none;
   }
+}
+
+#steamcannon-logo a:hover {
+    background-color: transparent;
 }
 
 .page_header {
@@ -92,7 +96,6 @@ h1, h2, h3 {
   border-top: 1px solid $bar_background_color - #333; 
 }
 
-
 #footer-bar {
   padding-top: .2em;
   padding-bottom: .2em;
@@ -131,8 +134,10 @@ h1, h2, h3 {
       a {
         font-weight: bold;
         color: $navigation_color;
+        text-decoration: none;
         &:hover {
           color: $navigation_hover_color;
+          background-color: transparent;
         }
         &.selected, 
         &:hover {
@@ -372,6 +377,9 @@ table.header_top {
       font-weight: bold;
       margin-right: 1ex;
       color: $major_accent_color;
+      &:hover {
+          color: $link_hover_color;
+      }
     }
   }
 
