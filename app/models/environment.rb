@@ -30,10 +30,14 @@ class Environment < ActiveRecord::Base
 
   belongs_to :platform_version
   belongs_to :user
+  
   attr_protected :user_id
+  
   accepts_nested_attributes_for :environment_images
+  
   validates_presence_of :name, :user
-
+  validates_uniqueness_of :name, :scope => :user_id
+  
   default_scope :order => 'name ASC'
   
   aasm_column :current_state

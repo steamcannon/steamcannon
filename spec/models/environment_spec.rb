@@ -20,26 +20,19 @@ require 'spec_helper'
 
 describe Environment do
   before(:each) do
-    @valid_attributes = {
-      :name => "value for name",
-      :platform_version_id => 1,
-      :user => mock_model(User)
-    }
+    @environment = Factory(:environment)
   end
 
   it { should have_many :instance_services }
   it { should have_many :storage_volumes }
-
-  it "should create a new instance given valid attributes" do
-    Environment.create!(@valid_attributes)
-  end
-
+  it { should have_many :images }
+  it { should have_many :instances }
+  
+  it { should belong_to :user }
+  it { should belong_to :platform_version }
+  
   it "should have a name attribute" do
-    Environment.new.should respond_to(:name)
-  end
-
-  it "should belong to a platform version" do
-    Environment.new.should respond_to(:platform_version)
+    @environment.should respond_to(:name)
   end
 
   it "should belong to a platform" do
@@ -47,21 +40,6 @@ describe Environment do
     version = PlatformVersion.new(:platform => platform)
     environment = Environment.new(:platform_version => version)
     environment.platform.should eql(platform)
-  end
-
-  it "should have many images" do
-    environment = Environment.new
-    environment.images << Image.new
-    environment.images << Image.new
-    environment.images.size.should be(2)
-  end
-
-  it "should have many instances" do
-    Environment.new.should respond_to(:instances)
-  end
-
-  it "should belong to a user" do
-    Environment.new.should respond_to(:user)
   end
 
   it "should not be able to mass-assign user_id attribute" do
@@ -95,7 +73,6 @@ describe Environment do
 
   describe "run" do
     before(:each) do
-      @environment = Environment.new(@valid_attributes)
       @environment.current_state = 'starting'
     end
 
@@ -186,12 +163,11 @@ describe Environment do
 
   describe "stopped" do
     before(:each) do
-      @environment = Environment.new(@valid_attributes)
       @environment.current_state = 'stopping'
     end
 
     it "should be default for new environments" do
-      Environment.new(@valid_attributes).should be_stopped
+      Factory.build(:environment).should be_stopped
     end
 
     it "should be stopped if stopped_all_instances" do
