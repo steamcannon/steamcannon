@@ -89,6 +89,16 @@ class Environment < ActiveRecord::Base
   def default_realm
     user.default_realm
   end
+
+  def clone!(attributes_to_override = { })
+    new_attributes = {
+      :name => "#{name} (copy)",
+      :current_state => 'stopped'
+    }
+    super(attributes_to_override.merge(new_attributes)).tap do |copy|
+      environment_images.each { |ei| ei.clone!(:environment_id => copy.id) }
+    end
+  end
   
   protected
 

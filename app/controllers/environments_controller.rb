@@ -137,12 +137,9 @@ class EnvironmentsController < ApplicationController
   # POST /environments/1/clone.xml
   def clone
     environment = current_user.environments.find(params[:id])
-    unless environment.blank?
-      @environment = environment.clone
-      @environment.stop if @environment.can_stop?
-    end
+    @environment = environment.clone! if environment
     respond_to do |format|
-      if @environment && @environment.save
+      if @environment
         format.html { redirect_to(@environment, :notice => 'Environment was successfully cloned.') }
         format.xml  { render :xml => @environment, :status => :created, :location => @environment }
       else

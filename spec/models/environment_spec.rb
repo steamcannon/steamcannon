@@ -301,5 +301,22 @@ describe Environment do
     end
   end
 
+  describe 'clone!' do
+    it "should update the name" do
+      @environment.clone!.name.should == "#{@environment.name} (copy)"
+    end
+
+    it "should set the state to stopped" do
+      @environment.clone!.should be_stopped
+    end
+    
+    it "should clone! the environment images" do
+      environment_image = mock(EnvironmentImage)
+      environment_image.should_receive(:clone!)
+      @environment.should_receive(:environment_images).and_return([environment_image])
+      @environment.clone!
+    end
+    
+  end
 
 end
