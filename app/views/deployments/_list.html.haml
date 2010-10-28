@@ -6,11 +6,11 @@
     - deployments.each do |deployment|
       - div_for( deployment ) do
         .actions
-          - if deployment.deployed?
+          - if deployment.is_deployed?
             = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
           - else
             .current_state
-              = deployment.current_state.humanize
+              = deployment_state(deployment)
         %h3.environment
           = link_to h(deployment.environment.name), environment_path(deployment.environment)
         .artifact

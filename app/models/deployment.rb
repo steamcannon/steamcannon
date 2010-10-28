@@ -28,6 +28,10 @@ class Deployment < ActiveRecord::Base
   has_many :deployment_instance_services, :dependent => :destroy
   has_many :instance_services, :through => :deployment_instance_services
 
+  validates_each :environment_id, :on => :create do |record, attr, value|
+    record.send(:validate_artifact_unique_in_environment)
+  end
+  
   aasm_column :current_state
   aasm_initial_state :pending
   aasm_state :pending
@@ -74,6 +78,13 @@ class Deployment < ActiveRecord::Base
   end
   
   protected
+
+  def validate_artifact_unique_in_environment
+    artifact = artifact_version.artifact
+    if environment.artifacts.include?(artifact)
+      errors.add :environment_id, "'#{environment.name}' already has a version of '#{artifact.name}' deployed to it."
+    end
+  end
 
   def perform_deploy_async
     audit_action :deployed

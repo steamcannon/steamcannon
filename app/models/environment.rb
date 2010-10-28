@@ -99,6 +99,10 @@ class Environment < ActiveRecord::Base
       environment_images.each { |ei| ei.clone!(:environment_id => copy.id) }
     end
   end
+
+  def artifacts
+    deployments.deployed.collect(&:artifact)
+  end
   
   protected
 

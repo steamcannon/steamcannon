@@ -37,3 +37,7 @@ group :test do
   gem "awesome_print", "0.2.1"
   gem "email_spec", "0.6.3"
 end
+
+group :development do
+  gem "tobias-railroad", "0.10.0"
+end
