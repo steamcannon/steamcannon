@@ -66,10 +66,10 @@ describe AgentServices::ModCluster do
   end
 
   describe "url_for_instance_service" do
-    it "should should append mod_cluster_manager path to url_for_instance" do
+    it "should equal url_for_instance" do
       instance_service = Factory(:instance_service)
-      url = @agent_service.url_for_instance_service(instance_service)
-      url.end_with?('mod_cluster_manager').should be(true)
+      @agent_service.should_receive(:url_for_instance).with(instance_service.instance).and_return('url')
+      @agent_service.url_for_instance_service(instance_service).should == 'url'
     end
   end
 end

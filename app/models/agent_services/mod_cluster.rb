@@ -38,7 +38,7 @@ module AgentServices
     end
 
     def url_for_instance_service(instance_service)
-      "#{url_for_instance(instance_service.instance)}/mod_cluster_manager"
+      url_for_instance(instance_service.instance)
     end
 
   end
