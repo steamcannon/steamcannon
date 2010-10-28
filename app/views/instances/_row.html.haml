@@ -2,12 +2,15 @@
   %td.summary
     .name
       == ##{instance.number}
-    .current_state
-      = instance_status_for_environment_row(instance)
+    %div
+      %span.current_state
+        = instance_status_for_environment_row(instance)
+      = instance_details_link(instance)
     .hardware_profile
       &= instance.hardware_profile
       - unless instance.cloud_id.blank?
         == - #{instance.cloud_id}
+
   %td.services
     %ul
       - if instance.services.blank?

@@ -25,7 +25,14 @@ module InstancesHelper
 
     text = instance.current_state.titleize
     text << javascript_tag("update_instance_message(#{instance.id}, #{msg.to_json})") if msg
-    Rails.logger.info(text)
+
     text
+  end
+
+  def instance_details_link(instance)
+    unless instance.public_address.blank?
+      details = render('instances/details', :instance => instance).html_safe.to_json
+      link_to_function('Details', "update_instance_message(#{instance.id}, #{details})")
+    end
   end
 end

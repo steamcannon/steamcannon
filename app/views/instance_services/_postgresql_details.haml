@@ -1,26 +1,43 @@
 .postgresql_details
-  Details for the PostgreSQL service:
+  %h3
+    Details for the PostgreSQL service
   %ul
     %li
       %label
         Admin user: 
-      #{instance_service.environment.metadata[:postgresql_admin_user][:user]}
+      = instance_service.environment.metadata[:postgresql_admin_user][:user]
     %li
       %label
         Admin password: 
-      #{instance_service.environment.metadata[:postgresql_admin_user][:password]}
+      = instance_service.environment.metadata[:postgresql_admin_user][:password]
     %li
       %label
         External hostname: 
-      #{instance_service.instance.public_address}
+      = instance_service.instance.public_address
     %li
-      %label
-        Internal hostname: 
-      #{instance_service.internal_hostname}
+      %label 
+        Cluster internal hostname: 
+      = instance_service.internal_hostname
+    %li
+      %label 
+        Global internal hostname: 
+      = instance_service.instance.private_address
     %li
       %label
         Port: 
       5432
-  To access PostgreSQL from machines outside this environment, open port 5432
-  for tcp traffic in the steamcannon_postgresql security group.
-    
+  %p
+    To access PostgreSQL from machines outside this environment, open port 5432
+    for tcp traffic in the steamcannon_postgresql security group.
+  %p
+    The
+    %em Cluster internal hostname
+    can be used inside this environment to refer to this instance, and will always
+    be #{instance_service.internal_hostname}, even if the instance is stopped
+    and relaunched.
+  %p
+    The
+    %em Global internal hostname
+    is ephemeral, and will change (along with the <em>External hostname</em>) if the 
+    instance is stopped and relaunched.
+

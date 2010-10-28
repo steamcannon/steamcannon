@@ -70,6 +70,10 @@ h1, h2, h3 {
   }
 }
 
+em {
+    font-style: italic;
+}
+
 .empty {
   color: $minor_accent_color;
   font-size: 110%;
@@ -592,6 +596,13 @@ table.header_top {
 tr.instance_message {
     background-color: $highlight_color;     
     border-bottom: 3px solid #eee;     
+    font-size: 90%;
+    h3 {
+        color: $text_color;
+    }
+    p {
+        margin: 10px 0 0 0;
+    }
     ul {
         list-style-type: none;
         margin-bottom: 0;

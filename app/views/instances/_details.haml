@@ -1,0 +1,13 @@
+.instance_details
+  %h3
+    Details for #{instance.name}
+  %ul
+    %li
+      %label
+        External hostname:
+      = instance.public_address
+    %li
+      %label
+        Internal hostname:
+      = instance.private_address
+    
