@@ -29,11 +29,7 @@ class Deployment < ActiveRecord::Base
   has_many :instance_services, :through => :deployment_instance_services
 
   validates_each :environment_id do |record, attr, value|
-    environment = record.environment
-    artifact = record.artifact_version.artifact
-    if environment.artifacts.include?(artifact)
-      record.errors.add attr, "'#{environment.name}' already has a version of '#{artifact.name}' deployed to it."
-    end
+    record.send(:validate_artifact_unique_in_environment)
   end
   
   aasm_column :current_state
@@ -82,6 +78,13 @@ class Deployment < ActiveRecord::Base
   end
   
   protected
+
+  def validate_artifact_unique_in_environment
+    artifact = artifact_version.artifact
+    if environment.artifacts.include?(artifact)
+      errors.add :environment_id, "'#{environment.name}' already has a version of '#{artifact.name}' deployed to it."
+    end
+  end
 
   def perform_deploy_async
     audit_action :deployed
