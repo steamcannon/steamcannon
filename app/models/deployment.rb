@@ -28,7 +28,7 @@ class Deployment < ActiveRecord::Base
   has_many :deployment_instance_services, :dependent => :destroy
   has_many :instance_services, :through => :deployment_instance_services
 
-  validates_each :environment_id do |record, attr, value|
+  validates_each :environment_id, :on => :create do |record, attr, value|
     record.send(:validate_artifact_unique_in_environment)
   end
   

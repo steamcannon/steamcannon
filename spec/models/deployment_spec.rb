@@ -78,7 +78,6 @@ describe Deployment do
       @deployment.current_state = 'deployed'
       @instance_service.stub!(:undeploy)
       @deployment.stub!(:instance_services).and_return([@instance_service])
-      @deployment.stub!(:validate_artifact_unique_in_environment)
     end
 
     it "should populate undeployed_at after undeploying" do
