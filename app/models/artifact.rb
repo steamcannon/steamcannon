@@ -25,7 +25,10 @@ class Artifact < ActiveRecord::Base
   has_many :deployments, :through => :artifact_versions
   
   attr_protected :user
+  
   validates_presence_of :name
+  validates_uniqueness_of :name, :scope => :user_id
+  
   accepts_nested_attributes_for :artifact_versions
 
   def latest_version

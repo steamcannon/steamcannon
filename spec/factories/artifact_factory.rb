@@ -16,7 +16,10 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+Factory.sequence :artifact_name do |n|
+  "artifact ##{n}"
+end
 Factory.define :artifact do |a|
-  a.name 'an artifact'
+  a.name { Factory.next :artifact_name }
   a.association :service
 end

@@ -19,30 +19,24 @@
 require 'spec_helper'
 
 describe Artifact do
-
-  it { should belong_to :service }
-  
-  it "should require a name attribute" do
-    artifact = Artifact.new
-    artifact.save
-    artifact.should have(1).error_on(:name)
+  before(:each) do
+    @artifact = Factory(:artifact)
   end
-
+  
+  it { should belong_to :service }
+  it { should have_many :artifact_versions }
+  it { should have_many :deployments }
+  
+  it { should validate_presence_of :name}
+  it { should validate_uniqueness_of :name }
+  
   it "should belong to a user" do
-    Artifact.new.should respond_to(:user)
+    @artifact.should respond_to(:user)
   end
 
   it "should not be able to mass-assign user attribute" do
     artifact = Artifact.new(:user => User.new)
     artifact.user.should be_nil
-  end
-
-  it "should have many artifact versions" do
-    Artifact.new.should respond_to(:artifact_versions)
-  end
-
-  it "should have many deployments" do
-    Artifact.new.should respond_to(:deployments)
   end
 
   describe 'deployment_for_instance_service' do
@@ -67,7 +61,6 @@ describe Artifact do
 
   describe "is_deployed?" do
     before(:each) do
-      @artifact = Artifact.new
       @artifact_version = mock(ArtifactVersion)
       @artifact.stub!(:artifact_versions).and_return([@artifact_version])
     end
