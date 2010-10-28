@@ -7,4 +7,4 @@ if [ "." == $TARGET. ] ; then
   exit 1
 fi
 
-pg_dump steamcannon_production -U steamcannon | psql -h $TARGET steamcannon_production -U steamcannon
+su postgres -c 'pg_dump steamcannon_production'  | psql -h $TARGET steamcannon_production -U steamcannon

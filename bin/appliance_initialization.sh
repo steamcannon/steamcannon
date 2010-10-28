@@ -16,21 +16,21 @@ if [ ! -e $STEAMCANNON_DEPLOYMENT ] ; then
   echo -e '---\napplication:\n  RAILS_ROOT: /opt/steamcannon\n  RAILS_ENV: production\nweb:\n  context: /\n' > $STEAMCANNON_DEPLOYMENT
 fi
 
-STEAMCANNON_USER=`echo '\du' | psql | grep steamcannon | cut -d' ' -f2`
+STEAMCANNON_USER=`echo '\du' | $SU_CMD postgres -c psql | grep steamcannon | cut -d' ' -f2`
 if [ $STEAMCANNON_USER. != 'steamcannon.' ] ; then
   echo "Creating steamcannon database user"
-  $SU_CMD postgres -c "/usr/bin/createuser -SDR steamcannon" 
+  $SU_CMD postgres -c "/usr/bin/createuser -SDR steamcannon"
   echo "ALTER USER steamcannon WITH PASSWORD 'steamcannon';" | $SU_CMD postgres -c /usr/bin/psql
 fi
 
-STEAMCANNON_DB=`echo '\l' | psql | grep steamcannon_production | cut -d' ' -f2`
+STEAMCANNON_DB=`echo '\l' | $SU_CMD postgres -c psql | grep steamcannon_production | cut -d' ' -f2`
 if [ $STEAMCANNON_DB. != 'steamcannon_production.' ] ; then
   echo "Creating steamcannon database"
   $SU_CMD postgres -c "/usr/bin/createdb steamcannon_production -O steamcannon"
   echo "GRANT ALL ON DATABASE steamcannon_production TO steamcannon" | $SU_CMD postgres -c /usr/bin/psql
 fi
 
-STEAMCANNON_SCHEMA=`echo '\dt' | psql steamcannon_production | grep schema_migrations | cut -d' ' -f4`
+STEAMCANNON_SCHEMA=`echo '\dt' | $SU_CMD postgres -c 'psql steamcannon_production' | grep schema_migrations | cut -d' ' -f4`
 if [ $STEAMCANNON_SCHEMA. != 'schema_migrations.' ] ; then
   echo "Initializing and seeding database schema"
   cd /opt/steamcannon
