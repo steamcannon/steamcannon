@@ -28,6 +28,14 @@ class Deployment < ActiveRecord::Base
   has_many :deployment_instance_services, :dependent => :destroy
   has_many :instance_services, :through => :deployment_instance_services
 
+  validates_each :environment_id do |record, attr, value|
+    environment = record.environment
+    artifact = record.artifact_version.artifact
+    if environment.artifacts.include?(artifact)
+      record.errors.add attr, "'#{environment.name}' already has a version of '#{artifact.name}' deployed to it."
+    end
+  end
+  
   aasm_column :current_state
   aasm_initial_state :pending
   aasm_state :pending
