@@ -19,5 +19,3 @@
             - for deployment in artifact.deployments.deployed
               %li
                 = link_to h(deployment.environment.name), deployment.environment
-- javascript_tag do
-  monitor_content('#{dashboard_path}', 'table#artifacts');

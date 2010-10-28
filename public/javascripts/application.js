@@ -176,16 +176,19 @@ function monitor_deployment(url, selector) {
   });
 }
 
-function update_content(url, selector) {
-  $.get(url, function(data) {
-    $(selector).html($(data).find(selector).html());
-  });
-  setTimeout("update_content('" + url + "', '" + selector + "')", 30000);
+function update_content(url, selectors) {
+    $.get(url, function(data) {
+        $(selectors.split('|')).each(function(index, selector) {
+            $(selector).html($(data).find(selector).html());
+        })
+    })
+
+    setTimeout("update_content('" + url + "', '" + selectors + "')", 30000);
 }
 
-function monitor_content(url, selector) {
+function monitor_content(url, selectors) {
   $(function () {
-    update_content(url, selector);
+      update_content(url, selectors.join('|'));
   });
 }
 

@@ -16,3 +16,6 @@
 
   .right_column
     = render :partial=>'dashboard_help'
+
+- javascript_tag do
+  monitor_content('#{dashboard_path}', ['table#artifacts', 'table#environments']);    
