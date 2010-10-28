@@ -395,13 +395,19 @@ table.header_top {
 #cloud_instances_index {
   table.cloud_instances {
     .instance_id {
-      width: 20%;
+      width: 15%;
     }
     .instance_image {
-      width: 30%;
+      width: 25%;
+    }
+    .instance_user {
+      width: 25%;
     }
     .instance_environment {
-      width: 30%;
+      width: 25%;
+    }
+    .instance_actions {
+      width: 10%;
     }
   }
 }
