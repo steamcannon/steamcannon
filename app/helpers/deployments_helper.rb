@@ -18,4 +18,14 @@
 
 
 module DeploymentsHelper
+
+  def deployment_state(deployment)
+    if deployment.is_deployed?
+      "Deployed"
+    elsif deployment.current_state == 'undeployed'
+      "Undeployed"
+    else
+      "Pending Deployment"
+    end
+  end
 end
