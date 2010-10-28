@@ -74,6 +74,7 @@ GEM
       nokogiri (>= 1.5.0.beta.2)
       rest-client (>= 1.4.2)
     syntax (1.0.0)
+    tobias-railroad (0.10.0)
     uuidtools (2.1.1)
     xml-simple (1.0.12)
 
@@ -108,3 +109,4 @@ DEPENDENCIES
   simple-navigation (= 2.6.0)
   ssl_requirement (= 0.1.0)
   steamcannon-deltacloud-client (= 0.0.9.7.2)
+  tobias-railroad (= 0.10.0)
