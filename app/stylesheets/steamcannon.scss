@@ -11,9 +11,8 @@ body {
 
 a {
   color: $link_color;
-  padding: 0 3px 0 3px;
   &:hover {
-    @include opacity(0.8);
+    @include opacity(0.7);
     @include border-radius(3px);
     color: $link_hover_color;
     background-color: $link_hover_background_color;
@@ -23,6 +22,7 @@ a {
 
 #steamcannon-logo a:hover {
     background-color: transparent;
+    @include opacity(1);
 }
 
 .page_header {
@@ -141,6 +141,7 @@ h1, h2, h3 {
         &:hover {
           color: $navigation_hover_color;
           background-color: transparent;
+          @include opacity(1);
         }
         &.selected, 
         &:hover {
