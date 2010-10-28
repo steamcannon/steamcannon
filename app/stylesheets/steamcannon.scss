@@ -1,5 +1,6 @@
 @import "compass/utilities/general/clearfix";
 @import "compass/css3/border-radius";
+@import "compass/css3/opacity";
 
 @import "colors";
 
@@ -10,8 +11,10 @@ body {
 
 a {
   color: $link_color;
-
+  padding: 0 3px 0 3px;
   &:hover {
+    @include opacity(0.8);
+    @include border-radius(3px);
     color: $link_hover_color;
     background-color: $link_hover_background_color;
     text-decoration: none;
