@@ -55,7 +55,10 @@ class InstancesController < ApplicationController
     if @instance && @instance.can_stop?
       @instance.stop!
       respond_to do |format|
-        format.js { render(generate_json_response(:ok, :instance=>@instance.to_json, :message=>"Stopping #{@instance.name} (#{@instance.cloud_id})")) }
+        format.js { render(generate_json_response(:ok,
+                                                  :instance=>@instance.to_json,
+                                                  :message=>"Stopping #{@instance.name} (#{@instance.cloud_id})",
+                                                  :js => "$('#instance_#{@instance.id}_stop_link').remove()")) }
       end
     else
       message = (@instance && !@instance.can_stop?) ? "Cannot stop instance while it is #{@instance.current_state}." : "Cannot find instance"
