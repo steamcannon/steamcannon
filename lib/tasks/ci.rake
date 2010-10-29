@@ -17,12 +17,30 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 namespace :ci do
+
   desc 'Run RSpecs and generate RCov report'
   task :specs => ['db:test:load', 'spec:rcov'] do
   end
 
-  desc 'Package SteamCannon'
-  task :package => ['bundle:package', 'bundle:local_deployment',
+  desc 'Create SteamCannon Zip Artifact'
+  task :package do
+    version = "1.0.0.beta1"
+    root_dir = File.join(File.dirname(__FILE__), '..', '..')
+    dist_dir = File.join(root_dir, 'dist')
+    package = File.join(dist_dir, "steamcannon-#{version}.zip")
+
+    excludes = ['.git/*', 'coverage/*', 'log/*', 'tmp/*', '.bundle/*',
+                'config/steamcannon.yml', 'db/*.sqlite3',
+                'public/stylesheets/compiled/*', 'public/uploads/*']
+    exclude_string = excludes.map {|exclude| "'#{exclude}'"}.join(' ')
+
+    FileUtils.mkdir_p(dist_dir)
+    FileUtils.rm_f(package)
+    `cd #{root_dir} && zip -R #{package} '*' -x #{exclude_string}`
+  end
+
+  desc 'Create .rails Archive of SteamCannon'
+  task :archive => ['bundle:package', 'bundle:local_deployment',
                     'compile_css', 'create_archive',
                     'bundle:delete_config', 'bundle:delete_vendor_bundle'] do
   end
