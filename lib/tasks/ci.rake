@@ -25,18 +25,26 @@ namespace :ci do
   desc 'Create SteamCannon Zip Artifact'
   task :package do
     version = "1.0.0.beta1"
-    root_dir = File.join(File.dirname(__FILE__), '..', '..')
-    dist_dir = File.join(root_dir, 'dist')
-    package = File.join(dist_dir, "steamcannon-#{version}.zip")
+    name = "steamcannon-#{version}"
+    root_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+    dist_dir = File.join(root_dir, "dist")
+    package_work_dir = File.join(dist_dir, "#{name}")
+    package = "#{name}.zip"
 
     excludes = ['.git/*', 'coverage/*', 'log/*', 'tmp/*', '.bundle/*',
-                'config/steamcannon.yml', 'db/*.sqlite3',
+                'config/steamcannon.yml', 'db/*.sqlite3', 'dist/*',
                 'public/stylesheets/compiled/*', 'public/uploads/*']
     exclude_string = excludes.map {|exclude| "'#{exclude}'"}.join(' ')
 
-    FileUtils.mkdir_p(dist_dir)
-    FileUtils.rm_f(package)
-    `cd #{root_dir} && zip -R #{package} '*' -x #{exclude_string}`
+    `rm -rf #{package_work_dir}`
+    `mkdir -p #{dist_dir} && mkdir -p #{package_work_dir}`
+    `cd #{root_dir} && rm -f #{package} && zip -R #{package} '*' -x #{exclude_string}`
+
+    # Adjust zip file to have correct directory name
+    `cd #{root_dir} && mv #{package} #{package_work_dir}`
+    `cd #{package_work_dir} && unzip #{package} && rm -f #{package}`
+    `cd #{dist_dir} && rm -f #{package} && zip -r #{package} #{name}`
+    `rm -rf #{package_work_dir}`
   end
 
   desc 'Create .rails Archive of SteamCannon'
