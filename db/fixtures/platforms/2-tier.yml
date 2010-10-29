@@ -12,7 +12,7 @@ platforms:
               - jboss_as
           - name: Frontend - mod_cluster
             description: Apache 2.2.16 (w/mod_cluster 1.1.0)
-            cloud_id: ami-dc55a1b5
+            cloud_id: ami-bab146d3
             can_scale_out: false
             services:
               - mod_cluster
