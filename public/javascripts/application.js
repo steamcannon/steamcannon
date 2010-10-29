@@ -149,7 +149,7 @@ function remote_stop_instance(instance_name, url) {
 
 function update_environment_status(url, selector) {
   $.post(url, function(data) {
-    elem = $(selector + ' .environment_status');
+    elem = $(selector + ' .status');
     if (elem.text() != data.message) {
       elem.text(data.message);
     }
