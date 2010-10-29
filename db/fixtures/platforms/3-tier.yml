@@ -18,7 +18,7 @@ platforms:
               - mod_cluster
           - name: Database - PostgreSQL
             description: PostgreSQL 8.4
-            cloud_id: ami-1656a27f
+            cloud_id: ami-2cb04745
             can_scale_out: false
             storage_volume_capacity: 10 #Gigs
             storage_volume_device: /dev/sdf #agent expects this, so don't change
