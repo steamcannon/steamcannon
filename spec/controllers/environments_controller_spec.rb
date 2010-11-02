@@ -200,20 +200,10 @@ describe EnvironmentsController do
     end
   end
 
-  describe "POST status" do
-    before(:each) do
-      Environment.stub!(:find).with("13").and_return( mock_environment )
-      mock_environment.stub(:current_state).and_return('running')
-    end
-
-    it "should assign the requested environment as @environment" do
-      post :status, :id => "13"
-      assigns[:environment].should equal(mock_environment)
-    end
-
-    it "should get the environment's current state" do
-      mock_environment.should_receive(:current_state)
-      post :status, :id => "13"
+  describe "GET status" do
+    it "should render the environments/_list partial" do
+      get :status
+      response.should render_template('environments/_list')
     end
   end
 

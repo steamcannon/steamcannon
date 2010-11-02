@@ -149,18 +149,10 @@ class EnvironmentsController < ApplicationController
     end
   end
 
-  # POST /environments/:id/status.json
+  # POST /environments/status
   def status
-    @environment = current_user.environments.find(params[:id])
-    if @environment
-      respond_to do |format|
-        format.js { render(generate_json_response(:ok, :message=>@environment.current_state.titleize)) }
-      end
-    else
-      respond_to do |format|
-        format.js { render(generate_json_response(:error, :message=>"Cannot find requested environment")) }
-      end
-    end
+    environments = current_user.environments
+    render :partial => 'list', :locals => { :environments => environments }, :layout => false 
   end
 
 

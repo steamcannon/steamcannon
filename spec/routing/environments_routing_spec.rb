@@ -49,7 +49,7 @@ describe EnvironmentsController do
     end
     
     it "recognizes and generates #status" do
-      { :post => '/environments/1/status' }.should route_to(:controller => 'environments', :action => 'status', :id => '1')
+      { :get => '/environments/status' }.should route_to(:controller => 'environments', :action => 'status')
     end
   end
 end
