@@ -1,39 +1,9 @@
-// Place your application-specific JavaScript functions and classes here
-// This file is automatically included by javascript_include_tag :defaults
-
 // Make jQuery play nice with Rails respond_to format.js
 $.ajaxSetup({
     'beforeSend': function(xhr) {
         xhr.setRequestHeader("Accept", "text/javascript");
     }
 });
-
-
-function monitor_changing(selector) {
-    $(selector).each(function() {
-	var id = this.id;
-	var e = $(this);
-        e.find('.pulsate').pulsate();
-        setTimeout(function() {
-            $.get((e.is('.app') ? '/apps/' : '/instances/') + id, function() {
-                monitor_changing("#"+id+".changing");
-            });
-        }, 5000);
-    });
-}
-
-function redeploy_staged(selector) {
-    $(selector).each(function() {
-	var id = this.id;
-        $(this).find('.pulsate').pulsate();
-	setTimeout(function() {
-            $.post("/apps/"+id+"/redeploy", function(data) {
-		redeploy_staged("#"+id+".staged");
-		monitor_changing("#"+id+".changing");
-            });
-	}, 5000);
-    });
-}
 
 jQuery.fn.pulsate = function() {
     this.pulse({opacity: [1,.2]}, 500, 10);
@@ -45,24 +15,12 @@ function update_instance_message(instance_id, message) {
     $(message_id).show()
 }
 
-function apply_rules_to_instance_status_load() {
+
+function apply_unobtrusive_rules($) {
     $('.js-popup_dialog').each(function(idx, el) {
         $(el).jqm({trigger: $(el).attr('rel'), overlay:0})
     })
         
-}
-
-
-jQuery(document).ready(function($) {
-    $(document).ajaxStart(function() {
-        $('#ajax-spinner').show()
-    })
-
-    $(document).ajaxStop(function() {
-        $('#ajax-spinner').hide()
-    })
-
-    $('.callout').delay(10000).slideUp()
 
     $('#environment_form #environment_platform_version_id').change(function() {
         $('.content_row').hide()
@@ -93,7 +51,6 @@ jQuery(document).ready(function($) {
         $($(this).closest('.start_another_dialog')).hide();
     })
 
-    apply_rules_to_instance_status_load()
 
     $('#account_requests_index .js-state_display_toggle').click(function() {
         $('#account_requests_index').toggleClass($(this).attr('rel'))
@@ -120,7 +77,26 @@ jQuery(document).ready(function($) {
         })
     })
 
+}
+
+jQuery(document).ready(function($) {
+    $(document).ajaxStart(function() {
+        $('#ajax-spinner').show()
+    })
+
+    $(document).ajaxStop(function() {
+        $('#ajax-spinner').hide()
+    })
+
+    $(document).ajaxComplete(function() {
+        apply_unobtrusive_rules($)
+    })
+
+    $('.callout').delay(10000).slideUp()
+
+    apply_unobtrusive_rules($)
 })
+
 
 function get_with_cloud_credentials(url, callback) {
     params = 'cloud_username=' + $('#user_cloud_username').val() + '&cloud_password=' + $('#user_cloud_password').val()
@@ -147,22 +123,6 @@ function remote_stop_instance(instance_name, url) {
     }
 }
 
-function update_environment_status(url, selector) {
-  $.post(url, function(data) {
-    elem = $(selector + ' .status');
-    if (elem.text() != data.message) {
-      elem.text(data.message);
-    }
-  }, "json");
-  setTimeout("update_environment_status('" + url + "', '" + selector + "')", 30000);
-}
-
-function monitor_environment(url, selector) {
-  jQuery(document).ready(function($) {
-    update_environment_status(url, selector);
-  });
-}
-
 function update_deployment_status(url, selector) {
   $.post(url, function(data) {
       $(selector + ' .status ul').replaceWith(data)
@@ -179,7 +139,12 @@ function monitor_deployment(url, selector) {
 function update_content(url, selectors) {
     $.get(url, function(data) {
         $(selectors.split('|')).each(function(index, selector) {
-            $(selector).html($(data).find(selector).html());
+            if ('#' + $(data).attr('id') == selector) {
+                content = $(data)
+            } else {
+                content = $(data).find(selector)
+            }
+            $(selector).html(content.html())
         })
     })
 
