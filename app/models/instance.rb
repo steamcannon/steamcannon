@@ -47,7 +47,7 @@ class Instance < ActiveRecord::Base
   aasm_state :running, :after_enter => :after_run_instance
   aasm_state :stopping, :enter => :stop_instance, :after_enter => :after_stop_instance
   aasm_state :terminating, :enter => :terminate_instance
-  aasm_state :stopped, :after_enter => [:after_stopped_instance]
+  aasm_state :stopped, :after_enter => :after_stopped_instance
   aasm_state :start_failed, :enter => :state_failed
   aasm_state :unreachable
 
@@ -259,7 +259,8 @@ class Instance < ActiveRecord::Base
 
   def after_stopped_instance
     instance_services.each(&:destroy)
-    environment.stopped! if environment.stopping?
+    environment.stopped! if environment.stopping?    
+    environment.instance_state_change(self)
   end
 
   def error_raised(error)

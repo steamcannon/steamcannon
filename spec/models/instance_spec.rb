@@ -338,6 +338,7 @@ describe Instance do
     end
 
     describe "stop" do
+      
       %w{ pending starting configuring verifying running start_failed unreachable }.each do |from_state|
         it "should be able to transition to stopping from #{from_state}" do
           @instance.current_state = from_state
@@ -361,7 +362,7 @@ describe Instance do
         @instance.stop!
         @instance.stopped_by.should be(@current_user.id)
       end
-
+      
     end
 
     describe "terminate" do
@@ -397,12 +398,18 @@ describe Instance do
         @environment.stub!(:preserve_storage_volumes?).and_return(true)
         @instance.current_state = 'terminating'
         @instance.stub!(:stopped_in_cloud?).and_return(true)
+        @instance.environment.stub!(:instance_state_change)
       end
 
       it "should call stopped! event on environment" do
         @environment.should_receive(:stopped!)
         @instance.stopped!
       end
+      
+      it "should notify the environment of its state change" do
+        @instance.environment.should_receive(:instance_state_change).with(@instance)
+        @instance.stopped!
+      end      
 
       it "should be stopped_in_cloud if terminated in cloud" do
         @instance.unstub(:stopped_in_cloud?)
