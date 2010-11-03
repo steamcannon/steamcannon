@@ -14,7 +14,8 @@ begin
   # Set up load paths for all bundled gems
   ENV["BUNDLE_GEMFILE"] = File.expand_path("../../Gemfile", __FILE__)
   Bundler.setup
-rescue Bundler::GemNotFound
+rescue Bundler::GemNotFound => e
+  puts e
   raise RuntimeError, "Bundler couldn't find some gems." +
     "Did you run `bundle install`?"
 end

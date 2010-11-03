@@ -57,7 +57,7 @@ class Environment < ActiveRecord::Base
   end
 
   aasm_event :stop do
-    transitions :to => :stopping, :from => [:running, :start_failed, :starting]
+    transitions :to => :stopping, :from => [:running, :starting, :start_failed, :starting]
   end
 
   aasm_event :stopped do
@@ -102,6 +102,10 @@ class Environment < ActiveRecord::Base
 
   def artifacts
     deployments.deployed.collect(&:artifact)
+  end
+  
+  def instance_state_change(instance)
+    self.stop! if instance.stopped? && instances.include?(instance) && instances.all{|i|i.stopped?}
   end
   
   protected

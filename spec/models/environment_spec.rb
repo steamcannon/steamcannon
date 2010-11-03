@@ -300,6 +300,32 @@ describe Environment do
       @environment.send(:first_service_base_url, 'service_name').should == 'url_for_instance'
     end
   end
+  
+  describe 'instance_state_change' do
+    
+    it "should respond to instance_state_change" do
+      @environment.should respond_to( :instance_state_change )
+    end
+    
+    context "when instance is 'stopped'" do
+      before(:each) do
+        @instance = Instance.new(:current_state => 'stopped')
+        @environment.instances = [@instance]
+        @environment.current_state = 'running'
+      end
+      
+      it "should stop the environment when no other instances are running" do
+        @environment.instance_state_change(@instance)
+        @environment.should be_stopped
+      end
+
+      it "should not stop the environment when other instances are running" do
+        @environment.instances << Instance.new(:current_state => 'running')
+        @environment.instance_state_change(@instance)
+        @environment.should_not be_stopped
+      end
+    end
+  end
 
   describe 'clone!' do
     it "should update the name" do
