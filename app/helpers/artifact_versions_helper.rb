@@ -22,9 +22,9 @@ module ArtifactVersionsHelper
   def artifact_version_download_link(artifact_version)
     file_name = h(artifact_version.archive_file_name)
     if artifact_version.uploading?
-      "Uploading to Cloud"
+      content_tag(:span, "Uploading to Cloud", :class => 'current_state')
     elsif artifact_version.upload_failed?
-      "Upload Failed"
+      content_tag(:span, "Upload Failed", :class => 'current_state')
     elsif artifact_version.public_url
       link_to(file_name, artifact_version.public_url)
     else
