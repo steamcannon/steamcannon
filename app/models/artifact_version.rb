@@ -47,6 +47,8 @@ class ArtifactVersion < ActiveRecord::Base
   validates_attachment_presence :archive
   attr_protected :version_number, :artifact
 
+  default_scope :order => 'version_number DESC'
+  
   aasm_column :current_state
   aasm_initial_state :staging
   aasm_state :staging

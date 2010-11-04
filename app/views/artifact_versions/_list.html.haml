@@ -3,7 +3,7 @@
     .empty
       You have not added any versions yet
   - else
-    - artifact_versions.sort_by(&:version_number).each do |artifact_version|
+    - artifact_versions.each do |artifact_version|
       = render 'artifact_versions/row', :artifact_version => artifact_version
 
           
