@@ -2,6 +2,6 @@
   - if deployment.instance_services.empty?
     %li Pending Deployment
   - else
-    - deployment.deployment_instance_services.each do |deployment_instance_service|
+    - deployment.deployment_instance_services.sort_by { |is| is.instance_service.instance.name }.each do |deployment_instance_service|
       %li
         == #{h deployment_instance_service.instance_service.instance.name} - #{deployment_instance_service.current_state.humanize}
