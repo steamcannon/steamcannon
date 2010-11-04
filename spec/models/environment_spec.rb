@@ -327,6 +327,20 @@ describe Environment do
     end
   end
   
+  describe 'instance_states' do
+    it "should return a hash of instance states keyed to the intances" do
+      running = Instance.new(:current_state => 'running')
+      stopped = Instance.new(:current_state => 'stopped')
+      @environment.instances << running
+      @environment.instances << stopped
+      @environment.instance_states.keys.size.should == 2
+      @environment.instance_states['running'].size.should == 1
+      @environment.instance_states['running'].first.should == running
+      @environment.instance_states['stopped'].size.should == 1
+      @environment.instance_states['stopped'].first.should == stopped
+    end
+  end
+  
   describe 'clone!' do
     it "should update the name" do
       @environment.clone!.name.should == "#{@environment.name} (copy)"
