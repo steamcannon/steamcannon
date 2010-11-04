@@ -100,11 +100,24 @@ describe Deployment do
     before(:each) do
       @environment = Factory(:environment)
       @environment.stub_chain(:instance_services, :running, :for_service).and_return([@instance_service])
-      @deployment = Factory(:deployment, :environment => @environment)
+      @artifact_version = Factory(:artifact_version)
+      @deployment = Factory(:deployment, :environment => @environment,
+                            :artifact_version => @artifact_version)
     end
 
-    it "should deploy to the running instance services for the service" do
+    it "should deploy to the running instance services for the service if artifact is uploaded" do
+      @artifact_version.should_receive(:uploaded?).and_return(true)
       @instance_service.should_receive(:deploy)
+      @deployment.send(:perform_deploy)
+    end
+
+    it "should fail deployment if artifact upload failed"
+
+    it "should sleep and try again if artifact not yet uploaded" do
+      @artifact_version.should_receive(:uploaded?).and_return(false)
+      @artifact_version.should_receive(:upload_failed?).and_return(false)
+      @deployment.should_receive(:sleep)
+      ModelTask.should_receive(:async).with(@deployment, :perform_deploy)
       @deployment.send(:perform_deploy)
     end
   end

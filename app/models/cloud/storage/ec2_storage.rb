@@ -27,28 +27,18 @@ module Cloud
         @cloud_specific_hacks = cloud_specific_hacks
       end
 
-      def exists?(path)
-        s3_object(path).exists?
-      end
-
-      def to_file(path)
-        file = Tempfile.new(File.basename(path))
-        file.write(s3_object(path).data)
-        file.rewind
-        file
-      end
-
-      def write(path, file, attachment)
-        content_type = attachment.instance_read(:content_type)
-        object = s3_object(path)
+      def write(artifact_version)
+        content_type = artifact_version.archive_content_type
+        file = artifact_version.archive.to_file
+        object = s3_object(artifact_version)
         object.put(file, 'private', {'Content-Type' => content_type})
       end
 
-      def delete(path)
-        s3_object(path).delete
+      def delete(artifact_version)
+        s3_object(artifact_version).delete
       end
 
-      def public_url(path)
+      def public_url(artifact_version)
         expires_at = Time.now + 1.hour
 
         options = {
@@ -56,12 +46,11 @@ module Cloud
           :secret_access_key => @secret_access_key,
           :method => :get,
           :bucket => bucket_name,
-          :resource => path,
+          :resource => path(artifact_version),
           :expires_at => expires_at
         }
         S3::Signature.generate_temporary_url(options)
       end
-
 
       def bucket_name
         prefix = "SteamCannonArtifacts_"
@@ -76,8 +65,12 @@ module Cloud
       end
       memoize :bucket
 
-      def s3_object(path)
-        bucket.key(path)
+      def s3_object(artifact_version)
+        bucket.key(path(artifact_version))
+      end
+
+      def path(artifact_version)
+        "#{artifact_version.id}/#{artifact_version.archive_file_name}"
       end
 
     end

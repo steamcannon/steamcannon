@@ -65,22 +65,22 @@ describe ArtifactVersion do
   describe "pull deployment" do
     before(:each) do
       @artifact_version = Factory.build(:artifact_version)
-      @archive = mock('archive')
-      @artifact_version.stub!(:archive).and_return(@archive)
+      @storage = mock('storage')
+      @artifact_version.stub!(:storage).and_return(@storage)
     end
 
     it "should support pull deployment if archive has public url" do
-      @archive.stub!(:public_url).and_return('public_url')
+      @storage.stub!(:public_url).and_return('public_url')
       @artifact_version.supports_pull_deployment?.should be(true)
     end
 
     it "should not support pull deployment if archive has no public url" do
-      @archive.stub!(:public_url).and_return(nil)
+      @storage.stub!(:public_url).and_return(nil)
       @artifact_version.supports_pull_deployment?.should be(false)
     end
 
     it "should return archive's public url as pull deployment url" do
-      @archive.stub!(:public_url).and_return('public_url')
+      @storage.stub!(:public_url).and_return('public_url')
       @artifact_version.pull_deployment_url.should == 'public_url'
     end
   end
@@ -99,7 +99,7 @@ describe ArtifactVersion do
       @deployment = mock(Deployment)
       @artifact_version.stub!(:deployments).and_return([@deployment])
     end
-    
+
     it "should return true if any deployments claim to be deployed" do
       @deployment.should_receive(:is_deployed?).and_return(true)
       @artifact_version.is_deployed?.should be_true

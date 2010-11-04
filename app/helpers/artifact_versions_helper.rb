@@ -20,10 +20,13 @@
 module ArtifactVersionsHelper
 
   def artifact_version_download_link(artifact_version)
-    archive = artifact_version.archive
     file_name = h(artifact_version.archive_file_name)
-    if archive.public_url
-      link_to(file_name, archive.public_url)
+    if artifact_version.uploading?
+      "Uploading to Cloud"
+    elsif artifact_version.upload_failed?
+      "Upload Failed"
+    elsif artifact_version.public_url
+      link_to(file_name, artifact_version.public_url)
     else
       file_name
     end
