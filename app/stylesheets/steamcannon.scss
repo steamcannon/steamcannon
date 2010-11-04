@@ -310,10 +310,6 @@ form {
     
   }
   
-  .left_column {
-    border-right: 1px dotted $separator_color;  
-  }
-
   #artifact_versions_container, #deployments_container {
     .artifact_version, .deployment {
       border-bottom: 1px dashed $separator_color;
