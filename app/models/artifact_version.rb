@@ -69,7 +69,7 @@ class ArtifactVersion < ActiveRecord::Base
   end
 
   def to_s
-    "#{artifact.name} version #{version_number}"
+    "#{artifact.name} v#{version_number}"
   end
 
   def supports_pull_deployment?

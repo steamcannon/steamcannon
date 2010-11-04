@@ -60,4 +60,8 @@ module EnvironmentsHelper
   def status_for(environment)
     render :partial => '/environments/instance_states', :locals => {:environment=>environment}
   end
+
+  def environments_with_status_for_select
+    current_user.environments.all.collect { |ev| ["#{ev.name} (#{ev.current_state})", ev.id ] }
+  end
 end

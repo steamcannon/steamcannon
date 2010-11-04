@@ -1,11 +1,11 @@
 = form.label :artifact_version, "Artifact Version"
 %br
-= form.select :artifact_version_id, current_user.artifact_versions.all.collect { |av| [av.to_s, av.id ] }
+= form.select :artifact_version_id, deployment_artifact_versions_for_select
 %br
 %br
 = form.label :environment
 %br
-= form.select :environment_id, current_user.environments.all.collect { |ev| [ev.name, ev.id ] }
+= form.select :environment_id, environments_with_status_for_select
 %br
 /%br
 /= form.label :datasource

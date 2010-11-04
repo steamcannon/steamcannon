@@ -59,7 +59,7 @@ describe ArtifactVersion do
     artifact_version = ArtifactVersion.new
     artifact_version.artifact = artifact
     artifact_version.version_number = 2
-    artifact_version.to_s.should eql("test artifact version 2")
+    artifact_version.to_s.should eql("test artifact v2")
   end
 
   describe "pull deployment" do

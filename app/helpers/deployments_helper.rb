@@ -28,4 +28,15 @@ module DeploymentsHelper
       "Pending Deployment"
     end
   end
+
+  def deployment_artifact_versions_for_select
+    latest = []
+    rest = []
+    current_user.artifacts.sort_by(&:name).each do |artifact|
+      versions = artifact.artifact_versions.all.collect { |av| [av.to_s, av.id ] }
+      latest += [versions.shift]
+      rest += versions
+    end
+    grouped_options_for_select([['Latest Versions:', latest], ['Prior Versions:', rest]])
+  end
 end
