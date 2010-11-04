@@ -417,6 +417,13 @@ table.header_top {
   }
 }
 
+.instance_info {
+  width: 200px;
+  .controls {
+    float: right;
+  }
+}  
+
 #artifacts_index {
 
 }

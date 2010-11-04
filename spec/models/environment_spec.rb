@@ -326,7 +326,7 @@ describe Environment do
       end
     end
   end
-
+  
   describe 'clone!' do
     it "should update the name" do
       @environment.clone!.name.should == "#{@environment.name} (copy)"

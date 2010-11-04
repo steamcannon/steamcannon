@@ -108,6 +108,14 @@ class Environment < ActiveRecord::Base
     self.stop! if instance.stopped? && instances.include?(instance) && instances.all{|i|i.stopped?}
   end
   
+  def instance_states
+    instances.inject({}) do |accum, i|
+      accum[i.current_state] ||= []
+      accum[i.current_state] << i
+      accum
+    end
+  end
+  
   protected
 
   def start_environment

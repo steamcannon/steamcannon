@@ -1,0 +1,12 @@
+=environment.current_state.titleize
+= link_to("(info)", '#', :id=>"instance_info_#{environment.id}")
+.instance_info.jqmWindow.js-popup_dialog{style_display_none.merge(:rel => "#instance_info_#{environment.id}")}
+  %h2
+    = environment.name  
+    instances    
+  %ul
+    - states = environment.instance_states
+    - states.keys.sort.each do |state| 
+      %li= "#{states[state].count} instances #{state}"
+  .controls
+    = link_to("Close", "#", :class=>'jqmClose')

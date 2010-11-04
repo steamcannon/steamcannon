@@ -20,7 +20,7 @@
         %td.platform
           &= environment.platform_version
         %td.status
-          = environment.current_state.titleize
+          = status_for(environment)
         %td.actions
           - if environment.can_stop?
             = stop_environment_link(environment, 'Stop')

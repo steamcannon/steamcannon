@@ -15,7 +15,4 @@
         %td.environment
           = link_to h(environment.name), environment
         %td.status
-          - if environment.stopped?
-            Off
-          - else
-            = environment.current_state.humanize
+          = status_for(environment)
