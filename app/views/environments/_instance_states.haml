@@ -1,12 +1,21 @@
 =environment.current_state.titleize
-= link_to("(info)", '#', :id=>"instance_info_#{environment.id}")
-.instance_info.jqmWindow.js-popup_dialog{style_display_none.merge(:rel => "#instance_info_#{environment.id}")}
-  %h2
-    = environment.name  
-    instances    
-  %ul
-    - states = environment.instance_states
-    - states.keys.sort.each do |state| 
-      %li= "#{states[state].count} instances #{state}"
-  .controls
-    = link_to("Close", "#", :class=>'jqmClose')
+- if environment.current_state !=  'stopped'
+  = link_to("(info)", '#', :id=>"instance_info_#{environment.id}")
+  .instance_info.jqmWindow.js-popup_dialog{style_display_none.merge(:rel => "#instance_info_#{environment.id}")}
+    %h2
+      = "#{environment.name} (#{environment.current_state.humanize})"
+      
+    %ul
+      - environment.environment_images.each do |env_image|
+        %li
+          = "#{env_image.image.name} (#{env_image.num_instances})"
+          %ol
+            - unless env_image.instances.blank?
+              - env_image.instances.each do |instance|
+                %li= "#{instance.cloud_id} &ndash; #{instance.current_state.humanize}" 
+            - else
+              %li No instances found
+    .controls
+      = link_to("Details", environment_path(environment))
+      \|
+      = link_to("Close", "#", :class=>'jqmClose')

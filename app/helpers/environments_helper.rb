@@ -58,7 +58,6 @@ module EnvironmentsHelper
   end
   
   def status_for(environment)
-    return environment.current_state.titleize unless environment.current_state == 'running'
     render :partial => '/environments/instance_states', :locals => {:environment=>environment}
   end
 end
