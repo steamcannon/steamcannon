@@ -23,16 +23,6 @@ module Paperclip
       end
     end
   end
-
-  # Load Storage class by class name directly instead of
-  # assuming it lives under paperclip/storage/
-  class Attachment
-    def initialize_storage
-      storage_class_name = @storage.to_s
-      @storage_module = storage_class_name.constantize
-      self.extend(@storage_module)
-    end
-  end
 end
 
 # Revert paperclip's ugly hack that breaks Tempfile.size on JRuby

@@ -26,15 +26,9 @@ module Cloud
         # No credentials needed for file-based storage
       end
 
-      def exists?(path)
-        File.exist?(path)
-      end
-
-      def to_file(path)
-        (File.new(path, 'rb')) if exists?(path)
-      end
-
-      def write(path, file, attachment)
+      def write(artifact_version)
+        path = path(artifact_version)
+        file = artifact_version.archive.to_file
         file.close
         FileUtils.mkdir_p(File.dirname(path))
         FileUtils.cp(file.path, path)
@@ -42,14 +36,19 @@ module Cloud
         FileUtils.chmod(0644, path)
       end
 
-      def delete(path)
-        FileUtils.rm(path) if exists?(path)
+      def delete(artifact_version)
+        path = path(artifact_version)
+        FileUtils.rm(path)
       rescue Errno::ENOENT => e
         # ignore file-not-found, let everything else pass
       end
 
       def public_url
         nil
+      end
+
+      def path(artifact_version)
+        "#{RAILS_ROOT}/public/uploads/#{artifact_version.id}/#{artifact_version.archive_file_name}"
       end
 
     end

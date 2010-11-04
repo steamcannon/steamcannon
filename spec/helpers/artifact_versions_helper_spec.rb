@@ -24,18 +24,18 @@ describe ArtifactVersionsHelper do
     before(:each) do
       @artifact_version = Factory.build(:artifact_version,
                                         :archive_file_name => 'file_name')
-      @archive = mock('archive')
-      @artifact_version.stub!(:archive).and_return(@archive)
+      @storage = mock('storage')
+      @artifact_version.stub!(:storage).and_return(@storage)
     end
 
     it "should link to public_url if non-nil" do
-      @archive.should_receive(:public_url).twice.and_return('public_url')
+      @storage.should_receive(:public_url).twice.and_return('public_url')
       helper.should_receive(:link_to).with('file_name', 'public_url')
       helper.artifact_version_download_link(@artifact_version)
     end
 
     it "should return file name if public_url is nil" do
-      @archive.should_receive(:public_url).and_return(nil)
+      @storage.should_receive(:public_url).and_return(nil)
       helper.artifact_version_download_link(@artifact_version).should == 'file_name'
     end
   end

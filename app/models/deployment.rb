@@ -31,7 +31,7 @@ class Deployment < ActiveRecord::Base
   validates_each :environment_id, :on => :create do |record, attr, value|
     record.send(:validate_artifact_unique_in_environment)
   end
-  
+
   aasm_column :current_state
   aasm_initial_state :pending
   aasm_state :pending
@@ -47,7 +47,7 @@ class Deployment < ActiveRecord::Base
   end
 
   after_create :deploy!
-  
+
   def artifact
     artifact_version.artifact
   end
@@ -76,7 +76,7 @@ class Deployment < ActiveRecord::Base
   def is_deployed?
     instance_services.exists?
   end
-  
+
   protected
 
   def validate_artifact_unique_in_environment
@@ -97,8 +97,16 @@ class Deployment < ActiveRecord::Base
   end
 
   def perform_deploy
-    environment.instance_services.running.for_service(service).each { |is| is.deploy(self) }
-
+    if artifact_version.uploaded?
+      environment.instance_services.running.for_service(service).each { |is| is.deploy(self) }
+    elsif artifact_version.upload_failed?
+      # Do nothing, which for now leaves this in Pending Deployment forever
+      # We'll want to add some kind of deploy failed state so if someone tries
+      # to deploy an artifact that fails to upload we can display a message
+    else
+      sleep(5)
+      ModelTask.async(self, :perform_deploy)
+    end
   end
 
   def perform_undeploy
