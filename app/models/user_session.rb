@@ -18,5 +18,5 @@
 
 
 class UserSession < Authlogic::Session::Base
-  last_request_at_threshold 1.minute
+  last_request_at_threshold 5.minutes
 end
