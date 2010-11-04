@@ -1,10 +1,11 @@
 - div_for( artifact_version ) do
-  .version_number
-    = artifact_version.version_number
-  .created_at
-    = artifact_version.created_at.to_s(:long)
-  .archive
-    = artifact_version_download_link(artifact_version)
+  .metadata
+    .version_number
+      = artifact_version.version_number
+    .created_at
+      = artifact_version.created_at.to_s(:long)
+    .archive
+      = artifact_version_download_link(artifact_version)
   .actions
     - unless artifact_version.upload_failed?
       = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact_version.id)

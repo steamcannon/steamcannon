@@ -309,9 +309,13 @@ form {
     }
     
   }
+  
+  .left_column {
+    border-right: 1px dotted $separator_color;  
+  }
 
-  #artifact_versions_container {
-    .artifact_version {
+  #artifact_versions_container, #deployments_container {
+    .artifact_version, .deployment {
       border-bottom: 1px dashed $separator_color;
       padding: 1ex 0;
       margin-bottom: 1ex;
@@ -325,15 +329,23 @@ form {
         font-size: 90%;
         font-weight: bold;
       }
+      .metadata, .actions {
+        display: inline-block;
+      }
+      .metadata {
+        width: 78%;
+      }
       .actions {
         font-size: 90%;
+        width: 20%;
       }
     }
   }
-
+  
   #deployments_container {
     .deployment {
       margin-bottom: 1em;
+      padding-bottom: 1.5ex;
       .actions {
         float: right;
       }
