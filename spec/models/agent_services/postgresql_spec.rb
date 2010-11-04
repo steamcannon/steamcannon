@@ -71,8 +71,8 @@ describe AgentServices::Postgresql do
 
   describe 'generate_username_and_password' do
     it "should return a hash with user and password" do
-      SecureRandom.should_receive(:hex).with(30).twice.and_return('1234','abcd')
-      @agent_service.send(:generate_username_and_password).should == { :user => '_1234', :password => 'abcd' }
+      SecureRandom.should_receive(:hex).with(15).and_return('abcd')
+      @agent_service.send(:generate_username_and_password).should == { :user => 'db_admin', :password => 'abcd' }
     end
   end
 

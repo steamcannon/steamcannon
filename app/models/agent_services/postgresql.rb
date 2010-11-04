@@ -44,8 +44,8 @@ module AgentServices
     protected
     def generate_username_and_password
       {
-        :user => '_' + SecureRandom.hex(30),
-        :password => SecureRandom.hex(30)
+        :user => 'db_admin',
+        :password => SecureRandom.hex(15)
       }
     end
   end
