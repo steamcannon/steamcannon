@@ -160,7 +160,6 @@ function monitor_content(url, selectors) {
 function update_instance_status(url, selector) {
   $.post(url, function(data) {
       $(selector).replaceWith(data.html);
-      apply_rules_to_instance_status_load()
   }, "json");
   setTimeout("update_instance_status('" + url + "', '" + selector + "')", 30000);
 }
