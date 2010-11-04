@@ -61,6 +61,11 @@ class ArtifactVersionsController < ApplicationController
     end
   end
 
+  def status
+    artifact_version = @artifact.artifact_versions.find(params[:id])
+    render :partial => 'artifact_versions/row', :locals => { :artifact_version => artifact_version }
+  end
+  
   private
 
   def load_artifact

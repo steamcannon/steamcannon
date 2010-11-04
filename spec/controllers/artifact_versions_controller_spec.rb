@@ -95,4 +95,15 @@ describe ArtifactVersionsController do
     end
   end
 
+  describe "GET status" do
+    before(:each) do
+      @artifact_version = Factory.build(:artifact_version)
+      mock_artifact.stub_chain(:artifact_versions, :find).and_return(@artifact_version)
+    end
+    
+    it "should render the row" do
+      get :status, :id => '77', :artifact_id => "29"
+      response.should render_template('_row')
+    end
+  end
 end

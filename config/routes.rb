@@ -20,7 +20,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :account_requests, :collection => { :invite => :post, :ignore => :post }
 
   map.resources :artifacts, :member => { :status => :post }
-  map.resources :artifact_versions
+  map.resources :artifact_versions, :member => { :status => :get }
   map.resources :platforms
   map.resources :environments, :member => {:start => :post, :stop => :post, :clone => :post}, :collection => {:status => :get} do |environment|
     environment.resources :instances, :member => {:stop => :post, :status => :post, :clone => :post}, :only => [:show, :index, :create] do |instance|
