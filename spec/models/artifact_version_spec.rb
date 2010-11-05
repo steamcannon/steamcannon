@@ -109,7 +109,118 @@ describe ArtifactVersion do
       @deployment.should_receive(:is_deployed?).and_return(false)
       @artifact_version.is_deployed?.should_not be_true
     end
+  end
 
+  describe "upload_archive_async" do
+    it "should create an async task" do
+      artifact_version = Factory(:artifact_version)
+      ModelTask.should_receive(:async).with(artifact_version, :upload_archive)
+      artifact_version.send(:upload_archive_async)
+    end
+  end
 
+  describe "upload_archive" do
+    before(:each) do
+      @artifact_version = Factory(:artifact_version)
+      @storage = mock('storage')
+      @storage.stub!(:write)
+      @artifact_version.stub!(:storage).and_return(@storage)
+      @artifact_version.stub!(:remove_local_archive)
+    end
+
+    it "should write to cloud storage" do
+      @storage.should_receive(:write).with(@artifact_version)
+      @artifact_version.send(:upload_archive)
+    end
+
+    it "should remove local archive" do
+      @artifact_version.should_receive(:remove_local_archive)
+      @artifact_version.send(:upload_archive)
+    end
+
+    it "should transition to uploaded on success" do
+      @artifact_version.send(:upload_archive)
+      @artifact_version.should be_uploaded
+    end
+
+    it "should transition to upload_failed on error" do
+      @storage.should_receive(:write).and_raise('error')
+      @artifact_version.send(:upload_archive)
+      @artifact_version.should be_upload_failed
+    end
+  end
+
+  describe "remove_archive" do
+    before(:each) do
+      @artifact_version = Factory(:artifact_version)
+      @artifact_version.stub!(:remove_local_archive)
+      @artifact_version.stub!(:remove_cloud_archive)
+    end
+
+    it "should remove local archive" do
+      @artifact_version.should_receive(:remove_local_archive)
+      @artifact_version.send(:remove_archive)
+    end
+
+    it "should remove cloud archive" do
+      @artifact_version.should_receive(:remove_cloud_archive)
+      @artifact_version.send(:remove_archive)
+    end
+  end
+
+  describe "remove_local_archive" do
+    before(:each) do
+      @artifact_version = Factory(:artifact_version)
+      @archive = mock('archive', :path => 'path')
+      @artifact_version.should_receive(:archive).and_return(@archive)
+    end
+
+    it "should remove the file" do
+      FileUtils.should_receive(:rm).with('path')
+      @artifact_version.send(:remove_local_archive)
+    end
+
+    it "should ignore file not found errors" do
+      FileUtils.should_receive(:rm).with('path').and_raise(Errno::ENOENT.new)
+      lambda {
+        @artifact_version.send(:remove_local_archive)
+      }.should_not raise_error
+    end
+
+    it "should not ignore other errors" do
+      FileUtils.should_receive(:rm).with('path').and_raise('error')
+      lambda {
+        @artifact_version.send(:remove_local_archive)
+      }.should raise_error
+    end
+  end
+
+  describe "remove_cloud_archive" do
+    before(:each) do
+      @artifact_version = Factory(:artifact_version)
+      @storage = mock('storage')
+      @artifact_version.stub!(:storage).and_return(@storage)
+    end
+
+    it "should delete from cloud storage" do
+      @storage.should_receive(:delete).with(@artifact_version)
+      @artifact_version.send(:remove_cloud_archive)
+    end
+  end
+
+  describe "storage" do
+    before(:each) do
+      @artifact_version = Factory(:artifact_version)
+      @user = Factory(:user)
+      @artifact_version.stub_chain(:artifact, :user).and_return(@user)
+      @cloud = mock('cloud')
+      @user.stub!(:cloud).and_return(@cloud)
+    end
+
+    it "should create class from cloud name" do
+      @cloud.should_receive(:name).at_least(:once).and_return('ec2')
+      Cloud::Storage::Ec2Storage.should_receive(:new)
+      @artifact_version.send(:storage)
+    end
   end
 end
