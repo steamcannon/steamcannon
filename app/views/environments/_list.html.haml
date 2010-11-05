@@ -20,7 +20,7 @@
         %td.platform
           &= environment.platform_version
         %td.status
-          = status_for(environment)
+          = render :partial => '/environments/instance_states', :locals => {:environment=>environment}
         %td.actions
           - if environment.can_stop?
             = stop_environment_link(environment, 'Stop')

@@ -21,7 +21,7 @@ class Artifact < ActiveRecord::Base
   belongs_to :user
   belongs_to :service
   
-  has_many :artifact_versions
+  has_many :artifact_versions, :dependent => :destroy
   has_many :deployments, :through => :artifact_versions
   
   attr_protected :user

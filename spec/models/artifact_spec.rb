@@ -24,8 +24,8 @@ describe Artifact do
   end
   
   it { should belong_to :service }
-  it { should have_many :artifact_versions }
-  it { should have_many :deployments }
+  it { should have_many( :artifact_versions ).dependent( :destroy ) }
+  it { should have_many( :deployments ).through( :artifact_versions ) }
   
   it { should validate_presence_of :name}
   it { should validate_uniqueness_of :name }
