@@ -48,7 +48,7 @@ class ArtifactVersion < ActiveRecord::Base
   attr_protected :version_number, :artifact
 
   default_scope :order => 'version_number DESC'
-  
+
   aasm_column :current_state
   aasm_initial_state :staging
   aasm_state :staging
@@ -155,6 +155,9 @@ class ArtifactVersion < ActiveRecord::Base
 
   def remove_cloud_archive
     storage.delete(self)
+  rescue => error
+    # Log but ignore any errors when trying to remove from cloud
+    logger.error("Error removing artifact from cloud: #{error.inspect}\n#{error.backtrace}")
   end
 
   def storage
