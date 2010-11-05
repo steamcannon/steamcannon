@@ -5,6 +5,11 @@
     = f.error_messages
     = render :partial => "form", :object => f
     = f.submit "Register"
+
+.account_actions
   %p
     Already have an account? 
     = link_to 'Login', new_user_session_path
+  %p
+    Forgot your password?
+    = link_to 'Reset it', new_password_reset_path

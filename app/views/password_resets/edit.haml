@@ -1,0 +1,12 @@
+.dcloud_form
+  %h2 Change My Password
+  - form_for @user, :url => password_reset_path, :method => :put do |f|
+    = f.error_messages
+    %ul
+      %li
+        = f.label :password
+        = f.password_field :password
+      %li
+        = f.label :password_confirmation
+        = f.password_field :password_confirmation
+    = submit_tag "Change my Password!", :class => "submit"

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101102205405) do
+ActiveRecord::Schema.define(:version => 20101105143451) do
 
   create_table "account_requests", :force => true do |t|
     t.string   "email"
@@ -214,6 +214,7 @@ ActiveRecord::Schema.define(:version => 20101102205405) do
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
+  add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
 
 end

@@ -36,6 +36,12 @@ ActionController::Routing::Routes.draw do |map|
   map.resource :dashboard, :controller => "dashboard"
 
   map.new_user_from_token '/signup/:token', :controller => "users", :action => "new"
+  
+  map.resources :password_resets
+  # map.forgot_password '/forgot_password', :controller => 'PasswordResets', :action => "new"
+  # map.reset_password '/reset_password', :controller => 'PasswordResets', :action => "create"
+  # map.edit_password '/edit_password/:id', :controller => 'PasswordResets', :action => "edit"
+  # map.change_password '/change_password/:id', :controller => 'PasswordResets', :action => "update"
 
   # The priority is based upon order of creation: first created -> highest priority.
 

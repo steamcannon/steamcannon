@@ -1,0 +1,8 @@
+.dcloud_form
+  %h2 Forgot Password
+  - form_tag password_resets_path do
+    %ul
+      %li
+        = label_tag :email
+        = text_field_tag :email
+    = submit_tag "Reset my Password", :class => "submit"

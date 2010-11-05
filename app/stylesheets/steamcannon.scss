@@ -627,3 +627,10 @@ tr.instance_message {
     color: $minor_accent_color;
     font-weight: bold;
 }
+
+.user_sessions_controller.new_action, .users_controller.new_action, .password_resets_controller.new_action {
+  .account_actions {
+    margin-top: 20px;
+    p { margin-bottom: 0; }
+  }
+}
