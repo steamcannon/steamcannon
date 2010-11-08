@@ -150,4 +150,10 @@ body.ninesixty {
   @include two-column-wide-left;
 }
 
-
+#application_error {
+  @include grid-prefix(6);
+  @include grid(12);
+  @include grid-suffix(6);
+  @include alpha();
+  @include omega();
+}

@@ -634,3 +634,13 @@ tr.instance_message {
     p { margin-bottom: 0; }
   }
 }
+
+#application_error {
+  text-align: center;
+
+  h1 {
+    font-size: 130%;
+    color: $failure_color;
+    margin: 1em 0;
+  }
+}

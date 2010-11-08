@@ -115,4 +115,26 @@ class ApplicationController < ActionController::Base
 
     {:json => response}
   end
+
+  def render_optional_error_file(status_code)
+    case status_code
+    when :not_found then render_404
+    when :unprocessable_entity then render_422
+    else super
+    end
+  end
+
+  def render_404
+    respond_to do |format|
+      format.html { render :template => "errors/error_404", :status => 404, :layout => "application" }
+      format.all  { render :nothing => true, :status => 404 }
+    end
+  end
+
+  def render_422
+    respond_to do |format|
+      format.html { render :template => "errors/error_422", :status => 422, :layout => "application" }
+      format.all  { render :nothing => true, :status => 422 }
+    end
+  end
 end
