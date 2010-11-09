@@ -20,7 +20,7 @@ function apply_unobtrusive_rules($) {
     $('.js-popup_dialog').each(function(idx, el) {
         $(el).jqm({trigger: $(el).attr('rel'), overlay:0})
     })
-        
+
 
     $('#environment_form #environment_platform_version_id').change(function() {
         $('.content_row').hide()
@@ -99,7 +99,7 @@ jQuery(document).ready(function($) {
 
 
 function get_with_cloud_credentials(url, callback) {
-    params = 'cloud_username=' + $('#user_cloud_username').val() + '&cloud_password=' + $('#user_cloud_password').val()
+    params = 'cloud_username=' + encodeURIComponent($('#user_cloud_username').val()) + '&cloud_password=' + encodeURIComponent($('#user_cloud_password').val())
     $.get(url + '?' + params, callback);
 }
 
