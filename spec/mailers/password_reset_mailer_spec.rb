@@ -28,7 +28,8 @@ describe "PasswordResetMailer" do
       @user   = mock_model(User)
       @user.stub!(:perishable_token).and_return("123")
       @user.stub!(:email).and_return('foo@bar.com')
-      @email  = PasswordResetMailer.create_password_reset_instructions(@user, @sender)
+      @host = 'zanzibar'
+      @email  = PasswordResetMailer.create_password_reset_instructions(@host, @user, @sender)
     end
 
     it "should be to the user's email address" do
@@ -39,8 +40,8 @@ describe "PasswordResetMailer" do
       @email.should deliver_from(@sender)
     end
 
-    it "should include the password reset token in the url" do
-      @email.should have_body_text("http://try.steamcannon.org/password_resets/#{@user.perishable_token}/edit")
+    it "should include the password reset token and hostname in the url" do
+      @email.should have_body_text("http://#{@host}/password_resets/#{@user.perishable_token}/edit")
     end
   end
 

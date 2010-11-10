@@ -18,14 +18,12 @@
 
 class PasswordResetMailer < ActionMailer::Base
   
-  default_url_options[:host] = "try.steamcannon.org" 
-
-  def password_reset_instructions(user, sender)
+  def password_reset_instructions(host, user, sender)
     subject    "[SteamCannon] Password Reset Instructions"
     recipients user.email
     from       sender
     
-    body       :url => edit_password_reset_url(user.perishable_token)
+    body       :url => edit_password_reset_url(user.perishable_token, :host => host)
   end
 
 end

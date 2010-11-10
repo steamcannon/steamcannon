@@ -95,9 +95,9 @@ class User < ActiveRecord::Base
     cloud_specific_hacks.unique_bucket_name("SteamCannonArtifacts_")
   end
 
-  def send_password_reset_instructions!  
+  def send_password_reset_instructions!(host)
     reset_perishable_token!  
     from = APP_CONFIG[:default_reply_to_address] || self.email
-    PasswordResetMailer.deliver_password_reset_instructions(self, from)  
+    PasswordResetMailer.deliver_password_reset_instructions(host, self, from)  
   end
 end
