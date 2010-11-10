@@ -86,9 +86,6 @@ class AgentClient
   end
 
   def fetch_log(log_id, num_lines, offset)
-    # double-encode the log_id parameter because Sinatra on our agent
-    # thinks its part of the URL otherwise
-    log_id = CGI.escape(URI.escape(CGI.escape(log_id), '.'))
     service_get "logs/#{log_id}?num_lines=#{num_lines}&offset=#{offset}"
   end
 
