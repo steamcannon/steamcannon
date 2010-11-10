@@ -88,9 +88,9 @@ class UsersController < ResourceController::Base
   end
 
   def collection
-    end_of_association_chain.visible_to_user(current_user)
+    end_of_association_chain.visible_to_user(current_user).sorted_by(sort_column(User, :email), sort_direction)
   end
-
+  
   def require_superuser_to_edit_other_user
     if !current_user.superuser? and current_user != object
       flash[:error] = "You don't have the proper rights to edit that user."

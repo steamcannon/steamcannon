@@ -57,4 +57,9 @@ module ApplicationHelper
     request.env["HTTP_REFERER"] ? :back : default
   end
 
+  def sort_link(text, column)
+    column = column.to_s
+    direction = (params[:sort_by] == column && params[:sort_dir] == 'ASC' ? 'DESC' : 'ASC')
+    link_to text, "?sort_by=#{column}&sort_dir=#{direction}", :class => (params[:sort_by] == column ? 'sort_column' : '')
+  end
 end

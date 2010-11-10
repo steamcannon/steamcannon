@@ -5,14 +5,14 @@
   %table#users_container.header_top
     %tr
       %th.email
-        Email
+        = sort_link('Email', :email)
       - content_for_superuser do
         %th.superuser
           Superuser? 
       %th.lastlogin
-        Last Login
+        = sort_link('Last Login', :current_login_at)
       %th.lastrequest
-        Last Activity
+        = sort_link('Last Activity', :last_request_at)
       %th.actions
         Actions
     - collection.each do |user|

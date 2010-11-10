@@ -137,4 +137,14 @@ class ApplicationController < ActionController::Base
       format.all  { render :nothing => true, :status => 422 }
     end
   end
+
+  #simple sorting - see users_controller for usage
+  def sort_column(klass, default)
+    klass.column_names.include?(params[:sort_by]) ? params[:sort_by] : default
+  end
+
+  def sort_direction
+    %w{ ASC DESC }.include?(params[:sort_dir]) ? params[:sort_dir] : 'ASC'
+  end
+
 end

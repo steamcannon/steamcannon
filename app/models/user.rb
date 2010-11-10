@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   named_scope :visible_to_user, lambda { |user|
     { :conditions => user.superuser? ? { } : { :id => user.id } }
   }
-
+  
   attr_protected :superuser
 
   attr_accessor_with_default :cloud_password_dirty, false

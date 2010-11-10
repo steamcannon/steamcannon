@@ -45,6 +45,10 @@ class AccountRequestsController < ResourceController::Base
   end
   
   protected
+  def collection
+    end_of_association_chain.sorted_by(sort_column(AccountRequest, :created_at), sort_direction)
+  end
+  
   def require_invite_only_mode
     if !invite_only_mode?
       flash[:error] = "You can't create an account request."

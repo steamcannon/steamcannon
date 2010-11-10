@@ -14,10 +14,13 @@
     %table#account_requests_container.header_top
       %tr
         %th
-        %th Email
+        %th
+          = sort_link('Email', :email)
         %th Reason
-        %th Requested
-        %th Status
+        %th 
+          = sort_link('Requested', :created_at)
+        %th 
+          = sort_link('Status', :current_state)
         %th.actions
           Actions
       - @account_requests.each do |account_request|

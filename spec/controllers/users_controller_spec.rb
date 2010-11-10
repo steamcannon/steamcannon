@@ -225,7 +225,7 @@ describe UsersController do
 
   describe "GET index" do
     it "should limit to users visible to the current user" do
-      User.should_receive(:visible_to_user).with(@current_user)
+      User.should_receive(:visible_to_user).with(@current_user).and_return(mock('user_fault', :sorted_by => []))
       get :index
     end
 
