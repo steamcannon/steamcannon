@@ -27,6 +27,7 @@ gem "aasm", "2.1.5"
 gem "rest-client", "~> 1.6.0"
 gem "json", "1.4.6"
 gem "ssl_requirement", "0.1.0"
+gem "versionomy", "0.4.0"
 
 group :test do
   gem "rspec", "1.3.0"

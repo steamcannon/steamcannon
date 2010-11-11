@@ -31,6 +31,18 @@ class AgentClient
   # Global agent methods
   ##
 
+  def api_version
+    unless @api_version
+      begin
+        version = get('api_version')
+      rescue RequestFailedError => ex
+        #ignore
+      end
+      @api_version = Versionomy.parse(version || '0.9')
+    end
+    @api_version
+  end
+  
   def agent_status
     response = get 'status'
     configure_agent if !agent_configured?
@@ -87,8 +99,9 @@ class AgentClient
 
   def fetch_log(log_id, num_lines, offset)
     # double-encode the log_id parameter because Sinatra on our agent
-    # thinks its part of the URL otherwise
-    log_id = CGI.escape(URI.escape(CGI.escape(log_id), '.'))
+    # thinks its part of the URL otherwise. This was added to the
+    # client in api v1.0.0
+    log_id = CGI.escape(URI.escape(CGI.escape(log_id), '.')) if api_version >= '1.0.0'
     service_get "logs/#{log_id}?num_lines=#{num_lines}&offset=#{offset}"
   end
 

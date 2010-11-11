@@ -23,6 +23,7 @@ GEM
       http_connection
       uuidtools
       xml-simple
+    blockenspiel (0.4.1-java)
     bouncy-castle-java (1.5.0145.2)
     compass (0.10.5)
       haml (>= 3.0.4)
@@ -76,6 +77,8 @@ GEM
     syntax (1.0.0)
     tobias-railroad (0.10.0)
     uuidtools (2.1.1)
+    versionomy (0.4.0)
+      blockenspiel (>= 0.3.1)
     xml-simple (1.0.12)
 
 PLATFORMS
@@ -110,3 +113,4 @@ DEPENDENCIES
   ssl_requirement (= 0.1.0)
   steamcannon-deltacloud-client (= 0.0.9.7.2)
   tobias-railroad (= 0.10.0)
+  versionomy (= 0.4.0)

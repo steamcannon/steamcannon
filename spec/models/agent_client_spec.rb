@@ -82,6 +82,35 @@ describe AgentClient do
 
   end
 
+  describe "api_version" do
+    it "should retrieve the agent api version" do
+      @client.should_receive(:get).with('api_version')
+      @client.api_version
+    end
+    
+    it "should return a Versionomy::Value" do
+      @client.should_receive(:get).with('api_version')
+      @client.api_version.should be_an_instance_of(Versionomy::Value)
+    end
+    
+    it "should fall back to 0.9 if version call fails" do
+      @client.should_receive(:get).with('api_version').and_raise(AgentClient::RequestFailedError.new('boom'))
+      @client.api_version.should == Versionomy.parse('0.9')
+    end
+
+
+    it "should fall back to 0.9 if version call returns nil" do
+      @client.should_receive(:get).with('api_version').and_return(nil)
+      @client.api_version.should == Versionomy.parse('0.9')
+    end
+
+    it "should cache the api version" do
+      @client.should_receive(:get).with('api_version').once
+      @client.api_version
+      @client.api_version
+    end
+  end
+  
   describe "agent_status" do
     it "should attempt to configure the agent if successful" do
       @client.stub!(:get).and_return({ })
@@ -177,6 +206,45 @@ describe AgentClient do
       @client.configure({})
     end
 
+    describe 'fetch_log' do
+      before(:each) do
+        @client.stub!(:service_get)
+      end
+      
+      context 'when the agent api version is less than 1.0' do
+        before(:each) do
+          @client.should_receive(:api_version).and_return(Versionomy.parse('0.9'))
+        end
+        
+        it "should not encode the log_id" do
+          CGI.should_not_receive(:escape)
+          @client.fetch_log('log', 1, 2)
+        end
+      end
+
+      context 'when the agent api version is equal to 1.0' do
+        before(:each) do
+          @client.should_receive(:api_version).and_return(Versionomy.parse('1.0'))
+        end
+        
+        it "should encode the log_id" do
+          CGI.should_receive(:escape).twice.and_return('log')
+          @client.fetch_log('log', 1, 2)
+        end
+      end
+
+      context 'when the agent api version is greater than 1.0' do
+        before(:each) do
+          @client.should_receive(:api_version).and_return(Versionomy.parse('1.0.1'))
+        end
+        
+        it "should encode the log_id" do
+          CGI.should_receive(:escape).twice.and_return('log')
+          @client.fetch_log('log', 1, 2)
+        end
+      end
+    end
+  
   end
 
   describe "deployment_payload" do
