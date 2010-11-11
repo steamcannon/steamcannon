@@ -20,7 +20,7 @@
 class Environment < ActiveRecord::Base
   include AASM
   include HasMetadata
-  
+
   has_many :deployments, :dependent => :destroy
   has_many :environment_images, :dependent => :destroy
   has_many :images, :through => :environment_images
@@ -30,16 +30,16 @@ class Environment < ActiveRecord::Base
 
   belongs_to :platform_version
   belongs_to :user
-  
+
   attr_protected :user_id
-  
+
   accepts_nested_attributes_for :environment_images
-  
+
   validates_presence_of :name, :user
   validates_uniqueness_of :name, :scope => :user_id
-  
+
   default_scope :order => 'name ASC'
-  
+
   aasm_column :current_state
   aasm_initial_state :stopped
   aasm_state :starting, :enter => :start_environment
@@ -103,11 +103,12 @@ class Environment < ActiveRecord::Base
   def artifacts
     deployments.deployed.collect(&:artifact)
   end
-  
+
   def instance_state_change(instance)
-    self.stop! if instance.stopped? && instances.include?(instance) && instances.all{|i|i.stopped?}
+    self.stop! if instance.stopped? && instances.include?(instance) &&
+      instances.all{|i|i.stopped?} && !self.stopping? && !self.stopped?
   end
-  
+
   def instance_states
     instances.inject({}) do |accum, i|
       accum[i.current_state] ||= []
@@ -115,7 +116,7 @@ class Environment < ActiveRecord::Base
       accum
     end
   end
-  
+
   protected
 
   def start_environment
@@ -133,7 +134,7 @@ class Environment < ActiveRecord::Base
     # try to move to stopped here - state won't change if there are still
     # running instances, but this catches the case where all instances
     # are stopped individually [STEAM-153]
-    stopped! 
+    stopped!
   end
 
   def running_all_instances?
