@@ -70,7 +70,7 @@ describe Platform do
       version = PlatformVersion.find_by_version_number('123')
       version.should_not be_nil
       version.images.should_not be_empty
-      Image.find_all_by_cloud_id('ami_123').count.should be(1)
+      Image.find_all_by_uid('image_123').count.should be(1)
     end
   end
 end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101105143451) do
+ActiveRecord::Schema.define(:version => 20101111150740) do
 
   create_table "account_requests", :force => true do |t|
     t.string   "email"
@@ -47,6 +47,16 @@ ActiveRecord::Schema.define(:version => 20101105143451) do
     t.text     "keypair"
     t.integer  "certifiable_id"
     t.string   "certifiable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "cloud_images", :force => true do |t|
+    t.string   "cloud"
+    t.string   "region"
+    t.string   "architecture"
+    t.string   "cloud_id"
+    t.integer  "image_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -106,7 +116,7 @@ ActiveRecord::Schema.define(:version => 20101105143451) do
 
   create_table "images", :force => true do |t|
     t.string   "name"
-    t.string   "cloud_id"
+    t.string   "uid"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "storage_volume_capacity"

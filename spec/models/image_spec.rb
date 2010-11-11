@@ -22,7 +22,7 @@ describe Image do
   before(:each) do
     @valid_attributes = {
       :name => "value for name",
-      :cloud_id => "value for cloud_id",
+      :uid => "value for uid",
     }
   end
 
@@ -30,7 +30,8 @@ describe Image do
   it { should have_many :instances }
   it { should have_many :image_services }
   it { should have_many :services }
-  
+  it { should have_many :cloud_images }
+
   it "should create a new instance given valid attributes" do
     Image.create!(@valid_attributes)
   end
@@ -39,15 +40,11 @@ describe Image do
     Image.new.should respond_to(:name)
   end
 
-  it "should have a cloud_id attribute" do
-    Image.new.should respond_to(:cloud_id)
-  end
-
   describe "needs_storage_volume?" do
     before(:each) do
       @image = Factory.build(:image)
     end
-    
+
     it "should be true if the storage_volume_capacity is set" do
       @image.storage_volume_capacity = '1'
       @image.needs_storage_volume?.should be_true
@@ -58,6 +55,48 @@ describe Image do
       @image.needs_storage_volume?.should_not be_true
     end
 
-    
+
+  end
+
+  describe "cloud_id" do
+    before(:each) do
+      @image = Factory.build(:image)
+      @user = Factory.build(:user)
+      @hardware_profile = 'm1-small'
+      @cloud = mock('cloud')
+      @cloud.stub!(:architecture).and_return('architecture')
+      @cloud.stub!(:name).and_return('name')
+      @cloud.stub!(:region).and_return('region')
+      @user.stub!(:cloud).and_return(@cloud)
+    end
+
+    it "should lookup architecture from hardware profile" do
+      @cloud.should_receive(:architecture).with(@hardware_profile).and_return('i386')
+      @image.cloud_id(@hardware_profile, @user)
+    end
+
+    it "should lookup name from cloud" do
+      @cloud.should_receive(:name).and_return('name')
+      @image.cloud_id(@hardware_profile, @user)
+    end
+
+    it "should lookup region from cloud" do
+      @cloud.should_receive(:region).and_return('region')
+      @image.cloud_id(@hardware_profile, @user)
+    end
+
+    it "should return nil if cloud_image not found" do
+      @image.cloud_id(@hardware_profile, @user).should be_nil
+    end
+
+    it "should return cloud_id if cloud_image found" do
+      cloud_image = mock('cloud_image', :cloud_id => 'ami-123')
+      @image.stub!(:cloud_images).and_return(CloudImage)
+      CloudImage.should_receive(:find).with(:first, :conditions => {
+                                              :cloud => 'name',
+                                              :region => 'region',
+                                              :architecture => 'architecture'}).and_return(cloud_image)
+      @image.cloud_id(@hardware_profile, @user).should == 'ami-123'
+    end
   end
 end

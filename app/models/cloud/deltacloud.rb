@@ -50,18 +50,24 @@ module Cloud
     end
 
     def hardware_profiles
-      Rails.cache.fetch('DeltacloudHardwareProfiles') do
-        supported = client.hardware_profiles.select do |hardware_profile|
-          hardware_profile.architecture.value == "i386"
-        end
-        supported.map(&:name)
+      deltacloud_hardware_profiles.map(&:name)
+    end
+
+    def architecture(hardware_profile)
+      profile = deltacloud_hardware_profiles.find do |hwp|
+        hwp.name == hardware_profile
       end
+      profile.architecture.value
     end
 
     def name
       Rails.cache.fetch('DeltacloudDriverName') do
         client.driver_name
       end
+    end
+
+    def region
+      'us-east-1'
     end
 
     def client
@@ -75,6 +81,14 @@ module Cloud
     def valid_key_name?(key_name)
       key_names = client.keys.map(&:id)
       key_names.include?(key_name)
+    end
+
+    protected
+
+    def deltacloud_hardware_profiles
+      Rails.cache.fetch('DeltacloudHardwareProfiles') do
+        client.hardware_profiles
+      end
     end
 
   end

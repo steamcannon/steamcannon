@@ -5,9 +5,9 @@ platforms:
       - version_number: 123
         images:
           - name: Test Image 123
-            cloud_id: ami_123
+            uid: image_123
           - name: Test Image 234
-            cloud_id: ami_234
+            uid: image_234
       - version_number: 234
         images:
-          - cloud_id: ami_123
+          - uid: image_123

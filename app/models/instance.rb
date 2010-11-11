@@ -119,7 +119,7 @@ class Instance < ActiveRecord::Base
   def name
     "#{image.name} ##{number}"
   end
-  
+
   def cloud
     user.cloud
   end
@@ -146,7 +146,7 @@ class Instance < ActiveRecord::Base
     configure!
     start_failed! if stuck_in_state_for_too_long?(5.minutes)
   end
-  
+
   def configure_agent
     generate_server_cert
     if agent_running?
@@ -195,7 +195,8 @@ class Instance < ActiveRecord::Base
   protected
 
   def start_instance
-    cloud_instance = cloud.launch(image.cloud_id,
+    image_cloud_id = image.cloud_id(hardware_profile, user)
+    cloud_instance = cloud.launch(image_cloud_id,
                                   instance_launch_options)
     # this will cause the instance to go to start_failed, and is the
     # first step in fixing STEAM-162.
@@ -259,7 +260,7 @@ class Instance < ActiveRecord::Base
 
   def after_stopped_instance
     instance_services.each(&:destroy)
-    environment.stopped! if environment.stopping?    
+    environment.stopped! if environment.stopping?
     environment.instance_state_change(self)
   end
 
@@ -290,5 +291,5 @@ class Instance < ActiveRecord::Base
   def update_cluster_member_addresses
     environment.instance_services.running.each &:distribute_cluster_member_address
   end
-  
+
 end

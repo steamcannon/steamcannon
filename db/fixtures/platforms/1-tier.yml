@@ -6,10 +6,15 @@ platforms:
         images:
           - name: Developer Instance
             description: JBoss AS 6 m5 (w/TorqueBox 1.0.0.Beta23-SNAPSHOT), PostgreSQL 8.4
-            cloud_id: ami-96b047ff
+            uid: ami-96b047ff
             can_scale_out: false
             storage_volume_capacity: 3 #Gigs
             storage_volume_device: /dev/sdf #agent expects this, so don't change
             services:
               - jboss_as
               - postgresql
+            cloud_images:
+              - cloud: ec2
+                region: us-east-1
+                architecture: i386
+                cloud_id: ami-96b047ff

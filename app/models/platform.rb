@@ -39,22 +39,27 @@ class Platform < ActiveRecord::Base
   #         images:
   #           - name: Test Image 123
   #             description: the versions and what not
-  #             cloud_id: ami_123
+  #             uid: test_123
   #             role: frontend
   #           - name: Test Image 234
   #             description: the versions and what not
-  #             cloud_id: ami_234
+  #             uid: test_234
   #             storage_volume_capacity: 10 #Gigs
   #             #the device where the agent expects to find the volume
-  #             storage_volume_device: /dev/sdf 
+  #             storage_volume_device: /dev/sdf
   #             services:
   #               - jboss_as
+  #             cloud_images:
+  #               - cloud: ec2
+  #                 region: us-east-1
+  #                 architecture: i386
+  #                 cloud_id: ami-234
   #       - version_number: 234
   #         images:
-  #           - cloud_id: ami_123
+  #           - uid: test_123
   #
-  # When specifying images for a PlatformVersion, the cloud_id is
-  # required. If an Image already exists with the same cloud_id then
+  # When specifying images for a PlatformVersion, the uid is
+  # required. If an Image already exists with the same uid then
   # it will be used, otherwise a new Image will be created and any
   # extra Image attributes you pass will get used for the creation.
   #

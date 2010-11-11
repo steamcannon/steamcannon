@@ -77,36 +77,41 @@ describe Cloud::Deltacloud do
     end
   end
 
-  describe "hardware profiles" do
+  describe "deltacloud_hardware_profiles" do
     before(:each) do
       @client = mock(Object,
                      :hardware_profiles => [])
       @deltacloud.stub!(:client).and_return(@client)
-      @profile = mock('hardware_profile',
-                      :name => "small")
-      @profile.stub_chain(:architecture, :value).and_return("i386")
     end
 
     it "should fetch from cloud" do
       @client.should_receive(:hardware_profiles)
-      @deltacloud.hardware_profiles
+      @deltacloud.send(:deltacloud_hardware_profiles)
     end
 
     it "should fetch from cache first" do
       Rails.cache.should_receive(:fetch).and_yield
-      @deltacloud.hardware_profiles
+      @deltacloud.send(:deltacloud_hardware_profiles)
     end
+  end
 
+  describe "hardware profiles" do
     it "should only return profile names" do
-      @profile.should_receive(:name).and_return("small")
-      @client.should_receive(:hardware_profiles).and_return([@profile])
-      @deltacloud.hardware_profiles.should eql(["small"])
+      profile = mock('hardware_profile',
+                     :name => 'small')
+      profile.should_receive(:name).and_return('small')
+      @deltacloud.should_receive(:deltacloud_hardware_profiles).and_return([profile])
+      @deltacloud.hardware_profiles.should eql(['small'])
     end
+  end
 
-    it "should only return i386 profiles" do
-      @profile.stub_chain(:architecture, :value).and_return("x86_64")
-      @client.should_receive(:hardware_profiles).and_return([@profile])
-      @deltacloud.hardware_profiles.should be_empty
+  describe "architecture" do
+    it "should find architecture of hardware profile" do
+      profile = mock('hardware_profile',
+                     :name => 'small')
+      profile.stub_chain(:architecture, :value).and_return('i386')
+      @deltacloud.should_receive(:deltacloud_hardware_profiles).and_return([profile])
+      @deltacloud.architecture('small').should == 'i386'
     end
   end
 
