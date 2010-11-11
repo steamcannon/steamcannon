@@ -196,6 +196,7 @@ class Instance < ActiveRecord::Base
 
   def start_instance
     image_cloud_id = image.cloud_id(hardware_profile, user)
+    raise RuntimeError.new("Cloud image not found for #{hardware_profile}") unless image_cloud_id
     cloud_instance = cloud.launch(image_cloud_id,
                                   instance_launch_options)
     # this will cause the instance to go to start_failed, and is the
