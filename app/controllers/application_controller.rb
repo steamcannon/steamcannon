@@ -116,6 +116,8 @@ class ApplicationController < ActionController::Base
     {:json => response}
   end
 
+  # Uncomment to test custom error pages locally
+  # alias_method :rescue_action_locally, :rescue_action_in_public
   def render_optional_error_file(status_code)
     case status_code
     when :not_found then render_404
@@ -125,6 +127,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_404
+    @hide_navigation = true
     respond_to do |format|
       format.html { render :template => "errors/error_404", :status => 404, :layout => "application" }
       format.all  { render :nothing => true, :status => 404 }
