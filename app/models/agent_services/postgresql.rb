@@ -23,7 +23,7 @@ module AgentServices
       config = { :create_admin => username_and_password }
       Rails.logger.debug "AgentServices::Postgresql#configure_instance_service: configuring with #{config.to_json}"
       instance_service.agent_client.configure(config.to_json)
-      instance_service.environment.update_attribute(:metadata, :postgresql_admin_user => username_and_password)
+      instance_service.environment.merge_and_update_metadata(:postgresql_admin_user => username_and_password)
       true
     end
 

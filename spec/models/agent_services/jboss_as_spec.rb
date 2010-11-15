@@ -26,6 +26,44 @@ describe AgentServices::JbossAs do
     @agent_service = AgentServices::JbossAs.new(@service, @environment)
   end
 
+  describe "configure_instance_service" do
+    before(:each) do
+      @agent_client = mock(AgentClient, :configure => nil)
+      @instance_service = Factory(:instance_service)
+      @instance_service.stub!(:agent_client).and_return(@agent_client)
+      @instance_service.stub!(:environment).and_return(@environment)
+      @username_password = { :user => 'username', :pasword => 'password' }
+      @agent_service.stub!(:multicast_config).and_return({})
+      @agent_service.stub!(:proxy_list).and_return(nil)
+      @agent_service.stub!(:generate_username_and_password).and_return(@username_password)
+    end
+
+    it "should generate a username and password" do
+      @agent_service.should_receive(:generate_username_and_password).and_return(@username_password)
+      @agent_service.configure_instance_service(@instance_service)
+    end
+
+    it "should not generate the username and password if we have one stored on the environment" do
+      @environment.metadata = { :jboss_as_admin_user => @username_password }
+      @agent_service.should_not_receive(:generate_username_and_password)
+      @agent_service.configure_instance_service(@instance_service)
+    end
+
+    it "should configure the service" do
+      @agent_client.should_receive(:configure)
+      @agent_service.configure_instance_service(@instance_service)
+    end
+
+    it "should return true" do
+      @agent_service.configure_instance_service(@instance_service).should be_true
+    end
+
+    it "should update the metadata for the environment" do
+      @agent_service.configure_instance_service(@instance_service)
+      @instance_service.environment.reload.metadata.should == { :jboss_as_admin_user => @username_password }
+    end
+  end
+
   describe "open_ports" do
     it "should have port 8080" do
       @agent_service.open_ports.should include(8080)
@@ -61,6 +99,13 @@ describe AgentServices::JbossAs do
       instance_service.should_receive(:instance).and_return(instance)
       @agent_service.should_receive(:url_for_instance).with(instance).and_return('url')
       @agent_service.url_for_instance_service(instance_service).should == 'url'
+    end
+  end
+
+  describe 'generate_username_and_password' do
+    it "should return a hash with user and password" do
+      SecureRandom.should_receive(:hex).with(15).and_return('abcd')
+      @agent_service.send(:generate_username_and_password).should == { :user => 'admin', :password => 'abcd' }
     end
   end
 

@@ -18,22 +18,19 @@
 
 module AgentServices
   class JbossAs < Base
-    # configures the jboss multicast, and also sets up the proxy list
-    # for mod_cluster if any mod_cluster instances are available.
+    # configures the jboss multicast, sets up the proxy list
+    # for mod_cluster if any mod_cluster instances are available
+    # and sets admin username and password
     def configure_instance_service(instance_service)
-      instance = instance_service.instance
-      config = instance.cloud_specific_hacks.multicast_config(instance)
-      proxies = environment.instance_services.not_pending.for_service(Service.by_name('mod_cluster'))
-      if !proxies.empty?
-        proxy_list = proxies.collect(&:instance).inject({}) do |list, proxy_instance|
-          dns = proxy_instance.public_address
-          list[dns] = {:host => dns, :port => 80} unless dns.blank?
-          list
-        end
-        config.merge!({:proxy_list => proxy_list})
-      end
+      config = multicast_config(instance_service)
+      proxies = proxy_list
+      config.merge!({:proxy_list => proxies}) if proxies
+
+      username_and_password = instance_service.environment.metadata[:jboss_as_admin_user] || generate_username_and_password
+      config.merge!({:create_admin => username_and_password})
       Rails.logger.debug "AgentServices::JbossAs#configure_instance_service: configuring with #{config.to_json}"
       instance_service.agent_client.configure(config.to_json)
+      instance_service.environment.merge_and_update_metadata(:jboss_as_admin_user => username_and_password)
 
       true
     end
@@ -49,6 +46,33 @@ module AgentServices
 
     def url_for_instance_service(instance_service)
       url_for_instance(instance_service.instance)
+    end
+
+    protected
+
+    def multicast_config(instance_service)
+      instance = instance_service.instance
+      instance.cloud_specific_hacks.multicast_config(instance)
+    end
+
+    def proxy_list
+      proxies = environment.instance_services.not_pending.for_service(Service.by_name('mod_cluster'))
+      if proxies.empty?
+        nil
+      else
+        proxies.collect(&:instance).inject({}) do |list, proxy_instance|
+          dns = proxy_instance.public_address
+          list[dns] = {:host => dns, :port => 80} unless dns.blank?
+          list
+        end
+      end
+    end
+
+    def generate_username_and_password
+      {
+        :user => 'admin',
+        :password => SecureRandom.hex(15)
+      }
     end
 
   end

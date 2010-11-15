@@ -28,4 +28,8 @@ module HasMetadata
     { }
   end
 
+  def merge_and_update_metadata(updates)
+    update_attribute(:metadata, (metadata || {}).merge(updates))
+  end
+
 end
