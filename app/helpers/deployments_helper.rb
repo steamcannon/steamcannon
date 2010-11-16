@@ -37,6 +37,6 @@ module DeploymentsHelper
       latest += [versions.shift]
       rest += versions
     end
-    grouped_options_for_select([['Latest Versions:', latest], ['Prior Versions:', rest]])
+    grouped_options_for_select([['Latest Versions:', latest], ['Prior Versions:', rest]], @deployment.artifact_version_id)
   end
 end
