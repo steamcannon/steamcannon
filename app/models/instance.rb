@@ -22,6 +22,8 @@ class Instance < ActiveRecord::Base
   include AASM
   include StuckState
 
+  has_events :subject_name => :name, :subject_owner => lambda { |i| i.environment.user }, :subject_parent => :environment
+  
   belongs_to :environment
   belongs_to :image
 

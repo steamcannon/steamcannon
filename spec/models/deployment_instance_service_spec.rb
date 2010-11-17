@@ -22,6 +22,8 @@ describe DeploymentInstanceService do
   it { should belong_to :deployment }
   it { should belong_to :instance_service }
 
+  it_should_have_events
+  
   describe "confirm_deploy" do
     before(:each) do
       @deployment_instance_service = DeploymentInstanceService.create

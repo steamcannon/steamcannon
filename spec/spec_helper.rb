@@ -34,46 +34,20 @@ require 'ap'
 # in ./support/ and its subdirectories.
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'support','**','*.rb'))].each {|f| require f}
 
+module HasEventsMacro
+  def it_should_have_events
+    it { should have_one :event_subject }
+    it { should have_many :events }
+  end
+end
+
 Spec::Runner.configure do |config|
-  # If you're not using ActiveRecord you should remove these
-  # lines, delete config/database.yml and disable :active_record
-  # in your config/boot.rb
   config.use_transactional_fixtures = true
   config.use_instantiated_fixtures  = false
   config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
 
-  # == Fixtures
-  #
-  # You can declare fixtures for each example_group like this:
-  #   describe "...." do
-  #     fixtures :table_a, :table_b
-  #
-  # Alternatively, if you prefer to declare them only once, you can
-  # do so right here. Just uncomment the next line and replace the fixture
-  # names with your fixtures.
-  #
-  # config.global_fixtures = :table_a, :table_b
-  #
-  # If you declare global fixtures, be aware that they will be declared
-  # for all of your examples, even those that don't use them.
-  #
-  # You can also declare which fixtures to use (for example fixtures for test/fixtures):
-  #
-  # config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
-  #
-  # == Mock Framework
-  #
-  # RSpec uses its own mocking framework by default. If you prefer to
-  # use mocha, flexmock or RR, uncomment the appropriate line:
-  #
-  # config.mock_with :mocha
-  # config.mock_with :flexmock
-  # config.mock_with :rr
-  #
-  # == Notes
-  #
-  # For more information take a look at Spec::Runner::Configuration and Spec::Runner
-
+  config.extend(HasEventsMacro, :type => :models)
+  
   config.before(:each) do
     # AuthLogic test helpers
     def login(session_stubs = {}, user_stubs = {})
@@ -96,12 +70,16 @@ Spec::Runner.configure do |config|
       UserSession.stub!(:find).and_return(nil)
       AuditColumns::Base.stub!(:controller).and_return(nil)
     end
-
+    
     ModelTask.stub!(:async)
      # force signup_mode here to override whatever is set in config/steamcannon.yml
     APP_CONFIG[:signup_mode] = 'open_signup'
     APP_CONFIG.delete(:certificate_password)
     # Don't require SSL for anything
     APP_CONFIG[:require_ssl_for_web] = false
+
+    #turn off state transition logging by default
+    HasEvents.log_event_on_state_transition = false
   end
+  
 end

@@ -18,6 +18,11 @@
 
 
 class StorageVolume < ActiveRecord::Base
+
+  has_events(:subject_name => lambda{ |v| "#{v.environment.name} Volume (#{v.volume_identifier})" },
+             :subject_parent => :environment,
+             :subject_owner => lambda { |v| v.environment.user })
+  
   belongs_to :environment_image
   belongs_to :instance
   has_one :image, :through => :environment_image
@@ -36,7 +41,9 @@ class StorageVolume < ActiveRecord::Base
     #TODO: handle errors here
     cloud_volume.attach!(:instance_id => instance.cloud_id,
                          :device => image.storage_volume_device) if cloud_volume_is_available?
-    cloud_volume_is_attached?
+    attached = cloud_volume_is_attached?
+    log_event(:operation => :attach, :status => attached ? :success : :failure, :message => "to #{instance.cloud_id}")
+    attached
   end
 
   def detach
@@ -77,20 +84,26 @@ class StorageVolume < ActiveRecord::Base
     #TODO: handle errors here
     @cloud_volume = cloud.create_storage_volume(:realm => environment.default_realm,
                                                 :capacity => image.storage_volume_capacity)
-    update_attribute(:volume_identifier, @cloud_volume.id) if @cloud_volume
+    status = :failure
+    if @cloud_volume
+      update_attribute(:volume_identifier, @cloud_volume.id)
+      status = :success
+    end
+    log_event(:operation => :create_in_cloud, :status => status)
   end
   
   def destroy_cloud_volume
+    status = :not_found
     if cloud_volume_exists?
       if cloud_volume_is_available?
         cloud_volume.destroy!
-        true
+        status = :success
       else
-        false
+        status = :failure
       end
-    else
-      true
     end
+    log_event(:operation => :destroy_in_cloud, :status => status)
+    status != :failure
   end
   
 end

@@ -20,6 +20,8 @@ class InstanceService < ActiveRecord::Base
   include AASM
   include StuckState
   include HasMetadata
+
+  has_events :subject_name => :full_name, :subject_parent => :instance, :subject_owner => lambda { |is| is.environment.user }
   
   belongs_to :instance
   belongs_to :service

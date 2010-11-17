@@ -20,9 +20,9 @@ require 'spec_helper'
 
 describe Instance do
   before(:each) do
-    @image = mock_model(Image)
-    @image.stub!(:cloud_id).and_return("ami-12345")
-    @environment = mock_model(Environment)
+    @image = Factory(:image)
+    @image.stub!(:cloud_id).and_return('ami-1234')
+    @environment = Factory(:environment)
 
     @valid_attributes = {
       :environment => @environment,
@@ -39,6 +39,8 @@ describe Instance do
   it { should have_many :instance_services }
   it { should have_many :services }
   it { should have_one :storage_volume }
+  
+  it_should_have_events
 
   it "should create a new instance given valid attributes" do
     Instance.create!(@valid_attributes)
@@ -438,10 +440,9 @@ describe Instance do
 
     describe "start_failed" do
       it "should call failed! event on environment" do
-        environment = mock_model(Environment)
-        environment.should_receive(:failed!)
+        @environment.should_receive(:failed!)
         @instance.current_state = 'pending'
-        @instance.stub!(:environment).and_return(environment)
+        @instance.stub!(:environment).and_return(@environment)
         @instance.start_failed!
       end
     end

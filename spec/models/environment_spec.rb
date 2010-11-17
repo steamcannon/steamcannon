@@ -30,6 +30,8 @@ describe Environment do
   
   it { should belong_to :user }
   it { should belong_to :platform_version }
+
+  it_should_have_events
   
   it "should have a name attribute" do
     @environment.should respond_to(:name)

@@ -21,6 +21,7 @@ class Deployment < ActiveRecord::Base
   include AuditColumns
   include AASM
 
+  has_events :subject_name => :artifact_identifier, :subject_parent => :environment, :subject_owner => :user
   belongs_to :artifact_version
   belongs_to :environment
   belongs_to :user

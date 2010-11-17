@@ -24,10 +24,14 @@ describe StorageVolume do
   it { should have_one :image }
   it { should have_one :environment }
 
+  it_should_have_events
+  
   before(:each) do
     @storage_volume = Factory(:storage_volume)
+    @environment = Factory(:environment)
     @cloud = mock('cloud')
     @storage_volume.stub!(:cloud).and_return(@cloud)
+    @storage_volume.stub!(:environment).and_return(@environment)
   end
 
   describe 'prepare' do
@@ -98,7 +102,7 @@ describe StorageVolume do
 
   describe 'create_in_cloud' do
     before(:each) do
-      @environment = mock(Environment)
+      @environment = Factory(:environment)
       @environment.stub!(:default_realm).and_return('def realm')
       @storage_volume.stub!(:environment).and_return(@environment)
       @cloud_volume = mock('cloud_volume')
@@ -126,6 +130,27 @@ describe StorageVolume do
       @storage_volume.send(:create_in_cloud)
       @storage_volume.volume_identifier.should == 'vol-1234'
     end
+
+    describe "logging an event" do
+      it "should log an event on success" do
+        @cloud.should_receive(:create_storage_volume).and_return(@cloud_volume)
+        @storage_volume.send(:create_in_cloud)
+        event = Event.last
+        event.subject.should == @storage_volume
+        event.operation.should == :create_in_cloud
+        event.status.should == :success
+      end
+
+      it "should log an event on failure" do
+        @cloud.should_receive(:create_storage_volume).and_return(nil)
+        @storage_volume.send(:create_in_cloud)
+        event = Event.last
+        event.subject.should == @storage_volume
+        event.operation.should == :create_in_cloud
+        event.status.should == :failure
+      end
+    end
+
   end
 
   describe 'attach' do
@@ -157,6 +182,20 @@ describe StorageVolume do
       @storage_volume.should_receive(:cloud_volume_is_attached?).and_return(true)
       @cloud_volume.should_not_receive(:attach!)
       @storage_volume.attach.should be_true
+    end
+
+    it "should log a success event if it attaches" do
+      @storage_volume.should_receive(:cloud_volume_is_attached?).and_return(true)
+      @storage_volume.should_receive(:log_event).with(:operation => :attach, :status => :success, :message => "to i-1234")
+      @cloud_volume.stub!(:attach!)
+      @storage_volume.attach
+    end
+
+    it "should log a failure event if fails to attach" do
+      @storage_volume.should_receive(:cloud_volume_is_attached?).and_return(false)
+      @storage_volume.should_receive(:log_event).with(:operation => :attach, :status => :failure, :message => "to i-1234")
+      @cloud_volume.stub!(:attach!)
+      @storage_volume.attach
     end
   end
 
@@ -196,7 +235,7 @@ describe StorageVolume do
   end
 
 
-  context 'destroy' do
+  describe 'destroy' do
     before(:each) do
       @cloud_volume = mock('cloud_volume')
     end
@@ -209,25 +248,45 @@ describe StorageVolume do
     end
 
     describe "#real_destroy" do
-      context 'when the cloud volume exists' do
+      describe 'when the cloud volume exists' do
         before(:each) do
           @storage_volume.stub!(:cloud_volume_exists?).and_return(true)
         end
 
-        it "should destroy from deltacloud on destroy if the cloud volume is available" do
-          @storage_volume.stub!(:cloud_volume_is_available?).and_return(true)
-          @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
-          @cloud_volume.should_receive(:destroy!)
-          @storage_volume.real_destroy
+        context "when cloud volume is available" do 
+          before(:each) do
+            @storage_volume.stub!(:cloud_volume_is_available?).and_return(true)
+            @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
+            @cloud_volume.should_receive(:destroy!)
+          end
+          
+          it "should destroy from deltacloud on destroy" do
+            @storage_volume.real_destroy
+          end
+
+          it "should log an event" do
+            @storage_volume.should_receive(:log_event).with(:operation => :destroy_in_cloud, :status => :success)
+            @storage_volume.real_destroy
+          end
         end
 
-        it "should not destroy the cloud volume if it is not available" do
-          @storage_volume.stub!(:cloud_volume_is_available?).and_return(false)
-          @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
-          @cloud_volume.should_not_receive(:destroy!)
-          @storage_volume.real_destroy
-        end
+        context "when cloud volume is not available" do
+          before(:each) do 
+            @storage_volume.stub!(:cloud_volume_is_available?).and_return(false)
+            @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
+            @cloud_volume.should_not_receive(:destroy!)
+          end
 
+          it "should not destroy the cloud volume if it is not available" do
+            @storage_volume.real_destroy
+          end
+
+          it "should log an event" do
+            @storage_volume.should_receive(:log_event).with(:operation => :destroy_in_cloud, :status => :failure)
+            @storage_volume.real_destroy
+          end
+        end
+        
         it "should delete the storage_volume if the cloud volume is in a state to be deleted" do
           @storage_volume.stub!(:cloud_volume_is_available?).and_return(true)
           @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
@@ -242,6 +301,22 @@ describe StorageVolume do
           @cloud_volume.should_not_receive(:destroy!)
           @storage_volume.real_destroy
           lambda { @storage_volume.reload }.should_not raise_error
+        end
+      end
+
+      context "when the cloud volume does not exist" do
+        before(:each) do
+          @storage_volume.stub!(:cloud_volume_exists?).and_return(false)
+        end
+
+        it "should log an event" do
+          @storage_volume.should_receive(:log_event).with(:operation => :destroy_in_cloud, :status => :not_found)
+          @storage_volume.real_destroy
+        end
+
+        it "should destroy the storage volume" do
+          @storage_volume.real_destroy
+          lambda { @storage_volume.reload }.should raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end

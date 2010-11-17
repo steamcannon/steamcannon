@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101111150740) do
+ActiveRecord::Schema.define(:version => 20101115211221) do
 
   create_table "account_requests", :force => true do |t|
     t.string   "email"
@@ -106,6 +106,26 @@ ActiveRecord::Schema.define(:version => 20101111150740) do
   end
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
+
+  create_table "event_subjects", :force => true do |t|
+    t.string   "subject_type"
+    t.integer  "subject_id"
+    t.string   "owner_type"
+    t.integer  "owner_id"
+    t.string   "name"
+    t.string   "ancestry"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "events", :force => true do |t|
+    t.integer  "event_subject_id"
+    t.string   "operation"
+    t.string   "status"
+    t.string   "message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "image_services", :force => true do |t|
     t.integer  "image_id"

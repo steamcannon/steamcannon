@@ -24,6 +24,8 @@ describe InstanceService do
   it { should have_many :deployment_instance_services }
   it { should have_many :deployments }
 
+  it_should_have_events
+  
   before(:each) do
     @instance_service = Factory(:instance_service)
     @mock_agent_service = mock('agent_service')
