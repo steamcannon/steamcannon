@@ -27,6 +27,11 @@ ActionController::Routing::Routes.draw do |map|
       instance.resources :instance_services, :member => {:logs => :get}, :only => []
     end
   end
+
+  map.with_options :controller => 'events' do |events|
+    events.events '/events/:subject_id', :action => 'index'
+  end
+
   map.resources :deployments, :member => { :status => :post }
   map.resources :users, :member => {:assume_user => :get}
   map.resources :cloud_instances, :only => [:index, :destroy]

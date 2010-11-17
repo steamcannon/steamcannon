@@ -20,7 +20,7 @@ class DeploymentInstanceService < ActiveRecord::Base
   include AASM
   include StuckState
 
-  has_events(:subject_name => lambda { |dis| "#{dis.deployment.artifact_identifier} to #{instance_service.full_name}" },
+  has_events(:subject_name => lambda { |dis| "#{dis.deployment.artifact_identifier} to #{dis.instance_service.full_name}" },
              :subject_parent => :deployment,
              :subject_owner => lambda { |dis| dis.deployment.environment.user })
   

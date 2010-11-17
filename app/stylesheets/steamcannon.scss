@@ -648,3 +648,18 @@ tr.instance_message {
 a.sort_column {
     font-style: italic;
 }
+
+.event_tree {
+    .event {
+        @for $depth from 0 through 4 {
+            &.indent-#{$depth} {
+                padding-left: 10px * $depth;
+            }
+        }
+        span {
+            @include border-radius(3px);
+            background-color: $bar_background_color;
+            padding: 0 3px 0 3px;
+        }
+    }
+}

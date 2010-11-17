@@ -1,0 +1,5 @@
+.event_tree
+  - events.each do |event|
+    .event{:class => "indent-#{event.event_subject.depth}"}
+      = formatted_event(event)
+      
