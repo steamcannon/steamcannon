@@ -14,7 +14,11 @@ platforms:
               - cloud: ec2
                 region: us-east-1
                 architecture: i386
-                cloud_id: ami-4cb04725
+                cloud_id: ami-7005f219
+              - cloud: ec2
+                region: us-east-1
+                architecture: x86_64
+                cloud_id: ami-ec06f185
           - name: Frontend - mod_cluster
             description: Apache 2.2.16 (w/mod_cluster 1.1.0)
             uid: ami-bab146d3
@@ -25,5 +29,9 @@ platforms:
               - cloud: ec2
                 region: us-east-1
                 architecture: i386
-                cloud_id: ami-bab146d3
+                cloud_id: ami-6e05f207
+              - cloud: ec2
+                region: us-east-1
+                architecture: x86_64
+                cloud_id: ami-0606f16f
 

@@ -17,4 +17,8 @@ platforms:
               - cloud: ec2
                 region: us-east-1
                 architecture: i386
-                cloud_id: ami-96b047ff
+                cloud_id: ami-5c05f235
+              - cloud: ec2
+                region: us-east-1
+                architecture: x86_64
+                cloud_id: ami-f206f19b
