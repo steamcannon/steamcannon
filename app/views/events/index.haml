@@ -1,3 +1,15 @@
 #events_index
+  .page_header
+    .actions
+    - if @event_subject.subject_type == 'Environment'
+      - environment = @event_subject.subject
+      %h1
+        = link_to h(environment.name), environment_path(environment)
+      %h2
+        &= environment.platform_version.platform.name
+    - else
+      %h1
+        &= @event_subject.name
+
   = render 'events/sub_tree', :events => @events
     

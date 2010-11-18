@@ -21,14 +21,14 @@ class EventsController < ApplicationController
   before_filter :require_user
 
   def index
-    @events = subject.descendants.inject(subject.events) do |events, descendant|
+    @events = event_subject.descendants.inject(event_subject.events) do |events, descendant|
       events + descendant.events
     end.sort_by(&:created_at)
   end
 
   protected
-  def subject
+  def event_subject
     #TODO: verify ownership
-    @subject ||= EventSubject.find(params[:subject_id])
+    @event_subject ||= EventSubject.find(params[:subject_id])
   end
 end

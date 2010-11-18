@@ -1,6 +1,7 @@
 
 - if environment.current_state !=  'stopped'
-  = link_to("#{environment.current_state.titleize} &raquo;", '#', :id=>"instance_info_#{environment.id}")
+  .status
+    = link_to("#{environment.current_state.titleize} &raquo;", '#', :id=>"instance_info_#{environment.id}")
   .instance_info.jqmWindow.js-popup_dialog{style_display_none.merge(:rel => "#instance_info_#{environment.id}")}
     %h2
       = "#{environment.name} (#{environment.current_state.humanize})"
@@ -20,4 +21,5 @@
       \|
       = link_to("Close", "#", :class=>'jqmClose')
 - else
-  Stopped
+  .status
+    Stopped

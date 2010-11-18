@@ -29,7 +29,7 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.with_options :controller => 'events' do |events|
-    events.events '/events/:subject_id', :action => 'index'
+    events.events_for_subject '/events/:subject_id', :action => 'index'
   end
 
   map.resources :deployments, :member => { :status => :post }

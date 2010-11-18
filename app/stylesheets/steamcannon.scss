@@ -499,6 +499,16 @@ table.header_top {
     }
 }
 
+#environments_container {
+    td.name, td.status .status {
+        font-weight: bold;
+    }
+
+    td.name .platform {
+        font-weight: normal;
+        color: $minor_accent_color;
+    }
+}
 #show_logs {
   ul#available_logs {
     font-weight: bold;
@@ -660,6 +670,16 @@ a.sort_column {
             @include border-radius(3px);
             background-color: $bar_background_color;
             padding: 0 3px 0 3px;
+        }
+        .status {
+            &.success {
+                background-color: $green;
+                color: white;
+            }
+            &.failure {
+                background-color: $red;
+                color: white;
+            }
         }
     }
 }

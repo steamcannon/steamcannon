@@ -2,8 +2,6 @@
   %tr
     %th.name
       Name
-    %th.platform
-      Platform
     %th.status
       Status
     %th.actions
@@ -17,8 +15,8 @@
       - content_tag_for(:tr, environment) do
         %td.name
           = link_to h(environment.name), environment
-        %td.platform
-          &= environment.platform_version
+          .platform
+            &= environment.platform_version
         %td.status
           = render :partial => '/environments/instance_states', :locals => {:environment=>environment}
         %td.actions
@@ -29,4 +27,6 @@
           = link_to 'Clone', clone_environment_path(environment), :method => :post
           = link_to 'Edit', edit_environment_path(environment)
           = link_to 'Delete', environment, :method => :delete, :confirm => "Are you sure you want to delete #{environment.name}?" if environment.stopped?
+          = link_to 'Event Log', events_for_subject_path(environment.event_subject) if environment.event_subject
+
   

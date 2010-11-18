@@ -1,5 +1,8 @@
-.event_tree
+%table.event_tree
   - events.each do |event|
-    .event{:class => "indent-#{event.event_subject.depth}"}
-      = formatted_event(event)
+    %tr
+      %td.event{:class => "indent-#{event.event_subject.depth}"}
+        = formatted_event(event)
+      %td.timestamp
+        = formatted_event_timestamp(event)
       
