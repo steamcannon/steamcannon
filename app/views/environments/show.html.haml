@@ -7,7 +7,7 @@
         = link_to 'Start Environment', start_environment_path(@environment), :method => :post
       = link_to 'Edit Environment', edit_environment_path(@environment)
       - if @environment.event_subject
-        = link_to 'Event Log', events_for_subject_path(@environment.event_subject)
+        = link_to 'Events', events_for_subject_path(@environment.event_subject)
 
     %h1
       &= @environment.name

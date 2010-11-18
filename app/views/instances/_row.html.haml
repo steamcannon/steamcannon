@@ -5,6 +5,7 @@
     %div
       %span.current_state
         = instance_status_for_environment_row(instance)
+      = link_to 'Events', events_for_subject_path(instance.event_subject) if instance.event_subject
       = instance_details_link(instance)
     .hardware_profile
       &= instance.hardware_profile
