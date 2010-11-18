@@ -16,22 +16,6 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-class EventsController < ApplicationController
-  navigation :environments
-  before_filter :require_user
-  before_filter :load_event_subject
-  
-  def index
-    @events = @event_subject.descendants.inject(@event_subject.events) do |events, descendant|
-      events + descendant.events
-    end.sort_by(&:created_at)
-  end
+Factory.define :event_subject do |es|
 
-  protected
-  def load_event_subject
-    @event_subject = current_user.event_subjects.find(params[:subject_id])
-  rescue ActiveRecord::RecordNotFound => ex
-    flash[:notice] = 'Those requested events do not exist, or are not accessible from your account.'
-    redirect_to dashboard_path
-  end
 end

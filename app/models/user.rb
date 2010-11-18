@@ -23,7 +23,8 @@ class User < ActiveRecord::Base
   has_many :deployments
   has_many :artifact_versions, :through => :artifacts
   has_many :instances, :through => :environments
-
+  has_many :event_subjects, :as => :owner
+  
   before_save :encrypt_cloud_password
   validate :validate_cloud_credentials
   validate :validate_ssh_key_name
