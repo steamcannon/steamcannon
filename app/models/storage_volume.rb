@@ -19,7 +19,7 @@
 
 class StorageVolume < ActiveRecord::Base
 
-  has_events(:subject_name => lambda{ |v| "#{v.environment.name} Volume (#{v.volume_identifier})" },
+  has_events(:subject_name => lambda{ |v| "Volume #{v.volume_identifier}" },
              :subject_parent => :environment,
              :subject_owner => lambda { |v| v.environment.user })
   

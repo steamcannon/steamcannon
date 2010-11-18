@@ -21,7 +21,9 @@ class InstanceService < ActiveRecord::Base
   include StuckState
   include HasMetadata
 
-  has_events :subject_name => :full_name, :subject_parent => :instance, :subject_owner => lambda { |is| is.environment.user }
+  has_events(:subject_name => :has_events_subject_name,
+             :subject_parent => :instance,
+             :subject_owner => lambda { |is| is.environment.user })
   
   belongs_to :instance
   belongs_to :service
@@ -140,7 +142,11 @@ class InstanceService < ActiveRecord::Base
       i.agent_client.delete_cluster_member_address(internal_hostname)
     end
   end
-  
+
+  def has_events_subject_name
+    "#{instance.name}: #{full_name} Service"
+  end
+    
   protected
   def running_entered
     handle_pending_deployments
@@ -154,5 +160,6 @@ class InstanceService < ActiveRecord::Base
       deploy(deployment)
     end
   end
+
 
 end

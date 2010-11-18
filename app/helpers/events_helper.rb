@@ -12,7 +12,7 @@ module EventsHelper
   end
   
   def formatted_event_subject(event_subject)
-    content_tag(:span, "#{event_subject.subject_type}:#{event_subject.name}", :class => 'event_subject')
+    link_to_unless_current content_tag(:span, event_subject.name, :class => 'event_subject'), events_for_subject_path(event_subject)
   end
 
 

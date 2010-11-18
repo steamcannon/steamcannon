@@ -661,17 +661,22 @@ a.sort_column {
 
 .event_tree {
     .event {
+        padding-right: 5px;
         @for $depth from 0 through 4 {
             &.indent-#{$depth} {
                 padding-left: 10px * $depth;
             }
         }
-        span {
+        .event_subject {
+            font-weight: bold;
+        }
+        .operation {
+            font-style: italic;
+        }
+        .status {
             @include border-radius(3px);
             background-color: $bar_background_color;
             padding: 0 3px 0 3px;
-        }
-        .status {
             &.success {
                 background-color: $green;
                 color: white;
