@@ -17,7 +17,7 @@ gem "jruby-openssl", "0.7.1"
 gem "http_connection", "1.4.0"
 
 gem "authlogic", "2.1.5"
-gem "aws", "2.3.21"
+gem "aws", "2.3.26"
 gem "s3", "0.3.4"
 gem "haml", "3.0.15"
 gem "compass", "0.10.5"
