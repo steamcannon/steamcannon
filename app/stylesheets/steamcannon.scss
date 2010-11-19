@@ -686,5 +686,15 @@ a.sort_column {
                 color: white;
             }
         }
+        .error {
+            background-color: $highlight_color;     
+            border: 1px solid #eee;
+            font-size: 90%;
+            padding: 3px;
+        }
+
+    }
+    .timestamp {
+        vertical-align: top;
     }
 }

@@ -41,4 +41,26 @@ class Event < ActiveRecord::Base
     super(val && val.to_s)
   end
 
+  def error=(error)
+    if error
+      if error.respond_to?(:message)
+        error = {
+          :type => error.class.name,
+          :message => error.message,
+          :backtrace => error.backtrace ? error.backtrace.join("\n") : '' }
+      else
+        error = { :type => '', :message => error, :backtrace => '' }
+      end
+      error = error.to_json
+    end
+
+    super(error)
+  end
+
+  def error
+    error = super
+    error = JSON.parse(error, :symbolize_names => true) if error
+    error
+  end
+  
 end
