@@ -69,4 +69,13 @@ module EventsHelper
     end
     klass.join(' ')
   end
+
+  def event_entry_point_link(entry_point)
+    text = entry_point.created_at.to_s(:db)
+    if entry_point == @entry_point
+      text
+    else
+      link_to text, events_for_subject_path(@event_subject, :entry_point => entry_point.id)
+    end
+  end
 end

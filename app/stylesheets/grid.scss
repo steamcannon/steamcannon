@@ -77,6 +77,18 @@ body.ninesixty {
   }
 }
 
+@mixin two-column-narrow-right {
+  .left_column {
+    @include grid(18);
+    @include grid-suffix(1);
+    @include alpha;
+  }
+  .right_column {
+    @include grid(5);
+    @include omega;
+  }
+}
+
 @mixin three-column-narrow-right {
   .left_column {
     @include grid(9);
@@ -148,6 +160,10 @@ body.ninesixty {
 
 #cloud_instances_index {
   @include two-column-wide-left;
+}
+
+#events_index {
+  @include two-column-narrow-right;
 }
 
 #application_error {

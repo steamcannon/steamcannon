@@ -22,4 +22,9 @@ class EventSubject < ActiveRecord::Base
   belongs_to :subject, :polymorphic => true
   belongs_to :owner, :polymorphic => true
   has_many :events, :dependent => :destroy
+
+  def event_log_entry_points(conditions)
+    events.find(:all, :conditions => conditions)
+  end
+
 end

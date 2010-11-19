@@ -20,11 +20,11 @@ class EventsController < ApplicationController
   navigation :environments
   before_filter :require_user
   before_filter :load_event_subject
-  
+  before_filter :load_bounds
+
   def index
-    @events = @event_subject.descendants.inject(@event_subject.events) do |events, descendant|
-      events + descendant.events
-    end.sort_by(&:created_at)
+    load_entry_points
+    load_events
   end
 
   protected
@@ -34,4 +34,33 @@ class EventsController < ApplicationController
     flash[:notice] = 'Those requested events do not exist, or are not accessible from your account.'
     redirect_to dashboard_path
   end
+
+  def load_bounds
+    @lower_bound, @upper_bound = params[:range].split(':').collect(&:to_i) unless params[:range].blank?
+  end
+
+  def load_entry_points
+    return unless @event_subject.subject_type == 'Environment'
+    @entry_points = @event_subject.event_log_entry_points(:operation => 'start_environment') 
+    begin
+      @entry_point = Event.find(params[:entry_point]) if params[:entry_point]
+    rescue ActiveRecord::RecordNotFound => ex
+      #ignore
+    end
+    
+    if @entry_points
+      @entry_point ||= @entry_points.last
+      @lower_bound = @entry_point.id
+      next_entry_point = @entry_points[@entry_points.index(@entry_points.find { |ep| ep.id == @entry_point.id }) + 1]
+      @upper_bound = next_entry_point.id if next_entry_point
+    end
+  end
+  
+  def load_events
+    @events = Event.events_for_subject_and_descendents(@event_subject,
+                                                       :lower_bound => @lower_bound,
+                                                       :upper_bound => @upper_bound)
+  end
+  
+  
 end

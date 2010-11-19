@@ -21,12 +21,3 @@
   .right_column
     =render :partial=>'deployments'
 
-  -##deployments
-    -#= render :partial => "deployments/list_from_environments", :locals => { :deployments => @environment.deployments.deployed, :header_text => "Deployed Artifacts", :empty_text => "This environment has no deployments." }
-
-  -##images
-    -#= render :partial=>'environment_images/list', :locals=>{ :header_text=>'Platform', :environment_images=>@environment.environment_images }
-
-  -##instances
-    -#= render :partial => "instances/list", :locals => { :instances => @environment.instances.active, :header_text => "Instances" }
-

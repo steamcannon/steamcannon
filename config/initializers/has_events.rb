@@ -57,10 +57,9 @@ module HasEvents
       end
 
       def create_subject(object)
-        EventSubject.create(:subject => object,
-                            :name => extract_option(:subject_name, object),
-                            :parent => update_or_create_subject(extract_option(:subject_parent, object)),
-                            :owner => extract_option(:subject_owner, object))
+        object.create_event_subject(:name => extract_option(:subject_name, object),
+                                    :parent => update_or_create_subject(extract_option(:subject_parent, object)),
+                                    :owner => extract_option(:subject_owner, object))
       end
 
       def extract_option(key, object)

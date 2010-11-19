@@ -7,9 +7,22 @@
         Event Log for #{link_to h(environment.name), environment_path(environment)}
       %h2
         &= environment.platform_version.platform.name
+      .entry_point
+        Showing events for run starting at #{@entry_point.created_at.to_s(:db)}
     - else
       %h1
         Event Log for #{h @event_subject.name}
 
-  = render 'events/sub_tree', :events => @events
+  .left_column
+    %h2
+      Events
+    = render 'events/sub_tree', :events => @events
+  .right_column
+    - if @entry_points
+      %h2
+        Envinronment Runs
+      %ul.entry_points
+        - @entry_points.each do |entry_point|
+          %li
+            = event_entry_point_link(entry_point)
     

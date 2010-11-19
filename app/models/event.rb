@@ -19,6 +19,33 @@
 class Event < ActiveRecord::Base
   belongs_to :event_subject
 
+  default_scope :order => 'created_at ASC'
+  
+  named_scope :with_id_gt_or_eq, lambda { |id|
+    { :conditions => ['id >= ?', id] }
+  }
+  named_scope :with_id_lt, lambda { |id|
+    { :conditions => ['id < ?', id] }
+  }
+
+  class << self
+    def events_for_subject_and_descendents(event_subject, opts = {})
+      lower_bound = opts[:lower_bound]
+      upper_bound = opts[:upper_bound]
+      events = limit_to_range(event_subject.events, lower_bound, upper_bound)
+      event_subject.descendants.inject(events) do |events, descendant|
+        events + limit_to_range(descendant.events, lower_bound, upper_bound)
+      end.sort_by(&:created_at)
+    end
+
+    def limit_to_range(events, lower_bound, upper_bound = nil)
+      chain = events
+      chain = chain.with_id_gt_or_eq(lower_bound) if lower_bound
+      chain = chain.with_id_lt(upper_bound) if upper_bound
+      chain
+    end
+  end
+  
   def subject
     event_subject.subject
   end
@@ -47,7 +74,8 @@ class Event < ActiveRecord::Base
         error = {
           :type => error.class.name,
           :message => error.message,
-          :backtrace => error.backtrace ? error.backtrace.join("\n") : '' }
+          :backtrace => error.backtrace ? error.backtrace.join("\n") : ''
+        }
       else
         error = { :type => '', :message => error, :backtrace => '' }
       end

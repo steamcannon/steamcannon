@@ -18,7 +18,7 @@
 
 module StateHelpers
   def self.included(base)
-    base.send(:before_save, :set_state_change_timestamp)
+    base.send(:before_save, :set_state_change_timestamp) if base.column_names.include?('state_change_timestamp')
   end
 
   attr_accessor :last_error

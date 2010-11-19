@@ -20,7 +20,8 @@
 class Environment < ActiveRecord::Base
   include AASM
   include HasMetadata
-
+  include StateHelpers
+  
   has_events :subject_name => :name, :subject_owner => :user
   
   has_many :deployments, :dependent => :destroy
@@ -119,6 +120,7 @@ class Environment < ActiveRecord::Base
     end
   end
 
+  
   protected
 
   def start_environment
