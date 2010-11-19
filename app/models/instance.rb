@@ -20,7 +20,7 @@
 class Instance < ActiveRecord::Base
   include AuditColumns
   include AASM
-  include StuckState
+  include StateHelpers
 
   has_events :subject_name => :name, :subject_owner => lambda { |i| i.environment.user }, :subject_parent => :environment
   

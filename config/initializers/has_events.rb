@@ -33,7 +33,7 @@ module HasEvents
     end
 
     def aasm_log_state_transition
-      log_event(:operation => :state_transition, :status => aasm_current_state) if HasEvents.log_event_on_state_transition
+      log_event(:operation => :state_transition, :status => aasm_current_state, :error => last_error) if HasEvents.log_event_on_state_transition
     end
 
     protected

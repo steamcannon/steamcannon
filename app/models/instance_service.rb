@@ -18,7 +18,7 @@
 
 class InstanceService < ActiveRecord::Base
   include AASM
-  include StuckState
+  include StateHelpers
   include HasMetadata
 
   has_events(:subject_name => :has_events_subject_name,
@@ -113,12 +113,7 @@ class InstanceService < ActiveRecord::Base
   end
   
   def undeploy(deployment)
-    success = agent_service.undeploy(self, deployment)
-    log_event(:operation => :undeploy,
-              :status => (success ? :success : :failure),
-              :error => agent_service.last_error,
-              :message => "artifact #{deployment.artifact_identifier}")
-    success
+    agent_service.undeploy(self, deployment)
   end
 
   def url

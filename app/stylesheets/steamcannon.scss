@@ -685,6 +685,10 @@ a.sort_column {
                 background-color: $red;
                 color: white;
             }
+            &.final {
+                background-color: $color_mid;
+                color: white;
+            }
         }
         .error {
             background-color: $highlight_color;     

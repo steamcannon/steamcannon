@@ -133,14 +133,22 @@ describe AgentServices::Base do
 
     context "on a failed deploy" do
       before(:each) do
-        @agent_client.stub!(:deploy_artifact).and_raise(AgentClient::RequestFailedError.new('deploy failure'))
+        @error = AgentClient::RequestFailedError.new('deploy failure')
+        @agent_client.stub!(:deploy_artifact).and_raise(@error)
+        @deployment_instance_service = DeploymentInstanceService.new
+        @instance_service.stub_chain(:deployment_instance_services, :create).and_return(@deployment_instance_service)
       end
 
       it "should create an deployment_instance_service record with a state of :deploy_failed" do
         @agent_service.deploy(@instance_service, @deployment)
-        @instance_service.deployment_instance_services.first.should be_deploy_failed
+        @deployment_instance_service.should be_deploy_failed
       end
 
+      it "should set the last error on the deployment_instance_service to the exception" do
+        @agent_service.deploy(@instance_service, @deployment)
+        @deployment_instance_service.last_error.should == @error
+      end
+      
       it "should not raise"  do
         lambda{
           @agent_service.deploy(@instance_service, @deployment)
@@ -169,6 +177,9 @@ describe AgentServices::Base do
       @artifact_version = mock(ArtifactVersion)
       @deployment.stub!(:artifact_version).and_return(@artifact_version)
       @instance_service.deployments << @deployment
+      @deployment_instance_service = @instance_service.deployment_instance_services.find_by_deployment_id(@deployment.id)
+      @instance_service.stub_chain(:deployment_instance_services, :find_by_deployment_id).and_return(@deployment_instance_service)
+      @deployment_instance_service.deployed!
     end
 
     it "should undeploy" do
@@ -186,6 +197,11 @@ describe AgentServices::Base do
         @agent_service.undeploy(@instance_service, @deployment).should == true
       end
 
+      it "should move the deployment_instance_service to :undeployed" do
+        @deployment_instance_service.should_receive(:undeployed!)
+        @agent_service.undeploy(@instance_service, @deployment)
+      end
+      
       it "should delete the deployment_instance_service record" do
         @agent_service.undeploy(@instance_service, @deployment)
         @instance_service.deployments.should be_empty
@@ -194,7 +210,8 @@ describe AgentServices::Base do
 
     context "on a failed undeploy" do
       before(:each) do
-        @agent_client.stub!(:undeploy_artifact).and_raise(AgentClient::RequestFailedError.new('msg'))
+        @error = AgentClient::RequestFailedError.new('msg')
+        @agent_client.stub!(:undeploy_artifact).and_raise(@error)
       end
 
       it "should not delete the deployment_instance_service record" do
@@ -202,6 +219,21 @@ describe AgentServices::Base do
         @instance_service.deployments.first.should == @deployment
       end
 
+      it "should move the deployment_instance_service to undeploy_failed" do
+        @deployment_instance_service.should_receive(:fail!)
+        @agent_service.undeploy(@instance_service, @deployment)
+      end
+      
+      it "should set the last error to the exception" do
+        @agent_service.undeploy(@instance_service, @deployment)
+        @agent_service.last_error.should == @error
+      end
+      
+      it "should set the last error on the deployment_instance_service to the exception" do
+        @agent_service.undeploy(@instance_service, @deployment)
+        @deployment_instance_service.last_error.should == @error
+      end
+      
       it "should not raise"  do
         lambda{
           @agent_service.undeploy(@instance_service, @deployment)

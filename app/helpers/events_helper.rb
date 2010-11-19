@@ -62,8 +62,10 @@ module EventsHelper
     case event.status.to_s
     when /fail/
       klass << 'failure'
-    when 'success', 'deployed', 'running', 'stopped'
+    when 'success', 'deployed', 'running'
       klass << 'success'
+    when 'stopped', 'undeployed'
+      klass << 'final'
     end
     klass.join(' ')
   end

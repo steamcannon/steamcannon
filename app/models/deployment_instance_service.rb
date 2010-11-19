@@ -18,7 +18,7 @@
 
 class DeploymentInstanceService < ActiveRecord::Base
   include AASM
-  include StuckState
+  include StateHelpers
 
   has_events(:subject_name => lambda { |dis| "#{dis.deployment.artifact_identifier} to #{dis.instance_service.has_events_subject_name}" },
              :subject_parent => :instance_service,
@@ -31,14 +31,21 @@ class DeploymentInstanceService < ActiveRecord::Base
   aasm_initial_state :pending
   aasm_state :pending
   aasm_state :deployed
+  aasm_state :undeployed
   aasm_state :deploy_failed
-
+  aasm_state :undeploy_failed
+  
   aasm_event :deployed do
     transitions :to => :deployed, :from => :pending
   end
 
+  aasm_event :undeployed do
+    transitions :to => :undeployed, :from => :deployed
+  end
+
   aasm_event :fail do
     transitions :to => :deploy_failed, :from => :pending
+    transitions :to => :undeploy_failed, :from => :deployed
   end
   
   def confirm_deploy
@@ -46,6 +53,7 @@ class DeploymentInstanceService < ActiveRecord::Base
       metadata = instance_service.artifact_metadata(deployment)
       deployed! if metadata and metadata['name']
     rescue AgentClient::RequestFailedError => ex
+      self.last_error = ex
       Rails.logger.info "deploy confirmation failed for '#{deployment.artifact_identifier}': #{ex}"
       Rails.logger.info ex.backtrace.join("\n")
     end

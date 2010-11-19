@@ -16,11 +16,13 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module StuckState
+module StateHelpers
   def self.included(base)
     base.send(:before_save, :set_state_change_timestamp)
   end
 
+  attr_accessor :last_error
+  
   protected
   def stuck_in_state_for_too_long?(too_long = 2.minutes)
     state_change_timestamp <= Time.now - too_long

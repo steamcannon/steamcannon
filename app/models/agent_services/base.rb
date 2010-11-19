@@ -65,6 +65,7 @@ module AgentServices
         deployment_instance_service.deployed! unless status == 'pending'
         return true
       rescue AgentClient::RequestFailedError => ex
+        deployment_instance_service.last_error = ex
         deployment_instance_service.fail!
         @last_error = ex
         Rails.logger.info "deploying artifact failed: #{ex}"
@@ -75,14 +76,20 @@ module AgentServices
     end
 
     def undeploy(instance_service, deployment)
-      instance_service.agent_client.undeploy_artifact(deployment.artifact_identifier)
-      instance_service.deployment_instance_services.find_by_deployment_id(deployment.id).destroy
-      true
-    rescue AgentClient::RequestFailedError => ex
-      @last_error = ex
-      Rails.logger.info "undeploying artifact failed: #{ex}"
-      Rails.logger.info ex.backtrace.join("\n")
-      false
+      deployment_instance_service = instance_service.deployment_instance_services.find_by_deployment_id(deployment.id)
+      begin
+        instance_service.agent_client.undeploy_artifact(deployment.artifact_identifier)
+        deployment_instance_service.undeployed!
+        deployment_instance_service.destroy
+        true
+      rescue AgentClient::RequestFailedError => ex
+        deployment_instance_service.last_error = ex
+        deployment_instance_service.fail!
+        @last_error = ex
+        Rails.logger.info "undeploying artifact failed: #{ex}"
+        Rails.logger.info ex.backtrace.join("\n")
+        false
+      end
     end
 
     def verify_instance_service(instance_service)

@@ -59,5 +59,22 @@ describe DeploymentInstanceService do
       @deployment_instance_service.should be_deploy_failed
     end
   end
-  
+
+  describe "fail!" do
+    before(:each) do
+      @deployment_instance_service = DeploymentInstanceService.create
+    end
+    
+    it "should move to deploy_failed if pending" do
+      @deployment_instance_service.current_state = 'pending'
+      @deployment_instance_service.fail!
+      @deployment_instance_service.should be_deploy_failed
+    end
+
+    it "should move to undeploy_failed if deployed" do
+      @deployment_instance_service.current_state = 'deployed'
+      @deployment_instance_service.fail!
+      @deployment_instance_service.should be_undeploy_failed
+    end
+  end
 end
