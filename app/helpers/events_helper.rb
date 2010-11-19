@@ -47,6 +47,7 @@ module EventsHelper
   end
 
   def formatted_event_status(event)
+    return '' if event.status.blank?
     case event.operation
     when :state_transition
       prefix = ' to '

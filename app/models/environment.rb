@@ -122,6 +122,7 @@ class Environment < ActiveRecord::Base
   protected
 
   def start_environment
+    log_event(:operation => :start_environment)
     environment_images.each do |env_image|
       env_image.num_instances.times do |i|
         env_image.start!(i+1)
