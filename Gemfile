@@ -13,6 +13,9 @@ end
 gem "activerecord-jdbcpostgresql-adapter", "0.9.7"
 gem "jruby-openssl", "0.7.1"
 
+# This should be removed when gemspec for aws on F13 is fixed
+gem "http_connection", "1.4.0"
+
 gem "authlogic", "2.1.5"
 gem "aws", "2.3.21"
 gem "s3", "0.3.4"
