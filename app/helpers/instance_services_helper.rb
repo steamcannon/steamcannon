@@ -30,10 +30,15 @@ module InstanceServicesHelper
   end
 
   def additional_instance_service_actions(instance_service)
-    if instance_service.name == 'postgresql' and
+    instance_service_details(instance_service, 'postgresql') or
+      instance_service_details(instance_service, 'jboss_as')
+  end
+
+  def instance_service_details(instance_service, name)
+    if instance_service.name == name and
         instance_service.running? and
-        instance_service.environment.metadata[:postgresql_admin_user]
-      details = render('instance_services/postgresql_details', :instance_service => instance_service).html_safe.to_json
+        instance_service.environment.metadata["#{name}_admin_user".to_sym]
+      details = render("instance_services/#{name}_details", :instance_service => instance_service).html_safe.to_json
       link_to_function('Details', "update_instance_message(#{instance_service.instance.id}, #{details})")
     end
   end

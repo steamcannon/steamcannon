@@ -2,11 +2,11 @@
   %h3
     Details for the PostgreSQL service
   %ul
-    %li
+    %li<
       %label
         Admin user: 
       = instance_service.environment.metadata[:postgresql_admin_user][:user]
-    %li
+    %li<
       %label
         Admin password: 
       = instance_service.environment.metadata[:postgresql_admin_user][:password]

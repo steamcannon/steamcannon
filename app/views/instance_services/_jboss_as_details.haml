@@ -1,0 +1,28 @@
+.jboss_as_details
+  %h3
+    Details for the JBoss AS service
+  %ul
+    %li<
+      %label
+        Admin user: 
+      = instance_service.environment.metadata[:jboss_as_admin_user][:user]
+    %li<
+      %label
+        Admin password: 
+      = instance_service.environment.metadata[:jboss_as_admin_user][:password]
+    %li
+      %label
+        External hostname: 
+      = instance_service.instance.public_address
+    %li
+      %label 
+        Cluster internal hostname: 
+      = instance_service.internal_hostname
+    %li
+      %label 
+        Global internal hostname: 
+      = instance_service.instance.private_address
+    %li
+      %label
+        Port: 
+      8080
