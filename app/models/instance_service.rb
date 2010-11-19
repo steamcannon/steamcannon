@@ -113,7 +113,12 @@ class InstanceService < ActiveRecord::Base
   end
   
   def undeploy(deployment)
-    agent_service.undeploy(self, deployment)
+    success = agent_service.undeploy(self, deployment)
+    log_event(:operation => :undeploy,
+              :status => (success ? :success : :failure),
+              :error => agent_service.last_error,
+              :message => "artifact #{deployment.artifact_identifier}")
+    success
   end
 
   def url

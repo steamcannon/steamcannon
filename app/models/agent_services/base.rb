@@ -36,6 +36,7 @@ module AgentServices
     end
 
     attr_reader :service, :environment
+    attr_reader :last_error
 
     def initialize(service, environment)
       @service = service
@@ -65,7 +66,7 @@ module AgentServices
         return true
       rescue AgentClient::RequestFailedError => ex
         deployment_instance_service.fail!
-        #TODO: store the failure reason?
+        @last_error = ex
         Rails.logger.info "deploying artifact failed: #{ex}"
         Rails.logger.info ex.backtrace.join("\n")
       end
@@ -78,7 +79,7 @@ module AgentServices
       instance_service.deployment_instance_services.find_by_deployment_id(deployment.id).destroy
       true
     rescue AgentClient::RequestFailedError => ex
-      #TODO: store the failure reason?
+      @last_error = ex
       Rails.logger.info "undeploying artifact failed: #{ex}"
       Rails.logger.info ex.backtrace.join("\n")
       false

@@ -28,7 +28,7 @@ describe InstanceService do
   
   before(:each) do
     @instance_service = Factory(:instance_service)
-    @mock_agent_service = mock('agent_service')
+    @mock_agent_service = mock('agent_service', :last_error => nil)
   end
 
   it "agent_service should lookup the agent service" do
@@ -182,7 +182,7 @@ describe InstanceService do
   describe "deploy and undeploy" do
     before(:each) do
       @instance_service.stub!(:agent_service).and_return(@mock_agent_service)
-      @mock_deployment = mock(Deployment)
+      @mock_deployment = mock(Deployment, :artifact_identifier => 'artifact' )
     end
 
     it "deploy should delegate to the agent_service" do

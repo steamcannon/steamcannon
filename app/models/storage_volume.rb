@@ -39,10 +39,17 @@ class StorageVolume < ActiveRecord::Base
   
   def attach
     #TODO: handle errors here
+    # FIXME: this will log a failure on the first try, then success on the
+    # second. This is because the attach succeeds on the first try
+    # from Deltacloud's pov, but the attachment process hasn't
+    # finished when cloud_volume_is_attached? is called. On the second
+    # pass, the volume isn't available (since it is attached), so we
+    # don't try to attach again.
     cloud_volume.attach!(:instance_id => instance.cloud_id,
                          :device => image.storage_volume_device) if cloud_volume_is_available?
     attached = cloud_volume_is_attached?
     log_event(:operation => :attach, :status => attached ? :success : :failure, :message => "to #{instance.cloud_id}")
+
     attached
   end
 

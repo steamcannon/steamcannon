@@ -133,7 +133,7 @@ describe AgentServices::Base do
 
     context "on a failed deploy" do
       before(:each) do
-        @agent_client.stub!(:deploy_artifact).and_raise(AgentClient::RequestFailedError.new('msg'))
+        @agent_client.stub!(:deploy_artifact).and_raise(AgentClient::RequestFailedError.new('deploy failure'))
       end
 
       it "should create an deployment_instance_service record with a state of :deploy_failed" do
@@ -149,6 +149,12 @@ describe AgentServices::Base do
 
       it "should return !true" do
         @agent_service.deploy(@instance_service, @deployment).should_not == true
+      end
+      
+      it "should store the exception" do
+        @agent_service.deploy(@instance_service, @deployment)
+        error = @agent_service.last_error
+        error.message.should == 'deploy failure'
       end
     end
 
@@ -204,6 +210,12 @@ describe AgentServices::Base do
 
       it "should return !true" do
         @agent_service.undeploy(@instance_service, @deployment).should_not == true
+      end
+
+      it "should store the exception" do
+        @agent_service.undeploy(@instance_service, @deployment)
+        error = @agent_service.last_error
+        error.message.should == 'msg'
       end
     end
 
