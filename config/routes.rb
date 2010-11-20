@@ -30,6 +30,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.with_options :controller => 'events' do |events|
     events.events_for_subject '/events/:subject_id', :action => 'index'
+    events.partial_events_for_subject '/partial_events/:subject_id', :action => 'partial_index'
   end
 
   map.resources :deployments, :member => { :status => :post }

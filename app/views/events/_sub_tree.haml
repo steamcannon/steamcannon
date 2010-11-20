@@ -1,13 +1,12 @@
-%table.event_tree
-  - events.each do |event|
-    %tr
-      %td.event{:class => "indent-#{event.event_subject.depth}"}
-        = formatted_event(event)
-        - if event.error
-          = link_to_function 'details', "$(this).next('.error').toggle()"
-          .error{style_display_none}
-            - Rails.logger.ap event.error
-            &= event.error[:message]
+- @events.each do |event|
+  %tr{:id => event.id}
+    %td.event{:class => "indent-#{event.event_subject.depth}"}
+      = formatted_event(event)
+      - if event.error
+        = link_to_function 'details', "$(this).next('.error').toggle()"
+        .error{style_display_none}
+          - Rails.logger.ap event.error
+          &= event.error[:message]
 
-      %td.timestamp
-        = formatted_event_timestamp(event)
+    %td.timestamp
+      = timeago(event.created_at)

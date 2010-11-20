@@ -16,7 +16,8 @@
   .left_column
     %h2
       Events
-    = render 'events/sub_tree', :events => @events
+    %table.event_tree
+      = render 'events/sub_tree'
   .right_column
     - if @entry_points
       %h2
@@ -26,3 +27,5 @@
           %li
             = event_entry_point_link(entry_point)
     
+:javascript 
+  tail_event_log('#{partial_events_for_subject_url(@event_subject)}')

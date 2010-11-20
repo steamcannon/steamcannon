@@ -77,6 +77,7 @@ function apply_unobtrusive_rules($) {
         })
     })
 
+    $("abbr.timeago").timeago()
 }
 
 jQuery(document).ready(function($) {
@@ -189,6 +190,14 @@ function tail_log(url, num_lines, offset, tailing) {
       setTimeout("tail_log('" + url + "', " + num_lines + ", " + data.offset + ", + " + tailing + ")", 5000);
     }
   }, "json");
+}
+
+function tail_event_log(url) {
+    params = {range: parseInt($('table.event_tree tr:last').attr('id')) + 1}
+    $.get(url, params, function(result) {
+        $('table.event_tree').append(result)
+        setTimeout("tail_event_log('" + url + "')", 30000)
+    })
 }
 
 

@@ -24,10 +24,6 @@ module EventsHelper
     accum << " (#{event.message})" if event.message
     accum
   end
-
-  def formatted_event_timestamp(event)
-    time_ago_in_words(event.created_at) + " ago"
-  end
   
   def formatted_event_subject(event_subject)
     link_to_unless_current content_tag(:span, event_subject.name, :class => 'event_subject'), events_for_subject_path(event_subject)

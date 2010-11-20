@@ -27,6 +27,11 @@ class EventsController < ApplicationController
     load_events
   end
 
+  def partial_index
+    load_events
+    render :partial => 'events/sub_tree'
+  end
+  
   protected
   def load_event_subject
     @event_subject = current_user.event_subjects.find(params[:subject_id])

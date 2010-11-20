@@ -62,4 +62,9 @@ module ApplicationHelper
     direction = (params[:sort_by] == column && params[:sort_dir] == 'ASC' ? 'DESC' : 'ASC')
     link_to text, "?sort_by=#{column}&sort_dir=#{direction}", :class => (params[:sort_by] == column ? 'sort_column' : '')
   end
+
+  def timeago(time, options = {})
+    options[:class] ||= "timeago"
+    content_tag(:abbr, time.to_s(:standard), options.merge(:title => time.getutc.iso8601)) if time
+  end
 end
