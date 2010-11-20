@@ -24,7 +24,7 @@ class EventSubject < ActiveRecord::Base
   has_many :events, :dependent => :destroy
 
   def event_log_entry_points(conditions)
-    events.find(:all, :conditions => conditions)
+    events.find(:all, :conditions => conditions, :order => 'created_at DESC')
   end
 
 end

@@ -71,7 +71,7 @@ module EventsHelper
   end
 
   def event_entry_point_link(entry_point)
-    text = entry_point.created_at.to_s(:db)
+    text = entry_point.created_at.to_s(:standard)
     if entry_point == @entry_point
       text
     else

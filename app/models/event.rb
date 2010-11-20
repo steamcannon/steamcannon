@@ -24,6 +24,7 @@ class Event < ActiveRecord::Base
   named_scope :with_id_gt_or_eq, lambda { |id|
     { :conditions => ['id >= ?', id] }
   }
+  
   named_scope :with_id_lt, lambda { |id|
     { :conditions => ['id < ?', id] }
   }

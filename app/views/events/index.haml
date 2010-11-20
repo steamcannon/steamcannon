@@ -8,7 +8,7 @@
       %h2
         &= environment.platform_version.platform.name
       .entry_point
-        Showing events for run starting at #{@entry_point.created_at.to_s(:db)}
+        Showing events for run starting at #{@entry_point.created_at.to_s(:standard)}
     - else
       %h1
         Event Log for #{h @event_subject.name}

@@ -41,7 +41,7 @@ class EventsController < ApplicationController
 
   def load_entry_points
     return unless @event_subject.subject_type == 'Environment'
-    @entry_points = @event_subject.event_log_entry_points(:operation => 'start_environment') 
+    @entry_points = @event_subject.event_log_entry_points(:operation => 'start_environment')
     begin
       @entry_point = Event.find(params[:entry_point]) if params[:entry_point]
     rescue ActiveRecord::RecordNotFound => ex
@@ -49,9 +49,10 @@ class EventsController < ApplicationController
     end
     
     if @entry_points
-      @entry_point ||= @entry_points.last
+      @entry_point ||= @entry_points.first
       @lower_bound = @entry_point.id
-      next_entry_point = @entry_points[@entry_points.index(@entry_points.find { |ep| ep.id == @entry_point.id }) + 1]
+      entry_point_idx = @entry_points.index(@entry_points.find { |ep| ep.id == @entry_point.id })
+      next_entry_point = @entry_points[entry_point_idx - 1] if entry_point_idx > 0
       @upper_bound = next_entry_point.id if next_entry_point
     end
   end
