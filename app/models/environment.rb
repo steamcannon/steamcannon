@@ -23,7 +23,7 @@ class Environment < ActiveRecord::Base
   include StateHelpers
   
   has_events :subject_name => :name, :subject_owner => :user
-  
+
   has_many :deployments, :dependent => :destroy
   has_many :environment_images, :dependent => :destroy
   has_many :images, :through => :environment_images
@@ -109,7 +109,7 @@ class Environment < ActiveRecord::Base
 
   def instance_state_change(instance)
     self.stop! if instance.stopped? && instances.include?(instance) &&
-      instances.all{|i|i.stopped?} && !self.stopping? && !self.stopped?
+      instances.all?{|i|i.stopped?} && !self.stopping? && !self.stopped?
   end
 
   def instance_states
