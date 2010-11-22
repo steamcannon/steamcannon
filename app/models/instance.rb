@@ -23,7 +23,7 @@ class Instance < ActiveRecord::Base
   include StateHelpers
 
   has_events :subject_name => :name, :subject_owner => lambda { |i| i.environment.user }, :subject_parent => :environment
-  
+
   belongs_to :environment
   belongs_to :image
 
@@ -75,7 +75,7 @@ class Instance < ActiveRecord::Base
   end
 
   aasm_event :run do
-    transitions :to => :running, :from => [:configuring, :verifying]
+    transitions :to => :running, :from => [:configuring, :verifying, :unreachable]
   end
 
   aasm_event :stop do
@@ -90,7 +90,7 @@ class Instance < ActiveRecord::Base
   end
 
   aasm_event :stopped do
-    transitions :to => :stopped, :from => :terminating, :guard => :stopped_in_cloud?
+    transitions :to => :stopped, :from => [:terminating, :unreachable], :guard => :stopped_in_cloud?
   end
 
   aasm_event :start_failed do
@@ -163,6 +163,10 @@ class Instance < ActiveRecord::Base
     cloud.instance_available?(self.cloud_id) ? true : false
   end
 
+  def terminated?
+    cloud.instance_terminated?(self.cloud_id)
+  end
+
   def verify_agent
     if agent_running?
       discover_services
@@ -192,6 +196,10 @@ class Instance < ActiveRecord::Base
 
   def user
     environment.user
+  end
+
+  def unreachable_for_too_long?
+    unreachable? && stuck_in_state_for_too_long(48.hours)
   end
 
   protected

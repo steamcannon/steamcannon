@@ -39,7 +39,7 @@ describe Instance do
   it { should have_many :instance_services }
   it { should have_many :services }
   it { should have_one :storage_volume }
-  
+
   it_should_have_events
 
   it "should create a new instance given valid attributes" do
@@ -340,7 +340,7 @@ describe Instance do
     end
 
     describe "stop" do
-      
+
       %w{ pending starting configuring verifying running start_failed unreachable }.each do |from_state|
         it "should be able to transition to stopping from #{from_state}" do
           @instance.current_state = from_state
@@ -364,7 +364,7 @@ describe Instance do
         @instance.stop!
         @instance.stopped_by.should be(@current_user.id)
       end
-      
+
     end
 
     describe "terminate" do
@@ -407,11 +407,11 @@ describe Instance do
         @environment.should_receive(:stopped!)
         @instance.stopped!
       end
-      
+
       it "should notify the environment of its state change" do
         @instance.environment.should_receive(:instance_state_change).with(@instance)
         @instance.stopped!
-      end      
+      end
 
       it "should be stopped_in_cloud if terminated in cloud" do
         @instance.unstub(:stopped_in_cloud?)
@@ -456,7 +456,6 @@ describe Instance do
        end
      end
       it "should call something on the environment to indicate that the environment is possibly in an inconsistent state"
-      it "should have a way to recover from a node marked as unreachable that is suddenly available again"
     end
   end
 
@@ -730,7 +729,7 @@ describe Instance do
       instance.should_receive(:image).and_return(image)
       instance.name.should == "The Image #77"
     end
-    
+
   end
 
   describe 'update_cluster_member_addresses' do
@@ -741,6 +740,36 @@ describe Instance do
       instance = Instance.new
       instance.should_receive(:environment).and_return(@environment)
       instance.send(:update_cluster_member_addresses)
+    end
+  end
+
+  describe "terminated?" do
+    before(:each) do
+      @instance = Factory(:instance, :cloud_id => '123')
+      @cloud = mock('cloud')
+      @instance.stub!(:cloud).and_return(@cloud)
+    end
+
+    it "should delegate to cloud with correct id" do
+      @cloud.should_receive(:instance_terminated?).with('123').and_return(true)
+      @instance.terminated?.should == true
+    end
+  end
+
+  describe "unreachable_for_too_long?" do
+    before(:each) do
+      @instance = Factory(:instance)
+    end
+
+    it "should return false if the instance isn't unreachable" do
+      @instance.current_state = 'running'
+      @instance.unreachable_for_too_long?.should == false
+    end
+
+    it "should return true if the instance is stuck in state for too long" do
+      @instance.current_state = 'unreachable'
+      @instance.should_receive(:stuck_in_state_for_too_long).and_return(true)
+      @instance.unreachable_for_too_long?.should == true
     end
   end
 end

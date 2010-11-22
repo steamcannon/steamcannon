@@ -65,8 +65,8 @@ describe Cloud::Deltacloud do
       @deltacloud.instance_available?(1).should == false
     end
 
-    it "should return false when an instance is in a TERMINATED state" do
-      @instance.stub!(:state).and_return("TERMINATED")
+    it "should return false when an instance is in a STOPPED state" do
+      @instance.stub!(:state).and_return("STOPPED")
       @client.stub!(:instance).with(1).and_return(@instance)
       @deltacloud.instance_available?(1).should == false
     end
@@ -74,6 +74,31 @@ describe Cloud::Deltacloud do
     it "should return the instance if it is available" do
       @client.stub!(:instance).with(1).and_return(@instance)
       @deltacloud.instance_available?(1).should equal(@instance)
+    end
+  end
+
+  describe "instance_terminated?" do
+    before(:each) do
+      @client = mock(Object)
+      @instance = mock(Object)
+      @instance.stub!(:state).and_return("RUNNING")
+      @deltacloud.stub!(:client).and_return(@client)
+    end
+
+    it "should not be true when the instance is not available" do
+      @client.stub!(:instance).with(1).and_return(nil)
+      @deltacloud.instance_terminated?(1).should_not == true
+    end
+
+    it "should return true when an instance is in a STOPPED state" do
+      @instance.stub!(:state).and_return("STOPPED")
+      @client.stub!(:instance).with(1).and_return(@instance)
+      @deltacloud.instance_terminated?(1).should == true
+    end
+
+    it "should return false when an instance is not in a STOPPED state" do
+      @client.stub!(:instance).with(1).and_return(@instance)
+      @deltacloud.instance_terminated?(1).should == false
     end
   end
 

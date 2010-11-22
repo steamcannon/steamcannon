@@ -22,6 +22,22 @@ class InstanceReaper
     # Check all running instances and ensure that they are still running
     # otherwise make them unavailable
     Instance.running.each { |i| i.unreachable! if (i.cloud.nil? || !i.reachable?) }
+
+    check_unreachable
+  end
+
+  def check_unreachable
+    Instance.unreachable.each do |instance|
+      unless instance.cloud.nil?
+        if instance.reachable?
+          instance.run!
+        elsif instance.terminated?
+          instance.stop!
+        elsif instance.unreachable_for_too_long?
+          instance.stop!
+        end
+      end
+    end
   end
 
 end

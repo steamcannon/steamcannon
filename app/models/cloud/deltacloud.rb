@@ -33,7 +33,12 @@ module Cloud
 
     def instance_available?(instance_id)
       i = client.instance(instance_id)
-      (i && i.state != "TERMINATED") ? i : false
+      (i && i.state != "STOPPED") ? i : false
+    end
+
+    def instance_terminated?(instance_id)
+      instance = client.instance(instance_id)
+      instance && instance.state == "STOPPED"
     end
 
     def terminate instance_id
