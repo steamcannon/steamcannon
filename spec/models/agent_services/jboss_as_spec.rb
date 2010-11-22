@@ -98,7 +98,7 @@ describe AgentServices::JbossAs do
       instance = Factory(:instance)
       instance_service.should_receive(:instance).and_return(instance)
       @agent_service.should_receive(:url_for_instance).with(instance).and_return('url')
-      @agent_service.url_for_instance_service(instance_service).should == 'url'
+      @agent_service.url_for_instance_service(instance_service).should == 'url/admin-console'
     end
   end
 

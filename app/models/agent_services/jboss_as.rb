@@ -45,7 +45,7 @@ module AgentServices
     end
 
     def url_for_instance_service(instance_service)
-      url_for_instance(instance_service.instance)
+      "#{url_for_instance(instance_service.instance)}/admin-console"
     end
 
     protected
