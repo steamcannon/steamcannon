@@ -50,7 +50,7 @@ class StorageVolume < ActiveRecord::Base
   aasm_state :deleted
   
   aasm_event :available do
-    transitions :to => :available, :from => [:creating, :attached]
+    transitions :to => :available, :from => [:creating, :attached, :not_found]
   end
 
   aasm_event :not_found do
@@ -67,6 +67,12 @@ class StorageVolume < ActiveRecord::Base
     transitions :to => :attach_failed, :from => [:available, :attaching], :guard => :stuck_in_state_for_too_long?
   end
 
+  #TODO: actually detach instead of just moving back to available
+  aasm_event :detach do
+    transitions :to => :available, :from => [:attached, :attaching, :attach_failed]
+    transitions :to => :not_found, :from => :not_found
+  end
+
   aasm_event :pending_delete do
     transitions :to => :pending_delete, :from => [:creating, :create_failed, :available, :attached, :attach_failed, :not_found]
   end
@@ -75,14 +81,13 @@ class StorageVolume < ActiveRecord::Base
     transitions :to => :deleted, :from => :pending_delete
   end
 
+  def can_be_deleted?
+    [:creating, :create_failed, :available, :attach_failed, :not_found].include?(current_state.to_sym)
+  end
+  
   def prepare(instance)
     update_attribute(:instance, instance)
     ModelTask.async(self, :create_in_cloud)
-  end
-  
-
-  def detach
-    #TODO: implement
   end
   
   def cloud_volume
@@ -101,7 +106,7 @@ class StorageVolume < ActiveRecord::Base
   end
 
   def cloud_volume_exists?
-    !cloud_volume.nil?
+    !cloud_volume.nil? and cloud_volume.state.downcase != 'deleting'
   end
 
   alias_method :real_destroy, :destroy

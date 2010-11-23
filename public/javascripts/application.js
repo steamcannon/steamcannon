@@ -124,6 +124,17 @@ function remote_stop_instance(instance_name, url) {
     }
 }
 
+function remote_delete_volume(volume_name, url) {
+    if (confirm("Are you sure you want to delete " + volume_name + "? Any data on it will be lost.")) {
+        $.post(url, {_method: 'delete'}, function(data){
+            if (data.js) {
+                eval(data.js)
+            }
+            alert(data.message)
+        }, "json");
+    }
+}
+
 function update_deployment_status(url, selector) {
   $.post(url, function(data) {
       $(selector + ' .status ul').replaceWith(data)
@@ -170,6 +181,20 @@ function monitor_instance(url, selector) {
     update_instance_status(url, selector);
   });
 }
+
+function update_volume_status(url, selector) {
+  $.post(url, function(data) {
+      $(selector).replaceWith(data.html);
+  }, "json");
+  setTimeout("update_volume_status('" + url + "', '" + selector + "')", 30000);
+}
+
+function monitor_volume(url, selector) {
+  jQuery(document).ready(function($) {
+    update_volume_status(url, selector);
+  });
+}
+
 
 function tail_log(url, num_lines, offset, tailing) {
   var params = {num_lines: num_lines, offset: offset};

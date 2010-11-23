@@ -368,23 +368,22 @@ describe Instance do
     end
 
     describe "terminate" do
-      it "should terminate instance in cloud" do
-        cloud = mock(Object)
-        cloud.stub!(:instance_available?).and_return(true)
-        cloud.should_receive(:terminate).with('i-123')
+      before(:each) do
+        @cloud = mock(Object)
+        @cloud.stub!(:instance_available?).and_return(false)
         @instance.cloud_id = 'i-123'
-        @instance.stub!(:cloud).and_return(cloud)
+        @instance.stub!(:cloud).and_return(@cloud)
         @instance.current_state = 'stopping'
+      end
+      
+      it "should terminate instance in cloud" do
+        @cloud.stub!(:instance_available?).and_return(true)
+        @cloud.should_receive(:terminate).with('i-123')
         @instance.terminate!
       end
 
       it "should ensure the instance is available in the cloud before attempting to terminate it" do
-        cloud = mock(Object)
-        cloud.stub!(:instance_available?).and_return(false)
-        cloud.should_not_receive(:terminate)
-        @instance.cloud_id = 'i-123'
-        @instance.stub!(:cloud).and_return(cloud)
-        @instance.current_state = 'stopping'
+        @cloud.should_not_receive(:terminate)
         @instance.terminate!
       end
     end

@@ -1,0 +1,22 @@
+- content_tag_for( :tr, volume ) do
+  %td.summary
+    .name
+      = volume.volume_identifier
+
+    %div
+      %span.current_state
+        = volume_status_for_environment_row(volume)
+      = link_to 'Events', events_for_subject_path(volume.event_subject) if volume.event_subject
+      /= volume_details_link(volume)
+
+  %td.services
+    .capacity
+      Capacity: #{volume.image.storage_volume_capacity}GB
+    - if volume.attached?
+      .attachment_details
+        Attached to #{volume.instance.cloud_id} on device #{volume.image.storage_volume_device}
+
+  %td.actions
+    - if volume.can_be_deleted?
+      = link_to_function "Delete", "remote_delete_volume('#{volume.volume_identifier}', '#{environment_storage_volume_path(volume.environment.id, volume.id)}')", :id => "volume_#{volume.id}_delete_link" 
+

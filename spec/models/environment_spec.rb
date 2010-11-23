@@ -140,6 +140,7 @@ describe Environment do
       @environment.stop!
     end
 
+    
     it "should stop all instances" do
       instance = Instance.new
       @environment.stub_chain(:instances, :not_stopped, :not_stopping).and_return([instance])
@@ -147,19 +148,28 @@ describe Environment do
       @environment.stop!
     end
 
-    it "should destroy the storage volumes if environment is not marked to preserve" do
-      @environment.should_receive(:preserve_storage_volumes?).and_return(false)
-      storage_volume = mock(StorageVolume)
-      storage_volume.should_receive(:destroy)
-      @environment.should_receive(:storage_volumes).and_return([storage_volume])
-      @environment.stop!
-    end
-
+    context 'with storage_volumes' do 
+      before(:each) do
+        @storage_volume = mock(StorageVolume, :detach! => nil)
+        @environment.stub!(:storage_volumes).and_return([@storage_volume])
+      end
       
-    it "should not destroy the storage volumes if environment is marked to preserve" do
-      @environment.should_receive(:preserve_storage_volumes?).and_return(true)
-      @environment.should_not_receive(:storage_volumes)
-      @environment.stop!
+      it "should detach the storage_volumes" do
+        @storage_volume.should_receive(:detach!)
+        @environment.stop!
+      end
+
+      it "should destroy the storage volumes if environment is not marked to preserve" do
+        @environment.should_receive(:preserve_storage_volumes?).and_return(false)
+        @storage_volume.should_receive(:destroy)
+        @environment.stop!
+      end
+      
+      it "should not destroy the storage volumes if environment is marked to preserve" do
+        @environment.should_receive(:preserve_storage_volumes?).and_return(true)
+        @storage_volume.should_not_receive(:destroy)
+        @environment.stop!
+      end
     end
   end
 

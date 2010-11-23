@@ -134,6 +134,7 @@ class Environment < ActiveRecord::Base
 
   def stop_environment
     deployments.deployed.each(&:undeploy!)
+    storage_volumes.each(&:detach!)
     instances.not_stopped.not_stopping.each(&:stop!)
     storage_volumes.each(&:destroy) unless preserve_storage_volumes?
     # try to move to stopped here - state won't change if there are still

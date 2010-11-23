@@ -26,6 +26,8 @@ ActionController::Routing::Routes.draw do |map|
     environment.resources :instances, :member => {:stop => :post, :status => :post, :clone => :post}, :only => [:show, :index, :create] do |instance|
       instance.resources :instance_services, :member => {:logs => :get}, :only => []
     end
+
+    environment.resources :storage_volumes, :member => {:status => :post}, :only => [:destroy]
   end
 
   map.with_options :controller => 'events' do |events|

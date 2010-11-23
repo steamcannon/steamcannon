@@ -56,9 +56,9 @@ module EventsHelper
   def event_status_dom_class(event)
     klass = %w{ status }
     case event.status.to_s
-    when /fail/
+    when /fail/, 'not_found'
       klass << 'failure'
-    when 'success', 'deployed', 'running'
+    when 'success', 'deployed', 'running', 'attached'
       klass << 'success'
     when 'stopped', 'undeployed'
       klass << 'final'

@@ -17,3 +17,12 @@
 
           - javascript_tag do
             ="monitor_instance('#{status_environment_instance_path(instance.environment.id, instance.id)}', '##{dom_id(instance)}');"
+  %h3 Storage Volumes
+  - if @environment.storage_volumes.empty?
+    .empty
+      No storage volumes.
+  %table
+    - @environment.storage_volumes.each do |volume|
+      = render 'storage_volumes/row', :volume => volume
+      - javascript_tag do
+        ="monitor_volume('#{status_environment_storage_volume_path(volume.environment.id, volume.id)}', '##{dom_id(volume)}');"
