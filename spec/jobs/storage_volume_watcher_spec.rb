@@ -24,16 +24,16 @@ describe StorageVolumeWatcher do
   end
 
   it "should try to destroy volumes marked for destruction" do
-    @instance_watcher.should_receive(:destroy_volumes_pending_destroy)
+    @instance_watcher.should_receive(:destroy_volumes_pending_delete)
     @instance_watcher.run
   end
 
 
-  it "should attempt to destroy any pending_destroy storage_volumes" do
+  it "should attempt to destroy any pending_delete storage_volumes" do
     storage_volume = mock_model(StorageVolume)
     storage_volume.should_receive(:real_destroy)
-    StorageVolume.stub!(:pending_destroy).and_return([storage_volume])
-    @instance_watcher.destroy_volumes_pending_destroy
+    StorageVolume.stub!(:pending_delete).and_return([storage_volume])
+    @instance_watcher.destroy_volumes_pending_delete
   end
 
 

@@ -18,10 +18,15 @@
 
 
 class StorageVolume < ActiveRecord::Base
+  include AASM
+  include StateHelpers
 
+  # we can't use the environment association here, because the initial
+  # state gets set before the record is saved, and AR can't access
+  # :through assocations if the record does not exist.
   has_events(:subject_name => lambda{ |v| "Volume #{v.volume_identifier}" },
-             :subject_parent => :environment,
-             :subject_owner => lambda { |v| v.environment.user })
+             :subject_parent => lambda { |v| v.environment_image.environment },
+             :subject_owner => lambda { |v| v.environment_image.environment.user })
   
   belongs_to :environment_image
   belongs_to :instance
@@ -30,28 +35,49 @@ class StorageVolume < ActiveRecord::Base
 
   before_destroy :destroy_cloud_volume
 
-  named_scope :pending_destroy, { :conditions => { :pending_destroy => true } }
+  aasm_column :current_state
+  aasm_initial_state :creating
+  aasm_state :creating
+  aasm_state :create_failed
+  aasm_state :available
+  aasm_state :not_found
+  aasm_state :attaching, :enter => :attach_volume
+  aasm_state :attached
+  aasm_state :attach_failed
+  aasm_state :pending_delete
+  aasm_state :deleted
   
+  aasm_event :available do
+    transitions :to => :available, :from => [:creating, :attached]
+  end
+
+  aasm_event :not_found do
+    transitions :to => :not_found, :from => [:creating, :create_failed, :available, :attached, :attach_failed]
+  end
+  
+  aasm_event :fail do
+    transitions :to => :create_failed, :from => :creating
+  end
+  
+  aasm_event :attach do
+    transitions :to => :attaching, :from => :available, :guard => :cloud_volume_is_available?
+    transitions :to => :attached, :from => :attaching, :guard => :cloud_volume_is_attached?
+    transitions :to => :attach_failed, :from => [:available, :attaching], :guard => :stuck_in_state_for_too_long?
+  end
+
+  aasm_event :pending_delete do
+    transitions :to => :pending_delete, :from => [:creating, :create_failed, :available, :attached, :attach_failed, :not_found]
+  end
+  
+  aasm_event :deleted do
+    transitions :to => :deleted, :from => :pending_delete
+  end
+
   def prepare(instance)
     update_attribute(:instance, instance)
     ModelTask.async(self, :create_in_cloud)
   end
   
-  def attach
-    #TODO: handle errors here
-    # FIXME: this will log a failure on the first try, then success on the
-    # second. This is because the attach succeeds on the first try
-    # from Deltacloud's pov, but the attachment process hasn't
-    # finished when cloud_volume_is_attached? is called. On the second
-    # pass, the volume isn't available (since it is attached), so we
-    # don't try to attach again.
-    cloud_volume.attach!(:instance_id => instance.cloud_id,
-                         :device => image.storage_volume_device) if cloud_volume_is_available?
-    attached = cloud_volume_is_attached?
-    log_event(:operation => :attach, :status => attached ? :success : :failure, :message => "to #{instance.cloud_id}")
-
-    attached
-  end
 
   def detach
     #TODO: implement
@@ -78,7 +104,7 @@ class StorageVolume < ActiveRecord::Base
 
   alias_method :real_destroy, :destroy
   def destroy
-    update_attribute(:pending_destroy, true)
+    pending_delete!
   end
   
  protected
@@ -86,31 +112,36 @@ class StorageVolume < ActiveRecord::Base
     environment.user.cloud
   end
 
+  def attach_volume
+    #TODO: handle errors
+    cloud_volume.attach!(:instance_id => instance.cloud_id,
+                         :device => image.storage_volume_device)
+  end
+
   def create_in_cloud
     return if cloud_volume_is_available?
     #TODO: handle errors here
     @cloud_volume = cloud.create_storage_volume(:realm => environment.default_realm,
                                                 :capacity => image.storage_volume_capacity)
-    status = :failure
     if @cloud_volume
       update_attribute(:volume_identifier, @cloud_volume.id)
-      status = :success
+      available!
+    else
+      fail!
     end
-    log_event(:operation => :create_in_cloud, :status => status)
   end
   
   def destroy_cloud_volume
-    status = :not_found
+    result = true
     if cloud_volume_exists?
       if cloud_volume_is_available?
         cloud_volume.destroy!
-        status = :success
+        deleted!
       else
-        status = :failure
+        result = false
       end
     end
-    log_event(:operation => :destroy_in_cloud, :status => status)
-    status != :failure
+    result
   end
   
 end

@@ -691,31 +691,39 @@ describe Instance do
   describe 'attach_volume' do
     before(:each) do
       @instance = Instance.new
-      @storage_volume = mock(StorageVolume, :attach => false)
+      @storage_volume = mock(StorageVolume, :attach! => nil, :attached? => false, :attach_failed? => false)
       @instance.stub!(:storage_volume).and_return(@storage_volume)
       @instance.stub!(:configure!)
       @instance.stub!(:stuck_in_state_for_too_long?).and_return(false)
     end
 
     it "should attach the volume" do
-      @storage_volume.should_receive(:attach)
+      @storage_volume.should_receive(:attach!)
       @instance.attach_volume
     end
 
     it "should move to configuring if the attach succeeds" do
-      @storage_volume.should_receive(:attach).and_return(true)
+      @storage_volume.should_receive(:attach!)
+      @storage_volume.should_receive(:attached?).and_return(true)
       @instance.should_receive(:configure!)
       @instance.attach_volume
     end
 
     it "should not move to configuring if the attach fails" do
-      @storage_volume.should_receive(:attach).and_return(false)
+      @storage_volume.should_receive(:attach!)
+      @storage_volume.should_receive(:attached?).and_return(false)
       @instance.should_not_receive(:configure!)
       @instance.attach_volume
     end
 
     it "should move to start_failed if it waits too long to attach" do
       @instance.should_receive(:stuck_in_state_for_too_long?).and_return(true)
+      @instance.should_receive(:start_failed!)
+      @instance.attach_volume
+    end
+
+    it "should move to start_failed the storage volume failed to attach" do
+      @storage_volume.should_receive(:attach_failed?).and_return(true)
       @instance.should_receive(:start_failed!)
       @instance.attach_volume
     end

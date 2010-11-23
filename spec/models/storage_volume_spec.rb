@@ -131,33 +131,25 @@ describe StorageVolume do
       @storage_volume.volume_identifier.should == 'vol-1234'
     end
 
-    describe "logging an event" do
-      it "should log an event on success" do
-        @cloud.should_receive(:create_storage_volume).and_return(@cloud_volume)
-        @storage_volume.send(:create_in_cloud)
-        event = Event.last
-        event.subject.should == @storage_volume
-        event.operation.should == :create_in_cloud
-        event.status.should == :success
-      end
-
-      it "should log an event on failure" do
-        @cloud.should_receive(:create_storage_volume).and_return(nil)
-        @storage_volume.send(:create_in_cloud)
-        event = Event.last
-        event.subject.should == @storage_volume
-        event.operation.should == :create_in_cloud
-        event.status.should == :failure
-      end
+    it "should move to available on success" do
+      @cloud.should_receive(:create_storage_volume).and_return(@cloud_volume)
+      @storage_volume.send(:create_in_cloud)
+      @storage_volume.should be_available
     end
 
+    it "should move to create_failed on failure" do
+      @cloud.should_receive(:create_storage_volume).and_return(nil)
+      @storage_volume.send(:create_in_cloud)
+      @storage_volume.should be_create_failed
+    end
   end
 
-  describe 'attach' do
+  describe 'attach!' do
     before(:each) do
       @instance = mock(Instance, :cloud_id => 'i-1234')
+      @storage_volume.current_state = 'available'
       @storage_volume.stub!(:instance).and_return(@instance)
-      @cloud_volume = mock('cloud_volume')
+      @cloud_volume = mock('cloud_volume', :attach! => nil)
       @storage_volume.stub!(:cloud_volume).and_return(@cloud_volume)
       @storage_volume.stub!(:cloud_volume_is_available?).and_return(true)
       @storage_volume.stub!(:cloud_volume_is_attached?).and_return(false)
@@ -168,34 +160,32 @@ describe StorageVolume do
 
     it "should attach" do
       @cloud_volume.should_receive(:attach!).with(:instance_id => 'i-1234', :device => '/dev/sdh')
-      @storage_volume.attach
+      @storage_volume.attach!
     end
 
     it "should not attach if the cloud volume is not available" do
       @storage_volume.should_receive(:cloud_volume_is_available?).and_return(false)
       @cloud_volume.should_not_receive(:attach!)
-      @storage_volume.attach
+      @storage_volume.attach!
     end
 
-    it "should return true if the volume is already attached" do
-      @storage_volume.should_receive(:cloud_volume_is_available?).and_return(false)
-      @storage_volume.should_receive(:cloud_volume_is_attached?).and_return(true)
-      @cloud_volume.should_not_receive(:attach!)
-      @storage_volume.attach.should be_true
+    it "should move to attaching if the volume is available" do
+      @storage_volume.attach!
+      @storage_volume.should be_attaching
     end
 
-    it "should log a success event if it attaches" do
-      @storage_volume.should_receive(:cloud_volume_is_attached?).and_return(true)
-      @storage_volume.should_receive(:log_event).with(:operation => :attach, :status => :success, :message => "to i-1234")
-      @cloud_volume.stub!(:attach!)
-      @storage_volume.attach
+    it "should move to attaching from attached if the cloud volume is attached" do
+      @storage_volume.current_state = 'attaching'
+      @storage_volume.stub!(:cloud_volume_is_attached?).and_return(true)
+      @storage_volume.attach!
+      @storage_volume.should be_attached
     end
 
-    it "should log a failure event if fails to attach" do
-      @storage_volume.should_receive(:cloud_volume_is_attached?).and_return(false)
-      @storage_volume.should_receive(:log_event).with(:operation => :attach, :status => :failure, :message => "to i-1234")
-      @cloud_volume.stub!(:attach!)
-      @storage_volume.attach
+    it "should move to attach_failed if the attach attempt times out" do
+      @storage_volume.stub!(:cloud_volume_is_available?).and_return(false)
+      @storage_volume.should_receive(:stuck_in_state_for_too_long?).and_return(true)
+      @storage_volume.attach!
+      @storage_volume.should be_attach_failed
     end
   end
 
@@ -241,9 +231,9 @@ describe StorageVolume do
     end
 
     describe '#destroy' do
-      it "should set the pending_destroy flag" do
+      it "should move to the pending_delete state" do
         @storage_volume.destroy
-        @storage_volume.reload.should be_pending_destroy
+        @storage_volume.reload.should be_pending_delete
       end
     end
 
@@ -251,6 +241,7 @@ describe StorageVolume do
       describe 'when the cloud volume exists' do
         before(:each) do
           @storage_volume.stub!(:cloud_volume_exists?).and_return(true)
+          @storage_volume.current_state = 'pending_delete'
         end
 
         context "when cloud volume is available" do 
@@ -264,10 +255,11 @@ describe StorageVolume do
             @storage_volume.real_destroy
           end
 
-          it "should log an event" do
-            @storage_volume.should_receive(:log_event).with(:operation => :destroy_in_cloud, :status => :success)
+          it "should move through :deleted before destroy" do
+            @storage_volume.should_receive(:deleted!)
             @storage_volume.real_destroy
           end
+          
         end
 
         context "when cloud volume is not available" do
@@ -281,10 +273,6 @@ describe StorageVolume do
             @storage_volume.real_destroy
           end
 
-          it "should log an event" do
-            @storage_volume.should_receive(:log_event).with(:operation => :destroy_in_cloud, :status => :failure)
-            @storage_volume.real_destroy
-          end
         end
         
         it "should delete the storage_volume if the cloud volume is in a state to be deleted" do
@@ -307,11 +295,6 @@ describe StorageVolume do
       context "when the cloud volume does not exist" do
         before(:each) do
           @storage_volume.stub!(:cloud_volume_exists?).and_return(false)
-        end
-
-        it "should log an event" do
-          @storage_volume.should_receive(:log_event).with(:operation => :destroy_in_cloud, :status => :not_found)
-          @storage_volume.real_destroy
         end
 
         it "should destroy the storage volume" do

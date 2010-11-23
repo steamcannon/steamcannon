@@ -20,11 +20,11 @@
 class StorageVolumeWatcher
 
   def run
-    destroy_volumes_pending_destroy
+    destroy_volumes_pending_delete
   end
 
-  def destroy_volumes_pending_destroy
-    StorageVolume.pending_destroy.each(&:real_destroy)
+  def destroy_volumes_pending_delete
+    StorageVolume.pending_delete.each(&:real_destroy)
   end
 end
 

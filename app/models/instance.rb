@@ -137,9 +137,11 @@ class Instance < ActiveRecord::Base
   end
 
   def attach_volume
-    if storage_volume.attach
+    storage_volume.attach!
+    if storage_volume.attached?
       configure!
-    elsif stuck_in_state_for_too_long?
+    elsif storage_volume.attach_failed? or
+        stuck_in_state_for_too_long?(3.minutes)
       start_failed!
     end
   end
