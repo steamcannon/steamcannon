@@ -21,10 +21,17 @@ class StorageVolumeWatcher
 
   def run
     destroy_volumes_pending_delete
+    check_for_volume_existence
   end
 
   def destroy_volumes_pending_delete
     StorageVolume.pending_delete.each(&:real_destroy)
+  end
+
+  def check_for_volume_existence
+    StorageVolume.should_exist.each do |sv|
+      sv.not_found! unless sv.cloud_volume_exists?
+    end
   end
 end
 

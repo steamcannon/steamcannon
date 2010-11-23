@@ -33,6 +33,8 @@ class StorageVolume < ActiveRecord::Base
   has_one :image, :through => :environment_image
   has_one :environment, :through => :environment_image
 
+  named_scope :should_exist, :conditions => "current_state != 'creating' AND current_state != 'not_found' AND current_state != 'pending_delete' AND current_state != 'deleted'"
+  
   before_destroy :destroy_cloud_volume
 
   aasm_column :current_state
