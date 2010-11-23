@@ -53,9 +53,18 @@ describe StorageVolume do
   end
 
   describe "cloud_volume_exists?" do
-    it "should be true if the cloud_volume is not nil" do
-      @storage_volume.should_receive(:cloud_volume).and_return(mock('cloud volume'))
+    it "should be true if the cloud_volume is not nil and the state is not deleting" do
+      cloud_volume = mock('cloud volume')
+      cloud_volume.should_receive(:state).and_return('blah')
+      @storage_volume.stub!(:cloud_volume).and_return(cloud_volume)
       @storage_volume.cloud_volume_exists?.should be_true
+    end
+
+    it "should be false if the cloud_volume is not nil and the state is deleting" do
+      cloud_volume = mock('cloud volume')
+      cloud_volume.should_receive(:state).and_return('deleting')
+      @storage_volume.stub!(:cloud_volume).and_return(cloud_volume)
+      @storage_volume.cloud_volume_exists?.should_not be_true
     end
 
     it "should be false if the cloud_volume is nil" do
