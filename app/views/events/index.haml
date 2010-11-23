@@ -27,5 +27,6 @@
           %li
             = event_entry_point_link(entry_point)
     
-:javascript 
-  tail_event_log('#{partial_events_for_subject_url(@event_subject)}')
+- if !@entry_point or @entry_point == @entry_points.first
+  :javascript 
+    tail_event_log('#{partial_events_for_subject_url(@event_subject)}')
