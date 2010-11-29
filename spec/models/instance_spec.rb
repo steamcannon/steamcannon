@@ -135,7 +135,7 @@ describe Instance do
     end
 
     it "should include the instance user default_realm as the realm" do
-      @instance.send(:instance_launch_options)[:realm].should == 'a_realm_id'
+      @instance.send(:instance_launch_options)[:realm_id].should == 'a_realm_id'
     end
   end
 
@@ -146,7 +146,7 @@ describe Instance do
     end
 
     it "should include the client cert" do
-      Base64.decode64(@instance.send(:instance_user_data)).should == '{"steamcannon_ca_cert":"cert pem"}'
+      @instance.send(:instance_user_data).should == '{"steamcannon_ca_cert":"cert pem"}'
     end
 
   end

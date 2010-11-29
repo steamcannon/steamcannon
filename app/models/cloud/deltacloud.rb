@@ -47,11 +47,7 @@ module Cloud
     end
 
     def method_missing(meth, *args, &block)
-      if client.respond_to?(meth)
-        client.send(meth, *args, &block)
-      else
-        super
-      end
+      client.send(meth, *args, &block)
     end
 
     def hardware_profiles

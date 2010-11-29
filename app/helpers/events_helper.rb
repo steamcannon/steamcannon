@@ -74,4 +74,8 @@ module EventsHelper
       link_to text, events_for_subject_path(@event_subject, :entry_point => entry_point.id)
     end
   end
+
+  def event_error_message(event)
+    event.error[:message].blank? ? 'An unknown error occurred.' : event.error[:message]
+  end
 end

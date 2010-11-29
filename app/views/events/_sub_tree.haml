@@ -5,8 +5,7 @@
       - if event.error
         = link_to_function 'details', "$(this).next('.error').toggle()"
         .error{style_display_none}
-          - Rails.logger.ap event.error
-          &= event.error[:message]
+          &= event_error_message(event)
 
     %td.timestamp
       = timeago(event.created_at)

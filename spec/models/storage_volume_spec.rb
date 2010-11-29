@@ -128,7 +128,7 @@ describe StorageVolume do
 
     it "should try to create" do
       @cloud.should_receive(:create_storage_volume).
-        with(:realm => @environment.default_realm,
+        with(:realm_id => @environment.default_realm,
              :capacity => '77').
         and_return(@cloud_volume)
       @storage_volume.send(:create_in_cloud)
@@ -208,7 +208,7 @@ describe StorageVolume do
     end
 
     it "should be true if the cloud_volume exists, is in use, and is attached to the instance" do
-      @cloud_volume.should_receive(:state).and_return('IN-USE')
+      @cloud_volume.should_receive(:state).and_return('IN_USE')
       @cloud_volume.should_receive(:instance_id).and_return('i-1234')
       @storage_volume.should_receive(:cloud_volume_exists?).and_return(true)
       @storage_volume.cloud_volume_is_attached?.should be_true
@@ -227,7 +227,7 @@ describe StorageVolume do
 
     it "should be false if the volume is attached to another instance" do
       @storage_volume.should_receive(:cloud_volume_exists?).and_return(true)
-      @cloud_volume.should_receive(:state).and_return('IN-USE')
+      @cloud_volume.should_receive(:state).and_return('IN_USE')
       @cloud_volume.should_receive(:instance_id).and_return('i-1235')
       @storage_volume.cloud_volume_is_attached?.should_not be_true
     end
