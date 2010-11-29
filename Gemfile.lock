@@ -21,11 +21,6 @@ GEM
     authlogic (2.1.5)
       activesupport
     awesome_print (0.2.1)
-    aws (2.3.26)
-      activesupport
-      http_connection
-      uuidtools
-      xml-simple
     blockenspiel (0.4.1-java)
     bouncy-castle-java (1.5.0145.2)
     compass (0.10.5)
@@ -74,7 +69,12 @@ GEM
     shoulda (2.11.3)
     simple-navigation (2.6.0)
     ssl_requirement (0.1.0)
-    steamcannon-deltacloud-client (0.1.0.1)
+    steamcannon-aws (2.3.26.1)
+      activesupport
+      http_connection
+      uuidtools
+      xml-simple
+    steamcannon-deltacloud-client (0.1.0.3)
       nokogiri (>= 1.5.0.beta.2)
       rest-client (>= 1.6.1)
     syntax (1.0.0)
@@ -93,7 +93,6 @@ DEPENDENCIES
   ancestry (= 1.2.3)
   authlogic (= 2.1.5)
   awesome_print (= 0.2.1)
-  aws (= 2.3.26)
   compass (= 0.10.5)
   compass-960-plugin (= 0.10.0)
   email_spec (= 0.6.3)
@@ -116,6 +115,7 @@ DEPENDENCIES
   shoulda (= 2.11.3)
   simple-navigation (= 2.6.0)
   ssl_requirement (= 0.1.0)
-  steamcannon-deltacloud-client (= 0.1.0.1)
+  steamcannon-aws (= 2.3.26.1)
+  steamcannon-deltacloud-client (= 0.1.0.3)
   tobias-railroad (= 0.10.0)
   versionomy (= 0.4.0)
