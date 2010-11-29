@@ -29,7 +29,7 @@ class EnvironmentsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @environments }
+      format.xml  # index.xml.haml
     end
   end
 
@@ -46,7 +46,7 @@ class EnvironmentsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @environment }
+      format.xml  # show.xml.haml
     end
   end
 
@@ -155,5 +155,23 @@ class EnvironmentsController < ApplicationController
     render :partial => 'list', :locals => { :environments => environments }, :layout => false 
   end
 
+  # GET /environments/1/hardware_profiles
+  def hardware_profiles 
+    @environment = current_user.environments.find(params[:id])
+  end
 
+  # GET /environments/1/instance_states
+  def instance_states 
+    @environment = current_user.environments.find(params[:id])
+  end
+
+  # GET /environments/1/realms
+  def realms 
+    @environment = current_user.environments.find(params[:id])
+  end
+
+  # GET /environments/1/images
+  def images 
+    @environment = current_user.environments.find(params[:id])
+  end
 end

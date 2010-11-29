@@ -51,5 +51,22 @@ describe EnvironmentsController do
     it "recognizes and generates #status" do
       { :get => '/environments/status' }.should route_to(:controller => 'environments', :action => 'status')
     end
+    
+    it "recognizes and generates #hardware_profiles" do
+      { :get => '/environments/1/hardware_profiles' }.should route_to(:controller => 'environments', :action => 'hardware_profiles', :id => '1' )
+    end
+
+    it "recognizes and generates #instance_states" do
+      { :get => '/environments/1/instance_states' }.should route_to(:controller => 'environments', :action => 'instance_states', :id => '1' )
+    end
+
+    it "recognizes and generates #realms" do
+      { :get => '/environments/1/realms' }.should route_to(:controller => 'environments', :action => 'realms', :id => '1' )
+    end
+
+    it "recognizes and generates #images" do
+      { :get => '/environments/1/images' }.should route_to(:controller => 'environments', :action => 'images', :id => '1' )
+    end
+
   end
 end
