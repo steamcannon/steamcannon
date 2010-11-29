@@ -211,9 +211,6 @@ class Instance < ActiveRecord::Base
     raise RuntimeError.new("Cloud image not found for #{hardware_profile}") unless image_cloud_id
     cloud_instance = cloud.launch(image_cloud_id,
                                   instance_launch_options)
-    # this will cause the instance to go to start_failed, and is the
-    # first step in fixing STEAM-162.
-    raise RuntimeError.new("Instance failed to start!") unless cloud_instance
     update_addresses(cloud_instance, :cloud_id => cloud_instance.id)
   end
 
@@ -222,7 +219,7 @@ class Instance < ActiveRecord::Base
       :hardware_profile => hardware_profile,
       :key_name => cloud_keyname,
       :user_data => instance_user_data,
-      :realm => environment.default_realm
+      :realm_id => environment.default_realm
     }.merge(cloud_specific_hacks.launch_options(self))
   end
 
@@ -231,8 +228,7 @@ class Instance < ActiveRecord::Base
   end
 
   def instance_user_data
-    user_data = { :steamcannon_ca_cert => Certificate.ca_certificate.certificate }
-    Base64.encode64(user_data.to_json)
+    { :steamcannon_ca_cert => Certificate.ca_certificate.certificate }.to_json
   end
 
   def running_in_cloud?
@@ -278,8 +274,8 @@ class Instance < ActiveRecord::Base
   end
 
   def error_raised(error)
-    logger.error error.inspect
-    logger.error error.backtrace
+    logger.error error.with_trace
+    @last_error = error
     start_failed!
   end
 

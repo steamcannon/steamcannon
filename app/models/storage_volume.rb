@@ -59,6 +59,7 @@ class StorageVolume < ActiveRecord::Base
   
   aasm_event :fail do
     transitions :to => :create_failed, :from => :creating
+    transitions :to => :attach_failed, :from => :attaching
   end
   
   aasm_event :attach do
@@ -69,7 +70,7 @@ class StorageVolume < ActiveRecord::Base
 
   #TODO: actually detach instead of just moving back to available
   aasm_event :detach do
-    transitions :to => :available, :from => [:attached, :attaching, :attach_failed]
+    transitions :to => :available, :from => [:available, :attached, :attaching, :attach_failed]
     transitions :to => :not_found, :from => :not_found
   end
 
@@ -92,6 +93,8 @@ class StorageVolume < ActiveRecord::Base
   
   def cloud_volume
     @cloud_volume ||= cloud.storage_volumes(:id => volume_identifier).first unless volume_identifier.blank?
+  rescue DeltaCloud::API::BackendError => ex
+    raise ex unless ex.message =~ /InvalidVolume.NotFound/
   end
 
   def cloud_volume_is_available?
@@ -101,7 +104,7 @@ class StorageVolume < ActiveRecord::Base
 
   def cloud_volume_is_attached?
     cloud_volume_exists? and
-      cloud_volume.state.downcase == 'in-use' and
+      cloud_volume.state.downcase == 'in_use' and
       cloud_volume.instance_id == instance.cloud_id
   end
 
@@ -120,15 +123,18 @@ class StorageVolume < ActiveRecord::Base
   end
 
   def attach_volume
-    #TODO: handle errors
     cloud_volume.attach!(:instance_id => instance.cloud_id,
                          :device => image.storage_volume_device)
+  rescue DeltaCloud::API::BackendError => ex
+    @last_error = ex
+    fail!
+    logger.error ex.with_trace
   end
 
   def create_in_cloud
     return if cloud_volume_is_available?
     #TODO: handle errors here
-    @cloud_volume = cloud.create_storage_volume(:realm => environment.default_realm,
+    @cloud_volume = cloud.create_storage_volume(:realm_id => environment.default_realm,
                                                 :capacity => image.storage_volume_capacity)
     if @cloud_volume
       update_attribute(:volume_identifier, @cloud_volume.id)
