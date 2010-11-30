@@ -157,6 +157,7 @@ class EnvironmentsController < ApplicationController
 
   # GET /environments/1/hardware_profiles
   def hardware_profiles 
+    @cloud = current_user.cloud
     @environment = current_user.environments.find(params[:id])
   end
 
