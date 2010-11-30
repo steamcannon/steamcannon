@@ -375,7 +375,7 @@ describe Instance do
         @instance.stub!(:cloud).and_return(@cloud)
         @instance.current_state = 'stopping'
       end
-      
+
       it "should terminate instance in cloud" do
         @cloud.stub!(:instance_available?).and_return(true)
         @cloud.should_receive(:terminate).with('i-123')
@@ -775,7 +775,7 @@ describe Instance do
 
     it "should return true if the instance is stuck in state for too long" do
       @instance.current_state = 'unreachable'
-      @instance.should_receive(:stuck_in_state_for_too_long).and_return(true)
+      @instance.should_receive(:stuck_in_state_for_too_long?).and_return(true)
       @instance.unreachable_for_too_long?.should == true
     end
   end

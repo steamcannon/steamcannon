@@ -201,7 +201,7 @@ class Instance < ActiveRecord::Base
   end
 
   def unreachable_for_too_long?
-    unreachable? && stuck_in_state_for_too_long(48.hours)
+    unreachable? && stuck_in_state_for_too_long?(48.hours)
   end
 
   protected
