@@ -316,23 +316,23 @@ describe UsersController do
       @user = login
       @client = mock(Cloud::Deltacloud)
       @user.stub!(:cloud).and_return(@client)
-      @client.stub!(:valid_credentials?).and_return(true)
+      @client.stub!(:attempt).and_return(true)
     end
 
     it "should validate" do
-      @client.should_receive(:valid_credentials?)
+      @client.should_receive(:attempt).with(:valid_credentials?, false)
       get :validate_cloud_credentials
     end
 
     context "returned json" do
       it "should have a status of :ok if the credentials are valid" do
-        @client.should_receive(:valid_credentials?).and_return(true)
+        @client.should_receive(:attempt).with(:valid_credentials?, false).and_return(true)
         get :validate_cloud_credentials
         JSON.parse(response.body)['status'].should == 'ok'
       end
       
       it "should have a status of :error if the credentials are not valid" do
-        @client.should_receive(:valid_credentials?).and_return(false)
+        @client.should_receive(:attempt).with(:valid_credentials?, false).and_return(false)
         get :validate_cloud_credentials
         JSON.parse(response.body)['status'].should == 'error'
       end

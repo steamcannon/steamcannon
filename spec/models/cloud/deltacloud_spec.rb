@@ -191,4 +191,38 @@ describe Cloud::Deltacloud do
       @deltacloud.valid_key_name?('key3').should be(false)
     end
   end
+
+  describe 'attempt' do
+    
+    context "on error" do
+      before(:each) do
+        @error = DeltaCloud::API::BackendError.new
+        @deltacloud.should_receive(:some_method).and_raise(@error)
+      end
+      it "should catch Deltacloud backend error" do
+        lambda {
+          @deltacloud.attempt(:some_method)
+        }.should_not raise_error
+      end
+      
+      it "should store the error in last_error" do
+        @deltacloud.attempt(:some_method)
+        @deltacloud.last_error.should == @error
+      end
+      it "should return the default value" do
+        @deltacloud.attempt(:some_method, 'blah').should == 'blah'
+      end
+    end
+    
+    it "should return the value from the method call" do
+      @deltacloud.should_receive(:some_method).and_return('blech')
+      @deltacloud.attempt(:some_method, 'blah').should == 'blech'
+    end
+
+    it "should pop off the last arg as the default value" do
+      @deltacloud.should_receive(:some_method).with(1)
+      @deltacloud.attempt(:some_method, 1, 'blah')
+    end
+    
+  end
 end

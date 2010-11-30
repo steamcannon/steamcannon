@@ -73,7 +73,7 @@ class UsersController < ResourceController::Base
 
   def validate_cloud_credentials
     update_cloud_credentials_from_params
-    valid = object.cloud.valid_credentials?
+    valid = object.cloud.attempt(:valid_credentials?, false)
     render(generate_json_response(valid ? :ok : :error))
   end
 

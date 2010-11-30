@@ -59,8 +59,7 @@ module Cloud
     rescue => e
       # If we encounter any errors, log them and pretend there are
       # no running instances for now
-      log(e)
-      log(e.backtrace)
+      log e.with_trace
       []
     end
 

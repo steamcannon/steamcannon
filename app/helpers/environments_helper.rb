@@ -40,7 +40,7 @@ module EnvironmentsHelper
   end
 
   def hardware_profile_options
-    current_user.cloud.hardware_profiles
+    current_user.cloud.attempt(:hardware_profiles, [])
   end
 
   def stop_environment_link(environment, title = "Stop Environment")

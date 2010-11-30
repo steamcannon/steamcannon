@@ -30,7 +30,7 @@ describe EnvironmentsHelper do
   end
 
   it "should retrieve hardware profiles from cloud" do
-    helper.stub_chain(:current_user, :cloud, :hardware_profiles).and_return(['small'])
+    helper.stub_chain(:current_user, :cloud, :attempt).and_return(['small'])
     helper.hardware_profile_options.should eql(['small'])
   end
 

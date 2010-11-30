@@ -20,7 +20,7 @@
 module Cloud
   class Deltacloud
 
-    attr_reader :cloud_username, :cloud_password
+    attr_reader :cloud_username, :cloud_password, :last_error
 
     def initialize(cloud_username, cloud_password)
       @cloud_username = cloud_username
@@ -47,9 +47,25 @@ module Cloud
     end
 
     def method_missing(meth, *args, &block)
-      client.send(meth, *args, &block)
+      client.__send__(meth, *args, &block)
     end
 
+    # Similar to active_support's #try, but specifically handles
+    # backend errors. If there are args, the last arg must be the
+    # return value used on error.
+    # Example:
+    # dc.attempt(:some_method, []) # [] will be returned on error
+    def attempt(meth, *args, &block)
+      default = args.pop
+      begin
+        __send__(meth, *args, &block)
+      rescue DeltaCloud::API::BackendError => ex
+        @last_error = ex
+        Rails.logger.info ex.with_trace
+        default
+      end
+    end
+    
     def hardware_profiles
       deltacloud_hardware_profiles.map(&:name)
     end
