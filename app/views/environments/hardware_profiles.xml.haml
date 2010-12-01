@@ -1,7 +1,8 @@
 %hardware_profiles
   - @cloud.hardware_profiles.each do |profile|
     %hardware_profile{:href=>'TODO', :id=>profile}
+      - dc_profile = @cloud.hardware_profile(profile)
       %property{:kind=>:fixed, :name=>'architecture', :unit=>:label, :value=>@cloud.architecture(profile)}
-      %property{:kind=>:fixed, :name=>'storage', :unit=>:GB, :value=>'TODO'}
-      %property{:kind=>:fixed, :name=>'cpu', :unit=>:count, :value=>'TODO'}
-      %property{:kind=>:fixed, :name=>'memory', :unit=>:MB, :value=>'TODO'}
+      %property{:kind=>:fixed, :name=>'storage', :unit=>dc_profile.storage.unit, :value=>dc_profile.storage.value}
+      %property{:kind=>:fixed, :name=>'cpu', :unit=>dc_profile.cpu.unit, :value=>dc_profile.cpu.value}
+      %property{:kind=>:fixed, :name=>'memory', :unit=>dc_profile.memory.unit, :value=>dc_profile.memory.value}
