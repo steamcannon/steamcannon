@@ -69,7 +69,7 @@ GEM
     shoulda (2.11.3)
     simple-navigation (2.6.0)
     ssl_requirement (0.1.0)
-    steamcannon-aws (2.3.26.1)
+    steamcannon-aws (2.3.26.2)
       activesupport
       http_connection
       uuidtools
@@ -115,7 +115,7 @@ DEPENDENCIES
   shoulda (= 2.11.3)
   simple-navigation (= 2.6.0)
   ssl_requirement (= 0.1.0)
-  steamcannon-aws (= 2.3.26.1)
+  steamcannon-aws (= 2.3.26.2)
   steamcannon-deltacloud-client (= 0.1.0.3)
   tobias-railroad (= 0.10.0)
   versionomy (= 0.4.0)

@@ -17,7 +17,7 @@ gem "jruby-openssl", "0.7.2"
 gem "http_connection", "1.4.0"
 
 gem "authlogic", "2.1.5"
-gem 'steamcannon-aws', '2.3.26.1', :require => 'aws'
+gem 'steamcannon-aws', '2.3.26.2', :require => 'aws'
 gem "s3", "0.3.4"
 gem "haml", "3.0.15"
 gem "compass", "0.10.5"
