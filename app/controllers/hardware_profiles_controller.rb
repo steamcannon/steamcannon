@@ -16,6 +16,7 @@ class HardwareProfilesController < ApplicationController
     @environment = current_user.environments.find(params[:environment_id])
   end
 
+  # These are annoying, but necessary since rails routes barf if an ID has a '.' in it
   def pathify(profile_id)
     profile_id.sub('.', '-')
   end
