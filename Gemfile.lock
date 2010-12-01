@@ -74,7 +74,7 @@ GEM
       http_connection
       uuidtools
       xml-simple
-    steamcannon-deltacloud-client (0.1.0.3)
+    steamcannon-deltacloud-client (0.1.0.4)
       nokogiri (>= 1.5.0.beta.2)
       rest-client (>= 1.6.1)
     syntax (1.0.0)
@@ -116,6 +116,6 @@ DEPENDENCIES
   simple-navigation (= 2.6.0)
   ssl_requirement (= 0.1.0)
   steamcannon-aws (= 2.3.26.2)
-  steamcannon-deltacloud-client (= 0.1.0.3)
+  steamcannon-deltacloud-client (= 0.1.0.4)
   tobias-railroad (= 0.10.0)
   versionomy (= 0.4.0)
