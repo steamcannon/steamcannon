@@ -56,10 +56,6 @@ describe EnvironmentsController do
       { :get => '/environments/1/instance_states' }.should route_to(:controller => 'environments', :action => 'instance_states', :id => '1' )
     end
 
-    it "recognizes and generates #realms" do
-      { :get => '/environments/1/realms' }.should route_to(:controller => 'environments', :action => 'realms', :id => '1' )
-    end
-
     it "recognizes and generates #images" do
       { :get => '/environments/1/images' }.should route_to(:controller => 'environments', :action => 'images', :id => '1' )
     end
