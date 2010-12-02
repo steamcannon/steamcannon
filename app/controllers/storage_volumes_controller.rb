@@ -63,5 +63,7 @@ class StorageVolumesController < ApplicationController
 
   def get_storage_volume
     @storage_volume = @environment.storage_volumes.find(params[:id])
+  rescue ActiveRecord::RecordNotFound => ex
+    #ignore
   end
 end
