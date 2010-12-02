@@ -125,6 +125,12 @@ class Environment < ActiveRecord::Base
 
   def start_environment
     log_event(:operation => :start_environment)
+    
+    # destroy any instances from prior runs that may be hanging
+    # around. Instances self destroy on stop, but this catches any
+    # that didn't make it to the stopped state.
+    instances.each(&:destroy)
+    
     environment_images.each do |env_image|
       env_image.num_instances.times do |i|
         env_image.start!(i+1)

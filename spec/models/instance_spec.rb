@@ -435,6 +435,11 @@ describe Instance do
         @instance.should_receive(:instance_services).and_return([instance_service])
         @instance.stopped!
       end
+
+      it "should destroy itself" do
+        @instance.should_receive(:destroy)
+        @instance.stopped!
+      end
     end
 
     describe "start_failed" do

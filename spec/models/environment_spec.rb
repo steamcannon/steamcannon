@@ -70,6 +70,12 @@ describe Environment do
         @environment.start!
       end
 
+      it "should destroy old instances" do
+        instance = mock_model(Instance)
+        instance.should_receive(:destroy)
+        @environment.should_receive(:instances).and_return([instance])
+        @environment.start!
+      end
     end
   end
 
