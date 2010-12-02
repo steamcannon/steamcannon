@@ -1,6 +1,6 @@
-%image{:href=>environment_image_url(@environment, image), :id=>image.id}
+%image{:href=>environment_image_url(@environment, cloud_image.cloud_id), :id=>cloud_image.cloud_id}
   %owner steamcannon
   %name=image.name
   %description=image.description
-  %architecture
+  %architecture=cloud_image.architecture
 

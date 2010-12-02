@@ -1,3 +1,4 @@
 %images
-  - @images.each do |image|
-    = render :partial => 'image', :object => image
+  - @images.each do |image| 
+    - image.cloud_images.each do |ci|
+      = render :partial => 'image', :locals => {:image => image, :cloud_image => ci}

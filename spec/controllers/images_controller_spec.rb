@@ -58,11 +58,14 @@ describe ImagesController do
   end
 
   describe "GET show" do
-#    before(:each) do
-#      @realm = OpenStruct.new( :name=>'1' )
-#      @realm.stub!(:first).and_return(@realm)
-#      @realms.stub!(:select).and_return(@realm)
-#    end
+    before(:each) do
+      images = []
+      @image = mock_model(Image)
+      @cloud_image = mock_model(CloudImage, :cloud_id=>'1')
+      mock_environment.stub!(:images).and_return(images)
+      images.stub!(:collect).and_return([@cloud_image])
+      @cloud_image.stub!(:image).and_return(@image)
+    end
 
     it "should assign the requested environment as @environment" do
       get :show, :id => "1", :environment_id => "13", :format => 'xml'
@@ -78,6 +81,12 @@ describe ImagesController do
       get :show, :id => "1", :environment_id => "13", :format => 'xml'
       assigns[:image].should equal(@image)
     end
+
+    it "should assign the requested cloud_image as @cloud_image" do
+      get :show, :id => "1", :environment_id => "13", :format => 'xml'
+      assigns[:cloud_image].should equal(@cloud_image)
+    end
+
   end
 end
 
