@@ -37,6 +37,28 @@ describe Environment do
     @environment.should respond_to(:name)
   end
 
+  it "should have a cloud attribute" do 
+    @environment.should respond_to(:cloud)
+  end
+
+  it "should delegate to the user's cloud for the cloud attribute" do
+    cloud = mock(:cloud)
+    @environment.user.stub!(:cloud).and_return(cloud)
+    cloud.should_receive(:name)
+    @environment.cloud
+  end
+
+  it "should have a region attribute" do
+    @environment.should respond_to(:region)
+  end
+
+  it "should delegate to the user's cloud for the region attribute" do
+    cloud = mock(:cloud)
+    @environment.user.stub!(:cloud).and_return(cloud)
+    cloud.should_receive(:region)
+    @environment.region
+  end
+
   it "should belong to a platform" do
     platform = Platform.new
     version = PlatformVersion.new(:platform => platform)
