@@ -22,7 +22,10 @@ class Instance < ActiveRecord::Base
   include AASM
   include StateHelpers
 
-  has_events :subject_name => :name, :subject_owner => lambda { |i| i.environment.user }, :subject_parent => :environment
+  has_events(:subject_name => :name,
+             :subject_owner => lambda { |i| i.environment.user },
+             :subject_parent => :environment,
+             :subject_metadata => :event_subject_metadata)
 
   belongs_to :environment
   belongs_to :image
@@ -301,4 +304,13 @@ class Instance < ActiveRecord::Base
     environment.instance_services.running.each &:distribute_cluster_member_address
   end
 
+  def event_subject_metadata
+    {
+      :cloud_instance_id => cloud_id,
+      :cloud_image_id => image.cloud_id(hardware_profile, user),
+      :cloud_hardware_profile => hardware_profile,
+      :started_by => started_by,
+      :stopped_by => stopped_by
+    }
+  end
 end

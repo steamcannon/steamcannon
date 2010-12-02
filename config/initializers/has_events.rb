@@ -48,8 +48,12 @@ module HasEvents
         return nil unless object
         subject = object.event_subject
         if subject
-          name = extract_option(:subject_name, object)
-          subject.update_attribute(:name, name) unless subject.name == name
+          attributes_to_update = { }
+          [ :name, :metadata ].each do |field|
+            new_value = extract_option(:"subject_#{field}", object)
+            attributes_to_update[field] = new_value unless subject.__send__(field) == new_value
+          end
+          subject.update_attributes(attributes_to_update)
           subject
         else
           create_subject(object)
@@ -59,7 +63,8 @@ module HasEvents
       def create_subject(object)
         object.create_event_subject(:name => extract_option(:subject_name, object),
                                     :parent => update_or_create_subject(extract_option(:subject_parent, object)),
-                                    :owner => extract_option(:subject_owner, object))
+                                    :owner => extract_option(:subject_owner, object),
+                                    :metadata => extract_option(:subject_metadata, object))
       end
 
       def extract_option(key, object)

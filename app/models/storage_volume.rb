@@ -26,7 +26,8 @@ class StorageVolume < ActiveRecord::Base
   # :through assocations if the record does not exist.
   has_events(:subject_name => lambda{ |v| "Volume #{v.volume_identifier}" },
              :subject_parent => lambda { |v| v.environment_image.environment },
-             :subject_owner => lambda { |v| v.environment_image.environment.user })
+             :subject_owner => lambda { |v| v.environment_image.environment.user },
+             :subject_metadata => :event_subject_metadata)
   
   belongs_to :environment_image
   belongs_to :instance
@@ -156,5 +157,8 @@ class StorageVolume < ActiveRecord::Base
     end
     result
   end
-  
+
+  def event_subject_metadata
+    { :capacity => image.try(:storage_volume_capacity) }
+  end
 end
