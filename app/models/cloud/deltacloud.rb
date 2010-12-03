@@ -70,6 +70,10 @@ module Cloud
       deltacloud_hardware_profiles.map(&:name)
     end
 
+    def hardware_profile(profile_name)
+      deltacloud_hardware_profiles.find { |hwp| hwp.name == profile_name }
+    end
+
     def architecture(hardware_profile)
       profile = deltacloud_hardware_profiles.find do |hwp|
         hwp.name == hardware_profile
