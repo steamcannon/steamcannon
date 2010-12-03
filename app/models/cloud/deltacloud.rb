@@ -65,7 +65,7 @@ module Cloud
         default
       end
     end
-    
+
     def hardware_profiles
       deltacloud_hardware_profiles.map(&:name)
     end
@@ -104,7 +104,9 @@ module Cloud
 
     def deltacloud_hardware_profiles
       Rails.cache.fetch('DeltacloudHardwareProfiles') do
-        client.hardware_profiles
+        client.hardware_profiles.select do |profile|
+          profile.name != 't1.micro'
+        end
       end
     end
 
