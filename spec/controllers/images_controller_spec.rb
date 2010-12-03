@@ -61,10 +61,9 @@ describe ImagesController do
     before(:each) do
       images = []
       @image = mock_model(Image)
+      Image.stub!(:find_by_uid).and_return(@image)
       @cloud_image = mock_model(CloudImage, :cloud_id=>'1')
-      mock_environment.stub!(:images).and_return(images)
-      images.stub!(:collect).and_return([@cloud_image])
-      @cloud_image.stub!(:image).and_return(@image)
+      @image.stub!(:cloud_images).and_return([@cloud_image])
     end
 
     it "should assign the requested environment as @environment" do

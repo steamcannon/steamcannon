@@ -17,6 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module InstancesHelper
+  include HardwareProfilesHelper
   def instance_status_for_environment_row(instance)
     case instance.current_state
     when "start_failed"

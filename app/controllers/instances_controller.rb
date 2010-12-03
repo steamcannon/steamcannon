@@ -25,6 +25,7 @@ class InstancesController < ApplicationController
     @instances = @environment.instances
     respond_to do |format|
       format.js { render(generate_json_response(:ok, :instances=>@instances.to_json)) }
+      format.xml # renders instances/index.xml.haml
     end
   end
 

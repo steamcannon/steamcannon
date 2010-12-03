@@ -211,6 +211,9 @@ class Instance < ActiveRecord::Base
     unreachable? && stuck_in_state_for_too_long?(48.hours)
   end
 
+  def realm
+    environment.default_realm
+  end
   protected
 
   def start_instance

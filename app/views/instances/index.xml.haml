@@ -1,0 +1,16 @@
+%instances
+  - @instances.each do |instance|
+    %instance{:href=>environment_instance_url(instance.environment, instance)}
+      %owner=instance.realm
+      %name=instance.image.name
+      %image{:href=>environment_image_url(instance.environment, instance.image)}
+      %hardware_profile{:href=>environment_hardware_profile_url(:environment_id=>instance.environment.id, :id=>pathify(instance.hardware_profile))}
+      %realm
+      %state= instance.current_state
+      %actions
+        - instance.aasm_events_for_current_state.each do |e|
+          %link{:rel=>e, :href=>'TODO'}
+      %public_addresses
+        %address= instance.public_address
+      %private_addresses
+        %address= instance.private_address
