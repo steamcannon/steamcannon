@@ -16,7 +16,7 @@
           - runaway_instances = @current_user.cloud_specific_hacks.instances_summary[:runaway]
           - if runaway_instances > 0
             .runaway_instances
-              = link_to "Possible Runaway Instances: #{runaway_instances}", cloud_instances_path
+              = link_to "Orphaned Instances: #{runaway_instances}", cloud_instances_path
           - else
             = link_to 'Details', cloud_instances_path
       - else

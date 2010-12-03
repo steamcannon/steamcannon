@@ -12,7 +12,7 @@
       = render :partial => 'list', :locals => {:instances => @managed_instances, :instance_type => :managed, :allow_stop => false}
   
     #runaway
-      %h2 Potentially Runaway Instances
+      %h2 Orphaned Instances
       = render :partial => 'list', :locals => {:instances => @runaway_instances, :instance_type => :runaway, :allow_stop => true}
   .right_column
     = render :partial=>'index_help'

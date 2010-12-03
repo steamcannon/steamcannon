@@ -21,7 +21,7 @@ module CloudInstancesHelper
   def cloud_instances_header(instance_type)
     { :running => 'Running Instances',
       :managed => 'Managed Instances',
-      :runaway => 'Possible Runaway Instances'
+      :runaway => 'Orphaned Instances'
     }[instance_type]
   end
 
