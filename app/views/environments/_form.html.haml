@@ -5,7 +5,7 @@
       = form.text_field :name
     %li
       = form.label :platform_version, "Platform"
-      = form.select :platform_version_id, platform_version_options(PlatformVersion.all)
+      = form.select :platform_version_id, platform_version_options(platform_versions_available_to_environment(@environment))
       %table#environment_images.header_top
         %tr
           %th.name
@@ -14,7 +14,7 @@
             Hardware Profile
           %th.num_instances
             Number of Instances
-        - PlatformVersion.all.each do |platform_version|
+        - platform_versions_available_to_environment(@environment).each do |platform_version|
           - sort_images_by_service_display_order(platform_version.images).each_with_index do |image, index|
             - content_tag_for( :tr, platform_version, :class=>"row_for_platform_version_#{platform_version.id} content_row" ) do 
               - environment_image = @environment.environment_images.find_by_image_id(image.id)

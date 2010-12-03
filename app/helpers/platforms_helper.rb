@@ -17,4 +17,12 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module PlatformsHelper
+
+  def platform_versions_available_to_environment(environment)
+    if environment.new_record?
+      PlatformVersion.all
+    else
+      environment.platform.platform_versions
+    end
+  end
 end
