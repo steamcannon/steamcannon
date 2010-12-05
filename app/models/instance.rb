@@ -106,9 +106,9 @@ class Instance < ActiveRecord::Base
                                                :configure_failed, :stopping, :terminating, :start_failed]
   end
 
-  def to_param
-    cloud_id
-  end
+#   def to_param
+#     cloud_id
+#   end
 
   def can_stop?
     aasm_events_for_current_state.include?(:stop)

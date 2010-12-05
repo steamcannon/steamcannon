@@ -23,6 +23,7 @@ describe InstancesController do
     login
     @instances = [Factory(:instance)]
     @instances.first.stub!(:cloud_id).and_return('1')
+    @instances.stub!(:find_by_cloud_id).and_return(@instances.first)
     @instances.stub!(:to_json).and_return("{}")
     @current_user.stub!(:environments).and_return(Environment)
     mock_environment.stub!(:instances).and_return(@instances)

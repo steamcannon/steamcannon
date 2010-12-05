@@ -91,6 +91,6 @@ class InstancesController < ApplicationController
   end
 
   def get_instance
-    @instance = @environment.instances.first{|i|i.cloud_id == (params[:id])}
+    @instance = @environment.instances.find_by_cloud_id(params[:id]) || @environment.instances.find(params[:id])
   end
 end
