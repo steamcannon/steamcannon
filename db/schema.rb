@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101201123812) do
+ActiveRecord::Schema.define(:version => 20101206162806) do
 
   create_table "account_requests", :force => true do |t|
     t.string   "email"
@@ -214,6 +214,18 @@ ActiveRecord::Schema.define(:version => 20101201123812) do
     t.integer  "display_order"
     t.boolean  "allow_artifacts", :default => false
   end
+
+  create_table "slugs", :force => true do |t|
+    t.string   "name"
+    t.integer  "sluggable_id"
+    t.integer  "sequence",                     :default => 1, :null => false
+    t.string   "sluggable_type", :limit => 40
+    t.string   "scope"
+    t.datetime "created_at"
+  end
+
+  add_index "slugs", ["name", "sequence", "sluggable_type", "scope"], :name => "index_slugs_on_n_s_s_and_s", :unique => true
+  add_index "slugs", ["sluggable_id"], :name => "index_slugs_on_sluggable_id"
 
   create_table "storage_volumes", :force => true do |t|
     t.string   "volume_identifier"

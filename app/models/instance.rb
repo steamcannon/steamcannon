@@ -27,6 +27,8 @@ class Instance < ActiveRecord::Base
              :subject_parent => :environment,
              :subject_metadata => :event_subject_metadata)
 
+  has_friendly_id :cloud_id, :allow_nil => true, :use_slug => true
+
   belongs_to :environment
   belongs_to :image
 
@@ -105,10 +107,6 @@ class Instance < ActiveRecord::Base
                                                :attaching_volume,
                                                :configure_failed, :stopping, :terminating, :start_failed]
   end
-
-#   def to_param
-#     cloud_id
-#   end
 
   def can_stop?
     aasm_events_for_current_state.include?(:stop)

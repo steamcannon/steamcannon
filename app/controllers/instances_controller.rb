@@ -35,10 +35,12 @@ class InstancesController < ApplicationController
     unless @instance.blank?
       respond_to do |format|
         format.js { render(generate_json_response(:ok, :instance=>@instance.to_json)) }
+        format.xml 
       end
     else
       respond_to do |format|
         format.js { render(generate_json_response(:error, :message=>"Invalid instance")) }
+        format.xml { render( :text => "Instance not found #{params[:id]}", :status => 200 ) }
       end
     end
   end
@@ -91,6 +93,6 @@ class InstancesController < ApplicationController
   end
 
   def get_instance
-    @instance = @environment.instances.find_by_cloud_id(params[:id]) || @environment.instances.find(params[:id])
+    @instance = @environment.instances.find(params[:id]) 
   end
 end

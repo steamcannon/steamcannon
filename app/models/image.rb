@@ -24,9 +24,7 @@ class Image < ActiveRecord::Base
   has_many :services, :through => :image_services
   has_many :cloud_images
 
-  def to_param
-    self.uid
-  end
+  has_friendly_id :uid, :use_slug => true, :allow_nil => true
 
   def needs_storage_volume?
     !storage_volume_capacity.blank?
