@@ -61,7 +61,7 @@ describe ImagesController do
     before(:each) do
       images = []
       @image = mock_model(Image)
-      Image.stub!(:find_by_uid).and_return(@image)
+      Image.stub!(:find).and_return(@image)
       @cloud_image = mock_model(CloudImage, :cloud_id=>'1')
       @image.stub!(:cloud_images).and_return([@cloud_image])
     end
