@@ -9,23 +9,29 @@ jQuery.fn.pulsate = function() {
     this.pulse({opacity: [1,.2]}, 500, 10);
 };
 
+jQuery.fn.applyOnce = function() {
+    marker_class = 'ujs_rule_applied'
+    elements = this.filter(':not(.' + marker_class + ')')
+    elements.addClass(marker_class)
+    return elements
+}
+
 function update_instance_message(instance_id, message) {
     message_id = '#instance_' + instance_id + '_message'
-     $(message_id + ' td').first().html(message)
+    $(message_id + ' td').first().html(message)
     $(message_id).show()
 }
 
-
-function apply_unobtrusive_rules($) {
-    $('.js-popup_dialog').each(function(idx, el) {
+function apply_ujs_rules($) {
+    $('.js-popup_dialog').applyOnce().each(function(idx, el) {
         $(el).jqm({trigger: $(el).attr('rel'), overlay:0})
     })
 
 
-    $('#environment_form #environment_platform_version_id').change(function() {
-        $('.content_row').hide()
-        $('.row_for_platform_version_' + this.value).show()
-    })
+        $('#environment_form #environment_platform_version_id').applyOnce().change(function() {
+            $('.content_row').hide()
+            $('.row_for_platform_version_' + this.value).show()
+        })
 
     //show the correct data on load
     $('#environment_form #environment_platform_version_id').trigger('change')
@@ -34,30 +40,30 @@ function apply_unobtrusive_rules($) {
      * remove other, unused platform versions, since some versions of IE
      * will still submit form fields within hidden content.
      */
-    $('body.environments_controller form').submit(function() {
+    $('body.environments_controller form').applyOnce().submit(function() {
         $('.content_row:hidden').remove()
     })
 
-    $('body.users_controller form .js-cloud_password_toggle').click(function() {
+    $('body.users_controller form .js-cloud_password_toggle').applyOnce().click(function() {
         $("#cloud_password_field").slideToggle();
         $("#cloud_password_prompt").slideToggle();
     });
 
-    $('#environment_images_container .image_row .start_another a').click(function() {
+    $('#environment_images_container .image_row .start_another a').applyOnce().click(function() {
         $($(this).closest('.start_another').next('.start_another_dialog')).show();
     })
 
-    $('#environment_images_container .image_row .start_another_dialog .close a').click(function() {
+    $('#environment_images_container .image_row .start_another_dialog .close a').applyOnce().click(function() {
         $($(this).closest('.start_another_dialog')).hide();
     })
 
 
-    $('#account_requests_index .js-state_display_toggle').click(function() {
+    $('#account_requests_index .js-state_display_toggle').applyOnce().click(function() {
         $('#account_requests_index').toggleClass($(this).attr('rel'))
         return false
     })
 
-    $('#edit_user .js-verify_credential').change(function() {
+    $('#edit_user .js-verify_credential').applyOnce().change(function() {
         if ($('#user_cloud_username').val() === '' ||
             $('#user_cloud_password').val() === '') {
             return
@@ -77,7 +83,9 @@ function apply_unobtrusive_rules($) {
         })
     })
 
-    $("abbr.timeago").timeago()
+    $('.callout').applyOnce().delay(10000).slideUp()
+
+    $("abbr.timeago").applyOnce().timeago()
 }
 
 jQuery(document).ready(function($) {
@@ -89,13 +97,13 @@ jQuery(document).ready(function($) {
         $('#ajax-spinner').hide()
     })
 
+    // apply ujs rules after each ajax request
     $(document).ajaxComplete(function() {
-        apply_unobtrusive_rules($)
+        apply_ujs_rules($)
     })
 
-    $('.callout').delay(10000).slideUp()
-
-    apply_unobtrusive_rules($)
+    // apply ujs rules on load
+    apply_ujs_rules($)
 })
 
 
@@ -136,16 +144,16 @@ function remote_delete_volume(volume_name, url) {
 }
 
 function update_deployment_status(url, selector) {
-  $.post(url, function(data) {
-      $(selector + ' .status ul').replaceWith(data)
-  });
-  setTimeout("update_deployment_status('" + url + "', '" + selector + "')", 30000);
+    $.post(url, function(data) {
+        $(selector + ' .status ul').replaceWith(data)
+    });
+    setTimeout("update_deployment_status('" + url + "', '" + selector + "')", 30000);
 }
 
 function monitor_deployment(url, selector) {
-  jQuery(document).ready(function($) {
-    update_deployment_status(url, selector);
-  });
+    jQuery(document).ready(function($) {
+        update_deployment_status(url, selector);
+    });
 }
 
 function update_content(url, selectors) {
@@ -158,63 +166,63 @@ function update_content(url, selectors) {
             }
             $(selector).html(content.html())
         })
-    })
+            })
 
     setTimeout("update_content('" + url + "', '" + selectors + "')", 30000);
 }
 
 function monitor_content(url, selectors) {
-  $(function () {
-      update_content(url, selectors.join('|'));
-  });
+    $(function () {
+        update_content(url, selectors.join('|'));
+    });
 }
 
 function update_instance_status(url, selector) {
-  $.post(url, function(data) {
-      $(selector).replaceWith(data.html);
-  }, "json");
-  setTimeout("update_instance_status('" + url + "', '" + selector + "')", 30000);
+    $.post(url, function(data) {
+        $(selector).replaceWith(data.html);
+    }, "json");
+    setTimeout("update_instance_status('" + url + "', '" + selector + "')", 30000);
 }
 
 function monitor_instance(url, selector) {
-  jQuery(document).ready(function($) {
-    update_instance_status(url, selector);
-  });
+    jQuery(document).ready(function($) {
+        update_instance_status(url, selector);
+    });
 }
 
 function update_volume_status(url, selector) {
-  $.post(url, function(data) {
-      $(selector).replaceWith(data.html);
-  }, "json");
-  setTimeout("update_volume_status('" + url + "', '" + selector + "')", 30000);
+    $.post(url, function(data) {
+        $(selector).replaceWith(data.html);
+    }, "json");
+    setTimeout("update_volume_status('" + url + "', '" + selector + "')", 30000);
 }
 
 function monitor_volume(url, selector) {
-  jQuery(document).ready(function($) {
-    update_volume_status(url, selector);
-  });
+    jQuery(document).ready(function($) {
+        update_volume_status(url, selector);
+    });
 }
 
 
 function tail_log(url, num_lines, offset, tailing) {
-  var params = {num_lines: num_lines, offset: offset};
-  $.get(url, params, function(data) {
-    logs = $('#log_output');
-    if (logs.text().trim() == 'Fetching log...') {
-      logs.html('');
-    }
-    if (data.lines.length > 0) {
-      //logs.html(logs.html() + "<br />" + data.lines.join("<br />"));
-      //logs.html(logs.html() + "\n" + data.lines.join("\n"));
-      logs.html(logs.html() + data.lines.join(""));
-      if (tailing) {
-        logs.animate({scrollTop: logs.attr("scrollHeight")}, 10);
-      }
-    }
-    if (tailing || data.lines.length > 0) {
-      setTimeout("tail_log('" + url + "', " + num_lines + ", " + data.offset + ", + " + tailing + ")", 5000);
-    }
-  }, "json");
+    var params = {num_lines: num_lines, offset: offset};
+    $.get(url, params, function(data) {
+        logs = $('#log_output');
+        if (logs.text().trim() == 'Fetching log...') {
+            logs.html('');
+        }
+        if (data.lines.length > 0) {
+            //logs.html(logs.html() + "<br />" + data.lines.join("<br />"));
+            //logs.html(logs.html() + "\n" + data.lines.join("\n"));
+            logs.html(logs.html() + data.lines.join(""));
+            if (tailing) {
+                logs.animate({scrollTop: logs.attr("scrollHeight")}, 10);
+            }
+        }
+        if (tailing || data.lines.length > 0) {
+            setTimeout("tail_log('" + url + "', " + num_lines + ", " + data.offset + ", + " + tailing + ")", 5000);
+        }
+    }, "json");
 }
 
 function tail_event_log(url) {
