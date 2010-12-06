@@ -14,7 +14,7 @@
           attached to the following images:
           %ul
             - environment.storage_volumes.each do |volume|
-              %li= volume.instance.name
+              %li= volume.instance.name unless volume.instance.blank?
         %p
           You can preserve these volume(s), and they will be reattached the next time you start the
           environment. If you choose not to preserve them, all data on them will be lost.

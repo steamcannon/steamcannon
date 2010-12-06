@@ -27,7 +27,7 @@ class Instance < ActiveRecord::Base
              :subject_parent => :environment,
              :subject_metadata => :event_subject_metadata)
 
-  has_friendly_id :cloud_id, :allow_nil => true, :use_slug => true
+  has_friendly_id :name, :allow_nil => true, :use_slug => true
 
   belongs_to :environment
   belongs_to :image

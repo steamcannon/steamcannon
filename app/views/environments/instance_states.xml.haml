@@ -1,1 +1,3 @@
-%instance_states
+%states
+  - Instance.aasm_states.each do |state|
+    %state{:name=>state.name}
