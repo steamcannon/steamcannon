@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  cloud_username: MyString
+  crypted_cloud_password: MyString
+
+two:
+  name: MyString
+  cloud_username: MyString
+  crypted_cloud_password: MyString

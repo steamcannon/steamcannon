@@ -179,6 +179,14 @@ ActiveRecord::Schema.define(:version => 20101206162806) do
 
   add_index "instances", ["current_state"], :name => "index_instances_on_current_state"
 
+  create_table "organizations", :force => true do |t|
+    t.string   "name"
+    t.string   "cloud_username"
+    t.string   "crypted_cloud_password"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "platform_version_images", :force => true do |t|
     t.integer  "platform_version_id"
     t.integer  "image_id"
@@ -258,6 +266,7 @@ ActiveRecord::Schema.define(:version => 20101206162806) do
     t.string   "crypted_cloud_password"
     t.string   "ssh_key_name",           :default => ""
     t.string   "default_realm"
+    t.integer  "organization_id"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

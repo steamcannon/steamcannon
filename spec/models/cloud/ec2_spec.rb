@@ -20,9 +20,11 @@ require 'spec_helper'
 
 describe Cloud::Ec2 do
   before(:each) do
-    @user = Factory.build(:user,
-                          :cloud_username => 'username',
-                          :cloud_password => 'password')
+    @user = Factory.build(:user)
+    @organization = Factory.build(:organization,
+                                  :cloud_username => 'username',
+                                  :cloud_password => 'password')
+    @user.stub!(:organization).and_return(@organization)
     @ec2 = Cloud::Ec2.new(@user)
     @instance = Factory.build(:instance)
   end
@@ -86,12 +88,12 @@ describe Cloud::Ec2 do
 
   describe "running_instances" do
     it "should be empty if cloud username isn't set" do
-      @user.stub!(:cloud_username).and_return('')
+      @organization.stub!(:cloud_username).and_return('')
       @ec2.running_instances.should be_empty
     end
 
     it "should be empty if cloud password isn't set" do
-      @user.stub!(:cloud_password).and_return('')
+      @organization.stub!(:cloud_password).and_return('')
       @ec2.running_instances.should be_empty
     end
   end
@@ -126,14 +128,14 @@ describe Cloud::Ec2 do
     end
 
     it "should get access_key from user object" do
-      @user.should_receive(:cloud_username).and_return('username')
+      @organization.should_receive(:cloud_username).and_return('username')
       @sig.should_receive(:generate_temporary_url).
         with(hash_including(:access_key => 'username'))
       @ec2.send(:pre_signed_url, @instance, {})
     end
 
     it "should get secret_access_key from user object" do
-      @user.should_receive(:cloud_password).and_return('password')
+      @organization.should_receive(:cloud_password).and_return('password')
       @sig.should_receive(:generate_temporary_url).
         with(hash_including(:secret_access_key => 'password'))
       @ec2.send(:pre_signed_url, @instance, {})

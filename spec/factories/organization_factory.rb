@@ -16,18 +16,10 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-Factory.sequence :email do |n|
-  "email+#{n}@example.com"
+Factory.sequence :organization_name do |n|
+  "organization ##{n}"
 end
 
-Factory.define :user do |u|
-  u.association :organization
-  u.email { Factory.next(:email)}
-  u.password 'sekret1@'
-  u.password_confirmation 'sekret1@'
+Factory.define :organization do |o|
+  o.name { Factory.next :organization_name }
 end
-
-Factory.define :superuser, :parent => :user do |u|
-  u.superuser true
-end
-

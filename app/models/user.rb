@@ -18,15 +18,14 @@
 
 
 class User < ActiveRecord::Base
+  belongs_to :organization
   has_many :artifacts
   has_many :environments
   has_many :deployments
   has_many :artifact_versions, :through => :artifacts
   has_many :instances, :through => :environments
   has_many :event_subjects, :as => :owner
-  
-  before_save :encrypt_cloud_password
-  validate :validate_cloud_credentials
+
   validate :validate_ssh_key_name
 
   acts_as_authentic do |c|
@@ -35,46 +34,23 @@ class User < ActiveRecord::Base
   named_scope :visible_to_user, lambda { |user|
     { :conditions => user.superuser? ? { } : { :id => user.id } }
   }
-  
+
   attr_protected :superuser
 
-  attr_accessor_with_default :cloud_password_dirty, false
-  attr_accessor_with_default( :cloud_password ) do
-    (@cloud_password_dirty or self.crypted_cloud_password.blank?) ? @cloud_password : Certificate.decrypt(self.crypted_cloud_password)
-  end
-
-  def obfuscated_cloud_password
-    obfuscated = cloud_password ? cloud_password.dup : ''
-    if obfuscated.length < 6
-      obfuscated = '******'
-    else
-      obfuscated[0..-5] = '*' * (cloud_password.length-4)
-    end
-    obfuscated
-  end
-
-  def cloud_password=(pw)
-    @cloud_password_dirty = true
-    @cloud_password = pw
-  end
-
   def cloud
-    @cloud ||= Cloud::Deltacloud.new(cloud_username, cloud_password)
+    organization.cloud
+  end
+
+  def cloud_username
+    organization.cloud_username
+  end
+
+  def cloud_password
+    organization.cloud_password
   end
 
   def profile_complete?
     self.superuser? || (!self.cloud_username.blank? && !self.crypted_cloud_password.blank?)
-  end
-
-  def encrypt_cloud_password
-    self.crypted_cloud_password = Certificate.encrypt(@cloud_password) if (@cloud_password_dirty || (new_record? && !@cloud_password.blank?))
-  end
-
-  def validate_cloud_credentials
-    if cloud_username_changed? or @cloud_password_dirty
-      message = "Cloud credentials are invalid"
-      errors.add_to_base(message) unless cloud.valid_credentials?
-    end
   end
 
   def validate_ssh_key_name
@@ -97,8 +73,8 @@ class User < ActiveRecord::Base
   end
 
   def send_password_reset_instructions!(host)
-    reset_perishable_token!  
+    reset_perishable_token!
     from = APP_CONFIG[:default_reply_to_address] || self.email
-    PasswordResetMailer.deliver_password_reset_instructions(host, self, from)  
+    PasswordResetMailer.deliver_password_reset_instructions(host, self, from)
   end
 end
