@@ -16,6 +16,9 @@
   - if current_user.organization_admin?
     - form.fields_for :organization do |org_form|
       %ul
+        %li
+          = org_form.label :name, "Organization Name"
+          = org_form.text_field :name
         - unless form.object.profile_complete?
           %li
             = org_form.label :cloud_username, "Amazon Access Key"
