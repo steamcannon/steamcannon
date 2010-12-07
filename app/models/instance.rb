@@ -124,6 +124,7 @@ class Instance < ActiveRecord::Base
   end
 
   def name
+    return "##{number}" if image.blank?
     "#{image.name} ##{number}"
   end
 

@@ -189,6 +189,7 @@ describe Instance do
         @cloud = mock(Object)
         @cloud.stub!(:launch).and_return(@cloud_instance)
         @instance.stub_chain(:image, :cloud_id).and_return('ami-123')
+        @instance.stub_chain(:image, :name).and_return('name-1')
         @instance.stub!(:update_attributes)
         @instance.stub!(:cloud).and_return(@cloud)
         @instance.stub!(:instance_launch_options).and_return({})
@@ -738,7 +739,7 @@ describe Instance do
       instance = Instance.new(:number => 77)
       image = mock(Image)
       image.should_receive(:name).and_return("The Image")
-      instance.should_receive(:image).and_return(image)
+      instance.stub(:image).and_return(image) 
       instance.name.should == "The Image #77"
     end
 
