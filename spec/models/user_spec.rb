@@ -77,6 +77,17 @@ describe User do
     user.cloud_specific_hacks
   end
 
+  it "should create an organization if none given" do
+    user = User.create!(@valid_attributes)
+    user.organization.should_not be_nil
+  end
+
+  it "should not create an organization if given" do
+    org = Factory(:organization)
+    user = User.create!(@valid_attributes.merge(:organization => org))
+    user.organization.should == org
+  end
+
   context "visible_to_user named_scope" do
     before(:each) do
       @superuser = Factory(:superuser)

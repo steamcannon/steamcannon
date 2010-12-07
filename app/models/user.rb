@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :organization
   validate :validate_ssh_key_name
+  after_create :ensure_organization
 
   acts_as_authentic do |c|
   end
@@ -83,5 +84,13 @@ class User < ActiveRecord::Base
 
   def organization_admin?
     true
+  end
+
+  def ensure_organization
+    if organization.nil?
+      org = Organization.create!(:name => email)
+      org.users << self
+      org.save!
+    end
   end
 end
