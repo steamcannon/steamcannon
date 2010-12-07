@@ -1,0 +1,32 @@
+#
+# Copyright 2010 Red Hat, Inc.
+#
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 3 of
+# the License, or (at your option) any later version.
+#
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
+require 'spec_helper'
+
+describe "/environments/index.xml.haml" do
+  include EnvironmentsHelper
+
+  it "renders links to the DeltaCloud API endpoints for each environment" do
+    assigns[:environments] = [stub_model(Environment), stub_model(Environment)]
+    render
+    response.should have_tag("environments") do
+      with_tag("link[href=?][rel=?][id=?]", environment_url(assigns[:environments][0]), 'deltacloud_endpoint', assigns[:environments][0].id)
+      with_tag("link[href=?][rel=?][id=?]", environment_url(assigns[:environments][1]), 'deltacloud_endpoint', assigns[:environments][1].id)
+    end
+  end
+end
