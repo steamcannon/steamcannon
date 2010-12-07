@@ -41,7 +41,7 @@ describe UsersController do
           @account_request = mock_model(AccountRequest, :email => 'blah@example.com')
           @user = mock_model(User, :'email=' => nil)
         end
-        
+
         it "should redirect to login if signup_mode when no token provided" do
           get :new
           response.should redirect_to(new_user_session_url)
@@ -109,7 +109,7 @@ describe UsersController do
           @account_request = mock_model(AccountRequest)
           @account_request.stub!(:accept!)
         end
-        
+
         it "should redirect to login if signup_mode when no token provided" do
           post :create
           response.should redirect_to(new_user_session_url)
@@ -133,7 +133,7 @@ describe UsersController do
           post :create, :token => '1234'
           assigns[:account_request].should == @account_request
         end
-        
+
         it "should accept! the account_request" do
           AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
           @account_request.should_receive(:accept!)
@@ -170,7 +170,7 @@ describe UsersController do
       get :edit
       response.should be_success
     end
-    
+
     it "should set an error message in the flash if the user's profile is not complete'" do
       @current_user.stub!(:profile_complete?).and_return(false)
       get :edit
@@ -240,9 +240,9 @@ describe UsersController do
     context "with a superuser logged in" do
       before(:each) do
         login_with_user(@superuser)
-        User.stub!(:find).and_return(@account_user)        
+        User.stub!(:find).and_return(@account_user)
       end
-    
+
       it "should allow a superuser to edit another user" do
         get :edit, :id => 1
         response.should render_template(:edit)
@@ -259,7 +259,7 @@ describe UsersController do
         login_with_user(@account_user)
         User.stub!(:find).and_return(@superuser)
       end
-      
+
       it "should not allow a non-superuser to edit other users" do
         get :edit, :id => 1
         response.should redirect_to(new_user_session_path)
@@ -271,13 +271,13 @@ describe UsersController do
       end
     end
   end
-  
+
   describe "assume user" do
     before(:each) do
       @user = mock_model(User, :email => 'email@example.com')
       User.stub!(:find).and_return(@user)
     end
-    
+
     context "functionality" do
       before(:each) do
         login({ }, :superuser? => true)
@@ -294,14 +294,14 @@ describe UsersController do
         response.should redirect_to(root_path)
       end
     end
-    
+
     context "permissions" do
       it "should not allow a regular user access" do
         login({ }, :superuser? => false)
         get :assume_user, :id => 1
         response.should redirect_to(new_user_session_path)
       end
-      
+
       it "should allow a superuser to access" do
         login({ }, :superuser? => true)
         UserSession.should_receive(:create).with(@user)
@@ -315,7 +315,9 @@ describe UsersController do
     before(:each) do
       @user = login
       @client = mock(Cloud::Deltacloud)
+      @organization = mock(Organization)
       @user.stub!(:cloud).and_return(@client)
+      @user.stub!(:organization).and_return(@organization)
       @client.stub!(:attempt).and_return(true)
     end
 
@@ -330,7 +332,7 @@ describe UsersController do
         get :validate_cloud_credentials
         JSON.parse(response.body)['status'].should == 'ok'
       end
-      
+
       it "should have a status of :error if the credentials are not valid" do
         @client.should_receive(:attempt).with(:valid_credentials?, false).and_return(false)
         get :validate_cloud_credentials
@@ -339,11 +341,11 @@ describe UsersController do
     end
 
     it "should use provided cloud credentials" do
-      @user.should_receive(:cloud_password=).with("pw")
-      @user.should_receive(:cloud_username=).with("uname")
+      @organization.should_receive(:cloud_password=).with("pw")
+      @organization.should_receive(:cloud_username=).with("uname")
       get :validate_cloud_credentials, :cloud_password => 'pw', :cloud_username => 'uname'
     end
 
-    
+
   end
 end
