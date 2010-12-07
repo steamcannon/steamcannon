@@ -160,11 +160,6 @@ class EnvironmentsController < ApplicationController
     @environment = current_user.environments.find(params[:id])
   end
 
-  # GET /environments/1/realms
-  def realms 
-    @environment = current_user.environments.find(params[:id])
-  end
-
   # GET /environments/1/images
   def images 
     @environment = current_user.environments.find(params[:id])
