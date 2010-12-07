@@ -21,12 +21,17 @@ require 'spec_helper'
 describe "/environments/index.xml.haml" do
   include EnvironmentsHelper
 
-  it "renders links to the DeltaCloud API endpoints for each environment" do
-    assigns[:environments] = [stub_model(Environment), stub_model(Environment)]
+  before(:each) do
+    @environments = assigns[:environments] = [stub_model(Environment, :name=>'env-1'), stub_model(Environment, :name=>'env-2')]
+  end
+
+  it "renders a collection of environments" do
     render
     response.should have_tag("environments") do
-      with_tag("link[href=?][rel=?][id=?]", environment_url(assigns[:environments][0]), 'deltacloud_endpoint', assigns[:environments][0].id)
-      with_tag("link[href=?][rel=?][id=?]", environment_url(assigns[:environments][1]), 'deltacloud_endpoint', assigns[:environments][1].id)
+      @environments.each do |e|
+        with_tag("environment[href=?][name=?]", environment_url(e), e.name)
+      end
     end
   end
+
 end

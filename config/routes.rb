@@ -24,7 +24,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :platforms
   map.resources :environments, 
                 :member => {:start => :post, :stop => :post, :clone => :post, 
-                           :instance_states => :get }, 
+                           :instance_states => :get, :deltacloud => :get }, 
                 :collection => {:status => :get} do |environment|
     environment.resources :images, :only => [ :index, :show ]
     environment.resources :realms, :only => [ :index, :show ]
@@ -52,6 +52,8 @@ ActionController::Routing::Routes.draw do |map|
   map.new_user_from_token '/signup/:token', :controller => "users", :action => "new"
   
   map.resources :password_resets
+
+  map.api '/api.:format', :controller => 'api', :action=>'index'
   
   # map.forgot_password '/forgot_password', :controller => 'PasswordResets', :action => "new"
   # map.reset_password '/reset_password', :controller => 'PasswordResets', :action => "create"

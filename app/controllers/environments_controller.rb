@@ -155,6 +155,11 @@ class EnvironmentsController < ApplicationController
     render :partial => 'list', :locals => { :environments => environments }, :layout => false 
   end
 
+  # GET /environments/1/deltacloud
+  def deltacloud 
+    @environment = current_user.environments.find(params[:id])
+  end
+
   # GET /environments/1/instance_states
   def instance_states 
     @environment = current_user.environments.find(params[:id])

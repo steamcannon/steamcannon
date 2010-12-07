@@ -1,8 +1,11 @@
-%api{:driver=>@environment.user.cloud.name, :version=>'1.0'}
-  / 
-    Deltacloud endpoint for SteamCannon environment
-  %link{:rel=>'hardware_profiles', :href=>environment_hardware_profiles_url(@environment)}
-  %link{:rel=>'instance_states', :href=>instance_states_environment_url(@environment)}
-  %link{:rel=>'realms', :href=>environment_realms_url(@environment)}
-  %link{:rel=>'images', :href=>environment_images_url(@environment)}
-  %link{:rel=>'instances', :href=>environment_instances_url(@environment)}
+%environment{:href=>environment_url(@environment)}
+  %name=@environment.name
+  %owner=@environment.user.email
+  %created=@environment.created_at
+  %updated=@environment.updated_at
+  %current_state=@environment.current_state
+  %preserve_storage_volumes=@environment.preserve_storage_volumes?
+  %metadata
+    =@environment.metadata
+  %link{:rel=>'deltacloud_endpoint', :href=>deltacloud_environment_url(@environment)}
+

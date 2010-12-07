@@ -22,19 +22,28 @@ describe "/environments/show.xml.haml" do
   include EnvironmentsHelper
 
   before(:each) do
-    assigns[:environment] = stub_model(Environment)
-    assigns[:environment].stub_chain(:user, :cloud, :name).and_return('the-cloud')
+    @environment = stub_model(Environment)
+    assigns[:environment] = @environment
+    @environment.stub_chain(:user, :email).and_return('joe@smith.com')
+    @environment.stub_chain(:user, :cloud, :name).and_return('the-cloud')
   end
 
-  it "renders the DeltaCloud API endpoint for the enironment" do
-    assigns[:environment].user.cloud.should_receive(:name).and_return('the-cloud')
+  it "renders the DeltaCloud API endpoint url for the environment" do
     render
-    response.should have_tag("api[driver=?]", 'the-cloud') do
-      with_tag("link[rel=?][href=?]", "hardware_profiles", environment_hardware_profiles_url(assigns[:environment]))
-      with_tag("link[rel=?][href=?]", "instance_states", instance_states_environment_url(assigns[:environment]))
-      with_tag("link[rel=?][href=?]", "realms", environment_realms_url(assigns[:environment]))
-      with_tag("link[rel=?][href=?]", "images", environment_images_url(assigns[:environment]))
-      with_tag("link[rel=?][href=?]", "instances", environment_instances_url(assigns[:environment]))
+    response.should have_tag("environment[href=?]", environment_url(@environment)) do
+      with_tag("link[href=?]", deltacloud_environment_url(@environment))
+    end
+  end
+
+  it "renders the environment attributes" do
+    render
+    response.should have_tag("environment[href=?]", environment_url(@environment)) do
+      with_tag("name", @environment.name)
+      with_tag("owner", @environment.user.email)
+      with_tag("created", @environment.created_at)
+      with_tag("updated", @environment.updated_at)
+      with_tag("current_state", @environment.current_state)
+      with_tag("preserve_storage_volumes", @environment.preserve_storage_volumes)
     end
   end
 end
