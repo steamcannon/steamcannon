@@ -8,4 +8,4 @@
       = f.submit "Update Account"
       = link_to 'Back', :back
   .right_column
-    = render :partial=>'amazon_credentials_help'
+    = render :partial=>'amazon_credentials_help' if current_user.organization_admin?

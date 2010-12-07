@@ -26,6 +26,7 @@ class User < ActiveRecord::Base
   has_many :instances, :through => :environments
   has_many :event_subjects, :as => :owner
 
+  accepts_nested_attributes_for :organization
   validate :validate_ssh_key_name
 
   acts_as_authentic do |c|
@@ -50,7 +51,9 @@ class User < ActiveRecord::Base
   end
 
   def profile_complete?
-    self.superuser? || (!self.cloud_username.blank? && !self.crypted_cloud_password.blank?)
+    self.superuser? || (!self.cloud_username.blank? &&
+                        !self.cloud_password.blank? &&
+                        !self.default_realm.blank?)
   end
 
   def validate_ssh_key_name
@@ -76,5 +79,9 @@ class User < ActiveRecord::Base
     reset_perishable_token!
     from = APP_CONFIG[:default_reply_to_address] || self.email
     PasswordResetMailer.deliver_password_reset_instructions(host, self, from)
+  end
+
+  def organization_admin?
+    true
   end
 end

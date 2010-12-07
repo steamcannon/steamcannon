@@ -64,9 +64,9 @@ function apply_ujs_rules($) {
     })
 
     $('#edit_user .js-verify_credential').applyOnce().change(function() {
-        if ($('#user_cloud_username').val() === '' ||
-            $('#user_cloud_password').val() === '') {
-            return
+        if ($('#user_organization_attributes_cloud_username').val() === '' &&
+            $('#user_organization_attributes_cloud_password').val() === '') {
+            return;
         }
 
         $('#edit_user').removeClass('credentials_valid credentials_invalid')
@@ -108,7 +108,7 @@ jQuery(document).ready(function($) {
 
 
 function get_with_cloud_credentials(url, callback) {
-    params = 'cloud_username=' + encodeURIComponent($('#user_cloud_username').val()) + '&cloud_password=' + encodeURIComponent($('#user_cloud_password').val())
+    var params = 'cloud_username=' + encodeURIComponent($('#user_organization_attributes_cloud_username').val()) + '&cloud_password=' + encodeURIComponent($('#user_organization_attributes_cloud_password').val());
     $.get(url + '?' + params, callback);
 }
 

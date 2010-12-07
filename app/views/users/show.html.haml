@@ -11,8 +11,12 @@
     %b Email:
     &= @user.email
   %p
-    %b Amazon Access Key:
-    &= @user.cloud_username
+    %b Organization:
+    &= @user.organization
+  - if current_user.organization_admin?
+    %p
+      %b Amazon Access Key:
+      &= @user.cloud_username
   %p
     %b Amazon SSH Key Name:
     &= @user.ssh_key_name

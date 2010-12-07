@@ -46,6 +46,10 @@ class Organization < ActiveRecord::Base
     Cloud::Deltacloud.new(cloud_username, cloud_password)
   end
 
+  def to_s
+    name
+  end
+
   protected
 
   def encrypt_cloud_password

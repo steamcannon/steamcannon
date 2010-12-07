@@ -30,17 +30,21 @@ class UsersController < ResourceController::Base
   new_action.before do
     object.email = @account_request.email if @account_request
   end
-  
+
   edit.before do
     flash[:error] = "Please complete your profile before continuing." unless current_user.profile_complete?
   end
 
   update.before do
-    if params && params[:user]
-      if params[:user][:cloud_password].blank?
-        params[:user].delete(:cloud_password)
+    if params && params[:user] && params[:user][:organization_attributes]
+      if current_user.organization_admin?
+        if params[:user][:organization_attributes][:cloud_password].blank?
+          params[:user][:organization_attributes].delete(:cloud_password)
+        else
+          object.organization.cloud_password_dirty = true
+        end
       else
-        current_user.cloud_password_dirty = true
+        params[:user].delete(:organization_attributes)
       end
     end
   end
@@ -90,7 +94,7 @@ class UsersController < ResourceController::Base
   def collection
     end_of_association_chain.visible_to_user(current_user).sorted_by(sort_column(User, :email), sort_direction)
   end
-  
+
   def require_superuser_to_edit_other_user
     if !current_user.superuser? and current_user != object
       flash[:error] = "You don't have the proper rights to edit that user."
@@ -111,7 +115,8 @@ class UsersController < ResourceController::Base
   end
 
   def update_cloud_credentials_from_params
-    object.cloud_username = params[:cloud_username] if params[:cloud_username]
-    object.cloud_password = params[:cloud_password] if params[:cloud_password]
+    org = object.organization
+    org.cloud_username = params[:cloud_username] if params[:cloud_username]
+    org.cloud_password = params[:cloud_password] unless params[:cloud_password].blank?
   end
 end
