@@ -43,8 +43,7 @@ describe Environment do
 
   it "should delegate to the user's cloud for the cloud attribute" do
     cloud = mock(:cloud)
-    @environment.user.stub!(:cloud).and_return(cloud)
-    cloud.should_receive(:name)
+    @environment.user.should_receive(:cloud).and_return(cloud)
     @environment.cloud
   end
 

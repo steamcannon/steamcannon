@@ -22,19 +22,25 @@ describe "/environments/deltacloud.xml.haml" do
   include EnvironmentsHelper
 
   before(:each) do
-    assigns[:environment] = stub_model(Environment)
-    assigns[:environment].stub_chain(:user, :cloud, :name).and_return('the-cloud')
+    @environment = stub_model(Environment)
+    assigns[:environment] = @environment
+    @environment.stub_chain(:user, :cloud, :name).and_return('the-cloud')
+    @environment.stub_chain(:user, :cloud, :hardware_profiles_url).and_return('http://test.server/hardware_profiles')
+    @environment.stub_chain(:user, :cloud, :realms_url).and_return('http://test.server/realms')
+    @environment.stub_chain(:user, :cloud, :instance_states_url).and_return('http://test.server/instance_states')
+    @environment.stub_chain(:user, :cloud, :images_url).and_return('http://test.server/images')
+    @environment.stub_chain(:user, :cloud, :instances_url).and_return('http://test.server/instances')
   end
 
   it "renders the DeltaCloud API endpoint for the enironment" do
-    assigns[:environment].user.cloud.should_receive(:name).and_return('the-cloud')
+    @environment.user.cloud.should_receive(:name).and_return('the-cloud')
     render
     response.should have_tag("api[driver=?]", 'the-cloud') do
-      with_tag("link[rel=?][href=?]", "hardware_profiles", environment_hardware_profiles_url(assigns[:environment]))
-      with_tag("link[rel=?][href=?]", "instance_states", instance_states_environment_url(assigns[:environment]))
-      with_tag("link[rel=?][href=?]", "realms", environment_realms_url(assigns[:environment]))
-      with_tag("link[rel=?][href=?]", "images", environment_images_url(assigns[:environment]))
-      with_tag("link[rel=?][href=?]", "instances", environment_instances_url(assigns[:environment]))
+      with_tag("link[rel=?][href=?][proxy-for=?]", "hardware_profiles", environment_hardware_profiles_url(@environment), @environment.cloud.hardware_profiles_url)
+      with_tag("link[rel=?][href=?][proxy-for=?]", "instance_states", instance_states_environment_url(@environment), @environment.cloud.instance_states_url)
+      with_tag("link[rel=?][href=?][proxy-for=?]", "realms", environment_realms_url(@environment), @environment.cloud.realms_url)
+      with_tag("link[rel=?][href=?][proxy-for=?]", "images", environment_images_url(@environment), @environment.cloud.images_url)
+      with_tag("link[rel=?][href=?][proxy-for=?]", "instances", environment_instances_url(@environment), @environment.cloud.instances_url)
     end
   end
 end

@@ -66,6 +66,26 @@ module Cloud
       end
     end
 
+    def hardware_profiles_url
+      entry_points[:hardware_profiles]
+    end
+
+    def images_url
+      entry_points[:images]
+    end
+
+    def instance_states_url
+      entry_points[:instance_states]
+    end
+
+    def instances_url
+      entry_points[:instances]
+    end
+
+    def realms_url
+      entry_points[:realms]
+    end
+
     def hardware_profiles
       deltacloud_hardware_profiles.map(&:name)
     end

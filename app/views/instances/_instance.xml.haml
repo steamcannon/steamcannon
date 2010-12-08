@@ -2,7 +2,7 @@
   %owner=instance.environment.user.email
   %name=instance.image.name
   %image{:href=>environment_image_url(instance.environment, instance.image)}
-  %hardware_profile{:href=>environment_hardware_profile_url(:environment_id=>instance.environment.id, :id=>pathify(instance.hardware_profile))}
+  %hardware_profile{:href=>instance.environment.user.cloud.instance(instance.cloud_id).hardware_profile.url}
   %realm=instance.environment.default_realm
   %state= instance.current_state
   %actions
