@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
   end
 
   def cloud
-    Cloud::Deltacloud.new(cloud_username, cloud_password)
+    @cloud ||= Cloud::Deltacloud.new(cloud_username, cloud_password)
   end
 
   def profile_complete?

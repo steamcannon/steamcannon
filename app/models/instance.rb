@@ -213,13 +213,12 @@ class Instance < ActiveRecord::Base
   def realm
     environment.default_realm
   end
-  protected
 
+  protected
   def start_instance
     image_cloud_id = image.cloud_id(hardware_profile, user)
     raise RuntimeError.new("Cloud image not found for #{hardware_profile}") unless image_cloud_id
-    cloud_instance = cloud.launch(image_cloud_id,
-                                  instance_launch_options)
+    cloud_instance = cloud.launch(image_cloud_id, instance_launch_options)
     update_addresses(cloud_instance, :cloud_id => cloud_instance.id)
   end
 
@@ -283,7 +282,9 @@ class Instance < ActiveRecord::Base
   end
 
   def error_raised(error)
-    logger.error error.with_trace
+    Rails.logger.error "Instance#error_raised ==========================="  
+    logger.error error.try(:with_trace)
+    Rails.logger.error "================================================="  
     @last_error = error
     start_failed!
   end

@@ -28,7 +28,7 @@ module Cloud
     end
 
     def launch(image_id, opts={})
-      client.create_instance(image_id, opts)
+      create_instance(image_id, opts)
     end
 
     def instance_available?(instance_id)
@@ -61,7 +61,9 @@ module Cloud
         __send__(meth, *args, &block)
       rescue DeltaCloud::API::BackendError => ex
         @last_error = ex
-        Rails.logger.info ex.with_trace
+        Rails.logger.error "DeltaCloud call failed =========================="  
+        Rails.logger.error ex.with_trace
+        Rails.logger.error "================================================="  
         default
       end
     end

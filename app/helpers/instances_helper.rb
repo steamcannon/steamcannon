@@ -21,7 +21,13 @@ module InstancesHelper
   def instance_status_for_environment_row(instance)
     case instance.current_state
     when "start_failed"
-      msg = "This instance failed to start in the cloud. This may be caused by capacity problems in your selected realm (#{instance.environment.user.default_realm}). Please stop and restart the environment. If the problem persists, choose a different realm by editing your #{link_to 'profile', edit_account_path}."
+      msg = "This instance failed to start in the cloud. "
+      last_event = instance.events.find(:last, :conditions => "error is not null")
+      if last_event
+        msg << "The reason: #{event_error_message(last_event)}"
+      else
+        msg << "This may be caused by capacity problems in your selected realm (#{instance.environment.user.default_realm}). Please stop and restart the environment. If the problem persists, choose a different realm by editing your #{link_to 'profile', edit_account_path}."
+      end
     end
 
     text = instance.current_state.titleize

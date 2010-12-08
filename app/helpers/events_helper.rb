@@ -76,6 +76,13 @@ module EventsHelper
   end
 
   def event_error_message(event)
-    event.error[:message].blank? ? 'An unknown error occurred.' : event.error[:message]
+    if event.error[:message].blank?
+      'An unknown error occurred.'
+    else
+      # AWS errors have the message on the first line, with the request
+      # url on the second. We don't care about the url.
+      # TODO: we should in the future map these to our own error messages
+      event.error[:message].split("\n").first
+    end
   end
 end
