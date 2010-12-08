@@ -17,14 +17,26 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class AccountRequestsController < ResourceController::Base
-  before_filter :require_no_user, :only => [:new, :create] 
-  before_filter :require_invite_only_mode, :only => [:new, :create]
+  before_filter :require_no_user_or_org_admin, :only => [:new, :create]
   before_filter :require_superuser, :except => [:new, :create]
 
+  create.after do
+    if current_user && current_user.organization_admin?
+      object.organization = current_user.organization
+    end
+  end
+
   create.wants.html do
-    flash[:notice] = "Your request for an account has been received. If you are accepted, we'll send a signup code to #{object.email}."
-    object.send_request_notification(request.host, APP_CONFIG[:account_request_notification_address])
-    redirect_to new_user_session_url
+    if current_user && current_user.organization_admin?
+      from = APP_CONFIG[:default_reply_to_address] || current_user.email
+      object.send_invitation(request.host, from)
+      flash[:notice] = "Invitation queued to be sent to #{object.email}"
+      redirect_to users_url
+    else
+      flash[:notice] = "Your request for an account has been received. If you are accepted, we'll send a signup code to #{object.email}."
+      object.send_request_notification(request.host, APP_CONFIG[:account_request_notification_address])
+      redirect_to new_user_session_url
+    end
   end
 
   def invite
@@ -43,16 +55,20 @@ class AccountRequestsController < ResourceController::Base
     flash[:notice] = "#{ids_from_params.size} invitations ignored."
     redirect_to account_requests_url
   end
-  
+
   protected
   def collection
     end_of_association_chain.sorted_by(sort_column(AccountRequest, :created_at), sort_direction)
   end
-  
-  def require_invite_only_mode
-    if !invite_only_mode?
+
+  def require_no_user_or_org_admin
+    if current_user && !current_user.organization_admin?
+      redirect_to root_path
+      return false
+    elsif !current_user && !invite_only_mode?
       flash[:error] = "You can't create an account request."
       redirect_to new_user_session_path
+      return false
     end
   end
 

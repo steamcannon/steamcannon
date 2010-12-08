@@ -253,4 +253,78 @@ describe AccountRequestsController do
 
 
   end
+
+  context "as an organization admin" do
+    before(:each) do
+      @organization = mock_model(Organization)
+      @logged_in_user = mock_model(User,
+                                   { :organization_admin? => true,
+                                     :profile_complete? => true,
+                                     :email => 'org_admin@example.com',
+                                     :organization => @organization })
+      login_with_user(@logged_in_user)
+    end
+
+    describe "GET new" do
+      it "assigns a new account_request as @account_request" do
+        AccountRequest.stub(:new).and_return(mock_account_request)
+        get :new
+        assigns[:account_request].should equal(mock_account_request)
+      end
+    end
+
+    describe "POST create" do
+
+      describe "with valid params" do
+        before(:each) do
+          @account_request = mock_account_request(:save => true, :send_invitation => nil,
+                                                  :organization= => nil)
+        end
+
+        it "assigns a newly created account_request as @account_request" do
+          AccountRequest.stub(:new).with({'these' => 'params'}).and_return(@account_request)
+          post :create, :account_request => {:these => 'params'}
+          assigns[:account_request].should equal(@account_request)
+        end
+
+        it "assigns the account current user's organization to the account request" do
+          AccountRequest.stub(:new).and_return(@account_request)
+          @account_request.should_receive(:organization=)
+          post :create, :account_request => {}
+        end
+
+        it "redirects to the users index" do
+          AccountRequest.stub(:new).and_return(@account_request)
+          post :create, :account_request => {}
+          response.should redirect_to(users_url)
+        end
+
+
+        it "should call send_invitation on the account_request, passing the current hostname from the request" do
+          APP_CONFIG.stub!(:[]).and_return(false)
+          # APP_CONFIG.should_receive(:[]).with(:signup_mode).and_return('invite_only')
+          APP_CONFIG.should_receive(:[]).with(:default_reply_to_address).and_return('org_admin@example.com')
+          request.should_receive(:host).at_least(:once).and_return('the_host')
+          @account_request.should_receive(:send_invitation).with('the_host', 'org_admin@example.com')
+          AccountRequest.stub(:new).and_return(@account_request)
+          post :create, :account_request => {:email => 'user@example.com'}
+        end
+      end
+
+      describe "with invalid params" do
+        it "assigns a newly created but unsaved account_request as @account_request" do
+          AccountRequest.stub(:new).with({'these' => 'params'}).and_return(mock_account_request(:save => false))
+          post :create, :account_request => {:these => 'params'}
+          assigns[:account_request].should equal(mock_account_request)
+        end
+
+        it "re-renders the 'new' template" do
+          AccountRequest.stub(:new).and_return(mock_account_request(:save => false))
+          post :create, :account_request => {}
+          response.should render_template('new')
+        end
+      end
+
+    end
+  end
 end

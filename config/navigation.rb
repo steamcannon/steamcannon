@@ -60,7 +60,7 @@ SimpleNavigation::Configuration.run do |navigation|
     primary.item :artifacts, 'Artifacts', artifacts_path
     #primary.item :deployments, 'deployments', deployments_path
     primary.item :environments, 'Environments', environments_path
-    primary.item :users, 'Users', users_path, :if => lambda { current_user and current_user.superuser? }
+    primary.item :users, 'Users', users_path, :if => lambda { current_user and current_user.organization_admin? }
     # primary.item :platforms, 'Platforms', platforms_path, :if => lambda { current_user and current_user.superuser? }
     primary.item :account_requests, 'Account Requests', account_requests_path, :if => lambda { invite_only_mode? and current_user and current_user.superuser? }
   end

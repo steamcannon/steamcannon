@@ -1,6 +1,9 @@
 #users_index
-  %h1
-    Users
+  .page_header
+    - content_for_organization_admin do
+      .actions
+        = link_to '+ Invite New User', new_account_request_path
+    %h1 Users
 
   %table#users_container.header_top
     %tr

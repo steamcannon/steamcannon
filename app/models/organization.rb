@@ -18,6 +18,7 @@
 
 class Organization < ActiveRecord::Base
   has_many :users
+  has_many :account_requests
 
   before_save :encrypt_cloud_password
   validate :validate_cloud_credentials

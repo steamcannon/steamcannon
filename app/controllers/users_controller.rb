@@ -29,6 +29,7 @@ class UsersController < ResourceController::Base
 
   new_action.before do
     object.email = @account_request.email if @account_request
+    object.organization = @account_request.organization if @account_request
   end
 
   edit.before do
@@ -51,6 +52,7 @@ class UsersController < ResourceController::Base
 
   create do
     flash { "Account registered" }
+    before { object.organization = @account_request.organization if @account_request }
     after { @account_request.accept! if @account_request }
     wants.html { redirect_stored_or_default root_url }
   end
@@ -103,14 +105,12 @@ class UsersController < ResourceController::Base
   end
 
   def require_open_signup_mode_or_token
-    if !open_signup_mode?
-      if params[:token] and
-          @account_request = AccountRequest.invited.find_by_token(params[:token])
-        flash.now[:notice] = "Please create an account to continue."
-      else
-        flash[:error] = "You can't create a new user."
-        redirect_to new_user_session_path
-      end
+    if params[:token] and
+        @account_request = AccountRequest.invited.find_by_token(params[:token])
+      flash.now[:notice] = "Please create an account to continue."
+    elsif !open_signup_mode?
+      flash[:error] = "You can't create a new user."
+      redirect_to new_user_session_path
     end
   end
 

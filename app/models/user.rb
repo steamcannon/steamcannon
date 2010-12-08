@@ -34,7 +34,15 @@ class User < ActiveRecord::Base
   end
 
   named_scope :visible_to_user, lambda { |user|
-    { :conditions => user.superuser? ? { } : { :id => user.id } }
+    conditions = case
+                 when user.superuser?
+                   {}
+                 when user.organization_admin?
+                   { :organization_id => user.organization_id }
+                 else
+                   { :id => user.id }
+                 end
+    { :conditions => conditions }
   }
 
   attr_protected :superuser

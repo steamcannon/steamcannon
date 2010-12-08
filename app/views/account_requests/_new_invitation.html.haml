@@ -1,0 +1,9 @@
+%h2 Invite a User
+- form_for(@account_request) do |f|
+  = f.error_messages
+  %ul
+    %li
+      = f.label :email
+      = f.text_field :email
+  = f.submit 'Invite User'
+  = link_to 'Cancel', users_path

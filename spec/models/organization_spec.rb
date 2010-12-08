@@ -27,6 +27,7 @@ describe Organization do
   end
 
   it { should have_many :users }
+  it { should have_many :account_requests }
 
   it "should create a new instance given valid attributes" do
     Organization.create!(@valid_attributes)

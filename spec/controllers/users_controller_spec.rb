@@ -38,8 +38,9 @@ describe UsersController do
       context 'in invite_only mode' do
         before(:each) do
           APP_CONFIG[:signup_mode] = 'invite_only'
-          @account_request = mock_model(AccountRequest, :email => 'blah@example.com')
-          @user = mock_model(User, :'email=' => nil)
+          @account_request = mock_model(AccountRequest, :email => 'blah@example.com',
+                                        :organization => nil)
+          @user = mock_model(User, :email= => nil, :organization= => nil)
         end
 
         it "should redirect to login if signup_mode when no token provided" do
@@ -63,6 +64,15 @@ describe UsersController do
           get :new, :token => '1234'
           assigns[:account_request].should == @account_request
         end
+
+        it "should copy organization from account_request" do
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          User.should_receive(:new).and_return(@user)
+          organization = mock_model(Organization)
+          @account_request.should_receive(:organization).and_return(organization)
+          @user.should_receive(:organization=).with(organization)
+          get :new, :token => '1234'
+        end
       end
     end
 
@@ -81,6 +91,7 @@ describe UsersController do
       logout
       @user = mock_model(User)
       User.stub!(:new).and_return(@user)
+      @user.stub!(:organization=)
     end
 
     describe "with valid params" do
@@ -108,6 +119,7 @@ describe UsersController do
           APP_CONFIG[:signup_mode] = 'invite_only'
           @account_request = mock_model(AccountRequest)
           @account_request.stub!(:accept!)
+          @account_request.stub!(:organization)
         end
 
         it "should redirect to login if signup_mode when no token provided" do
@@ -137,6 +149,14 @@ describe UsersController do
         it "should accept! the account_request" do
           AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
           @account_request.should_receive(:accept!)
+          post :create, :token => '1234'
+        end
+
+        it "should copy organization from account_request" do
+          AccountRequest.should_receive(:find_by_token).with('1234').and_return(@account_request)
+          organization = mock_model(Organization)
+          @account_request.should_receive(:organization).and_return(organization)
+          @user.should_receive(:organization=).with(organization)
           post :create, :token => '1234'
         end
       end

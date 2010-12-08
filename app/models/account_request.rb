@@ -18,11 +18,13 @@
 
 class AccountRequest < ActiveRecord::Base
   include AASM
-  
+
+  belongs_to :organization
+
   validates_presence_of :email
 
   before_create :create_token
-  
+
   aasm_column :current_state
   aasm_initial_state :pending
   aasm_state :pending
@@ -37,11 +39,11 @@ class AccountRequest < ActiveRecord::Base
   aasm_event :ignore do
     transitions :to => :ignored, :from => :pending
   end
-  
+
   aasm_event :accept do
     transitions :to => :accepted, :from => :invited
   end
-  
+
   def send_invitation(host, from)
     ModelTask.async(self, :_send_invitation, host, from)
     invite!
@@ -53,14 +55,14 @@ class AccountRequest < ActiveRecord::Base
 
   protected
   def create_token
-    self.token = ActiveSupport::SecureRandom::hex(8) 
+    self.token = ActiveSupport::SecureRandom::hex(8)
   end
 
   def _send_invitation(host, from)
     logger.info "Sending account invitation to #{from}"
     AccountRequestMailer.deliver_invitation(host, from, email, token)
   end
-  
+
   def _send_request_notification(host, to)
     logger.info "Sending account request notification to #{to}"
     AccountRequestMailer.deliver_request_notification(host, self, to)
