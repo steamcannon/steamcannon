@@ -25,6 +25,7 @@ require 'spec/rails'
 require 'email_spec'
 require 'shoulda'
 require 'ap'
+require 'authlogic/test_case'
 
 
 # Uncomment the next line to use webrat's matchers
@@ -47,8 +48,10 @@ Spec::Runner.configure do |config|
   config.fixture_path = RAILS_ROOT + '/spec/fixtures/'
 
   config.extend(HasEventsMacro, :type => :models)
-  
+
   config.before(:each) do
+    activate_authlogic
+
     # AuthLogic test helpers
     def login(session_stubs = {}, user_stubs = {})
       login_with_user(mock_model(User, { :superuser? => false, :profile_complete? => true }.merge(user_stubs)),
@@ -70,7 +73,7 @@ Spec::Runner.configure do |config|
       UserSession.stub!(:find).and_return(nil)
       AuditColumns::Base.stub!(:controller).and_return(nil)
     end
-    
+
     ModelTask.stub!(:async)
      # force signup_mode here to override whatever is set in config/steamcannon.yml
     APP_CONFIG[:signup_mode] = 'open_signup'
@@ -81,5 +84,5 @@ Spec::Runner.configure do |config|
     #turn off state transition logging by default
     HasEvents.log_event_on_state_transition = false
   end
-  
+
 end
