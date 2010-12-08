@@ -21,8 +21,6 @@ require 'spec_helper'
 describe HardwareProfilesController do
   before(:each) do
     login
-    @current_user.stub!(:environments).and_return(Environment)
-    mock_environment.stub!(:instances).and_return(@instances)
     @current_user.stub!(:cloud).and_return(mock_cloud)
   end
 
@@ -30,50 +28,17 @@ describe HardwareProfilesController do
     @mock_cloud ||= mock_model(Cloud, stubs)
   end
 
-  def mock_environment(stubs={})
-    @mock_environment ||= mock_model(Environment, stubs)
-  end
-
   describe "GET index" do
-    before(:each) do
-      Environment.stub!(:find).with("13").and_return( mock_environment )
-    end
-
-    it "should assign the requested environment as @environment" do
-      get :index, :environment_id => "13", :format=>'xml'
-      assigns[:environment].should equal(mock_environment)
-    end
-
     it "should assign the user's cloud instance as @cloud" do
-      get :index, :environment_id => "13", :format=>'xml'
+      get :index, :format=>'xml'
       assigns[:cloud].should equal(mock_cloud)
     end
-
-    it "should scope requests to the current_user" do
-      @current_user.should_receive(:environments)
-      get :index, :environment_id => "13", :format=>'xml'
-    end
-
   end
 
   describe "GET show" do
-    before(:each) do
-      Environment.stub!(:find).with("13").and_return( mock_environment )
-    end
-
-    it "should assign the requested environment as @environment" do
-      get :show, :id => "1", :environment_id => "13", :format => 'xml'
-      assigns[:environment].should equal(mock_environment)
-    end
-
     it "should assign the user's cloud instance as @cloud" do
-      get :index, :environment_id => "13", :format => 'xml'
+      get :index, :format => 'xml'
       assigns[:cloud].should equal(mock_cloud)
-    end
-
-    it "should scope requests to the current_user" do
-      @current_user.should_receive(:environments)
-      get :show, :id => "1", :environment_id => "13", :format => 'xml'
     end
   end
 end

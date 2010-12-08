@@ -30,6 +30,11 @@ module InstancesHelper
     text
   end
 
+  def dc_hardware_profile_url(instance)
+    return unless instance.cloud_instance
+    tag('hardware_profile', :href=>instance.cloud_instance.hardware_profile.url)
+  end
+
   def instance_details_link(instance)
     unless instance.public_address.blank?
       details = render('instances/details', :instance => instance).html_safe.to_json

@@ -2,7 +2,7 @@
 - profile_name = deltacloudify(profile)
 - dc_profile = @cloud.hardware_profile(profile_name)
 
-%hardware_profile{:href=>environment_hardware_profile_url(:environment_id=>@environment.id, :id=>profile_path), :id=>profile_path, :'proxy-for'=>dc_profile.url}
+%hardware_profile{:href=>hardware_profile_url(:id=>profile_path), :id=>profile_path, :'proxy-for'=>dc_profile.url}
   %property{:kind=>:fixed, :name=>'architecture', :unit=>:label, :value=>@cloud.architecture(profile_name)}
   %property{:kind=>:fixed, :name=>'storage', :unit=>dc_profile.storage.unit, :value=>dc_profile.storage.value}
   %property{:kind=>:fixed, :name=>'cpu', :unit=>dc_profile.cpu.unit, :value=>dc_profile.cpu.value}

@@ -25,13 +25,6 @@ describe RealmsController do
     @realms = []
     mock_cloud.stub!(:realms).and_return(@realms)
     @current_user.stub!(:cloud).and_return( mock_cloud )
-    @current_user.stub!(:environments).and_return( Environment )
-    mock_environment.stub!(:instances).and_return( @instances )
-    Environment.stub!(:find).with("13").and_return( mock_environment )
-  end
-
-  def mock_environment(stubs={})
-    @mock_environment ||= mock_model(Environment, stubs)
   end
 
   def mock_cloud(stubs={})
@@ -39,18 +32,8 @@ describe RealmsController do
   end
 
   describe "GET index" do
-    it "should assign the requested environment as @environment" do
-      get :index, :environment_id => "13", :format=>'xml'
-      assigns[:environment].should equal(mock_environment)
-    end
-
-    it "should scope requests to the current_user" do
-      @current_user.should_receive(:environments)
-      get :index, :environment_id => "13", :format=>'xml'
-    end
-
-    it "should assign the environment's realms as @realms" do
-      get :index, :environment_id => "13", :format=>'xml'
+    it "should assign the realms as @realms" do
+      get :index, :format=>'xml'
       assigns[:realms].should equal(@realms)
     end
   end
@@ -62,18 +45,8 @@ describe RealmsController do
       @realms.stub!(:select).and_return(@realm)
     end
 
-    it "should assign the requested environment as @environment" do
-      get :show, :id => "1", :environment_id => "13", :format => 'xml'
-      assigns[:environment].should equal(mock_environment)
-    end
-
-    it "should scope requests to the current_user" do
-      @current_user.should_receive(:environments)
-      get :show, :id => "1", :environment_id => "13", :format => 'xml'
-    end
-
     it "should assign the requested realm as @realm" do
-      get :show, :id => "1", :environment_id => "13", :format => 'xml'
+      get :show, :id => "1", :format => 'xml'
       assigns[:realm].should equal(@realm)
     end
   end

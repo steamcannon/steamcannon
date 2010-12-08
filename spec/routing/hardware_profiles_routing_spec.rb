@@ -21,10 +21,10 @@ require 'spec_helper'
 describe HardwareProfilesController do
   describe "routing" do
     it "recognizes and generates #index" do
-      { :get => '/environments/1/hardware_profiles' }.should route_to(:controller => 'hardware_profiles', :action => 'index', :environment_id => '1' )
+      { :get => '/hardware_profiles' }.should route_to(:controller => 'hardware_profiles', :action => 'index' )
     end
     it "recognizes and generates #show" do
-      { :get => '/environments/1/hardware_profiles/2' }.should route_to(:controller => 'hardware_profiles', :action => 'show', :environment_id => '1', :id=>'2' )
+      { :get => '/hardware_profiles/2' }.should route_to(:controller => 'hardware_profiles', :action => 'show', :id=>'2' )
     end
   end
 end

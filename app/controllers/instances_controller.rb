@@ -25,7 +25,7 @@ class InstancesController < ApplicationController
     @instances = @environment.instances
     respond_to do |format|
       format.js { render(generate_json_response(:ok, :instances=>@instances.to_json)) }
-      format.xml { @instances = @instances.select{|i|!@environment.user.cloud.instance(i.cloud_id).blank?} } # only return cloud-backed instances
+      format.xml 
     end
   end
 

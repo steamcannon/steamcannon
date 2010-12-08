@@ -5,14 +5,12 @@ class HardwareProfilesController < ApplicationController
   # GET /environments/1/hardware_profiles
   def index 
     @cloud = current_user.cloud
-    @environment = current_user.environments.find(params[:environment_id])
   end
 
   # GET /environments/1/hardware_profile/t1-micro
   def show
     @profile = params[:id]
     @cloud = current_user.cloud
-    @environment = current_user.environments.find(params[:environment_id])
   end
 
 end

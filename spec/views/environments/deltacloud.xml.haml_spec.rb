@@ -36,9 +36,9 @@ describe "/environments/deltacloud.xml.haml" do
     @environment.user.cloud.should_receive(:name).and_return('the-cloud')
     render
     response.should have_tag("api[driver=?]", 'the-cloud') do
-      with_tag("link[rel=?][href=?][proxy-for=?]", "hardware_profiles", environment_hardware_profiles_url(@environment), @environment.cloud.hardware_profiles_url)
+      with_tag("link[rel=?][href=?][proxy-for=?]", "hardware_profiles", hardware_profiles_url, @environment.cloud.hardware_profiles_url)
       with_tag("link[rel=?][href=?][proxy-for=?]", "instance_states", instance_states_environment_url(@environment), @environment.cloud.instance_states_url)
-      with_tag("link[rel=?][href=?][proxy-for=?]", "realms", environment_realms_url(@environment), @environment.cloud.realms_url)
+      with_tag("link[rel=?][href=?][proxy-for=?]", "realms", realms_url, @environment.cloud.realms_url)
       with_tag("link[rel=?][href=?][proxy-for=?]", "images", environment_images_url(@environment), @environment.cloud.images_url)
       with_tag("link[rel=?][href=?][proxy-for=?]", "instances", environment_instances_url(@environment), @environment.cloud.instances_url)
     end

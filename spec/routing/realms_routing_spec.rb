@@ -21,10 +21,10 @@ require 'spec_helper'
 describe RealmsController do
   describe "routing" do
     it "recognizes and generates #index" do
-      { :get => '/environments/1/realms' }.should route_to(:controller => 'realms', :action => 'index', :environment_id => '1' )
+      { :get => '/realms' }.should route_to(:controller => 'realms', :action => 'index' )
     end
     it "recognizes and generates #show" do
-      { :get => '/environments/1/realms/2' }.should route_to(:controller => 'realms', :action => 'show', :environment_id => '1', :id=>'2' )
+      { :get => '/realms/2' }.should route_to(:controller => 'realms', :action => 'show', :id => '2' )
     end
   end
 end

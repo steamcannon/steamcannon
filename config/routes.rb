@@ -22,15 +22,14 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :artifacts, :member => { :status => :post }
   map.resources :artifact_versions, :member => { :status => :get }
   map.resources :platforms
+  map.resources :hardware_profiles, :only => [ :index, :show ]
+  map.resources :realms, :only => [ :index, :show ]
   map.resources :environments, 
                 :member => {:start => :post, :stop => :post, :clone => :post, 
                            :instance_states => :get, :deltacloud => :get }, 
                 :collection => {:status => :get} do |environment|
 
     environment.resources :images, :only => [ :index, :show ]
-    environment.resources :realms, :only => [ :index, :show ]
-    environment.resources :hardware_profiles, :only => [ :index, :show ]
-
     environment.resources :instances, :member => {:stop => :post, :status => :post, :clone => :post}, :only => [:show, :index, :create] do |instance|
       instance.resources :instance_services, :member => {:logs => :get}, :only => []
     end
