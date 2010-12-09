@@ -64,20 +64,20 @@ describe EnvironmentImage do
         end
 
         it "should not create a storage_volume if it already exists" do
-          @environment_image.stub(:storage_volumes).and_return([@storage_volume])
+          @environment_image.stub_chain(:storage_volumes, :in_realm).and_return([@storage_volume])
           @environment_image.storage_volumes.should_not_receive(:create)
           @environment_image.start!(1)
         end
 
         it "should create a storage volume if one does not exist at the instance num index" do
-          @environment_image.stub(:storage_volumes).and_return([@storage_volume])
+          @environment_image.stub_chain(:storage_volumes, :in_realm).and_return([@storage_volume])
           @environment_image.storage_volumes.should_receive(:create).and_return(@storage_volume)
           @environment_image.start!(2)
         end
 
         it "should trigger the storage_volume to prepare" do
           @storage_volume.should_receive(:prepare).with(@instance)
-          @environment_image.stub!(:storage_volumes).and_return([@storage_volume])
+          @environment_image.stub_chain(:storage_volumes, :in_realm).and_return([@storage_volume])
           @environment_image.start!(1)
         end
       end

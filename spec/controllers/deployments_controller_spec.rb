@@ -22,6 +22,7 @@ describe DeploymentsController do
   before(:each) do
     login
     @current_user.stub!(:deployments).and_return(Deployment)
+    @current_user.stub!(:default_realm).and_return('def-realm')
   end
 
   def mock_deployment(stubs={})

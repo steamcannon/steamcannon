@@ -35,7 +35,7 @@ class EnvironmentImage < ActiveRecord::Base
                                 hardware_profile)
 
     if image.needs_storage_volume?
-      storage_volume = storage_volumes[instance_number - 1] || storage_volumes.create
+      storage_volume = storage_volumes.in_realm(environment.realm)[instance_number - 1] || storage_volumes.create
       storage_volume.prepare(instance)
     end
 

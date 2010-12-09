@@ -97,10 +97,6 @@ class Environment < ActiveRecord::Base
     first_service_base_url('mod_cluster') or first_service_base_url('jboss_as')
   end
 
-  def default_realm
-    user.default_realm
-  end
-
   def clone!(attributes_to_override = { })
     new_attributes = {
       :name => "#{name} (copy)",
@@ -133,6 +129,8 @@ class Environment < ActiveRecord::Base
 
   def start_environment
     log_event(:operation => :start_environment)
+
+    update_attribute(:realm, user.default_realm)
     
     # destroy any instances from prior runs that may be hanging
     # around. Instances self destroy on stop, but this catches any

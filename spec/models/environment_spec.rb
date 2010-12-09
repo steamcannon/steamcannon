@@ -97,6 +97,14 @@ describe Environment do
         @environment.should_receive(:instances).and_return([instance])
         @environment.start!
       end
+
+      it "should set the realm to the current realm for the user" do
+        user = mock_model(User)
+        user.should_receive(:default_realm).and_return('xx')
+        @environment.stub!(:user).and_return(user)
+        @environment.should_receive(:realm=).with('xx')
+        @environment.start!
+      end
     end
   end
 
@@ -397,5 +405,6 @@ describe Environment do
     end
     
   end
-  
+
+
 end

@@ -117,7 +117,7 @@ describe Instance do
       @instance = Instance.new
       @instance.stub!(:cloud_specific_hacks).and_return(cloud_specific_hacks)
       @instance.stub_chain(:environment, :user, :ssh_key_name).and_return('something_not_default')
-      @instance.stub_chain(:environment, :default_realm).and_return('a_realm_id')
+      @instance.stub_chain(:environment, :realm).and_return('a_realm_id')
     end
 
     it "should include the instance user data" do
@@ -134,7 +134,7 @@ describe Instance do
       @instance.send(:instance_launch_options)[:key_name].should == 'something_not_default'
     end
 
-    it "should include the instance user default_realm as the realm" do
+    it "should include the environment realm as the realm" do
       @instance.send(:instance_launch_options)[:realm_id].should == 'a_realm_id'
     end
   end

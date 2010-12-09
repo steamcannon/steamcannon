@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(:version => 20101209155645) do
     t.string   "current_state",            :default => "stopped"
     t.boolean  "preserve_storage_volumes", :default => true
     t.text     "metadata"
+    t.string   "realm"
   end
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"

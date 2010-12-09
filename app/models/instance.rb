@@ -211,7 +211,7 @@ class Instance < ActiveRecord::Base
   end
 
   def realm
-    environment.default_realm
+    environment.realm
   end
 
   protected
@@ -227,7 +227,7 @@ class Instance < ActiveRecord::Base
       :hardware_profile => hardware_profile,
       :key_name => cloud_keyname,
       :user_data => instance_user_data,
-      :realm_id => environment.default_realm
+      :realm_id => environment.realm
     }.merge(cloud_specific_hacks.launch_options(self))
   end
 

@@ -26,7 +26,7 @@ module InstancesHelper
       if last_event
         msg << "The reason: #{event_error_message(last_event)}"
       else
-        msg << "This may be caused by capacity problems in your selected realm (#{instance.environment.user.default_realm}). Please stop and restart the environment. If the problem persists, choose a different realm by editing your #{link_to 'profile', edit_account_path}."
+        msg << "This may be caused by capacity problems in your selected realm (#{instance.realm}). Please stop and restart the environment. If the problem persists, choose a different realm by editing your #{link_to 'profile', edit_account_path}."
       end
     end
 
