@@ -244,6 +244,7 @@ ActiveRecord::Schema.define(:version => 20101209155645) do
     t.datetime "updated_at"
     t.string   "current_state"
     t.datetime "state_change_timestamp"
+    t.string   "realm"
   end
 
   create_table "users", :force => true do |t|
