@@ -365,7 +365,47 @@ describe UsersController do
       @organization.should_receive(:cloud_username=).with("uname")
       get :validate_cloud_credentials, :cloud_password => 'pw', :cloud_username => 'uname'
     end
-
-
   end
+
+  { "promote" => true, "demote" => false }.each do |action, organization_admin|
+    describe action do
+      before(:each) do
+        @user = mock_model(User, :email => 'email@example.com',
+                           :organization_admin= => nil, :save! => nil)
+        User.stub!(:find).and_return(@user)
+      end
+
+      context "functionality" do
+        before(:each) do
+          login({ }, :organization_admin? => true)
+        end
+
+        it "should set the user's organization admin flag to #{organization_admin}" do
+          @user.should_receive(:organization_admin=).with(organization_admin)
+          @user.should_receive(:save!)
+          post action, :id => 1
+        end
+
+        it "should redirect to the users list" do
+          post action, :id => 1
+          response.should redirect_to(users_path)
+        end
+      end
+
+      context "permissions" do
+        it "should not allow a regular user access" do
+          login({ }, :organization_admin? => false)
+          post action, :id => 1
+          response.should redirect_to(new_user_session_path)
+        end
+
+        it "should allow an organization admin to access" do
+          login({ }, :organization_admin? => true)
+          @user.should_receive(:organization_admin=).with(organization_admin)
+          post action, :id => 1
+        end
+      end
+    end
+  end
+
 end

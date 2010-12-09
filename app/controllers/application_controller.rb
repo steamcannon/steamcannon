@@ -90,6 +90,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def require_organization_admin
+    if !current_user || !current_user.organization_admin?
+      store_location
+      redirect_to new_user_session_url
+      return false
+    end
+  end
+
   def store_location
     session[:return_to] = request.request_uri
   end

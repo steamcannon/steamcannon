@@ -25,6 +25,7 @@ class UsersController < ResourceController::Base
   before_filter :require_user, :only => [:show, :edit, :update, :validate_cloud_credentials, :cloud_defaults_block]
   before_filter :require_superuser, :only => [:assume_user]
   before_filter :require_superuser_to_edit_other_user, :only => [:edit, :update]
+  before_filter :require_organization_admin, :only => [:promote, :demote]
   skip_before_filter :require_complete_profile, :except => [:show]
 
   new_action.before do
@@ -75,6 +76,20 @@ class UsersController < ResourceController::Base
     UserSession.create(object)
     flash[:notice] = "You have assumed the account of '#{object.email}'. You will need to logout and back in to return to your account."
     redirect_to root_path
+  end
+
+  def promote
+    object.organization_admin = true
+    object.save!
+    flash[:notice] = "User #{object.email} promoted to organization admin."
+    redirect_to users_path
+  end
+
+  def demote
+    object.organization_admin = false
+    object.save!
+    flash[:notice] = "User #{object.email} demoted to regular user."
+    redirect_to users_path
   end
 
   def validate_cloud_credentials

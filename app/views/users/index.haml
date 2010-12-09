@@ -11,7 +11,10 @@
         = sort_link('Email', :email)
       - content_for_superuser do
         %th.superuser
-          Superuser? 
+          Superuser?
+      - content_for_organization_admin do
+        %th.organizationadmin
+          Organization Admin?
       %th.lastlogin
         = sort_link('Last Login', :current_login_at)
       %th.lastrequest
@@ -25,6 +28,9 @@
         - content_for_superuser do
           %td.superuser
             = user.superuser?
+        - content_for_organization_admin do
+          %td.organizationadmin
+            = user.organization_admin?
         %td.lastlogin
           - if user.current_login_at
             == #{time_ago_in_words(user.current_login_at)} ago
@@ -35,4 +41,10 @@
           - content_for_superuser do
             = link_to 'Assume User', assume_user_user_path(user)
             = link_to 'Edit', edit_user_path(user)
+          - content_for_organization_admin do
+            - unless user == current_user
+              - if user.organization_admin?
+                = link_to 'Demote', demote_user_path(user), :method => :post
+                - else
+                  = link_to 'Promote', promote_user_path(user), :method => :post
   
