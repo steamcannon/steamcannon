@@ -80,12 +80,20 @@ describe User do
   it "should create an organization if none given" do
     user = User.create!(@valid_attributes)
     user.organization.should_not be_nil
+    user.organization_admin?.should be(true)
   end
 
   it "should not create an organization if given" do
     org = Factory(:organization)
     user = User.create!(@valid_attributes.merge(:organization => org))
     user.organization.should == org
+    user.organization_admin?.should be(false)
+  end
+
+  it "should not allow mass assignment of the organization_admin column" do
+    user = Factory.build(:user)
+    user.update_attributes(:organization_admin => true)
+    user.organization_admin?.should == false
   end
 
   context "visible_to_user named_scope" do

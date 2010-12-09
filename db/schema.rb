@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101208215626) do
+ActiveRecord::Schema.define(:version => 20101209155645) do
 
   create_table "account_requests", :force => true do |t|
     t.string   "email"
@@ -266,6 +266,7 @@ ActiveRecord::Schema.define(:version => 20101208215626) do
     t.string   "ssh_key_name",        :default => ""
     t.string   "default_realm"
     t.integer  "organization_id"
+    t.boolean  "organization_admin",  :default => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

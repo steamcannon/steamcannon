@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :organization
   validate :validate_ssh_key_name
-  after_create :ensure_organization
+  before_create :ensure_organization
 
   acts_as_authentic do |c|
   end
@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
     { :conditions => conditions }
   }
 
-  attr_protected :superuser
+  attr_protected :superuser, :organization_admin
 
   def cloud
     organization.cloud
@@ -90,15 +90,10 @@ class User < ActiveRecord::Base
     PasswordResetMailer.deliver_password_reset_instructions(host, self, from)
   end
 
-  def organization_admin?
-    true
-  end
-
   def ensure_organization
     if organization.nil?
-      org = Organization.create!(:name => email)
-      org.users << self
-      org.save!
+      create_organization(:name => email)
+      self.organization_admin = true
     end
   end
 end
