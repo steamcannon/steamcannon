@@ -112,10 +112,11 @@ describe StorageVolume do
   describe 'create_in_cloud' do
     before(:each) do
       @environment = Factory(:environment)
-      @environment.stub!(:default_realm).and_return('def realm')
+      @environment.stub!(:realm).and_return('def realm')
       @storage_volume.stub!(:environment).and_return(@environment)
-      @cloud_volume = mock('cloud_volume')
-      @cloud_volume.stub!(:id).and_return("vol-1234")
+      @cloud_volume = mock('cloud_volume',
+                           :id => "vol-1234",
+                           :realm_id => 'us-left-1e')
       @image = Factory.build(:image, :storage_volume_capacity => '77')
       @storage_volume.stub!(:image).and_return(@image)
     end
@@ -128,7 +129,7 @@ describe StorageVolume do
 
     it "should try to create" do
       @cloud.should_receive(:create_storage_volume).
-        with(:realm_id => @environment.default_realm,
+        with(:realm_id => @environment.realm,
              :capacity => '77').
         and_return(@cloud_volume)
       @storage_volume.send(:create_in_cloud)
@@ -140,6 +141,12 @@ describe StorageVolume do
       @storage_volume.volume_identifier.should == 'vol-1234'
     end
 
+    it "should store the realm id" do
+      @cloud.should_receive(:create_storage_volume).and_return(@cloud_volume)
+      @storage_volume.send(:create_in_cloud)
+      @storage_volume.realm.should == 'us-left-1e'
+    end
+    
     it "should move to available on success" do
       @cloud.should_receive(:create_storage_volume).and_return(@cloud_volume)
       @storage_volume.send(:create_in_cloud)
@@ -311,6 +318,31 @@ describe StorageVolume do
           lambda { @storage_volume.reload }.should raise_error(ActiveRecord::RecordNotFound)
         end
       end
+    end
+  end
+
+  describe 'realm' do
+    before(:each) do
+      @cloud_volume = mock('cloud_volume',
+                           :realm_id => 'us-left-1e')
+      @storage_volume.realm = nil
+    end
+    
+    it "should pull and store the realm if nil (to catch volumes that existed before realm was added)" do
+      @storage_volume.should_receive(:cloud_volume).and_return(@cloud_volume)
+      @storage_volume.realm.should == 'us-left-1e'
+    end
+
+    it "should store the realm in the db" do
+      @storage_volume.should_receive(:cloud_volume).and_return(@cloud_volume)
+      @storage_volume.should_receive(:update_attribute).with(:realm, 'us-left-1e')
+      @storage_volume.realm
+    end
+    
+    it "should return the stored realm if non-nil" do
+      @storage_volume.should_not_receive(:cloud_volume)
+      @storage_volume.realm = 'blah'
+      @storage_volume.realm.should == 'blah'
     end
   end
 end

@@ -35,6 +35,8 @@ class StorageVolume < ActiveRecord::Base
   has_one :environment, :through => :environment_image
 
   named_scope :should_exist, :conditions => "current_state != 'creating' AND current_state != 'not_found' AND current_state != 'pending_delete' AND current_state != 'deleted'"
+
+  named_scope :in_realm, lambda { |realm| { :conditions => { :realm => realm} } }
   
   before_destroy :destroy_cloud_volume
 
@@ -83,6 +85,15 @@ class StorageVolume < ActiveRecord::Base
     transitions :to => :deleted, :from => :pending_delete
   end
 
+  def realm
+    realm = super
+    unless realm
+      realm = cloud_volume.try(:realm_id)
+      update_attribute(:realm, realm) if realm
+    end
+    realm
+  end
+  
   def can_be_deleted?
     [:creating, :create_failed, :available, :attach_failed, :not_found].include?(current_state.to_sym)
   end
@@ -135,10 +146,11 @@ class StorageVolume < ActiveRecord::Base
   def create_in_cloud
     return if cloud_volume_is_available?
     #TODO: handle errors here
-    @cloud_volume = cloud.create_storage_volume(:realm_id => environment.default_realm,
+    @cloud_volume = cloud.create_storage_volume(:realm_id => environment.realm,
                                                 :capacity => image.storage_volume_capacity)
     if @cloud_volume
-      update_attribute(:volume_identifier, @cloud_volume.id)
+      update_attributes(:volume_identifier => @cloud_volume.id,
+                        :realm => @cloud_volume.realm_id)
       available!
     else
       fail!

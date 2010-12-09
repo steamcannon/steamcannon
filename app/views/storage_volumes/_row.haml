@@ -12,6 +12,10 @@
   %td.services
     .capacity
       Capacity: #{volume.image.storage_volume_capacity}GB
+    .realm
+      Availability Zone: #{volume.realm}
+    .last_used
+      Last Used: #{timeago(volume.state_change_timestamp)}
     - if volume.attached?
       .attachment_details
         Attached to #{volume.instance.cloud_id} on device #{volume.image.storage_volume_device}
