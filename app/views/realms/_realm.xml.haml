@@ -1,4 +1,4 @@
-%realm{:href=>realm_url(:id=>realm.name)}
+%realm{:href=>realm_url(:id=>realm.name), :'proxy-for'=>current_user.cloud.realm(realm.name).url}
   %name= realm.name
   %state= realm.state
   %limit= realm.limit

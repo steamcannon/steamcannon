@@ -1,4 +1,4 @@
-%images
+%images{:'proxy-for'=>@environment.cloud.images_url}
   - @images.each do |image| 
     - image.cloud_images.each do |ci|
       = render :partial => 'image', :locals => {:image => image, :cloud_image => ci}
