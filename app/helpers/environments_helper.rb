@@ -43,6 +43,17 @@ module EnvironmentsHelper
     current_user.cloud.attempt(:hardware_profiles, [])
   end
 
+  def start_environment_link(environment, title = 'Start Environment')
+    if environment.storage_volumes.any? { |volume| volume.realm != environment.user.default_realm }
+      trigger_id = "start_environment_trigger_#{environment.id}"
+      accum = link_to title, '#', :id => trigger_id
+      accum << render('environments/confirm_start', :environment => environment, :trigger => "##{trigger_id}").html_safe
+      accum
+    else
+      link_to title, start_environment_path(environment), :method => :post
+    end
+  end
+  
   def stop_environment_link(environment, title = "Stop Environment")
     trigger_id = "stop_environment_trigger_#{environment.id}"
     accum = link_to title, '#', :id => trigger_id

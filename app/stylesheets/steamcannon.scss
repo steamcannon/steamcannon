@@ -490,9 +490,20 @@ table.header_top {
 
 .jqmOverlay { background-color: #000; }
 
-.stop_environment_confirmation {
+.stop_environment_confirmation,
+.start_environment_confirmation { 
     .message {
         font-size: 120%;
+        ul {
+            list-style-type: disc;
+            list-style-position: inside;
+            li {
+                margin: 0px;
+            }
+        }
+        .in_realm {
+            font-weight: bold;
+        }
     }
     .controls {
         text-align: right;

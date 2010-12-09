@@ -4,7 +4,7 @@
       - if @environment.can_stop?
         = stop_environment_link(@environment)
       - elsif @environment.can_start?
-        = link_to 'Start Environment', start_environment_path(@environment), :method => :post
+        = start_environment_link(@environment)
       = link_to 'Edit Environment', edit_environment_path(@environment)
       - if @environment.event_subject
         = link_to 'Events', events_for_subject_path(@environment.event_subject)
