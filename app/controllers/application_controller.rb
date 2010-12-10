@@ -79,9 +79,6 @@ class ApplicationController < ActionController::Base
   end
 
   def require_user
-    request.env.each do |k,v|
-      puts "Request: #{k} = #{v}"
-    end
     case request.format
     when Mime::XML
       login_with_http_auth
