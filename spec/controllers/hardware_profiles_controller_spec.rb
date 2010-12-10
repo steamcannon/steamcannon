@@ -22,6 +22,7 @@ describe HardwareProfilesController do
   before(:each) do
     login
     @current_user.stub!(:cloud).and_return(mock_cloud)
+    @current_user_session.stub!(:save).and_return( true )
   end
 
   def mock_cloud(stubs={})

@@ -67,11 +67,30 @@ class ApplicationController < ActionController::Base
     store_location and redirect_to edit_account_path unless current_user.profile_complete?
   end
 
+  def login_with_http_auth
+    authenticate_with_http_basic do |user,pass|
+      @current_user_session = UserSession.new(:email=>user, :password=>pass)
+    end
+    if @current_user_session && @current_user_session.save
+      @current_user = @current_user_session.record
+    else
+      request_http_basic_authentication
+    end
+  end
+
   def require_user
-    unless current_user
-      store_location
-      redirect_to new_user_session_url
-      return false
+    request.env.each do |k,v|
+      puts "Request: #{k} = #{v}"
+    end
+    case request.format
+    when Mime::XML
+      login_with_http_auth
+    else
+      unless current_user 
+        store_location
+        redirect_to new_user_session_url
+        return false
+      end
     end
   end
 

@@ -25,6 +25,7 @@ describe RealmsController do
     @realms = []
     mock_cloud.stub!(:realms).and_return(@realms)
     @current_user.stub!(:cloud).and_return( mock_cloud )
+    @current_user_session.stub!(:save).and_return( true )
   end
 
   def mock_cloud(stubs={})
