@@ -67,7 +67,7 @@ module Cloud
 
     def unique_bucket_name(prefix)
       sc_salt = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
-      creds_salt = Digest::SHA1.hexdigest(@user.cloud_username)
+      creds_salt = Digest::SHA1.hexdigest(access_key)
       suffix = Digest::SHA1.hexdigest("#{sc_salt} #{creds_salt}")
       "#{prefix}#{suffix}"
     end
@@ -75,11 +75,11 @@ module Cloud
     protected
 
     def access_key
-      @user.cloud_username
+      @cloud_profile.username
     end
 
     def secret_access_key
-      @user.cloud_password
+      @cloud_profile.password
     end
 
     def pre_signed_put_url(instance)
@@ -117,7 +117,7 @@ module Cloud
     memoize :multicast_bucket
 
     def base_security_group
-      { :user => @user,
+      { :cloud_profile => @cloud_profile,
         :name => 'steamcannon',
         :description => 'SteamCannon',
         :permissions => [
@@ -155,7 +155,7 @@ module Cloud
         }
 
       end
-      { :user => @user,
+      { :cloud_profile => @cloud_profile,
         :name => name,
         :description => description,
         :permissions => permissions

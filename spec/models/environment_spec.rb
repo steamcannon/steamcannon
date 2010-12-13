@@ -42,9 +42,9 @@ describe Environment do
     @environment.should respond_to(:cloud)
   end
 
-  it "should delegate to the user's cloud for the cloud attribute" do
+  it "should delegate to the cloud_profile's cloud for the cloud attribute" do
     cloud = mock(:cloud)
-    @environment.user.should_receive(:cloud).and_return(cloud)
+    @environment.cloud_profile.should_receive(:cloud).and_return(cloud)
     @environment.cloud
   end
 
@@ -52,9 +52,9 @@ describe Environment do
     @environment.should respond_to(:region)
   end
 
-  it "should delegate to the user's cloud for the region attribute" do
+  it "should delegate to the cloud_profile's cloud for the region attribute" do
     cloud = mock(:cloud)
-    @environment.user.stub!(:cloud).and_return(cloud)
+    @environment.cloud_profile.stub!(:cloud).and_return(cloud)
     cloud.should_receive(:region)
     @environment.region
   end

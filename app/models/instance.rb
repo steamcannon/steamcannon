@@ -129,7 +129,7 @@ class Instance < ActiveRecord::Base
   end
 
   def cloud
-    user.cloud
+    cloud_profile.cloud
   end
 
   def cloud_instance
@@ -199,13 +199,17 @@ class Instance < ActiveRecord::Base
   end
 
   def cloud_specific_hacks
-    user.cloud_specific_hacks
+    cloud_profile.cloud_specific_hacks
   end
 
   def user
     environment.user
   end
 
+  def cloud_profile
+    environment.cloud_profile
+  end
+  
   def unreachable_for_too_long?
     unreachable? && stuck_in_state_for_too_long?(48.hours)
   end
@@ -216,7 +220,7 @@ class Instance < ActiveRecord::Base
 
   protected
   def start_instance
-    image_cloud_id = image.cloud_id(hardware_profile, user)
+    image_cloud_id = image.cloud_id(hardware_profile, cloud_profile)
     raise RuntimeError.new("Cloud image not found for #{hardware_profile}") unless image_cloud_id
     cloud_instance = cloud.launch(image_cloud_id, instance_launch_options)
     update_addresses(cloud_instance, :cloud_id => cloud_instance.id)
@@ -314,7 +318,7 @@ class Instance < ActiveRecord::Base
   def event_subject_metadata
     {
       :cloud_instance_id => cloud_id,
-      :cloud_image_id => image.cloud_id(hardware_profile, user),
+      :cloud_image_id => image.cloud_id(hardware_profile, cloud_profile),
       :cloud_hardware_profile => hardware_profile,
       :started_by => started_by,
       :stopped_by => stopped_by

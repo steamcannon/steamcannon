@@ -211,14 +211,12 @@ describe ArtifactVersion do
   describe "storage" do
     before(:each) do
       @artifact_version = Factory(:artifact_version)
-      @user = Factory(:user)
-      @artifact_version.stub_chain(:artifact, :user).and_return(@user)
-      @cloud = mock('cloud')
-      @user.stub!(:cloud).and_return(@cloud)
+      @cloud_profile = Factory(:cloud_profile)
+      @artifact_version.stub_chain(:artifact, :cloud_profile).and_return(@cloud_profile)
+      @cloud_profile.stub!(:cloud_name).and_return('ec2')
     end
 
     it "should create class from cloud name" do
-      @cloud.should_receive(:name).at_least(:once).and_return('ec2')
       Cloud::Storage::Ec2Storage.should_receive(:new)
       @artifact_version.send(:storage)
     end
