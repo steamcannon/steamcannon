@@ -10,10 +10,10 @@
         = link_to 'Log out', user_session_path, :method => :delete 
         .header_instances
           .running_instances
-            Running Instances: #{@current_user.cloud_specific_hacks.instances_summary[:running]}
+            Running Instances: #{cloud_instances_summary :running}
           .managed_instances
-            Managed Instances: #{@current_user.cloud_specific_hacks.instances_summary[:managed]}
-          - runaway_instances = @current_user.cloud_specific_hacks.instances_summary[:runaway]
+            Managed Instances: #{cloud_instances_summary :managed }
+          - runaway_instances = cloud_instances_summary :runaway
           - if runaway_instances > 0
             .runaway_instances
               = link_to "Orphaned Instances: #{runaway_instances}", cloud_instances_path
