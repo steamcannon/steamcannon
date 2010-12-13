@@ -47,17 +47,27 @@ describe CloudProfile do
     @cloud_profile.obfuscated_password.should == "******7890"
   end
 
-  it "should have a cloud object" do
-    @cloud_profile.should respond_to(:cloud)
-  end
+  describe 'cloud' do
+    it "should have a cloud object" do
+      @cloud_profile.should respond_to(:cloud)
+    end
 
-  it "should pass cloud credentials through to cloud object" do
-    @cloud_profile.username = 'user'
-    @cloud_profile.password = 'password'
-    Cloud::Deltacloud.should_receive(:new).with('user', 'password')
-    @cloud_profile.cloud
-  end
+    it "should pass cloud credentials and provider info through to cloud object" do
+      @cloud_profile.username = 'user'
+      @cloud_profile.password = 'password'
+      @cloud_profile.cloud_name = 'driver x'
+      @cloud_profile.provider_name = 'bf-egypt-1'
+      Cloud::Deltacloud.should_receive(:new).with('user', 'password', 'driver x', 'bf-egypt-1')
+      @cloud_profile.cloud
+    end
 
+    it "should cache the cloud instance" do
+      Cloud::Deltacloud.should_receive(:new).once.and_return('not nil')
+      @cloud_profile.cloud
+      @cloud_profile.cloud
+    end
+  end
+  
   context "validate_cloud_credentials" do
     before(:each) do
       @cloud = mock('cloud')
