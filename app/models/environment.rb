@@ -33,7 +33,8 @@ class Environment < ActiveRecord::Base
 
   belongs_to :platform_version
   belongs_to :user
-
+  belongs_to :cloud_profile
+  
   attr_protected :user_id
 
   accepts_nested_attributes_for :environment_images
