@@ -20,7 +20,7 @@ require 'spec_helper'
 
 describe Cloud::Deltacloud do
   before(:each) do
-    @deltacloud = Cloud::Deltacloud.new('abc', '123')
+    @deltacloud = Cloud::Deltacloud.new('abc', '123', 'ec2', 'bf-egypt-1')
   end
 
   describe "launch" do
@@ -147,7 +147,7 @@ describe Cloud::Deltacloud do
 
     it "should create with right credentials and url" do
       APP_CONFIG[:deltacloud_url] = 'url'
-      DeltaCloud.should_receive(:new).with('abc', '123', 'url')
+      DeltaCloud.should_receive(:new).with('abc', '123', 'url', { :driver => 'ec2', :provider => 'bf-egypt-1'})
       @deltacloud.client
     end
 
@@ -161,7 +161,7 @@ describe Cloud::Deltacloud do
   describe "valid_credentials?" do
     it "should validate with right credentials and url" do
       APP_CONFIG[:deltacloud_url] = 'url'
-      DeltaCloud.should_receive(:valid_credentials?).with('abc', '123', 'url')
+      DeltaCloud.should_receive(:valid_credentials?).with('abc', '123', 'url', { :driver => 'ec2', :provider => 'bf-egypt-1'})
       @deltacloud.valid_credentials?
     end
   end
