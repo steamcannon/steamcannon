@@ -47,4 +47,10 @@ module InstancesHelper
       link_to_function('Details', "update_instance_message(#{instance.id}, #{details})")
     end
   end
+
+  def cloud_instances_summary(type)
+    current_user.environments.inject(0) do |sum, env|
+      sum += env.cloud_profile.cloud_specific_hacks.instances_summary[type]
+    end
+  end
 end
