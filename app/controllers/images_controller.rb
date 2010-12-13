@@ -17,6 +17,8 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class ImagesController < ApplicationController
+  before_filter :require_user
+
   def index
     @environment = current_user.environments.find(params[:environment_id])
     @images = @environment.images
