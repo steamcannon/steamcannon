@@ -51,6 +51,14 @@ describe EnvironmentsController do
       get :show, :id => "37"
       assigns[:environment].should equal(mock_environment)
     end
+
+    context "API" do
+      it "responds with 404 response code when the environment is not found" do
+        Environment.stub(:find).with("37").and_raise(ActiveRecord::RecordNotFound)
+        get :show, :id => "37"
+        response.response_code.should == 404
+      end
+    end
   end
 
   describe "GET new" do
