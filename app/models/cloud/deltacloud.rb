@@ -20,11 +20,13 @@
 module Cloud
   class Deltacloud
 
-    attr_reader :cloud_username, :cloud_password, :last_error
+    attr_reader :cloud_username, :cloud_password, :driver, :provider, :last_error
 
-    def initialize(cloud_username, cloud_password)
+    def initialize(cloud_username, cloud_password, driver, provider)
       @cloud_username = cloud_username
       @cloud_password = cloud_password
+      @driver = driver
+      @provider = provider
     end
 
     def launch(image_id, opts={})
@@ -110,15 +112,15 @@ module Cloud
     end
 
     def region
-      'us-east-1'
+      provider
     end
 
     def client
-      @client ||= DeltaCloud.new(@cloud_username, @cloud_password, APP_CONFIG[:deltacloud_url])
+      @client ||= DeltaCloud.new(*deltacloud_args)
     end
 
     def valid_credentials?
-      DeltaCloud.valid_credentials?(@cloud_username, @cloud_password, APP_CONFIG[:deltacloud_url])
+      DeltaCloud.valid_credentials?(*deltacloud_args)
     end
 
     def valid_key_name?(key_name)
@@ -128,6 +130,10 @@ module Cloud
 
     protected
 
+    def deltacloud_args
+      [@cloud_username, @cloud_password, APP_CONFIG[:deltacloud_url], { :driver => @driver, :provider => @provider }]
+    end
+    
     def deltacloud_hardware_profiles
       Rails.cache.fetch('DeltacloudHardwareProfiles') do
         client.hardware_profiles.select do |profile|

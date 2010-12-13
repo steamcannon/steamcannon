@@ -29,7 +29,7 @@ class CloudProfile < ActiveRecord::Base
   end
 
   def cloud
-    Cloud::Deltacloud.new(username, password)
+    @cloud ||= Cloud::Deltacloud.new(username, password, cloud_name, provider_name)
   end
 
   def cloud_specific_hacks
