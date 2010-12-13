@@ -131,7 +131,7 @@ class StorageVolume < ActiveRecord::Base
   
  protected
   def cloud
-    environment.user.cloud
+    environment.cloud
   end
 
   def attach_volume

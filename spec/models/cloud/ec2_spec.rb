@@ -20,12 +20,10 @@ require 'spec_helper'
 
 describe Cloud::Ec2 do
   before(:each) do
-    @user = Factory.build(:user)
-    @organization = Factory.build(:organization,
-                                  :cloud_username => 'username',
-                                  :cloud_password => 'password')
-    @user.stub!(:organization).and_return(@organization)
-    @ec2 = Cloud::Ec2.new(@user)
+    @cloud_profile = Factory.build(:cloud_profile,
+                                   :username => 'username',
+                                   :password => 'password')
+    @ec2 = Cloud::Ec2.new(@cloud_profile)
     @instance = Factory.build(:instance)
   end
 
@@ -88,12 +86,12 @@ describe Cloud::Ec2 do
 
   describe "running_instances" do
     it "should be empty if cloud username isn't set" do
-      @organization.stub!(:cloud_username).and_return('')
+      @cloud_profile.stub!(:username).and_return('')
       @ec2.running_instances.should be_empty
     end
 
     it "should be empty if cloud password isn't set" do
-      @organization.stub!(:cloud_password).and_return('')
+      @cloud_profile.stub!(:password).and_return('')
       @ec2.running_instances.should be_empty
     end
   end
@@ -127,15 +125,15 @@ describe Cloud::Ec2 do
       @sig.stub!(:generate_temporary_url)
     end
 
-    it "should get access_key from user object" do
-      @organization.should_receive(:cloud_username).and_return('username')
+    it "should get access_key from cloud_profile object" do
+      @cloud_profile.should_receive(:username).and_return('username')
       @sig.should_receive(:generate_temporary_url).
         with(hash_including(:access_key => 'username'))
       @ec2.send(:pre_signed_url, @instance, {})
     end
 
-    it "should get secret_access_key from user object" do
-      @organization.should_receive(:cloud_password).and_return('password')
+    it "should get secret_access_key from cloud_profile object" do
+      @cloud_profile.should_receive(:password).and_return('password')
       @sig.should_receive(:generate_temporary_url).
         with(hash_including(:secret_access_key => 'password'))
       @ec2.send(:pre_signed_url, @instance, {})
@@ -242,8 +240,8 @@ describe Cloud::Ec2 do
                             :open_ports => [])
     end
 
-    it "should belong to correct user" do
-      @ec2.send(:security_group_from_service, @agent_service)[:user].should == @user
+    it "should belong to correct cloud_profile" do
+      @ec2.send(:security_group_from_service, @agent_service)[:cloud_profile].should == @cloud_profile
     end
 
     it "should create name from service's name" do

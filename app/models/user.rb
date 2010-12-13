@@ -47,22 +47,11 @@ class User < ActiveRecord::Base
 
   attr_protected :superuser, :organization_admin
 
-  def cloud
-    organization.cloud
-  end
-
-  def cloud_username
-    organization.cloud_username
-  end
-
-  def cloud_password
-    organization.cloud_password
-  end
-
   def profile_complete?
-    self.superuser? || (!self.cloud_username.blank? &&
-                        !self.cloud_password.blank? &&
-                        !self.default_realm.blank?)
+#     self.superuser? || (!self.cloud_username.blank? &&
+#                         !self.cloud_password.blank? &&
+#                         !self.default_realm.blank?)
+    true
   end
 
   def validate_ssh_key_name
@@ -72,17 +61,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  def cloud_specific_hacks
-    @cloud_hacks ||= "Cloud::#{cloud.name.camelize}".constantize.new(self)
-  end
-
-  def environment_bucket_name
-    cloud_specific_hacks.unique_bucket_name("SteamCannonEnvironments_")
-  end
-
-  def artifact_bucket_name
-    cloud_specific_hacks.unique_bucket_name("SteamCannonArtifacts_")
-  end
 
   def send_password_reset_instructions!(host)
     reset_perishable_token!

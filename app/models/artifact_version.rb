@@ -161,10 +161,10 @@ class ArtifactVersion < ActiveRecord::Base
   end
 
   def storage
-    user = artifact.user
-    storage_class = "Cloud::Storage::#{user.cloud.name.camelize}Storage".constantize
-    storage_class.new(user.cloud_username,
-                      user.cloud_password,
-                      user.cloud_specific_hacks)
+    cloud_profile = artifact.cloud_profile
+    storage_class = "Cloud::Storage::#{cloud_profile.cloud_name.camelize}Storage".constantize
+    storage_class.new(cloud_profile.username,
+                      cloud_profile.password,
+                      cloud_profile.cloud_specific_hacks)
   end
 end
