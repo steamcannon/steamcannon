@@ -1,0 +1,22 @@
+%h1 New cloud_profile
+- form_for(@cloud_profile) do |f|
+  = f.error_messages
+  %p
+    = f.label :cloud_name
+    %br/
+    = f.text_field :cloud_name
+  %p
+    = f.label :provider_name
+    %br/
+    = f.text_field :provider_name
+  %p
+    = f.label :username
+    %br/
+    = f.text_field :username
+  %p
+    = f.label :password
+    %br/
+    = f.text_field :password
+  %p
+    = f.submit 'Create'
+= link_to 'Back', cloud_profiles_path
