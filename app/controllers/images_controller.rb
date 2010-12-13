@@ -20,14 +20,22 @@ class ImagesController < ApplicationController
   before_filter :require_user
 
   def index
-    @environment = current_user.environments.find(params[:environment_id])
-    @images = @environment.images
+    begin
+      @environment = current_user.environments.find(params[:environment_id])
+      @images = @environment.images
+    rescue ActiveRecord::RecordNotFound
+      render :text => '', :status => 404
+    end
   end
 
   def show
-    @environment = current_user.environments.find(params[:environment_id])
-    @image = Image.find(params[:id])
-    # It's all complicated like this to scope the DB query to the user instead of just using CloudImage.find_by_cloud_id
-    @cloud_image = @image.cloud_images.flatten.first{|ci|ci.cloud_id == params[:id]}
+    begin
+      @environment = current_user.environments.find(params[:environment_id])
+      @image = @environment.images.find(params[:id]) unless @environment.blank?
+      # It's all complicated like this to scope the DB query to the user instead of just using CloudImage.find_by_cloud_id
+      @cloud_image = @image.cloud_images.flatten.first{|ci|ci.cloud_id == params[:id]} unless @image.blank?
+    rescue ActiveRecord::RecordNotFound
+      render :text => '', :status => 404
+    end
   end
 end

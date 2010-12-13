@@ -55,13 +55,20 @@ describe ImagesController do
       get :index, :environment_id => "13", :format=>'xml'
       assigns[:images].should equal(@images)
     end
+
+    it "should return 404 status code if the environment is not found" do
+      Environment.stub!(:find).with("13").and_raise(ActiveRecord::RecordNotFound)
+      get :index, :environment_id => "13", :format=>'xml'
+      response.response_code.should == 404
+    end
   end
 
   describe "GET show" do
     before(:each) do
-      images = []
       @image = mock_model(Image)
-      Image.stub!(:find).and_return(@image)
+      @images = [@image]
+      mock_environment.stub!(:images).and_return(@images)
+      @images.stub(:find).with("1").and_return(@image)
       @cloud_image = mock_model(CloudImage, :cloud_id=>'1')
       @image.stub!(:cloud_images).and_return([@cloud_image])
     end
@@ -84,6 +91,18 @@ describe ImagesController do
     it "should assign the requested cloud_image as @cloud_image" do
       get :show, :id => "1", :environment_id => "13", :format => 'xml'
       assigns[:cloud_image].should equal(@cloud_image)
+    end
+
+    it "should return 404 status code if the environment is not found" do
+      Environment.stub!(:find).with("13").and_raise(ActiveRecord::RecordNotFound)
+      get :show, :id => "1", :environment_id => "13", :format => 'xml'
+      response.response_code.should == 404
+    end
+
+    it "should return 404 status code if the image is not found" do
+      @images.stub!(:find).with("2").and_raise(ActiveRecord::RecordNotFound)
+      get :show, :id => "2", :environment_id => "13", :format => 'xml'
+      response.response_code.should == 404
     end
 
   end
