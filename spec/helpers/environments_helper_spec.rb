@@ -30,8 +30,9 @@ describe EnvironmentsHelper do
   end
 
   it "should retrieve hardware profiles from cloud" do
-    helper.stub_chain(:current_user, :cloud, :attempt).and_return(['small'])
-    helper.hardware_profile_options.should eql(['small'])
+    cloud_profile = mock(CloudProfile)
+    cloud_profile.stub_chain(:cloud, :attempt).and_return(['small'])
+    helper.hardware_profile_options(cloud_profile).should eql(['small'])
   end
 
 end

@@ -39,8 +39,8 @@ module EnvironmentsHelper
     end.to_json
   end
 
-  def hardware_profile_options
-    current_user.cloud.attempt(:hardware_profiles, [])
+  def hardware_profile_options(cloud_profile)
+    cloud_profile.cloud.attempt(:hardware_profiles, [])
   end
 
   def start_environment_link(environment, title = 'Start Environment')

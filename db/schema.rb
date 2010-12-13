@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101209155645) do
+ActiveRecord::Schema.define(:version => 20101211211740) do
 
   create_table "account_requests", :force => true do |t|
     t.string   "email"
@@ -34,12 +34,13 @@ ActiveRecord::Schema.define(:version => 20101209155645) do
   end
 
   create_table "artifacts", :force => true do |t|
-    t.string   "name",        :null => false
+    t.string   "name",             :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
     t.text     "description"
     t.integer  "service_id"
+    t.integer  "cloud_profile_id"
   end
 
   create_table "certificates", :force => true do |t|
@@ -58,6 +59,17 @@ ActiveRecord::Schema.define(:version => 20101209155645) do
     t.string   "architecture"
     t.string   "cloud_id"
     t.integer  "image_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "cloud_profiles", :force => true do |t|
+    t.string   "name"
+    t.string   "cloud_name"
+    t.string   "provider_name"
+    t.string   "username"
+    t.string   "crypted_password"
+    t.integer  "organization_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -105,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20101209155645) do
     t.boolean  "preserve_storage_volumes", :default => true
     t.text     "metadata"
     t.string   "realm"
+    t.integer  "cloud_profile_id"
   end
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
@@ -183,8 +196,6 @@ ActiveRecord::Schema.define(:version => 20101209155645) do
 
   create_table "organizations", :force => true do |t|
     t.string   "name"
-    t.string   "cloud_username"
-    t.string   "crypted_cloud_password"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
