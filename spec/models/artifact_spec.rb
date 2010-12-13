@@ -24,6 +24,8 @@ describe Artifact do
   end
   
   it { should belong_to :service }
+  it { should belong_to :cloud_profile }
+  
   it { should have_many( :artifact_versions ).dependent( :destroy ) }
   it { should have_many( :deployments ).through( :artifact_versions ) }
   

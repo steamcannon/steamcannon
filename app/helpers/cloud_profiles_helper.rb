@@ -1,0 +1,2 @@
+module CloudProfilesHelper
+end
