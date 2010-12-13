@@ -30,6 +30,7 @@ describe Environment do
   
   it { should belong_to :user }
   it { should belong_to :platform_version }
+  it { should belong_to :cloud_profile }
 
   it_should_have_events
   

@@ -16,9 +16,10 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-Factory.define :environment do |env|
-  env.name 'Environment'
-  env.association :user
-  env.association :platform_version
-  env.association :cloud_profile
+Factory.sequence :cloud_profile_name do |n|
+  "cloud_profile ##{n}"
+end
+
+Factory.define :cloud_profile do |cp|
+  cp.name { Factory.next(:cloud_profile_name)}
 end
