@@ -19,5 +19,4 @@
 
 class UserSession < Authlogic::Session::Base
   last_request_at_threshold 5.minutes
-  allow_http_basic_auth true
 end

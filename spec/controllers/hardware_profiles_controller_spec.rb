@@ -20,9 +20,8 @@ require 'spec_helper'
 
 describe HardwareProfilesController do
   before(:each) do
-    login
+    login_with_http_basic
     @current_user.stub!(:cloud).and_return(mock_cloud)
-    @current_user_session.stub!(:save).and_return( true )
   end
 
   def mock_cloud(stubs={})
@@ -31,14 +30,14 @@ describe HardwareProfilesController do
 
   describe "GET index" do
     it "should assign the user's cloud instance as @cloud" do
-      get :index, :format=>'xml'
+      get :index, :format => 'xml'
       assigns[:cloud].should equal(mock_cloud)
     end
   end
 
   describe "GET show" do
     it "should assign the user's cloud instance as @cloud" do
-      get :index, :format => 'xml'
+      get :show, :format => 'xml', :id => '1'
       assigns[:cloud].should equal(mock_cloud)
     end
   end

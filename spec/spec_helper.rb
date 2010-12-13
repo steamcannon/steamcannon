@@ -68,7 +68,19 @@ Spec::Runner.configure do |config|
       user
     end
 
+    def login_with_http_basic
+      UserSession.stub!(:find).and_return(nil)
+      user = Factory.build(:user)
+      user.stub!(:superuser? => false, :profile_complete? => true)
+      User.stub!(:find_by_smart_case_login_field).with(user.email).and_return(user)
+      user.stub!(:valid_password?).with(user.password).and_return(true)
+      encoded_credentials = Base64.encode64("#{user.email}:#{user.password}")
+      @request.env["HTTP_AUTHORIZATION"] = "Basic #{encoded_credentials}"
+      @current_user = user
+    end
+
     def logout
+      @current_user = nil
       @current_user_session = nil
       UserSession.stub!(:find).and_return(nil)
       AuditColumns::Base.stub!(:controller).and_return(nil)

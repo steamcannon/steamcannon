@@ -21,11 +21,10 @@ require 'spec_helper'
 describe RealmsController do
 
   before(:each) do
-    login
+    login_with_http_basic
     @realms = []
     mock_cloud.stub!(:realms).and_return(@realms)
     @current_user.stub!(:cloud).and_return( mock_cloud )
-    @current_user_session.stub!(:save).and_return( true )
   end
 
   def mock_cloud(stubs={})
@@ -34,7 +33,7 @@ describe RealmsController do
 
   describe "GET index" do
     it "should assign the realms as @realms" do
-      get :index, :format=>'xml'
+      get :index, :format => 'xml'
       assigns[:realms].should equal(@realms)
     end
   end
