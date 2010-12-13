@@ -42,6 +42,7 @@ group :test do
   gem "shoulda", "2.11.3"
   gem "awesome_print", "0.2.1"
   gem "email_spec", "0.6.3"
+  gem "watchr", '0.7'
 end
 
 group :development do
