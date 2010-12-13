@@ -21,7 +21,7 @@ require 'spec_helper'
 describe ImagesController do
 
   before(:each) do
-    login
+    login_with_http_basic
     @current_user.stub!(:cloud).and_return( mock_cloud )
     @current_user.stub!(:environments).and_return( Environment )
     Environment.stub!(:find).with("13").and_return( mock_environment )
