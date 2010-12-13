@@ -20,8 +20,8 @@ module Cloud
   class Base
     extend ActiveSupport::Memoizable
 
-    def initialize(user)
-      @user = user
+    def initialize(cloud_profile)
+      @cloud_profile = cloud_profile
     end
 
     def multicast_config(instance)
@@ -33,7 +33,7 @@ module Cloud
     end
 
     def instances_cache_key
-      "User#{@user.id}InstancesCache"
+      "CloudProfile#{@cloud_profile.id}InstancesCache"
     end
 
     def instances_summary(force_refresh = false)
@@ -47,7 +47,7 @@ module Cloud
     end
 
     def running_instances
-      instances = @user.cloud.instances.select do |instance|
+      instances = @cloud_profile.cloud.instances.select do |instance|
         instance.state.upcase != 'STOPPED'
       end
       instances.map do |instance|

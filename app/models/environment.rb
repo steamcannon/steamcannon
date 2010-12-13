@@ -75,11 +75,11 @@ class Environment < ActiveRecord::Base
   before_update :remove_images_from_prior_platform_version
 
   def cloud
-    user.cloud
+    cloud_profile.cloud
   end
 
   def region
-    user.cloud.region
+    cloud_profile.cloud.region
   end
 
   def platform
