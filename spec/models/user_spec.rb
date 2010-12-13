@@ -28,25 +28,11 @@ describe User do
   end
 
   it { should belong_to :organization }
-
+  it { should have_many :environments }
+  it { should have_many :artifacts }
+  
   it "should create a new instance given valid attributes" do
     User.create!(@valid_attributes)
-  end
-
-  it "should have a cloud_username attribute" do
-    User.new.should respond_to(:cloud_username)
-  end
-
-  it "should have a cloud password attribute" do
-    User.new.should respond_to(:cloud_password)
-  end
-
-  it "should have a cloud object" do
-    User.new.should respond_to(:cloud)
-  end
-
-  it "should have many environments" do
-    User.new.should respond_to(:environments)
   end
 
   it "should have an SSH key name attribute" do
@@ -58,23 +44,10 @@ describe User do
     User.new.ssh_key_name.should be_blank
   end
 
-  it "should have many artifacts" do
-    User.new.should respond_to(:artifacts)
-  end
-
   it "should not allow mass assignment of the superuser column" do
     user = Factory.build(:user)
     user.update_attributes(:superuser => true)
     user.superuser.should == false
-  end
-
-  it "should create cloud specific hacks" do
-    user = Factory.build(:user)
-    cloud = mock('cloud')
-    user.should_receive(:cloud).and_return(cloud)
-    cloud.should_receive(:name).and_return('ec2')
-    Cloud::Ec2.should_receive(:new).with(user)
-    user.cloud_specific_hacks
   end
 
   it "should create an organization if none given" do

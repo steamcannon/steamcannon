@@ -19,50 +19,12 @@
 class Organization < ActiveRecord::Base
   has_many :users
   has_many :account_requests
-
-  before_save :encrypt_cloud_password
-  validate :validate_cloud_credentials
-
-  attr_accessor_with_default :cloud_password_dirty, false
-  attr_accessor_with_default( :cloud_password ) do
-    (@cloud_password_dirty or self.crypted_cloud_password.blank?) ? @cloud_password : Certificate.decrypt(self.crypted_cloud_password)
-  end
-
-  def obfuscated_cloud_password
-    obfuscated = cloud_password ? cloud_password.dup : ''
-    if obfuscated.length < 6
-      obfuscated = '******'
-    else
-      obfuscated[0..-5] = '*' * (cloud_password.length-4)
-    end
-    obfuscated
-  end
-
-  def cloud_password=(pw)
-    @cloud_password_dirty = true
-    @cloud_password = pw
-  end
-
-  def cloud
-    Cloud::Deltacloud.new(cloud_username, cloud_password)
-  end
-
+  has_many :cloud_profiles
+  has_many :environments, :through => :users
+  has_many :artifacts, :through => :users
+  
   def to_s
     name
   end
-
-  protected
-
-  def encrypt_cloud_password
-    if @cloud_password_dirty || (new_record? && !@cloud_password.blank?)
-      self.crypted_cloud_password = Certificate.encrypt(@cloud_password)
-    end
-  end
-
-  def validate_cloud_credentials
-    if cloud_username_changed? or @cloud_password_dirty
-      message = "Cloud credentials are invalid"
-      errors.add_to_base(message) unless cloud.valid_credentials?
-    end
-  end
+  
 end
