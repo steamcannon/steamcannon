@@ -130,13 +130,6 @@ describe Environment do
         @environment.start!
       end
 
-      it "should set the realm to the current realm for the user" do
-        user = mock_model(User)
-        user.should_receive(:default_realm).and_return('xx')
-        @environment.stub!(:user).and_return(user)
-        @environment.should_receive(:realm=).with('xx')
-        @environment.start!
-      end
     end
   end
 
@@ -439,5 +432,42 @@ describe Environment do
     
   end
 
+  context "validate_ssh_key_name" do
+    before(:each) do
+      @environment = Factory(:environment)
+      @cloud = mock('cloud')
+      @environment.stub!(:cloud).and_return(@cloud)
+    end
 
+    it "should validate if ssh_key_name has changed" do
+      @environment.ssh_key_name = 'key_name'
+      @cloud.should_receive(:valid_key_name?)
+      @environment.validate_ssh_key_name
+    end
+
+    it "shouldn't validate if ssh_key_name hasn't changed" do
+      @cloud.should_not_receive(:valid_key_name?)
+      @environment.validate_ssh_key_name
+    end
+
+    it "shouldn't validate if ssh_key_name is blank" do
+      @environment.ssh_key_name = ''
+      @cloud.should_not_receive(:valid_key_name?)
+      @environment.validate_ssh_key_name
+    end
+
+    it "should add an error if invalid" do
+      @environment.ssh_key_name = 'key_name'
+      @cloud.should_receive(:valid_key_name?).and_return(false)
+      @environment.validate_ssh_key_name
+      @environment.errors.size.should be(1)
+    end
+
+    it "should not add an error if valid" do
+      @environment.ssh_key_name = 'key_name'
+      @cloud.should_receive(:valid_key_name?).and_return(true)
+      @environment.validate_ssh_key_name
+      @environment.errors.size.should be(0)
+    end
+  end
 end

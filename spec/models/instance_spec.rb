@@ -172,7 +172,7 @@ describe Instance do
       cloud_specific_hacks.stub!(:launch_options).and_return({})
       @instance = Instance.new
       @instance.stub!(:cloud_specific_hacks).and_return(cloud_specific_hacks)
-      @instance.stub_chain(:environment, :user, :ssh_key_name).and_return('something_not_default')
+      @instance.stub_chain(:environment, :ssh_key_name).and_return('something_not_default')
       @instance.stub_chain(:environment, :realm).and_return('a_realm_id')
     end
 

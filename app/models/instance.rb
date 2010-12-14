@@ -253,7 +253,7 @@ class Instance < ActiveRecord::Base
   end
 
   def cloud_keyname
-    user.ssh_key_name
+    environment.ssh_key_name
   end
 
   def instance_user_data

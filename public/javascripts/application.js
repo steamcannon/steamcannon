@@ -33,10 +33,15 @@ function apply_ujs_rules($) {
     })
 
 
-        $('#environment_form #environment_platform_version_id').applyOnce().change(function() {
-            $('.content_row').hide()
-            $('.row_for_platform_version_' + this.value).show()
-        })
+    $('#environment_form #environment_platform_version_id').applyOnce().change(function() {
+        $('.content_row').hide()
+        $('.row_for_platform_version_' + $(this).val() + '_cloud_profile_' + $('#environment_cloud_profile_id').val()).show()
+    })
+
+    $('#environment_form #environment_cloud_profile_id').applyOnce().change(function() {
+        $('.content_row').hide()
+        $('.row_for_platform_version_' + $('#environment_platform_version_id').val() + '_cloud_profile_' + $(this).val()).show()
+    })
 
     //show the correct data on load
     $('#environment_form #environment_platform_version_id').trigger('change')
