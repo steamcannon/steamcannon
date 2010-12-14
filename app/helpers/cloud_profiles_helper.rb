@@ -11,4 +11,5 @@ module CloudProfilesHelper
       [environment.cloud_profile]
     end
   end
+
 end
