@@ -23,8 +23,11 @@ class ImagesController < ApplicationController
     begin
       @environment = current_user.environments.find(params[:environment_id])
       @images = @environment.images
+      respond_to do |format|
+        format.xml # render index.xml.haml
+      end
     rescue ActiveRecord::RecordNotFound
-      render :text => '', :status => 404
+      render :nothing => true, :status => 404
     end
   end
 
@@ -34,8 +37,11 @@ class ImagesController < ApplicationController
       @image = @environment.images.find(params[:id]) unless @environment.blank?
       # It's all complicated like this to scope the DB query to the user instead of just using CloudImage.find_by_cloud_id
       @cloud_image = @image.cloud_images.flatten.first{|ci|ci.cloud_id == params[:id]} unless @image.blank?
+      respond_to do |format|
+        format.xml # render show.xml.haml
+      end
     rescue ActiveRecord::RecordNotFound
-      render :text => '', :status => 404
+      render :nothing => true, :status => 404
     end
   end
 end

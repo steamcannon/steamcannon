@@ -162,11 +162,17 @@ class EnvironmentsController < ApplicationController
   # GET /environments/1/deltacloud
   def deltacloud 
     @environment = current_user.environments.find(params[:id])
+    respond_to do |format|
+      format.xml # render deltacloud.xml
+    end
   end
 
   # GET /environments/1/instance_states
   def instance_states 
     @environment = current_user.environments.find(params[:id])
+    respond_to do |format|
+      format.xml # render instance_states.xml
+    end
   end
 
 end

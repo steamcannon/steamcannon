@@ -1,4 +1,4 @@
-%instance{:href=>environment_instance_url(instance.environment, instance), :'proxy-for'=>instance.cloud_instance_url}
+%instance{:href=>environment_instance_url(instance.environment, instance), :'proxy-for'=>instance.cloud_instance_url, :id => instance.friendly_id}
   %owner=instance.environment.user.email
   %name=instance.image.name
   %image{:href=>environment_image_url(instance.environment, instance.image)}
@@ -7,7 +7,7 @@
   %state= instance.current_state
   %actions
     - if instance.can_stop?
-      %link{:rel=>'stop', :href=>stop_environment_instance_url(instance.environment, instance)}
+      %link{:rel=>'stop', :href=>stop_environment_instance_url(instance.environment, instance), :method => 'POST'}
   %public_addresses
     %address= instance.public_address
   %private_addresses
