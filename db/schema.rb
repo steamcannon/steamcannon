@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101211211740) do
+ActiveRecord::Schema.define(:version => 20101213221841) do
 
   create_table "account_requests", :force => true do |t|
     t.string   "email"
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(:version => 20101211211740) do
     t.text     "metadata"
     t.string   "realm"
     t.integer  "cloud_profile_id"
+    t.string   "ssh_key_name"
   end
 
   add_index "environments", ["current_state"], :name => "index_environments_on_current_state"
@@ -276,8 +277,6 @@ ActiveRecord::Schema.define(:version => 20101211211740) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "superuser",           :default => false
-    t.string   "ssh_key_name",        :default => ""
-    t.string   "default_realm"
     t.integer  "organization_id"
     t.boolean  "organization_admin",  :default => false
   end

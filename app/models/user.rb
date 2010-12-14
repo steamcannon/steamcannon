@@ -25,9 +25,9 @@ class User < ActiveRecord::Base
   has_many :artifact_versions, :through => :artifacts
   has_many :instances, :through => :environments
   has_many :event_subjects, :as => :owner
-
+  has_many :cloud_profiles, :through => :organization
+  
   accepts_nested_attributes_for :organization
-  validate :validate_ssh_key_name
   before_create :ensure_organization
 
   acts_as_authentic do |c|
@@ -53,14 +53,6 @@ class User < ActiveRecord::Base
 #                         !self.default_realm.blank?)
     true
   end
-
-  def validate_ssh_key_name
-    if ssh_key_name_changed? and !ssh_key_name.blank?
-      message = "SSH key name is invalid"
-      errors.add_to_base(message) unless cloud.valid_key_name?(ssh_key_name)
-    end
-  end
-
 
   def send_password_reset_instructions!(host)
     reset_perishable_token!

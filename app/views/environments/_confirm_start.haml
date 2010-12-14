@@ -2,17 +2,17 @@
   - form_tag start_environment_path(environment) do
     .message
       %p
-        This environment will be started in the #{environment.user.default_realm} availability zone, but has
+        This environment will be started in the #{environment.realm} availability zone, but has
         at least one storage volume in another availability zone. If you start this environment now,
-        - volumes_in_current_realm = environment.storage_volumes.in_realm(environment.user.default_realm)
+        - volumes_in_current_realm = environment.storage_volumes.in_realm(environment.realm)
         - if volumes_in_current_realm.empty?
-          a new storage volume will be created in #{environment.user.default_realm} and any volumes in other
+          a new storage volume will be created in #{environment.realm} and any volumes in other
           zones will be ignored.
         - else
           the following highlighted volumes will be used, and any volumes in other zones will be ignored:
           %ul
             - environment.storage_volumes.each do |volume|
-              %li{:class => volume.realm == environment.user.default_realm ? 'in_realm' : ''}
+              %li{:class => volume.realm == environment.realm ? 'in_realm' : ''}
                 == #{volume.volume_identifier} (#{volume.realm})
  
     .controls
