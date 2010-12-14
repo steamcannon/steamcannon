@@ -27,6 +27,7 @@ describe "/environments/new.html.haml" do
                  :new_record? => true,
                  :name => "value for name")
     @controller.template.stub!(:hardware_profile_options).and_return([])
+    @controller.template.stub!(:cloud_profile_options).and_return([])
   end
 
   it "renders new environment form" do
