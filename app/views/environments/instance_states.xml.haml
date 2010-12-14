@@ -1,3 +1,6 @@
 %states{:'proxy-for'=>current_user.cloud.instance_states_url}
-  - Instance.aasm_states.each do |state|
-    %state{:name=>state.name}
+  - @instance_states.each do |k,v|
+    %state{:name=>k.to_s}
+      - transition = @instance_states[k][:transition]
+      - if transition
+        %transition{:action=>transition[:action], :to=>transition[:to]}

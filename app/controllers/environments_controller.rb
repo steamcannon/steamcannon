@@ -170,6 +170,7 @@ class EnvironmentsController < ApplicationController
   # GET /environments/1/instance_states
   def instance_states 
     @environment = current_user.environments.find(params[:id])
+    @instance_states = {:stopped => {}, :running => {:transition => {:action=>'stop', :to=>'stopped'}}, :pending => {}}
     respond_to do |format|
       format.xml # render instance_states.xml
     end
