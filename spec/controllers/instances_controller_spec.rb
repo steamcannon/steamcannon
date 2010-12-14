@@ -54,6 +54,12 @@ describe InstancesController do
       get :index, :environment_id => "13"
     end
 
+    it "should return 404 status code if the environment is not found" do
+      Environment.stub(:find).with("13").and_raise(ActiveRecord::RecordNotFound)
+      get :index, :environment_id => "13"
+      response.response_code.should == 404
+    end
+
   end
 
   describe "GET show" do
@@ -77,6 +83,11 @@ describe InstancesController do
       get :show, :id => "1", :environment_id => "13"
     end
 
+    it "should return 404 status code if the instance is not found" do
+      @instances.should_receive(:find).with("12").and_raise(ActiveRecord::RecordNotFound)
+      get :show, :id => "12", :environment_id => "13", :format => 'html'
+      response.response_code.should == 404
+    end
   end
 
   describe "POST stop" do

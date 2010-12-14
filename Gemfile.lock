@@ -42,11 +42,11 @@ GEM
       syntax (>= 1.0.0)
     mime-types (1.16)
     nokogiri (1.5.0.beta.3-java)
-    org.torquebox.rake-support (1.0.0.Beta23)
-    org.torquebox.torquebox-messaging-client (1.0.0.Beta23-java)
-      org.torquebox.torquebox-naming-client (= 1.0.0.Beta23)
-    org.torquebox.torquebox-naming-client (1.0.0.Beta23-java)
-    org.torquebox.vfs (1.0.0.Beta23)
+    org.torquebox.rake-support (1.0.0.RC1)
+    org.torquebox.torquebox-messaging-client (1.0.0.RC1-java)
+      org.torquebox.torquebox-naming-client (= 1.0.0.RC1)
+    org.torquebox.torquebox-naming-client (1.0.0.RC1-java)
+    org.torquebox.vfs (1.0.0.RC1)
     paperclip (2.3.3)
       activerecord
       activesupport

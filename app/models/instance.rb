@@ -136,6 +136,10 @@ class Instance < ActiveRecord::Base
     @cloud_instance ||= cloud.instance(cloud_id)
   end
 
+  def cloud_instance_url
+    cloud_instance.blank? ? nil : cloud_instance.url
+  end
+
   def agent_client(service_or_service_name = nil)
     service_or_service_name ||= services.first || :mock
     AgentClient.new(self, service_or_service_name.respond_to?(:name) ?

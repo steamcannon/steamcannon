@@ -1,4 +1,4 @@
-%instance{:href=>environment_instance_url(instance.environment, instance), :'proxy-for'=>instance.cloud.instance(instance.cloud_id).url}
+%instance{:href=>environment_instance_url(instance.environment, instance), :'proxy-for'=>instance.cloud_instance_url}
   %owner=instance.environment.user.email
   %name=instance.image.name
   %image{:href=>environment_image_url(instance.environment, instance.image)}

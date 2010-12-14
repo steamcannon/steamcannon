@@ -40,7 +40,8 @@ class InstancesController < ApplicationController
     else
       respond_to do |format|
         format.js { render(generate_json_response(:error, :message=>"Invalid instance")) }
-        format.xml { render( :text => "Instance not found #{params[:id]}", :status => 200 ) }
+        format.xml { render( :text => "Instance not found #{params[:id]}", :status => 404 ) }
+        format.html { render( :text => 'Not found', :status => 404 ) }
       end
     end
   end
@@ -89,10 +90,18 @@ class InstancesController < ApplicationController
 
   protected
   def require_environment
-    @environment = current_user.environments.find(params[:environment_id])
+    begin
+      @environment = current_user.environments.find(params[:environment_id])
+    rescue ActiveRecord::RecordNotFound
+      render :text => '', :status => 404 
+    end
   end
 
   def get_instance
-    @instance = @environment.instances.find(params[:id]) 
+    begin
+      @instance = @environment.instances.find(params[:id]) 
+    rescue ActiveRecord::RecordNotFound
+      @instance = nil
+    end
   end
 end
