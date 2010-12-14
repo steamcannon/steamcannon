@@ -218,6 +218,17 @@ class Instance < ActiveRecord::Base
     environment.realm
   end
 
+  def deltacloud_state
+    case current_state.to_s
+    when 'stopped', 'start_failed'
+      'stopped'
+    when 'running', 'unreachable'
+      'running'
+    when 'pending', 'starting', 'attaching_volume', 'configuring', 'verifying'
+      'pending'
+    end
+  end
+
   protected
   def start_instance
     image_cloud_id = image.cloud_id(hardware_profile, user)

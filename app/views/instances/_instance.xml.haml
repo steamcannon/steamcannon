@@ -4,7 +4,7 @@
   %image{:href=>environment_image_url(instance.environment, instance.image)}
   = dc_hardware_profile_url(instance)
   %realm=instance.realm
-  %state= instance.current_state
+  %state= instance.deltacloud_state
   %actions
     - if instance.can_stop?
       %link{:rel=>'stop', :href=>stop_environment_instance_url(instance.environment, instance), :method => 'POST'}

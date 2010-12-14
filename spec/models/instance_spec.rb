@@ -59,6 +59,62 @@ describe Instance do
     Instance.not_stopped.first.should eql(instance)
   end
 
+  describe "deltacloud states" do
+    it "should report stopped if current_state is stopped" do
+      instance = Instance.create!(@valid_attributes)
+      instance.stub!(:current_state).and_return(:stopped)
+      instance.deltacloud_state.should == 'stopped'
+    end
+
+    it "should report stopped if current_state is start_failed" do
+      instance = Instance.create!(@valid_attributes)
+      instance.stub!(:current_state).and_return(:start_failed)
+      instance.deltacloud_state.should == 'stopped'
+    end
+
+    it "should report running if current_state is running" do
+      instance = Instance.create!(@valid_attributes)
+      instance.stub!(:current_state).and_return(:running)
+      instance.deltacloud_state.should == 'running'
+    end
+
+    it "should report running if current_state is unreachable" do
+      instance = Instance.create!(@valid_attributes)
+      instance.stub!(:current_state).and_return(:unreachable)
+      instance.deltacloud_state.should == 'running'
+    end
+
+    it "should report pending if current_state is pending" do
+      instance = Instance.create!(@valid_attributes)
+      instance.stub!(:current_state).and_return(:pending)
+      instance.deltacloud_state.should == 'pending'
+    end
+
+    it "should report pending if current_state is starting" do
+      instance = Instance.create!(@valid_attributes)
+      instance.stub!(:current_state).and_return(:starting)
+      instance.deltacloud_state.should == 'pending'
+    end
+
+    it "should report pending if current_state is attaching_volume" do
+      instance = Instance.create!(@valid_attributes)
+      instance.stub!(:current_state).and_return(:attaching_volume)
+      instance.deltacloud_state.should == 'pending'
+    end
+
+    it "should report pending if current_state is configuring" do
+      instance = Instance.create!(@valid_attributes)
+      instance.stub!(:current_state).and_return(:configuring)
+      instance.deltacloud_state.should == 'pending'
+    end
+
+    it "should report pending if current_state is verifying" do
+      instance = Instance.create!(@valid_attributes)
+      instance.stub!(:current_state).and_return(:verifying)
+      instance.deltacloud_state.should == 'pending'
+    end
+  end
+
   describe "deploy" do
     it "should populate started_at" do
       instance = Instance.deploy!(@image, @environment, "test", "small")
