@@ -28,6 +28,10 @@ class CloudProfile < ActiveRecord::Base
     @password = pw
   end
 
+  def name_with_details
+    "#{name} (#{cloud_name}:#{provider_name})"
+  end
+  
   def cloud
     @cloud ||= Cloud::Deltacloud.new(username, password, cloud_name, provider_name)
   end

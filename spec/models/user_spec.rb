@@ -30,18 +30,10 @@ describe User do
   it { should belong_to :organization }
   it { should have_many :environments }
   it { should have_many :artifacts }
+  it { should have_many(:cloud_profiles).through(:organization) }
   
   it "should create a new instance given valid attributes" do
     User.create!(@valid_attributes)
-  end
-
-  it "should have an SSH key name attribute" do
-    User.new.should respond_to(:ssh_key_name)
-    User.new.should respond_to(:ssh_key_name=)
-  end
-
-  it "should have no default SSH key name attribute" do
-    User.new.ssh_key_name.should be_blank
   end
 
   it "should not allow mass assignment of the superuser column" do
@@ -84,42 +76,4 @@ describe User do
     end
   end
 
-  context "validate_ssh_key_name" do
-    before(:each) do
-      @user = Factory(:user)
-      @cloud = mock('cloud')
-      @user.stub!(:cloud).and_return(@cloud)
-    end
-
-    it "should validate if ssh_key_name has changed" do
-      @user.ssh_key_name = 'key_name'
-      @cloud.should_receive(:valid_key_name?)
-      @user.validate_ssh_key_name
-    end
-
-    it "shouldn't validate if ssh_key_name hasn't changed" do
-      @cloud.should_not_receive(:valid_key_name?)
-      @user.validate_ssh_key_name
-    end
-
-    it "shouldn't validate if ssh_key_name is blank" do
-      @user.ssh_key_name = ''
-      @cloud.should_not_receive(:valid_key_name?)
-      @user.validate_ssh_key_name
-    end
-
-    it "should add an error if invalid" do
-      @user.ssh_key_name = 'key_name'
-      @cloud.should_receive(:valid_key_name?).and_return(false)
-      @user.validate_ssh_key_name
-      @user.errors.size.should be(1)
-    end
-
-    it "should not add an error if valid" do
-      @user.ssh_key_name = 'key_name'
-      @cloud.should_receive(:valid_key_name?).and_return(true)
-      @user.validate_ssh_key_name
-      @user.errors.size.should be(0)
-    end
-  end
 end
