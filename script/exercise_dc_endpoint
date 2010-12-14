@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'deltacloud'
+
+puts "What's your deltacloud endpoint URL?"
+api_url  = gets.chomp
+
+puts "What's your steamcannon username?"
+api_name = gets.chomp
+
+puts "What's your steamcannon password?"
+api_pass = gets.chomp
+
+client   = DeltaCloud.new(api_name, api_pass, api_url) do |client|
+  puts "Realms"
+  client.realms.each do |realm|
+    r = client.realm(realm.id)
+    puts "#{r.name}\t#{r.url}"
+  end
+
+  puts "\nHardware Profiles"
+  client.hardware_profiles.each do |profile|
+    p = client.hardware_profile(profile.id)
+    puts "#{p.id}\t#{p.url}"
+  end
+
+  puts "\nImages"
+  client.images.each do |image|
+    i = client.image(image.id)
+    puts "#{i.name}\t#{i.url}"
+  end
+
+  puts "\nInstances"
+  client.instances.each do |instance|
+    i = client.instance(instance.id)
+    puts "#{i.name}\t#{i.url}"
+    puts "\t- state: #{i.state}"
+    puts "\t- actions"
+    i.actions.each do |action|
+      puts "\t#{action.inspect}"
+    end
+  end
+
+  puts "\nInstance States"
+  client.instance_states.each do |state|
+    s = client.instance_state(state.name)
+    puts s.name
+    puts "\ttransitions" if s.transitions.size > 0
+    s.transitions.each do |transition|
+      puts "\taction: #{transition.action} to: #{transition.to}"
+    end
+  end
+
+end
