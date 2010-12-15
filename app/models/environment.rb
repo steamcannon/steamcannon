@@ -87,7 +87,7 @@ class Environment < ActiveRecord::Base
 
   def start_instance(image_id)
     return false unless running?
-    environment_image = environment_images.first{|i|i.image.friendly_id = image_id}
+    environment_image = environment_images.first{|i|i.image.friendly_id == image_id}
     return false unless environment_image && environment_image.can_start_more?
     environment_image.start_another!
   end
