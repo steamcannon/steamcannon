@@ -48,9 +48,19 @@ class InstancesController < ApplicationController
 
   # POST /environments/:environment_id/instances
   def create
-    environment_image = EnvironmentImage.find(params[:environment_image_id])
-    instance = environment_image.start_another!
-    redirect_to(@environment, :notice => "Instance #{instance.name} is starting")
+    if (params[:environment_image_id])
+      environment_image = EnvironmentImage.find(params[:environment_image_id])
+      @instance = environment_image.start_another! unless environment_image.blank?
+    else
+      @instance = @environment.start_instance(params[:image_id])
+    end
+    if @instance.blank?
+      render( :nothing => true, :status => 404 ) and return
+    end
+    respond_to do |format|
+      format.html { redirect_to(@environment, :notice => "Instance #{@instance.name} is starting") }
+      format.xml  { render :nothing => true, :status => 201 }
+    end
   end
 
   # POST /environments/:environment_id/instances/1/stop.json

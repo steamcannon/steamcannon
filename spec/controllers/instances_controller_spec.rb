@@ -128,17 +128,46 @@ describe InstancesController do
     end
   end
 
-  describe "POST clone" do
+  describe "POST create" do
     describe "with valid params" do
-      it "should clone the requested instance"
-      it "should only allow instances that are running to be cloned"
-      it "should assign a newly created instance as @instance"
-      it "should redirect to the environment"
+      it "should accept environment_image_id as a parameter" do
+        EnvironmentImage.should_receive(:find).with('1').and_return(nil)
+        post :create, :environment_id => '13', :environment_image_id => '1'
+      end
+
+      it "should accept image_id as a parameter" do
+        mock_environment.should_receive(:start_instance).with('friendly-id').and_return(nil)
+        post :create, :environment_id => '13', :image_id => 'friendly-id'
+      end
+
+      it "should start the requested instance" do
+        image = mock(EnvironmentImage)
+        EnvironmentImage.should_receive(:find).with('1').and_return(image)
+        image.should_receive(:start_another!)
+        post :create, :environment_id => '13', :environment_image_id => '1'
+      end
+
+      it "should assign a newly created instance as @instance" do
+        instance = mock(Instance, :name=>'instance name')
+        mock_environment.should_receive(:start_instance).with('friendly-id').and_return(instance)
+        post :create, :environment_id => '13', :image_id => 'friendly-id'
+        assigns[:instance].should equal(instance)
+      end
+
+      it "should redirect to the environment when the client accepts html" do
+        instance = mock(Instance, :name=>'instance name')
+        mock_environment.should_receive(:start_instance).with('friendly-id').and_return(instance)
+        post :create, :environment_id => '13', :image_id => 'friendly-id'
+        response.should be_redirect
+      end
     end
 
     describe "with invalid params" do
-      it "should not assign a newly created instance as @instance"
-      it "should redirect to the environment"
+      it "return a status code of 404" do
+        mock_environment.should_receive(:start_instance).with('friendly-id').and_return(nil)
+        post :create, :environment_id => '13', :image_id => 'friendly-id'
+        response.response_code.should == 404
+      end
     end
   end
 
