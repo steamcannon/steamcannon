@@ -70,6 +70,37 @@ describe Environment do
     environment.user_id.should be_nil
   end
 
+  describe "start_instance" do
+
+    before(:each) do
+      @image = Image.new
+      @image.stub!(:friendly_id).and_return('image-id')
+      @environment_images = [EnvironmentImage.new(:image=>@image)]
+      @environment = Factory(:environment, :current_state => 'running', :environment_images=>@environment_images)
+    end
+
+    it "should return false if the environment is not running" do
+      @environment.current_state = 'stopped'
+      @environment.start_instance('image-id').should be_false
+    end
+
+    it "should return false if the Image can't be found" do
+      @environment.start_instance('foobar').should be_false
+    end
+
+    it "should ensure that the EnvironmentImage#can_start_more? instances" do
+      @environment_images.first.should_receive(:can_start_more?)
+      @environment.start_instance('image-id')
+    end
+
+    it "should start another instance if the EnvironmentImage#can_start_more? instances" do
+      @environment_images.first.stub!(:can_start_more?).and_return(true)
+      @environment_images.first.should_receive(:start_another!)
+      @environment.start_instance('image-id')
+    end
+
+  end
+
   describe "start" do
     before(:each) do
       @environment = Factory(:environment)
@@ -122,6 +153,7 @@ describe Environment do
     it "should be starting if not running_all_instances" do
       @environment.stub!(:running_all_instances?).and_return(false)
       @environment.run!
+
       @environment.should be_starting
     end
 

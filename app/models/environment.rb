@@ -85,6 +85,13 @@ class Environment < ActiveRecord::Base
     platform_version.platform
   end
 
+  def start_instance(image_id)
+    return false unless running?
+    environment_image = environment_images.first{|i|i.image.friendly_id = image_id}
+    return false unless environment_image && environment_image.can_start_more?
+    environment_image.start_another!
+  end
+
   def can_start?
     aasm_events_for_current_state.include?(:start)
   end
