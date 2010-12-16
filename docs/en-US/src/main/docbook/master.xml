@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+  <!ENTITY % images_ent SYSTEM "images.ent"> 
+  %images_ent;
+] >
+<book lang="en"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+  <bookinfo>
+    <title>SteamCannon</title>
+
+    <subtitle>Java and Ruby Platform-as-a-Service</subtitle>
+
+    <releaseinfo>${project.version}</releaseinfo>
+
+    <authorgroup>
+      <corpauthor>The SteamCannon Project</corpauthor>
+    </authorgroup>
+  </bookinfo>
+
+  <toc></toc>
+
+  <xi:include href="what-is-steamcannon.xml" />
+  <xi:include href="installation.xml" />
+
+  <xi:include href="licenses.xml" />
+  <xi:include href="licenses/lgpl-3.xml" />
+  <xi:include href="licenses/liberation-fonts.xml" />
+  <xi:include href="licenses/cc-by-sa.xml" />
+
+</book>

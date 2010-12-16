@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="what-is">
+  <title>What is SteamCannon?</title>
+
+  <para>SteamCannon is a JavaEE and Ruby Platform-as-a-Service
+  (PaaS). It provides a consistent platform for your applications
+  regardless of the underlying public or private cloud. Your
+  applications are deployed on mod_cluster, JBoss AS w/ TorqueBox, and
+  PostgreSQL with unrestricted access to all APIs.</para>
+
+  <para>The user-facing portion of SteamCannon is a Rails application
+  that can be run locally or in the cloud. It's used to start, stop,
+  and configure the environments that applications are deployed
+  to.</para>
+
+</chapter>
