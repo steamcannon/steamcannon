@@ -25,7 +25,7 @@ class InstancesController < ApplicationController
     @instances = @environment.instances
     respond_to do |format|
       format.js { render(generate_json_response(:ok, :instances=>@instances.to_json)) }
-      format.xml 
+      format.xml
     end
   end
 
@@ -35,7 +35,7 @@ class InstancesController < ApplicationController
     unless @instance.blank?
       respond_to do |format|
         format.js { render(generate_json_response(:ok, :instance=>@instance.to_json)) }
-        format.xml 
+        format.xml
       end
     else
       respond_to do |format|
@@ -59,7 +59,7 @@ class InstancesController < ApplicationController
     end
     respond_to do |format|
       format.html { redirect_to(@environment, :notice => "Instance #{@instance.name} is starting") }
-      format.xml  { render :nothing => true, :status => 201 }
+      format.xml  { render :partial => "instance", :locals => { :instance => @instance }, :status => 201 }
     end
   end
 
@@ -69,15 +69,17 @@ class InstancesController < ApplicationController
     if @instance && @instance.can_stop?
       @instance.stop!
       respond_to do |format|
-        format.js { render(generate_json_response(:ok,
-                                                  :instance=>@instance.to_json,
-                                                  :message=>"Stopping #{@instance.name} (#{@instance.cloud_id})",
-                                                  :js => "$('#instance_#{@instance.id}_stop_link').remove()")) }
+        format.js  { render(generate_json_response(:ok,
+                                                   :instance=>@instance.to_json,
+                                                   :message=>"Stopping #{@instance.name} (#{@instance.cloud_id})",
+                                                   :js => "$('#instance_#{@instance.id}_stop_link').remove()")) }
+        format.xml { render :partial => "instance", :locals => { :instance => @instance } }
       end
     else
       message = (@instance && !@instance.can_stop?) ? "Cannot stop instance while it is #{@instance.current_state}." : "Cannot find instance"
       respond_to do |format|
-        format.js { render(generate_json_response(:error, :message=>message)) }
+        format.js  { render(generate_json_response(:error, :message=>message)) }
+        format.xml { render :nothing => true, :status => 404 }
       end
     end
   end
@@ -103,13 +105,13 @@ class InstancesController < ApplicationController
     begin
       @environment = current_user.environments.find(params[:environment_id])
     rescue ActiveRecord::RecordNotFound
-      render :text => '', :status => 404 
+      render :text => '', :status => 404
     end
   end
 
   def get_instance
     begin
-      @instance = @environment.instances.find(params[:id]) 
+      @instance = @environment.instances.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       @instance = nil
     end
