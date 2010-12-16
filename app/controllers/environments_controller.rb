@@ -36,18 +36,14 @@ class EnvironmentsController < ApplicationController
   # GET /environments/1
   # GET /environments/1.xml
   def show
-    begin
-      all_deployments = @environment.deployments.deployed
-      @deployments = {}
-      ArtifactVersion::TYPES.each do |artifact_type|
-        @deployments[ artifact_type ] = all_deployments.select{|e| e.artifact_version.type_key == artifact_type }
-      end
-      respond_to do |format|
-        format.html # show.html.erb
-        format.xml  # show.xml.haml
-      end
-    rescue ActiveRecord::RecordNotFound
-      render :text => 'Not Found', :status => 404
+    all_deployments = @environment.deployments.deployed
+    @deployments = {}
+    ArtifactVersion::TYPES.each do |artifact_type|
+      @deployments[ artifact_type ] = all_deployments.select{|e| e.artifact_version.type_key == artifact_type }
+    end
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml  # show.xml.haml
     end
   end
 
@@ -173,5 +169,7 @@ class EnvironmentsController < ApplicationController
   protected
   def load_environment
     @environment = current_user.environments.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    render :text => 'Not Found', :status => 404
   end
 end
