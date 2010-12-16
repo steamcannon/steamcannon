@@ -4,4 +4,10 @@ class ApiController < ApplicationController
   def steamcannon_api_version
     '0.1'
   end
+
+  def index
+    respond_to do |format| 
+      format.xml # render index.xml.haml
+    end
+  end
 end
