@@ -1,10 +1,10 @@
 %instance{:href=>environment_instance_url(instance.environment, instance), :'proxy-for'=>instance.cloud_instance_url, :id => instance.friendly_id}
-  %owner=instance.environment.user.email
-  %name=instance.image.name
-  %image{:href=>environment_image_url(instance.environment, instance.image)}
+  %owner_id=instance.environment.user.email
+  %name=instance.name
+  %image{:href=>environment_image_url(instance.environment, instance.image), :id=>instance.image.friendly_id}
   = dc_hardware_profile_url(instance)
-  %realm=instance.realm
-  %state= instance.deltacloud_state
+  %realm{:href=>realm_url(instance.realm), :id=>instance.realm}
+  %state= instance.deltacloud_state.upcase
   %actions
     - if instance.can_stop?
       %link{:rel=>'stop', :href=>stop_environment_instance_url(instance.environment, instance), :method => 'POST'}

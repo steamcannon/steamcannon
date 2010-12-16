@@ -37,8 +37,8 @@ module InstancesHelper
   end
 
   def dc_hardware_profile_url(instance)
-    return unless instance.cloud_instance
-    tag('hardware_profile', :href=>instance.cloud_instance.hardware_profile.url)
+    profile_path = pathify(instance.hardware_profile)
+    tag('hardware_profile', :href => hardware_profile_url(profile_path), :id => profile_path)
   end
 
   def instance_details_link(instance)
