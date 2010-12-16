@@ -21,7 +21,7 @@ class Environment < ActiveRecord::Base
   include AASM
   include HasMetadata
   include StateHelpers
-  
+
   has_events :subject_name => :name, :subject_owner => :user
 
   has_many :deployments, :dependent => :destroy
@@ -87,7 +87,7 @@ class Environment < ActiveRecord::Base
 
   def start_instance(image_id)
     return false unless running?
-    environment_image = environment_images.first{|i|i.image.friendly_id == image_id}
+    environment_image = environment_images.all.find {|i|i.image.friendly_id == image_id}
     return false unless environment_image && environment_image.can_start_more?
     environment_image.start_another!
   end
@@ -135,19 +135,19 @@ class Environment < ActiveRecord::Base
     @usage_data ||= EnvironmentUsage.new(self, cloud_helper)
   end
 
-  
+
   protected
 
   def start_environment
     log_event(:operation => :start_environment)
 
     update_attribute(:realm, user.default_realm)
-    
+
     # destroy any instances from prior runs that may be hanging
     # around. Instances self destroy on stop, but this catches any
     # that didn't make it to the stopped state.
     instances.each(&:destroy)
-    
+
     environment_images.each do |env_image|
       env_image.num_instances.times do |i|
         env_image.start!(i+1)
