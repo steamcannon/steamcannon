@@ -5,7 +5,7 @@ platforms:
       - version_number: 1
         images:
           - name: Developer Instance
-            description: JBoss AS 6 CR1 (w/TorqueBox 1.0.0.Beta23-SNAPSHOT), PostgreSQL 8.4
+            description: JBoss AS 6 CR1 (w/TorqueBox 1.0.0.RC1-SNAPSHOT), PostgreSQL 8.4
             uid: ami-96b047ff
             can_scale_out: false
             storage_volume_capacity: 3 #Gigs
@@ -17,8 +17,8 @@ platforms:
               - cloud: ec2
                 region: us-east-1
                 architecture: i386
-                cloud_id: ami-dee610b7
+                cloud_id: ami-e0629489
               - cloud: ec2
                 region: us-east-1
                 architecture: x86_64
-                cloud_id: ami-66e6100f
+                cloud_id: ami-366f995f

@@ -5,7 +5,7 @@ platforms:
       - version_number: 1
         images:
           - name: Backend - JBoss
-            description: JBoss AS 6 CR1 (w/TorqueBox 1.0.0.Beta23-SNAPSHOT)
+            description: JBoss AS 6 CR1 (w/TorqueBox 1.0.0.RC1-SNAPSHOT)
             uid: ami-4cb04725
             can_scale_out: true
             services:
@@ -14,11 +14,11 @@ platforms:
               - cloud: ec2
                 region: us-east-1
                 architecture: i386
-                cloud_id: ami-26e7114f
+                cloud_id: ami-6e609607
               - cloud: ec2
                 region: us-east-1
                 architecture: x86_64
-                cloud_id: ami-86e610ef
+                cloud_id: ami-f46f999d
           - name: Frontend - mod_cluster
             description: Apache 2.2.16 (w/mod_cluster 1.1.0)
             uid: ami-bab146d3
@@ -29,11 +29,11 @@ platforms:
               - cloud: ec2
                 region: us-east-1
                 architecture: i386
-                cloud_id: ami-82e610eb
+                cloud_id: ami-866294ef
               - cloud: ec2
                 region: us-east-1
                 architecture: x86_64
-                cloud_id: ami-d8e610b1
+                cloud_id: ami-1a6f9973
           - name: Database - PostgreSQL
             description: PostgreSQL 8.4
             uid: ami-2cb04745
@@ -46,11 +46,8 @@ platforms:
               - cloud: ec2
                 region: us-east-1
                 architecture: i386
-                cloud_id: ami-4c05f225
+                cloud_id: ami-ba6096d3
               - cloud: ec2
                 region: us-east-1
                 architecture: x86_64
-                cloud_id: ami-ee06f187
-
-
-
+                cloud_id: ami-ce6f99a7
