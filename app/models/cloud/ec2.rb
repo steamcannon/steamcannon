@@ -72,6 +72,28 @@ module Cloud
       "#{prefix}#{suffix}"
     end
 
+    INSTANCE_COSTS = {
+      'us-east-1' => {
+        'm1.small' => 0.085,
+        'm1.large' => 0.34,
+        'm1.xlarge' => 0.68,
+        't1.micro' => 0.02,
+        'm2.xlarge' => 0.5,
+        'm2.2xlarge' => 1.0,
+        'm2.4xlarge' => 2.0,
+        'c1.medium' => 0.17,
+        'c1.xlarge' => 0.68
+      }
+    }
+    
+    def instance_run_cost(minutes, hardware_profile)
+      #TODO: this will need to be passed a region when we have support
+      #for that
+      hours = minutes ? (minutes.to_i/60 + (minutes%60 > 0 ? 1 : 0)) : 0.0
+      cost_per_hour = INSTANCE_COSTS['us-east-1'][hardware_profile] || 0.0
+      hours * cost_per_hour
+    end
+
     protected
 
     def access_key

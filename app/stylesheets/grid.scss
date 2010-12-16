@@ -173,3 +173,7 @@ body.ninesixty {
   @include alpha();
   @include omega();
 }
+
+#environment_usage {
+   @include two-column-narrow-right;
+}

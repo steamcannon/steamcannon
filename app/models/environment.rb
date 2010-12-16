@@ -131,6 +131,10 @@ class Environment < ActiveRecord::Base
     end
   end
 
+  def usage_data(cloud_helper)
+    @usage_data ||= EnvironmentUsage.new(self, cloud_helper)
+  end
+
   
   protected
 

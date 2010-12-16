@@ -274,4 +274,23 @@ describe Cloud::Ec2 do
       @ec2.send(:agent_services, @instance)
     end
   end
+  
+  describe 'instance_run_cost' do
+    it "should calculate a per hour cost" do
+      @ec2.instance_run_cost(120, 't1.micro').should == 0.04
+    end
+
+    it "should count partial hours" do
+      @ec2.instance_run_cost(121, 't1.micro').should == 0.06
+    end
+
+    it "should return 0.0 if minutes is nil" do
+      @ec2.instance_run_cost(nil, 't1.micro').should == 0.0
+    end
+
+    it "should return 0.0 if profile does not exist" do
+      @ec2.instance_run_cost(120, 'x1.micro').should == 0.0
+    end
+    
+  end
 end

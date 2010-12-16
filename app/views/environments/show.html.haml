@@ -8,7 +8,7 @@
       = link_to 'Edit Environment', edit_environment_path(@environment)
       - if @environment.event_subject
         = link_to 'Events', events_for_subject_path(@environment.event_subject)
-
+        = link_to 'Usage', usage_environment_path(@environment)
     %h1
       &= @environment.name
     %h2

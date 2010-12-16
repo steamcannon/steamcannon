@@ -1,0 +1,65 @@
+#environment_usage
+  .page_header
+    %h1 
+      Usage for #{link_to h(@environment.name), environment_path(@environment)}
+    %h3 
+      Total Approximate Cost: #{formatted_run_cost(@usage.total_run_cost)}
+  .left_column
+    %table.data_table
+      %tr
+        %th.start_time
+          Environment Started At
+        %th.run_time
+          Running Time
+        %th.cost
+          Approximate Cost
+      - @usage.runs.each do |run|
+        %tr.run
+          %td.start_time
+            = run.created_at.to_s(:standard)
+          %td.run_time
+            = formatted_run_time(@usage.total_run_time_for_single_run(run))
+          %td.cost
+            = formatted_run_cost(@usage.total_run_cost_for_single_run(run))
+            = link_to "details", "", :class => 'details_toggle', :rel => "#run_#{run.id}_details"
+        %tr{style_display_none.merge(:id => "run_#{run.id}_details")}
+          %td.instance_data{:colspan => '3'}
+            %h3
+              Instance Details
+            - if @usage.instance_data_for_run(run)
+              %table.data_table
+                %tr
+                  %th.instance_name
+                    Instance
+                  %th.profile
+                    Hardware Profile
+                  %th.start_time
+                    Start Time
+                  %th.end_time
+                    End Time
+                  %th.run_time
+                    Running Time
+                  %th.cost
+                    Approximate Cost
+                - @usage.instance_data_for_run(run).each do |subject_id, instance_data|
+                  %tr
+                    %td.instance_name
+                      =h instance_data[:name]
+                    %td.profile
+                      =h instance_data[:profile]
+                    %td.start_time
+                      = formatted_event_time(instance_data[:running])
+                    %td.end_time
+                      = formatted_event_time(instance_data[:stopped])
+                    %td.run_time
+                      = formatted_run_time(@usage.instance_run_time(run, subject_id))
+                    %td.cost
+                      = formatted_run_cost(@usage.instance_run_cost(run, subject_id))
+            - else
+              No data available.
+  .right_column
+    %h2
+      A Note On the Data
+    %p
+      All of the run times and costs are approximate, and will likely not exactly match the costs given to you by Amazon.
+      The costs here also do not include any S3 or EBS charges.

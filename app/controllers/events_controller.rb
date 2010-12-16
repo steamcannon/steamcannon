@@ -52,13 +52,10 @@ class EventsController < ApplicationController
     rescue ActiveRecord::RecordNotFound => ex
       #ignore
     end
-    
+
     if @entry_points
       @entry_point ||= @entry_points.first
-      @lower_bound = @entry_point.id
-      entry_point_idx = @entry_points.index(@entry_points.find { |ep| ep.id == @entry_point.id })
-      next_entry_point = @entry_points[entry_point_idx - 1] if entry_point_idx > 0
-      @upper_bound = next_entry_point.id if next_entry_point
+      @lower_bound, @upper_bound = @entry_point.entry_point_bounds(@entry_points)
     end
   end
   

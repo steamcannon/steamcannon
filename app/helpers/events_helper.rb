@@ -85,4 +85,9 @@ module EventsHelper
       event.error[:message].split("\n").first
     end
   end
+
+  def formatted_event_time(event)
+    event ? event.created_at.to_s(:standard) : 'n/a'
+  end
+
 end

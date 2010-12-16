@@ -80,6 +80,12 @@ module Cloud
       []
     end
 
+    def instance_run_cost(minutes, hardware_profile)
+      #TODO: this will need to be passed a region when we have support
+      #for that
+      0.0
+    end
+    
     protected
 
     def expiring_fetch(cache_key, expires_in)

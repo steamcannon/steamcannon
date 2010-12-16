@@ -21,7 +21,7 @@ class EnvironmentsController < ApplicationController
 
   navigation :environments
   before_filter :require_user
-
+  before_filter :load_environment, :except => [:index, :new, :create, :status]
   # GET /environments
   # GET /environments.xml
   def index
@@ -37,14 +37,11 @@ class EnvironmentsController < ApplicationController
   # GET /environments/1.xml
   def show
     begin
-      @environment = current_user.environments.find(params[:id])
-
       all_deployments = @environment.deployments.deployed
       @deployments = {}
       ArtifactVersion::TYPES.each do |artifact_type|
         @deployments[ artifact_type ] = all_deployments.select{|e| e.artifact_version.type_key == artifact_type }
       end
-
       respond_to do |format|
         format.html # show.html.erb
         format.xml  # show.xml.haml
@@ -67,7 +64,7 @@ class EnvironmentsController < ApplicationController
 
   # GET /environments/1/edit
   def edit
-    @environment = current_user.environments.find(params[:id])
+
   end
 
   # POST /environments
@@ -89,8 +86,6 @@ class EnvironmentsController < ApplicationController
   # PUT /environments/1
   # PUT /environments/1.xml
   def update
-    @environment = current_user.environments.find(params[:id])
-
     respond_to do |format|
       if @environment.update_attributes(params[:environment])
         format.html { redirect_to(@environment, :notice => 'Environment was successfully updated.') }
@@ -105,7 +100,6 @@ class EnvironmentsController < ApplicationController
   # DELETE /environments/1
   # DELETE /environments/1.xml
   def destroy
-    @environment = current_user.environments.find(params[:id])
     @environment.destroy
 
     respond_to do |format|
@@ -117,7 +111,6 @@ class EnvironmentsController < ApplicationController
   # POST /environments/1/start
   # POST /environments/1/start.xml
   def start
-    @environment = current_user.environments.find(params[:id])
     @environment.start!
     respond_to do |format|
       format.html { redirect_back_or_default(environments_url, :notice => 'Environment is starting.') }
@@ -128,7 +121,6 @@ class EnvironmentsController < ApplicationController
   # POST /environments/1/stop
   # POST /environments/1/stop.xml
   def stop
-    @environment = current_user.environments.find(params[:id])
     @environment.preserve_storage_volumes = params[:preserve_storage_volumes]
     @environment.stop!
     respond_to do |format|
@@ -140,8 +132,7 @@ class EnvironmentsController < ApplicationController
   # POST /environments/1/clone
   # POST /environments/1/clone.xml
   def clone
-    environment = current_user.environments.find(params[:id])
-    @environment = environment.clone! if environment
+    @environment &&= @environment.clone! 
     respond_to do |format|
       if @environment
         format.html { redirect_to(@environment, :notice => 'Environment was successfully cloned.') }
@@ -159,9 +150,13 @@ class EnvironmentsController < ApplicationController
     render :partial => 'list', :locals => { :environments => environments }, :layout => false 
   end
 
+  # GET /environments/1/usage
+  def usage
+    @usage = @environment.usage_data(current_user.cloud_specific_hacks)
+  end
+  
   # GET /environments/1/deltacloud
   def deltacloud 
-    @environment = current_user.environments.find(params[:id])
     respond_to do |format|
       format.xml # render deltacloud.xml
     end
@@ -169,11 +164,14 @@ class EnvironmentsController < ApplicationController
 
   # GET /environments/1/instance_states
   def instance_states 
-    @environment = current_user.environments.find(params[:id])
     @instance_states = {:stopped => {}, :running => {:transition => {:action=>'stop', :to=>'stopped'}}, :pending => {}}
     respond_to do |format|
       format.xml # render instance_states.xml
     end
   end
 
+  protected
+  def load_environment
+    @environment = current_user.environments.find(params[:id])
+  end
 end

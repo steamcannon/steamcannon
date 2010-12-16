@@ -714,3 +714,27 @@ a.sort_column {
         vertical-align: top;
     }
 }
+
+table.data_table {
+   font-size: 90%;
+   width: 100%;
+   border-right: 1px solid $color_light;
+   border-bottom: 1px solid $color_light;
+   th {
+      font-weight: bold;
+      color: $color_dark;
+      background-color: $color_light;
+   }
+   th, td {
+      border: 1px solid $color_light;
+      border-bottom: none;
+      border-right: none;
+      padding: .2ex;
+   }
+}
+
+#environment_usage {
+   td.instance_data {
+      padding: 0 1em 0 1em;
+   }
+}

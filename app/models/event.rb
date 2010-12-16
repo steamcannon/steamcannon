@@ -29,6 +29,10 @@ class Event < ActiveRecord::Base
     { :conditions => ['id < ?', id] }
   }
 
+  named_scope :with_status, lambda { |status|
+    { :conditions => ['status in (?)', status] }
+  }
+  
   class << self
     def events_for_subject_and_descendents(event_subject, opts = {})
       lower_bound = opts[:lower_bound]
@@ -45,8 +49,9 @@ class Event < ActiveRecord::Base
       chain = chain.with_id_lt(upper_bound) if upper_bound
       chain
     end
+
   end
-  
+
   def subject
     event_subject.subject
   end
@@ -90,6 +95,14 @@ class Event < ActiveRecord::Base
     error = super
     error = JSON.parse(error, :symbolize_names => true) if error
     error
+  end
+
+  def entry_point_bounds(all_entry_points)
+    lower_bound = id
+    entry_point_idx = all_entry_points.index(all_entry_points.find { |ep| ep.id == id })
+    next_entry_point = all_entry_points[entry_point_idx - 1] if entry_point_idx > 0
+    upper_bound = next_entry_point.try(:id)
+    [lower_bound, upper_bound]
   end
   
 end

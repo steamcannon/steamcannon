@@ -25,6 +25,10 @@ class EventSubject < ActiveRecord::Base
   belongs_to :owner, :polymorphic => true
   has_many :events, :dependent => :destroy
 
+  named_scope :with_subject_type, lambda { |subject_type|
+    { :conditions => { :subject_type => subject_type } }
+  }
+
   def event_log_entry_points(conditions)
     events.find(:all, :conditions => conditions, :order => 'created_at DESC')
   end

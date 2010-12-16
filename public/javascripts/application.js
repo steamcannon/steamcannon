@@ -23,6 +23,11 @@ function update_instance_message(instance_id, message) {
 }
 
 function apply_ujs_rules($) {
+    $('.details_toggle').applyOnce().click(function() {
+        $($(this).attr('rel')).toggle()
+        return false
+    })
+
     $('.js-popup_dialog').applyOnce().each(function(idx, el) {
         $(el).jqm({trigger: $(el).attr('rel'), overlay:0})
     })

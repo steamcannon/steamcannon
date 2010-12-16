@@ -34,4 +34,24 @@ describe EnvironmentsHelper do
     helper.hardware_profile_options.should eql(['small'])
   end
 
+  describe "instance_run_time" do
+    before(:each) do
+      @now = Time.now
+      @running_event = mock(Event, :created_at => @now - 3.hours)
+      @stopped_event = mock(Event, :created_at => @now)
+    end
+    
+    it "should calculate the run time" do
+      helper.instance_run_time({ :running => @running_event, :stopped => @stopped_event }).should == 3.hours
+    end
+
+    it "should use the current time if a stopped event is not given" do
+      Time.should_receive(:now).and_return(@now + 1.hour)
+      helper.instance_run_time({ :running => @running_event }).should == 4.hours
+    end
+
+    it "should return nil if the running event is not given" do
+      helper.instance_run_time({ }).should == nil
+    end
+  end
 end

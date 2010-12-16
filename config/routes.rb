@@ -26,7 +26,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :realms, :only => [ :index, :show ]
   map.resources :environments,
                 :member => {:start => :post, :stop => :post, :clone => :post,
-                           :instance_states => :get, :deltacloud => :get },
+                            :instance_states => :get, :deltacloud => :get,
+                            :usage => :get},
                 :collection => {:status => :get} do |environment|
 
     environment.resources :images, :only => [ :index, :show ]

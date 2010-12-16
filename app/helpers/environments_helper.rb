@@ -71,4 +71,29 @@ module EnvironmentsHelper
   def environments_with_status_for_select
     current_user.environments.all.collect { |ev| ["#{ev.name} (#{ev.current_state})", ev.id ] }
   end
+  
+  def formatted_run_time(seconds)
+    if seconds
+      seconds = seconds.to_i
+      days = seconds / 1.day
+      seconds -= days.days
+      hours = seconds / 1.hour
+      seconds -= hours.hours
+      minutes = seconds / 1.minute
+      accum = ""
+      accum << "#{days}d " if days > 0
+      accum << "#{hours}h " if hours > 0
+      accum << "#{minutes}m "
+      accum
+    else
+      'n/a'
+    end
+
+  end
+
+  def formatted_run_cost(cost)
+    cost ? number_to_currency(cost) : 'n/a'
+  end
+
+
 end
