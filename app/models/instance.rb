@@ -222,10 +222,12 @@ class Instance < ActiveRecord::Base
     case current_state.to_s
     when 'stopped', 'start_failed'
       'stopped'
-    when 'running', 'unreachable'
+    when 'running', 'unreachable', 'stopping', 'terminating'
       'running'
     when 'pending', 'starting', 'attaching_volume', 'configuring', 'verifying'
       'pending'
+    else
+      'unknown'
     end
   end
 
@@ -297,9 +299,9 @@ class Instance < ActiveRecord::Base
   end
 
   def error_raised(error)
-    Rails.logger.error "Instance#error_raised ==========================="  
+    Rails.logger.error "Instance#error_raised ==========================="
     logger.error error.try(:with_trace)
-    Rails.logger.error "================================================="  
+    Rails.logger.error "================================================="
     @last_error = error
     start_failed!
   end
