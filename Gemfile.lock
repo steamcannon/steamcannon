@@ -85,6 +85,7 @@ GEM
     uuidtools (2.1.1)
     versionomy (0.4.0)
       blockenspiel (>= 0.3.1)
+    watchr (0.7)
     xml-simple (1.0.12)
 
 PLATFORMS
@@ -123,3 +124,4 @@ DEPENDENCIES
   steamcannon-deltacloud-client (= 0.1.0.5)
   tobias-railroad (= 0.10.0)
   versionomy (= 0.4.0)
+  watchr (= 0.7)
