@@ -24,8 +24,9 @@
           You can preserve these volume(s), and they will be reattached the next time you start the
           environment. If you choose not to preserve them, all data on them will be lost.
         %p
-          = check_box_tag :preserve_storage_volumes, 1, environment.preserve_storage_volumes?
-          Preserve storage volumes  
+          %label
+            = check_box_tag :preserve_storage_volumes, 1, environment.preserve_storage_volumes?
+            Preserve storage volumes  
         
       
     .controls
