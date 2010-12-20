@@ -1,0 +1,15 @@
+<environment href='http://localhost:8080/environments/15'>
+  <name>Staging, 2-tier</name>
+  <owner>lanceball@gmail.com</owner>
+  <created>2010-11-04 22:26:03 UTC</created>
+  <updated>2010-12-10 22:02:01 UTC</updated>
+  <current_state>stopped</current_state>
+  <preserve_storage_volumes>false</preserve_storage_volumes>
+  <metadata>
+    
+  </metadata>
+  <link 
+    href='http://try.steamcannon.org/environments/15/deltacloud' 
+    rel='deltacloud_endpoint' />
+</environment>
+
