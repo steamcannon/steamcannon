@@ -1,3 +1,6 @@
+class Instance < ActiveRecord::Base
+end
+
 class ClearExistingInstances < ActiveRecord::Migration
   def self.up
     Instance.all.each do |instance|
@@ -14,7 +17,7 @@ class ClearExistingInstances < ActiveRecord::Migration
           instance.log_event(:operation => :state_transition, :status => :stopped, :created_at => instance.stopped_at)
         end
       end
-      
+
       if %w{ configure_failed start_failed stopped }.include?(instance.current_state)
         puts '-> destroying!'
         instance.destroy

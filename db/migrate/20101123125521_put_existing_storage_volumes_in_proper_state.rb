@@ -1,3 +1,6 @@
+class StorageVolume < ActiveRecord::Base
+end
+
 class PutExistingStorageVolumesInProperState < ActiveRecord::Migration
   def self.up
     StorageVolume.all.each do |sv|
