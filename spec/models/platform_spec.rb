@@ -72,5 +72,29 @@ describe Platform do
       version.images.should_not be_empty
       Image.find_all_by_uid('image_123').count.should be(1)
     end
+
+    it "should support cloud images" do
+      Platform.load_from_yaml_file(File.join(@yaml_path, 'cloud_images_support.yml'))
+      cloud_image = Image.find_by_uid('image_123').cloud_images.first
+      cloud_image.should_not be_nil
+      cloud_image.cloud.should == 'ec2'
+      cloud_image.region.should == 'us-west-1'
+      cloud_image.architecture.should == 'i386'
+      cloud_image.cloud_id.should == 'ami-12345'
+    end
+
+    it "should update cloud images" do
+      yaml_path = File.join(@yaml_path, 'cloud_images_support.yml')
+      Platform.load_from_yaml_file(yaml_path)
+      cloud_image = Image.find_by_uid('image_123').cloud_images.first
+      cloud_image.cloud_id.should == 'ami-12345'
+
+      yaml = YAML::load_file(yaml_path)
+      yaml['platforms'].first['platform_versions'].first['images'].first['cloud_images'].first['cloud_id'] = 'ami-23456'
+      YAML.should_receive(:load_file).and_return(yaml)
+      Platform.load_from_yaml_file(yaml_path)
+      cloud_image = Image.find_by_uid('image_123').cloud_images.first
+      cloud_image.cloud_id.should == 'ami-23456'
+    end
   end
 end

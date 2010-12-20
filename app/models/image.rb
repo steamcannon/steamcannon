@@ -30,17 +30,18 @@ class Image < ActiveRecord::Base
     !storage_volume_capacity.blank?
   end
 
-  # See Platform.create_from_yaml_file
+  # See Platform.load_from_yaml_file
   def self.new_from_yaml(yaml)
     services = yaml.delete('services')
     cloud_images = yaml.delete('cloud_images')
     image = Image.find_or_create_by_uid(yaml)
     image.update_attributes!(yaml)
-    image_services = image.services
+    image.services.clear
     services && services.each do |service_name|
       service = Service.find_or_create_by_name(service_name)
-      image.services << service unless image_services.include?(service)
+      image.services << service
     end
+    image.cloud_images.clear
     cloud_images && cloud_images.each do |cloud_image_yaml|
       image.cloud_images.find_or_create_by_cloud_id(cloud_image_yaml)
     end

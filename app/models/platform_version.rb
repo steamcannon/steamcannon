@@ -24,19 +24,19 @@ class PlatformVersion < ActiveRecord::Base
   accepts_nested_attributes_for :images, :allow_destroy => true
 
   validates_presence_of :version_number
-  
+
   def to_s
-    version = version_number.blank? ? '' : " v#{version_number}" 
+    version = version_number.blank? ? '' : " v#{version_number}"
     "#{platform}#{version}"
   end
 
-  # See Platform.create_from_yaml_file
-  def self.new_from_yaml(yaml)
+  # See Platform.load_from_yaml_file
+  def update_from_yaml(yaml)
     images = yaml.delete('images') || []
-    version = PlatformVersion.new(yaml)
+    update_attributes(yaml)
+    self.images.clear
     images.each do |image_yaml|
-      version.images << Image.new_from_yaml(image_yaml)
+      self.images << Image.new_from_yaml(image_yaml)
     end
-    version
   end
 end

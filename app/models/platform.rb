@@ -69,9 +69,12 @@ class Platform < ActiveRecord::Base
       platform_versions = platform_yaml.delete('platform_versions') || []
       platform = Platform.find_or_create_by_name(platform_yaml)
       platform_versions.each do |version_yaml|
-        if !platform.platform_versions.exists?(:version_number => version_yaml['version_number'].to_s)
-          platform.platform_versions << PlatformVersion.new_from_yaml(version_yaml)
+        version = platform.platform_versions.first(:conditions => {:version_number => version_yaml['version_number'].to_s})
+        unless version
+          version = PlatformVersion.new
         end
+        version.update_from_yaml(version_yaml)
+        platform.platform_versions << version
       end
       platform.save!
     end
