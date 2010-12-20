@@ -24,7 +24,7 @@ namespace :ci do
 
   desc 'Create SteamCannon Zip Artifact'
   task :package do
-    version = "1.0.0.beta1"
+    version = "0.2.0"
     name = "steamcannon-#{version}"
     root_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
     dist_dir = File.join(root_dir, "dist")
