@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="api">
+  <title>API</title>
+
+  <para>
+    Version 0.1
+  </para>
+
+  <section>
+    <title>Introduction</title>
+    <para>
+      SteamCannon provides a <acronym>REST</acronym> <acronym>API</acronym> through which clients may discover
+      and act upon cloud objects from their SteamCannon account.  The API exposes a single XML entry point 
+      with subsequent traversal and manipulation of objects done via opaque URLs returned by the SteamCannon server.  
+      Client requests over HTTP use the standard HTTP verbs: GET, POST, PUT and DELETE.
+    </para>
+    <para>
+      SteamCannon's <acronym>API</acronym> is implemented using <acronym>HATEOS</acronym> (Hypermedia as the Engine of Application State)
+      where all a client needs to know is the entry point URL. Subsequent access to objects within the system is made
+      possible my URLs returned in the server response.  For more information about REST and HATEOS, please see (references).
+    </para>
+
+    <section>
+      <title>Deltacloud Endpoint</title>
+      <para>
+        The primary function of the SteamCannon API in this nascent version is to expose a user-specific Deltacloud endpoint
+        which may be used to start and stop SteamCannon machine instances within a SteamCannon environment. Through this Deltacloud
+        endpoint, clients have access to instances, images, hardware profiles and realms.  These entities 
+        are abstractions of specific cloud-based objects, allowing programmatic manipulation of cloud assets while
+        freeing the API client from having to know about various specific cloud APIs.
+      </para>
+    </section>
+
+    <section>
+      <title>Authentication</title>
+      <para>
+        The SteamCannon API is stateless and does not retain any session information between requests from a single client.
+        Clients use HTTP basic authentication in every request to authenticate the client.  Standard SteamCannon
+        account email and password may be sent as part of the URL for each request as in 
+        <code>http://username@email.com:try.steamcannon.org/api</code>.  In addition, the server will issue an 
+        HTTP Basic authentication challenge, allowing for interactive clients to prompt for username and password
+        as with any HTTP Basic authentication from within a web browser.
+      </para>
+    </section>
+
+    <section>
+      <title>Server Responses</title>
+      <para>
+        All server responses from the API will be in XML format.  In the event that a client attempts to access a resource
+        which does not exist or for which the user is not authorized, the server will issue an HTTP 404 (Not Found)
+        error code in response.
+      </para>
+    </section>
+  </section>
+
+  <section>
+    <title>The API Entry Point</title>
+    <para>
+      All access to the SteamCannon API originates at the SteamCannon API Endpoint.  The server response from this endpoint 
+      provides subsequent URLs to access entities from the authenticated SteamCannon account.
+      <programlisting><xi:include href="api/endpoint.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+      As you can see, the API endpoint for version 0.1 exposes simply the URL for the user's SteamCannon environments.
+    </para>
+  </section>
+
+</chapter>
+
