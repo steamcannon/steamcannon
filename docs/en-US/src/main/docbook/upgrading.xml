@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="upgrading">
+  <title>Upgrading From 0.1.0 (previously 1.0.0.beta1)</title>
+
+  <para>The only supported upgrade path from 0.1.0 to 0.2.0 is to
+  start a new virtual machine or AMI and migrate the data. In all
+  directions below, the source machine is the one running 0.1.0 and
+  the target machine is the one running 0.2.0.</para>
+
+  <para>
+    On target machine:
+    <screen>
+<prompt>$</prompt> <command>/etc/init.d/jboss-as stop</command>
+<prompt>$</prompt> <command>su postgres -c "/usr/bin/dropdb steamcannon_production"</command>
+<prompt>$</prompt> <command>su postgres -c "/usr/bin/createdb steamcannon_production -O steamcannon"</command>
+<prompt>$</prompt> <command>su postgres -c "/usr/bin/psql -c 'GRANT ALL ON DATABASE steamcannon_production TO steamcannon'"</command></screen>
+  </para>
+
+  <para>
+    On source machine:
+    <screen>
+<prompt>$</prompt> <command>su postgres -c 'pg_dump -c steamcannon_production' | psql -h $TARGET steamcannon_production -U steamcannon</command></screen>
+    Replace $TARGET with the IP address of your target machine. The
+    password for the steamcannon user is 'steamcannon'.
+  </para>
+
+  <para>
+    On target machine:
+    <screen>
+<prompt>$</prompt> <command>cd /opt/steamcannon</command>
+<prompt>$</prompt> <command>RAILS_ENV=production /opt/jruby/bin/jruby -S rake db:migrate</command>
+<prompt>$</prompt> <command>RAILS_ENV=production /opt/jruby/bin/jruby -S rake db:seed</command>
+<prompt>$</prompt> <command>/etc/init.d/jboss-as start</command></screen>
+  </para>
+
+</chapter>
