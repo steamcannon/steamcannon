@@ -75,7 +75,7 @@
       Access to the SteamCannon API originates at the SteamCannon API
       Endpoint.  The server response from this endpoint provides subsequent
       URLs to access entities from the authenticated SteamCannon account.
-<programlisting><xi:include href="api/endpoint.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+<screen><xi:include href="api/endpoint.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
       URLs to SteamCannon resource collections are exposed at the
       endpoint as <code>&lt;link&gt;</code> elements.  The <code>rel</code> attribute
       provides the name of the collection.  A <code>GET</code> request to the
@@ -103,7 +103,7 @@
         The server returns a list of the authenticated user's environments
         as <code>&lt;environment&gt;</code> elements, each containing <code>name</code>
         and <code>href</code> attributes as shown below. 
-<programlisting><xi:include href="api/environments.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+<screen><xi:include href="api/environments.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
       </para>
     </section>
     <section>
@@ -112,7 +112,7 @@
         Clients may access a single <code>&lt;environment&gt;</code> using an
         <code>href</code> from then environments collection.  For example
         <code>http://try.steamcannon.org/environments/12</code>.
-<programlisting><xi:include href="api/environment.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></programlisting>
+<screen><xi:include href="api/environment.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
         The <code>&lt;environment&gt;</code> element provides information about a single environment.
       </para>
       <section>
