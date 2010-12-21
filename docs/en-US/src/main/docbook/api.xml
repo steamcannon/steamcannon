@@ -251,6 +251,14 @@
     </section>
     <section>
       <title>Instance States</title>
+      <para>
+        SteamCannon exposes three distinct instance states, <code>running</code>,
+        <code>pending</code>, and <code>stopped</code>.  These states map 
+        directly to the Deltacloud states of the same name.  As with other
+        API responses, a <code>proxy-for</code> attribute is included which
+        points to the underlying Deltacloud URL.
+<screen><xi:include href="api/instance-states.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
     </section>
     <section>
       <title>Images</title>

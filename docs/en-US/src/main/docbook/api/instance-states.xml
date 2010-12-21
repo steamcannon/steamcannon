@@ -1,0 +1,10 @@
+<states proxy-for='http://try.steamcannon.org/deltacloud/api/instance_states'>
+  <state name='stopped'>
+  </state>
+  <state name='running'>
+    <transition action='stop' to='stopped'></transition>
+  </state>
+  <state name='pending'>
+  </state>
+</states>
+
