@@ -1,0 +1,36 @@
+<realms 
+  proxy-for='http://try.steamcannon.org/deltacloud/api/realms'>
+  <realm 
+    href='http://try.steamcannon.org/realms/us-east-1a' 
+    id='us-east-1a' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/realms/us-east-1a'>
+    <name>us-east-1a</name>
+    <state>available</state>
+    <limit></limit>
+  </realm>
+  <realm 
+    href='http://try.steamcannon.org/realms/us-east-1b' 
+    id='us-east-1b' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/realms/us-east-1b'>
+    <name>us-east-1b</name>
+    <state>available</state>
+    <limit></limit>
+  </realm>
+  <realm 
+    href='http://try.steamcannon.org/realms/us-east-1c' 
+    id='us-east-1c' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/realms/us-east-1c'>
+    <name>us-east-1c</name>
+    <state>available</state>
+    <limit></limit>
+  </realm>
+  <realm 
+    href='http://try.steamcannon.org/realms/us-east-1d' 
+    id='us-east-1d' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/realms/us-east-1d'>
+    <name>us-east-1d</name>
+    <state>available</state>
+    <limit></limit>
+  </realm>
+</realms>
+

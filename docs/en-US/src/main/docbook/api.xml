@@ -5,7 +5,7 @@
   <title>API</title>
 
   <para>
-    Version 0.1
+    Version 0.2
   </para>
 
   <section>
@@ -241,6 +241,13 @@
     </section>
     <section>
       <title>Realms</title>
+      <para>
+        As with hardware profiles, SteamCannon makes no changes to the
+        typical Deltacloud response for a realms collection other than
+        inserting <code>proxy-for</code> attributes in each <code>realm</code>
+        element.
+<screen><xi:include href="api/realms.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
     </section>
     <section>
       <title>Instance States</title>
