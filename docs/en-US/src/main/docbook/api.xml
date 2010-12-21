@@ -49,10 +49,15 @@
         authentication in every request to authenticate.  Standard SteamCannon
         account email and password may be sent as part of the URL for each
         request as in
-        <code>http://username@email.com:try.steamcannon.org/api</code>.  In
+        <code>http://username@email.com:pass@try.steamcannon.org/api</code>.  In
         addition, the server will issue an HTTP Basic authentication challenge,
         allowing for interactive clients to prompt for username and password as
         with any HTTP Basic authentication from within a web browser.
+      </para>
+      <para>
+        Note: Some clients may not properly escape the '@' in the user's
+        email address. In that case, the above URL should be modified as such:
+        <code>http://username%40email.com:pass@try.steamcannon.org/api</code>.
       </para>
     </section>
 
@@ -76,33 +81,34 @@
       Endpoint.  The server response from this endpoint provides subsequent
       URLs to access entities from the authenticated SteamCannon account.
 <screen><xi:include href="api/endpoint.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
-      URLs to SteamCannon resource collections are exposed at the
-      endpoint as <code>&lt;link&gt;</code> elements.  The <code>rel</code> attribute
+      URLs to SteamCannon resource collections are exposed at the endpoint as
+      <code>&lt;link&gt;</code> elements.  The <code>rel</code> attribute
       provides the name of the collection.  A <code>GET</code> request to the
-      URL in the <code>href</code> attribute provides access to the
-      collection itself. As you can see, the API endpoint for version 0.1 
-      contains a single collection &mdash; environments.
+      URL in the <code>href</code> attribute provides access to the collection
+      itself. As you can see, the API endpoint for version 0.1 contains a
+      single collection &mdash; environments.
     </para>
   </section>
   <section>
     <title>Environments</title>
     <para>
-      SteamCannon uses the concept of an "environment" to encapsulate a named collection
-      of machine images.  Each environment is based on a pre-defined set of SteamCannon
-      images known as a Platform.  For example, SteamCannon provides a JBoss 3-tier
-      Platform with a separate machine image for each application layer, e.g. 
-      a frontend web balancer, a JBoss application server, and a backend database.
-      An environment based upon this Platform will have 3 images and any number of running
-      instances.
+      SteamCannon uses the concept of an "environment" to encapsulate a named
+      collection of machine images.  Each environment is based on a pre-defined
+      set of SteamCannon images known as a Platform.  For example, SteamCannon
+      provides a JBoss 3-tier Platform with a separate machine image for each
+      application layer, e.g.  an image with a frontend web balancer
+      (mod_proxy), an image providing a JBoss AS application server, and an
+      image providing a PostgreSQL database.  An environment based on this
+      Platform will have 3 images and any number of running instances.
     </para>
     <section>
       <title>Environment Collections</title>
       <para>
         By sending a GET request to the endpoint's <code>environments</code>
-        link, you can access a collection of all environments available.  
-        The server returns a list of the authenticated user's environments
-        as <code>&lt;environment&gt;</code> elements, each containing <code>name</code>
-        and <code>href</code> attributes as shown below. 
+        link, you can access a collection of all environments available.  The
+        server returns a list of the authenticated user's environments as
+        <code>&lt;environment&gt;</code> elements, each containing
+        <code>name</code> and <code>href</code> attributes as shown below. 
 <screen><xi:include href="api/environments.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
       </para>
     </section>
@@ -110,18 +116,26 @@
       <title>Single Environment</title>
       <para>
         Clients may access a single <code>&lt;environment&gt;</code> using an
-        <code>href</code> from then environments collection.  For example
-        <code>http://try.steamcannon.org/environments/12</code>.
+        <code>href</code> from the environments collection.  For example
+        <code>http://try.steamcannon.org/environments/12</code> provides
+        identifying information about the environment, as well as information
+        about the current state, and a link to a Deltacloud API endpoint
+        for the environment.
 <screen><xi:include href="api/environment.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
-        The <code>&lt;environment&gt;</code> element provides information about a single environment.
+        The data returned in the <code>&lt;environment&gt;</code> element
       </para>
       <section>
         <title>name</title>
-        <para>The name of the environment as provided by the user in the SteamCannon user interface.</para>
+        <para>
+          The name of the environment as provided by the user in the
+          SteamCannon user interface.
+        </para>
       </section>
       <section>
         <title>owner</title>
-        <para>The login id of the SteamCannon user to whom this environment belongs. </para>
+        <para>
+          The login id of the SteamCannon user to whom this environment belongs. 
+        </para>
       </section>
       <section>
         <title>created</title>
@@ -129,18 +143,28 @@
       </section>
       <section>
         <title>updated</title>
-        <para>The date of the environment's most recent change.  If there has been no change, this will be identical to <code>created</code></para>
+        <para>
+          The date of the environment's most recent change.  If there has been
+          no change, this will be identical to <code>created</code>
+        </para>
       </section>
       <section>
         <title>current_state</title>
-        <para>The current state of the environment. If there are no instances running, this will be <code>stopped</code>.
-          If instances are running, the environment will be considered <code>running</code>.  If no instances are running
-          the environment will be considered <code>stopped</code></para>
+        <para>
+          The current state of the environment. If there are no instances
+          running, this will be <code>stopped</code>.  If instances are
+          running, the environment will be considered <code>running</code>.  If
+          no instances are running the environment will be considered
+          <code>stopped</code>
+        </para>
       </section>
       <section>
         <title>preserve_storage_volumes</title>
-        <para>This will be either <code>true</code> or <code>false</code> depending upon whether 
-          this environment is configured to save storage volumes on shutdown.</para>
+        <para>
+          This will be either <code>true</code> or <code>false</code> depending
+          upon whether this environment is configured to save storage volumes
+          on shutdown.
+        </para>
       </section>
       <section>
         <title>metadata</title>
@@ -152,10 +176,25 @@
       </section>
       <section>
         <title>link</title>
-        <para>The link tag provides access to the environment-specific Deltacloud endpoint.</para>
+        <para>
+          The link tag provides access to the environment-specific Deltacloud
+          endpoint.
+        </para>
       </section>
     </section>
   </section>
 
+  <section>
+    <title>Deltacloud Endpoint</title>
+    <para>
+      SteamCannon exposes a user- and environment-specific Deltacloud
+      API endpoint.  By following the <code>href</code> URL in an 
+      <code>&lt;environment&gt;</code> element's <code>&lt;link&gt;</code>
+      tag, a SteamCannon API client is authorized with the backing
+      Deltacloud server, and has access to the assets and actions
+      available via Deltacloud for images and instances associated
+      with the environment.
+    </para>
+  </section>
 </chapter>
 
