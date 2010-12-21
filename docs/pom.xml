@@ -9,6 +9,10 @@
   <name>SteamCannon Documentation</name>
   <description>Documentation for SteamCannon</description>
 
+  <properties>
+    <ami.us-east>ami-2ebe4947</ami.us-east>
+  </properties>
+
   <build>
     <defaultGoal>compile</defaultGoal>
     <plugins>

@@ -4,4 +4,56 @@
 <chapter id="installation">
   <title>Installation</title>
 
+  <section>
+    <title>Amazon AMI</title>
+
+    <para>
+      To run SteamCannon on Amazon EC2, start an instance of
+      ${ami.us-east} in the us-east-1 region. The c1.medium instance
+      size is recommended; m1.small may also be used but will take
+      much longer to boot. SteamCannon does not support t1.micro at
+      this time. Make sure the instance is started in a security group
+      that allows tcp traffic over port 8080.
+    </para>
+  </section>
+
+  <section>
+    <title>VMware Appliance</title>
+
+    <para>
+      To run SteamCannon in a desktop VMware product (Fusion,
+      Workstation, Player) <ulink
+      url="http://steamcannon.org/download/">download</ulink> the
+      VMware Appliance for version ${project.version}. Extract the
+      downloaded .tgz file and open steamcannon.vmx in VMware. The
+      root user's password is 'boxgrinder'.
+    </para>
+  </section>
+
+  <section>
+    <title>Create a New User</title>
+
+    <para>
+      Open http://ip_address_of_appliance:8080 in your web browser and
+      click the Register link under the Login button to create a new
+      user. All appliances are configured for open registration,
+      meaning anyone that can access the SteamCannon running on that
+      appliance can create an account.
+    </para>
+  </section>
+
+  <section>
+    <title>Enter AWS Credentials</title>
+
+    <para>
+      After registering, you'll be prompted to enter your Amazon Web
+      Services (AWS) credentials. If you don't already have
+      credentials, you'll need to <ulink
+      url="http://aws.amazon.com/">sign up</ulink> for an AWS
+      account. Note that Amazon places very low quotas on
+      newly-created AWS accounts so you may have to wait several hours
+      after registering to successfully start an environment.
+    </para>
+  </section>
+
 </chapter>
