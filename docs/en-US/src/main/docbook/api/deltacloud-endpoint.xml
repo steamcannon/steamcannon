@@ -1,0 +1,22 @@
+<api driver='ec2' version='1.0'>
+  <link 
+    href='http://try.steamcannon.org/hardware_profiles' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/hardware_profiles' 
+    rel='hardware_profiles' />
+  <link 
+    href='http://try.steamcannon.org/environments/15/instance_states' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/instance_states' 
+    rel='instance_states' />
+  <link 
+    href='http://try.steamcannon.org/realms' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/realms' 
+    rel='realms' />
+  <link 
+    href='http://try.steamcannon.org/environments/15/images' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/images' 
+    rel='images' />
+  <link 
+    href='http://try.steamcannon.org/environments/15/instances' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/instances' 
+    rel='instances' />
+</api>
