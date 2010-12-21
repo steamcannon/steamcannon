@@ -262,9 +262,24 @@
     </section>
     <section>
       <title>Images</title>
+      <para>
+        The <code>&lt;images&gt;</code> element returns a collection of 
+        <code>&lt;image&gt;</code> elements which describe the machine imgaes
+        which compirise this environment. SteamCannon filters the full list
+        of images provided by the underlying DeltaCloud URL and exposes only
+        those images that are associated with the environment.
+<screen><xi:include href="api/images.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
     </section>
     <section>
       <title>Instances</title>
+      <para>
+        If the environment contains any running machine instances, those are
+        returned from the <code>instances</code> link.  Again, SteamCannon
+        filters what is returned to include only instances running in the 
+        context of this environment.
+<screen><xi:include href="api/instances.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
     </section>
 
   </section>
