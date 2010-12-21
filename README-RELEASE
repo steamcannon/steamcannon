@@ -1,0 +1,25 @@
+Some random notes about releasing
+
+Appliances are built using a 32bit (ami-b344b3da) and a 64bit
+(ami-7543b41c) SC-meta appliance.
+  - For faster appliance creation, launch c1.medium and c1.xlarge.
+  - yum update libguestfs augeas-libs
+
+Make sure all appliances are built in the steamcannon-appliances
+bucket.
+
+Make sure all appliances have version 0.2.0 in their bucket URL (so
+version 0, release 2.0?)
+
+Mark all appliance AMIs as public.
+
+Ensure SC Vmware appliances has appropriate filename -
+steamcannon-0.2.0-fedora-13-i386-vmware.tgz or similar.
+
+Upload the SC VMware appliance to steamcannon-releases bucket.
+
+Tag steamcannon, steamcannon-agent, steamcannon-appliances for release
+
+Publish release announcement to steamcannon.org
+
+Email release announcement to steamcannon-user and steamcannon-dev
