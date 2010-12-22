@@ -10,7 +10,7 @@
   <description>Documentation for SteamCannon</description>
 
   <properties>
-    <ami.us-east>ami-2ebe4947</ami.us-east>
+    <ami.us-east>ami-6ea25307</ami.us-east>
   </properties>
 
   <build>
@@ -86,7 +86,7 @@
             <format>
               <formatName>pdf</formatName>
               <stylesheetResource>file:${project.parent.basedir}/src/main/xsl/pdf-style.xsl</stylesheetResource>
-              <finalName>${pom.artifactId}.pdf</finalName>
+              <finalName>${pom.artifactId}-${pom.version}.pdf</finalName>
             </format>
             <format>
               <formatName>xhtml</formatName>
