@@ -1,5 +1,10 @@
 Some random notes about releasing
 
+Build all platform images and test SC appliances several days before
+the release to work out any kinks. Be sure to test migrating a copy of
+the data from try.steamcannon.org to a newer AMI to work out any
+migration issues.
+
 Appliances are built using a 32bit (ami-b344b3da) and a 64bit
 (ami-7543b41c) SC-meta appliance.
   - For faster appliance creation, launch c1.medium and c1.xlarge.
@@ -30,7 +35,9 @@ Update SC AMI ids in docs/pom.xml
 
 Build docs with 'mvn package' from steamcannon/docs directory.
 
-Copy steamcannon/docs/en_US/target/steamcannon-docs-en_US-{version}-html.zip to steamcannon.org/documentation/download/
+Copy
+steamcannon/docs/en_US/target/steamcannon-docs-en_US-{version}-html.zip
+to steamcannon.org/documentation/download/
 
 Publish release announcement to steamcannon.org
 
