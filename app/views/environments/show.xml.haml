@@ -7,5 +7,12 @@
   %preserve_storage_volumes=@environment.preserve_storage_volumes?
   %metadata
     =@environment.metadata
+  %actions
+    - if @environment.running?
+      %link{:rel=>'stop', :href=>stop_environment_url(@environment)}
+    - else
+      %link{:rel=>'start', :href=>start_environment_url(@environment)}
+    %link{:rel=>'clone', :href=>clone_environment_url(@environment)}
+
   %link{:rel=>'deltacloud_endpoint', :href=>deltacloud_environment_url(@environment)}
 
