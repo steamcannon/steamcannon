@@ -281,7 +281,17 @@
 <screen><xi:include href="api/instances.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
       </para>
     </section>
-
+    <section>
+      <title>Samples</title>
+      <para>
+        The SteamCannon source repository includes a script to exercise
+        the Deltacloud endpoint using the deltacloud-client rubygem.
+        To see the API in action, checkout the steamcannon repository
+        from github <ulink url="http://github.com/steamcannon/steamcannon"/>
+        and run 
+        <screen>./script/exercise_dc_endpoint</screen>
+      </para>
+    </section>
   </section>
 </chapter>
 
