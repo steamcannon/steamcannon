@@ -46,4 +46,29 @@ describe "/environments/show.xml.haml" do
       with_tag("preserve_storage_volumes", @environment.preserve_storage_volumes)
     end
   end
+
+  context "available actions" do
+    it "provides a stop action if the environment is running" do
+      @environment.stub!(:running?).and_return(true)
+      render
+      response.should have_tag('actions') do
+        with_tag('link[rel=?][href=?]', 'stop', stop_environment_url(@environment))
+      end
+    end
+
+    it "provides a start action if the environment is not running" do
+      @environment.stub!(:running?).and_return(false)
+      render
+      response.should have_tag('actions') do
+        with_tag('link[rel=?][href=?]', 'start', start_environment_url(@environment))
+      end
+    end
+
+    it "provides a clone action" do
+      render
+      response.should have_tag('actions') do
+        with_tag('link[rel=?][href=?]', 'clone', clone_environment_url(@environment))
+      end
+    end
+  end
 end
