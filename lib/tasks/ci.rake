@@ -32,7 +32,7 @@ namespace :ci do
     package = "#{name}.zip"
 
     excludes = ['.git/*', 'coverage/*', 'log/*', 'tmp/*', '.bundle/*',
-                'config/steamcannon.yml', 'db/*.sqlite3', 'dist/*',
+                'config/steamcannon.yml', 'db/*.sqlite3', 'dist/*', 'docs/*',
                 'public/stylesheets/compiled/*', 'public/uploads/*']
     exclude_string = excludes.map {|exclude| "'#{exclude}'"}.join(' ')
 
