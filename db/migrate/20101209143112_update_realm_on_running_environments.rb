@@ -1,4 +1,5 @@
 class Environment < ActiveRecord::Base
+  belongs_to :user
 end
 
 class UpdateRealmOnRunningEnvironments < ActiveRecord::Migration
