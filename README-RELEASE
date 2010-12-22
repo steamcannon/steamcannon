@@ -20,11 +20,13 @@ Upload the SC VMware appliance to steamcannon-releases bucket.
 
 Tag steamcannon, steamcannon-agent, steamcannon-appliances for release
 
+Mark the version as released in JIRA
+
 Add the release info to steamcannon.org/_config/releases.yml
 
 Ensure versions in all docs/**/pom.xml are correct
 
-Update SC AMI ids to docs/pom.xml
+Update SC AMI ids in docs/pom.xml
 
 Build docs with 'mvn package' from steamcannon/docs directory.
 
@@ -33,3 +35,5 @@ Copy steamcannon/docs/en_US/target/steamcannon-docs-en_US-{version}-html.zip to 
 Publish release announcement to steamcannon.org
 
 Email release announcement to steamcannon-user and steamcannon-dev
+
+Tweet release announcement from @steamcannon and RT
