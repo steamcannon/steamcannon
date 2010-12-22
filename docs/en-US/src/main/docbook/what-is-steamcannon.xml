@@ -7,12 +7,190 @@
   <para>SteamCannon is a JavaEE and Ruby Platform-as-a-Service
   (PaaS). It provides a consistent platform for your applications
   regardless of the underlying public or private cloud. Your
-  applications are deployed on mod_cluster, JBoss AS w/ TorqueBox, and
-  PostgreSQL with unrestricted access to all APIs.</para>
+  applications are deployed on <ulink
+  url="http://www.jboss.org/mod_cluster">mod_cluster</ulink>, <ulink
+  url="http://www.jboss.org/jbossas/">JBoss AS</ulink> w/ <ulink
+  url="http://torquebox.org">TorqueBox</ulink>, and <ulink
+  url="http://www.postgresql.org/">PostgreSQL</ulink> with
+  unrestricted access to all APIs.</para>
 
   <para>The user-facing portion of SteamCannon is a Rails application
   that can be run locally or in the cloud. It's used to start, stop,
   and configure the environments that applications are deployed
   to.</para>
+
+  <section>
+    <title>Terminology</title>
+
+    <section>
+      <title>Organization</title>
+      <para>
+        An organization is a collection of users that all share a
+        common set of Amazon credentials. When a new user requests an
+        invite or registers for an account, a new organization is
+        created and that user is flagged as the administrator of that
+        organization. The administrator can then invite other users
+        into the organization and these additional users will not be
+        prompted to enter Amazon credentials to use SteamCannon. The
+        administrator can also promote or demote other users in the
+        organization to administrator status.
+      </para>
+    </section>
+
+    <section>
+      <title>Artifact</title>
+      <para>
+        An artifact is a deployable file. Examples of valid Java
+        artifacts would be war files, ear files, jar files, and
+        datasources. Valid Ruby artifacts would be .rails archives,
+        *-rack.yml deployment descriptors, or any other type supported
+        by TorqueBox.
+      </para>
+    </section>
+
+    <section>
+      <title>Service</title>
+      <para>
+        A service is the smallest building block of a
+        platform. SteamCannon currently has three services -
+        mod_cluster, JBoss AS, and PostgreSQL.
+      </para>
+    </section>
+
+    <section>
+      <title>Image</title>
+      <para>
+        An image is a virtual machine that provides one or more
+        services. SteamCannon's images are created by <ulink
+        url="http://www.jboss.org/boxgrinder">BoxGrinder</ulink> from
+        the <ulink
+        url="http://github.com/steamcannon/steamcannon-appliances/">steamcannon-appliances</ulink>
+        repository.
+      </para>
+  </section>
+
+  <section>
+    <title>Platform</title>
+    <para>
+      A platform is a predefined collection of 1 - N images shared by
+      all users of SteamCannon. SteamCannon currently ships with three
+      platforms - JBoss Developer Instance, JBoss 2-Tier, and JBoss
+      3-Tier.
+    </para>
+  </section>
+
+  <section>
+    <title>Environment</title>
+    <para>
+      An environment is an instance of a platform and the thing that
+      artifacts are deployed into. A user can have many environments
+      from multiple platforms. For example, you might have a
+      Development environment based off of the developer platform and
+      QA and Production environments based off of the 3-Tier Platform.
+    </para>
+  </section>
+
+  <section>
+    <title>Instance</title>
+
+    <para>
+      An instance represents a running image. One or more instances is
+      contained in every running environment. When an environment is
+      started a configurable number of instances is started for each
+      image in the environment's platform. When an environment is
+      stopped, all running instances in that environment are stopped.
+    </para>
+  </section>
+
+  </section>
+
+  <section>
+    <title>Architecture</title>
+    <para>
+      <mediaobject>
+        <imageobject role="html">
+          <imagedata align="center" fileref="./images/39k.png" format="PNG" width="640px" />
+        </imageobject>
+        <imageobject role="fo">
+          <imagedata align="center" fileref="./images/39k.png" format="PNG" width="450px" />
+        </imageobject>
+      </mediaobject>
+    </para>
+  </section>
+
+  <section>
+    <title>Technology</title>
+
+    <para>
+      SteamCannon consists of several components each with its own
+      distinct technologies.
+    </para>
+
+    <section>
+      <title>Web Interface</title>
+      <para>
+        The user-facing portion of SteamCannon is built on top of
+        <ulink url="http://torquebox.org">Torquebox</ulink>, <ulink
+        url="http://rubyonrails.org">Rails</ulink>, and <ulink
+        url="http://jruby.org">JRuby</ulink>.
+      </para>
+      <para>
+        <ulink url="http://github.com/steamcannon/steamcannon">http://github.com/steamcannon/steamcannon</ulink>
+      </para>
+    </section>
+
+    <section>
+      <title>Agent</title>
+      <para>
+        The agent runs on each instance launched by SteamCannon and is
+        responsible for configuring, deploying, and monitoring
+        instances. It's built on <ulink
+        url="http://www.sinatrarb.com">Sinatra</ulink> and <ulink
+        url="http://www.ruby-lang.org">Ruby</ulink>.
+      </para>
+      <para>
+        <ulink url="http://github.com/steamcannon/steamcannon-agent">http://github.com/steamcannon/steamcannon-agent</ulink>
+      </para>
+    </section>
+
+    <section>
+      <title>Images</title>
+      <para>
+        The SteamCannon appliance and the images for each platform are
+        built by <ulink
+        url="http://www.jboss.org/boxgrinder">BoxGrinder</ulink>.
+      </para>
+      <para>
+        <ulink url="http://github.com/steamcannon/steamcannon-appliances">http://github.com/steamcannon/steamcannon-appliances</ulink>
+      </para>
+    </section>
+
+    <section>
+      <title>Platforms</title>
+      <para>
+        SteamCannon's platforms are based on <ulink
+        url="http://community.jboss.org/wiki/AS600CR1ReleaseNotes">JBoss
+        AS 6 Candidate Release 1</ulink>, <ulink
+        url="http://docs.jboss.org/mod_cluster/1.1.0/html/changelog.html">mod_cluster
+        1.1.0</ulink>, and <ulink
+        url="http://www.postgresql.org/docs/8.4/static/release-8-4-5.html">PostgreSQL
+        8.4.5</ulink>.
+      </para>
+      <para>
+      </para>
+    </section>
+
+    <section>
+      <title>steamcannon.org</title>
+      <para>
+        The steamcannon.org website is built using <ulink
+        url="http://awestruct.org/">Awestruct</ulink>.
+      </para>
+      <para>
+        <ulink url="http://github.com/steamcannon/steamcannon.org">http://github.com/steamcannon/steamcannon.org</ulink>
+      </para>
+    </section>
+
+  </section>
 
 </chapter>
