@@ -4,12 +4,13 @@
       = form.label :name
       = form.text_field :name
     %li
-      = form.label :cloud_provider
+      = form.label :cloud_profile
       - if @environment.new_record?
         = form.select :cloud_profile_id, cloud_profile_options
       - else
         = form.hidden_field :cloud_profile_id
         =h @environment.cloud_profile.name_with_details
+    = render 'environments/cloud_settings', :environment => @environment, :cloud_profile => @environment.cloud_profile
     %li
       = form.label :platform_version, "Platform"
       = form.select :platform_version_id, platform_version_options(platform_versions_available_to_environment(@environment))

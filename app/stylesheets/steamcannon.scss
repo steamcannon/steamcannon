@@ -488,6 +488,22 @@ table.header_top {
       }
     }
   }
+
+   #cloud_settings {
+      .loading {
+         display: none;
+         font-style: italic;
+         color: $green;
+      }
+      &.loading {
+         .loaded {
+            display: none;
+         }
+         .loading {
+            display: block;
+         }
+      }  
+   }
 }
 
 /* positioning and overlay for jquery.modal (jqm) */

@@ -32,6 +32,8 @@ describe Environment do
   it { should belong_to :platform_version }
   it { should belong_to :cloud_profile }
 
+  it { should validate_presence_of :cloud_profile }
+  
   it_should_have_events
   
   it "should have a name attribute" do
