@@ -5,6 +5,13 @@
   %updated=@environment.updated_at
   %current_state=@environment.current_state
   %preserve_storage_volumes=@environment.preserve_storage_volumes?
+  %artifacts
+    - @environment.artifacts.each do |artifact|
+      %artifact{:name=>artifact.name}
+        %created=artifact.created_at
+        %updated=artifact.updated_at
+        %description=artifact.description
+        %service=artifact.service.full_name
   %metadata
     =@environment.metadata
   %actions

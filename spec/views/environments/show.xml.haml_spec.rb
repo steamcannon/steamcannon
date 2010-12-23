@@ -26,6 +26,28 @@ describe "/environments/show.xml.haml" do
     assigns[:environment] = @environment
     @environment.stub_chain(:user, :email).and_return('joe@smith.com')
     @environment.stub_chain(:user, :cloud, :name).and_return('the-cloud')
+    @artifacts = [stub_model(Artifact, 
+                             :name=>'node info', 
+                             :description=>'a description', 
+                             :created_at=>Time.now, :updated_at=>Time.now)]
+    @artifacts.first.stub_chain(:service, :full_name).and_return('service name')
+    @environment.stub!(:artifacts).and_return(@artifacts)
+  end
+
+  it "should contain an artifacts element" do
+    render
+    response.should have_tag('artifacts')
+  end
+
+  it "should have data for each artifact" do
+    render
+    artifact = @artifacts.first
+    response.should have_tag('artifacts') do
+      with_tag('artifact[name=?]', artifact.name) do
+        with_tag('description', artifact.description)
+        with_tag('service', artifact.service.full_name)
+      end
+    end
   end
 
   it "renders the DeltaCloud API endpoint url for the environment" do
