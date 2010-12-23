@@ -1,6 +1,0 @@
-%li
-  %label{:for => :user_ssh_key_name} Amazon SSH Key Name (leave blank to disable SSH access)
-  = select_tag 'user[ssh_key_name]', cloud_ssh_key_select_options(user)
-%li
-  %label{:for => :default_realm} Amazon Availability Zone
-  = select_tag 'user[default_realm]', cloud_realm_select_options(user)

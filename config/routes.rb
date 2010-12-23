@@ -17,7 +17,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 ActionController::Routing::Routes.draw do |map|
-  map.resources :cloud_profiles
+  map.resources :cloud_profiles, :member => { :cloud_settings_block => :get }
 
   map.resources :account_requests, :collection => { :invite => :post, :ignore => :post }
 
@@ -50,7 +50,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :cloud_instances, :only => [:index, :destroy]
 
   map.resource :user_session
-  map.resource :account, :controller => "users", :member => { :validate_cloud_credentials => :get, :cloud_defaults_block => :get }
+  map.resource :account, :controller => "users", :member => { :validate_cloud_credentials => :get }
   map.resource :dashboard, :controller => "dashboard"
 
   map.new_user_from_token '/signup/:token', :controller => "users", :action => "new"

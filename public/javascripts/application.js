@@ -9,8 +9,10 @@ jQuery.fn.pulsate = function() {
     this.pulse({opacity: [1,.2]}, 500, 10);
 };
 
-jQuery.fn.applyOnce = function() {
-    marker_class = 'ujs_rule_applied'
+jQuery.fn.applyOnce = function(marker_class) {
+    if (!marker_class) {
+        marker_class = 'ujs_rule_applied'
+    }
     elements = this.filter(':not(.' + marker_class + ')')
     elements.addClass(marker_class)
     return elements
@@ -93,6 +95,16 @@ function apply_ujs_rules($) {
         })
     })
 
+    $('#environment_form #environment_cloud_profile_id').applyOnce('ujs_update_cloud_settings_applied').change(function() {
+        console.log($(this).val())
+        if ($(this).val()) {
+            $('#cloud_settings').addClass('loading')
+            $.get('/cloud_profiles/' + $(this).val() + '/cloud_settings_block', function(data) {
+                $('#cloud_settings').replaceWith(data)
+            })
+        }
+    })
+    
     $('.callout').applyOnce().delay(10000).slideUp()
 
     $("abbr.timeago").applyOnce().timeago()

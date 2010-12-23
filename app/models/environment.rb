@@ -39,7 +39,7 @@ class Environment < ActiveRecord::Base
 
   accepts_nested_attributes_for :environment_images
 
-  validates_presence_of :name, :user
+  validates_presence_of :name, :user, :cloud_profile
   validates_uniqueness_of :name, :scope => :user_id
   validate :validate_ssh_key_name
 

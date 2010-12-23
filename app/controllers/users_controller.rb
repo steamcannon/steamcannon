@@ -98,11 +98,6 @@ class UsersController < ResourceController::Base
     render(generate_json_response(valid ? :ok : :error))
   end
 
-  def cloud_defaults_block
-    update_cloud_credentials_from_params
-    render(:partial => 'users/cloud_defaults', :locals => { :user => object })
-  end
-
   protected
   def object
     super || current_user
