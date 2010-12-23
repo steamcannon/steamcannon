@@ -23,7 +23,7 @@
   <xi:include href="what-is-steamcannon.xml" />
   <xi:include href="installation.xml" />
   <xi:include href="upgrading.xml" />
-
+  <xi:include href="api.xml" />
   <xi:include href="licenses.xml" />
   <xi:include href="licenses/lgpl-3.xml" />
   <xi:include href="licenses/liberation-fonts.xml" />

@@ -53,7 +53,7 @@ class EventsController < ApplicationController
       #ignore
     end
 
-    if @entry_points
+    unless @entry_points.blank?
       @entry_point ||= @entry_points.first
       @lower_bound, @upper_bound = @entry_point.entry_point_bounds(@entry_points)
     end

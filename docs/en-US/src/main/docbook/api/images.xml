@@ -1,0 +1,31 @@
+<images 
+  proxy-for='http://try.steamcannon.org/deltacloud/api/images'>
+  <image 
+    href='http://try.steamcannon.org/environments/14/images/frontend-modcluster' 
+    id='frontend-modcluster' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/images/ami-bab146d3'>
+    <owner>steamcannon</owner>
+    <name>Frontend - mod_cluster</name>
+    <description>Apache 2.2.16 (w/mod_cluster 1.1.0)</description>
+    <architecture>i386</architecture>
+  </image>
+  <image 
+    href='http://try.steamcannon.org/environments/14/images/backend-jboss' 
+    id='backend-jboss' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/images/ami-4cb04725'>
+    <owner>steamcannon</owner>
+    <name>Backend - JBoss</name>
+    <description>JBoss AS 6 m5 (w/TorqueBox 1.0.0.Beta23-SNAPSHOT)</description>
+    <architecture>i386</architecture>
+  </image>
+  <image 
+    href='http://try.steamcannon.org/environments/14/images/database-postgresql' 
+    id='database-postgresql' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/images/ami-2cb04745'>
+    <owner>steamcannon</owner>
+    <name>Database - PostgreSQL</name>
+    <description>PostgreSQL 8.4</description>
+    <architecture>i386</architecture>
+  </image>
+</images>
+

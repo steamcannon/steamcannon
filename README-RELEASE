@@ -1,0 +1,46 @@
+Some random notes about releasing
+
+Build all platform images and test SC appliances several days before
+the release to work out any kinks. Be sure to test migrating a copy of
+the data from try.steamcannon.org to a newer AMI to work out any
+migration issues.
+
+Appliances are built using a 32bit (ami-b344b3da) and a 64bit
+(ami-7543b41c) SC-meta appliance.
+  - For faster appliance creation, launch c1.medium and c1.xlarge.
+  - yum update libguestfs augeas-libs
+
+Make sure all appliances are built in the steamcannon-appliances
+bucket.
+
+Make sure all appliances have version 0.2.0 in their bucket URL (so
+version 0, release 2.0?)
+
+Mark all appliance AMIs as public.
+
+Ensure SC Vmware appliances has appropriate filename -
+steamcannon-0.2.0-vmware.tgz or similar.
+
+Upload the SC VMware appliance to steamcannon-releases bucket.
+
+Tag steamcannon, steamcannon-agent, steamcannon-appliances for release
+
+Mark the version as released in JIRA
+
+Add the release info to steamcannon.org/_config/releases.yml
+
+Ensure versions in all docs/**/pom.xml are correct
+
+Update SC AMI ids in docs/pom.xml
+
+Build docs with 'mvn package' from steamcannon/docs directory.
+
+Copy
+steamcannon/docs/en_US/target/steamcannon-docs-en_US-{version}-html.zip
+to steamcannon.org/documentation/download/
+
+Publish release announcement to steamcannon.org
+
+Email release announcement to steamcannon-user and steamcannon-dev
+
+Tweet release announcement from @steamcannon and RT

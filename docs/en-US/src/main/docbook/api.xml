@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="api">
+  <title>API</title>
+
+  <para>
+    Version 0.2
+  </para>
+
+  <section>
+    <title>Introduction</title>
+    <para>
+      SteamCannon provides a <acronym>REST</acronym> <acronym>API</acronym>
+      through which clients may discover and act upon cloud objects from their
+      SteamCannon account.  The API exposes a single XML entry point with
+      subsequent traversal and manipulation of objects done via opaque URLs
+      returned by the SteamCannon server.  Client requests over HTTP use the
+      standard HTTP verbs: GET, POST, PUT and DELETE.
+    </para>
+    <para>
+      SteamCannon's <acronym>API</acronym> is implemented using
+      <acronym>HATEOS</acronym> (Hypermedia as the Engine of Application State)
+      where all a client needs to know is the entry point URL. Subsequent
+      access to objects within the system is made possible by URLs returned in
+      the server response.  For more information about REST and HATEOS, please
+      see the reference below.
+      <itemizedlist>
+        <listitem>
+          <ulink url="http://roy.gbiv.com/untangled/2008/rest-apis-must-be-hypertext-driven">
+            REST APIs must be hypertext driven
+          </ulink>
+
+        </listitem>
+      </itemizedlist>
+      What this means for the purposes of this document is that any URLs
+      noted here are purely hypothetical and should not be used to infer
+      any specific URL structure for elements of the API.  The SteamCannon
+      server may send back URLs in any format and the client should not 
+      be affected.  All URLs are opaque.
+    </para>
+
+    <section>
+      <title>Deltacloud Endpoint</title>
+      <para>
+        The primary function of the SteamCannon API in this nascent version is
+        to expose a user- and environment-specific Deltacloud endpoint which
+        may be used to start and stop SteamCannon machine instances within a
+        SteamCannon environment. Through this Deltacloud endpoint, clients have
+        access to instances, images, hardware profiles and realms.  These
+        entities are abstractions of specific cloud-based objects, allowing
+        programmatic manipulation of cloud assets while freeing the API client
+        from having to know about various specific cloud APIs.
+      </para>
+    </section>
+
+    <section>
+      <title>Authentication</title>
+      <para>
+        The SteamCannon API is stateless and does not retain any session
+        information between requests from a client.  Clients use HTTP basic
+        authentication in every request to authenticate.  Standard SteamCannon
+        account email and password may be sent as part of the URL for each
+        request as in
+        <code>http://username@email.com:pass@try.steamcannon.org/api</code>.  In
+        addition, the server will issue an HTTP Basic authentication challenge,
+        allowing for interactive clients to prompt for username and password as
+        with any HTTP Basic authentication from within a web browser.
+      </para>
+      <para>
+        Note: Some clients may not properly escape the '@' in the user's
+        email address. In that case, the above URL should be modified as such:
+        <code>http://username%40email.com:pass@try.steamcannon.org/api</code>.
+      </para>
+    </section>
+
+    <section>
+      <title>Server Responses</title>
+      <para>
+        All server responses from the API will be in XML format.  In the event
+        that a client attempts to access a resource which does not exist or for
+        which the user is not authorized, the server will issue an HTTP 404
+        (Not Found) error code in response.  Creation of new objects, for example
+        starting a new instance, will return HTTP 201 upon success. Most other
+        API requests will return 200 when successful.
+      </para>
+    </section>
+  </section>
+
+  <section>
+    <title>The API Entry Point</title>
+    <para>
+      Access to the SteamCannon API originates at the SteamCannon API
+      Endpoint.  The server response from this endpoint provides subsequent
+      URLs to access entities from the authenticated SteamCannon account.
+<screen><xi:include href="api/endpoint.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      URLs to SteamCannon resource collections are exposed at the endpoint as
+      <code>&lt;link&gt;</code> elements.  The <code>rel</code> attribute
+      provides the name of the collection.  A <code>GET</code> request to the
+      URL in the <code>href</code> attribute provides access to the collection
+      itself. As you can see, the API endpoint for version 0.1 contains a
+      single collection &mdash; environments.
+    </para>
+  </section>
+  <section>
+    <title>Environments</title>
+    <para>
+      SteamCannon uses the concept of an "environment" to encapsulate a named
+      collection of machine images.  Each environment is based on a pre-defined
+      set of SteamCannon images known as a Platform.  For example, SteamCannon
+      provides a JBoss 3-tier Platform with a separate machine image for each
+      application layer, e.g.  an image with a frontend web balancer
+      (mod_proxy), an image providing a JBoss AS application server, and an
+      image providing a PostgreSQL database.  An environment based on this
+      Platform will have 3 images and any number of running instances.
+    </para>
+    <section>
+      <title>Environment Collections</title>
+      <para>
+        By sending a GET request to the endpoint's <code>environments</code>
+        link, you can access a collection of all environments available.  The
+        server returns a list of the authenticated user's environments as
+        <code>&lt;environment&gt;</code> elements, each containing
+        <code>name</code> and <code>href</code> attributes as shown below. 
+<screen><xi:include href="api/environments.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
+    </section>
+    <section>
+      <title>Single Environment</title>
+      <para>
+        Clients may access a single <code>&lt;environment&gt;</code> using an
+        <code>href</code> from the environments collection.  For example
+        <code>http://try.steamcannon.org/environments/12</code> provides
+        identifying information about the environment, as well as information
+        about the current state, and a link to a Deltacloud API endpoint
+        for the environment.
+<screen><xi:include href="api/environment.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+        The data returned in the <code>&lt;environment&gt;</code> element
+      </para>
+      <section>
+        <title>name</title>
+        <para>
+          The name of the environment as provided by the user in the
+          SteamCannon user interface.
+        </para>
+      </section>
+      <section>
+        <title>owner</title>
+        <para>
+          The login id of the SteamCannon user to whom this environment belongs. 
+        </para>
+      </section>
+      <section>
+        <title>created</title>
+        <para>The date the environment was created</para>
+      </section>
+      <section>
+        <title>updated</title>
+        <para>
+          The date of the environment's most recent change.  If there has been
+          no change, this will be identical to <code>created</code>
+        </para>
+      </section>
+      <section>
+        <title>current_state</title>
+        <para>
+          The current state of the environment. If there are no instances
+          running, this will be <code>stopped</code>.  If instances are
+          running, the environment will be considered <code>running</code>.  If
+          no instances are running the environment will be considered
+          <code>stopped</code>
+        </para>
+      </section>
+      <section>
+        <title>preserve_storage_volumes</title>
+        <para>
+          This will be either <code>true</code> or <code>false</code> depending
+          upon whether this environment is configured to save storage volumes
+          on shutdown.
+        </para>
+      </section>
+      <section>
+        <title>metadata</title>
+        <para>Any metadata associated with this environment.</para>
+      </section>
+      <section>
+        <title>link</title>
+        <para>
+          The link tag provides access to the environment-specific Deltacloud
+          endpoint.
+        </para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Deltacloud Endpoint</title>
+    <para>
+      SteamCannon exposes a user- and environment-specific Deltacloud API
+      endpoint.  By following the <code>href</code> URL in an
+      <code>&lt;environment&gt;</code> element's <code>&lt;link&gt;</code> tag,
+      a SteamCannon API client is authorized with the backing Deltacloud
+      server, and has access to the assets and actions available via Deltacloud
+      for images and instances associated with the environment.
+    </para>
+    <para>
+      SteamCannon's Deltacloud endpoint for this release conforms to the API
+      exposed in steamcannon-deltacloud-core 0.1.1.3.  We're running a fork of
+      Deltacloud that contains experimental storage volume support that has not
+      yet been merged with the mainline deltacloud codebase.  This fork is
+      based on version 0.1.1 of deltacloud-core and makes no changes to the
+      underlying API exposed by Deltacloud.  That's a long way of saying, that
+      our Deltacloud endpoint confirms to deltacloud-core version 0.1.1.
+    </para>
+    <para>
+      The following sections outline issues specific to SteamCannon's
+      Deltacloud API implementation.  For a complete Deltacloud API reference,
+      please see the Deltacloud documentation.
+      <ulink url="http://deltacloud.org/api.html"/>
+    </para>
+
+    <section>
+      <title>Endpoint Response</title>
+      <para>
+        Here is a typical response from the SteamCannon Deltacloud endpoint
+        for a given environment.  Notice that, in addition to the the standard
+        <code>rel</code> and <code>href</code> attributes with all Deltacloud
+        endpoint links, we also expose the underlying DeltaCloud URL using
+        a <code>proxy-for</code> attribute.
+<screen><xi:include href="api/deltacloud-endpoint.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
+    </section>
+    <section>
+      <title>Hardware Profiles</title>
+      <para>
+        For hardware profiles, SteamCannon makes no changes to the typical
+        Deltacloud response other than inserting <code>proxy-for</code>
+        attributes in each <code>hardware_profile</code> element.
+<screen><xi:include href="api/hardware-profiles.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
+    </section>
+    <section>
+      <title>Realms</title>
+      <para>
+        As with hardware profiles, SteamCannon makes no changes to the
+        typical Deltacloud response for a realms collection other than
+        inserting <code>proxy-for</code> attributes in each <code>realm</code>
+        element.
+<screen><xi:include href="api/realms.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
+    </section>
+    <section>
+      <title>Instance States</title>
+      <para>
+        SteamCannon exposes three distinct instance states, <code>running</code>,
+        <code>pending</code>, and <code>stopped</code>.  These states map 
+        directly to the Deltacloud states of the same name.  As with other
+        API responses, a <code>proxy-for</code> attribute is included which
+        points to the underlying Deltacloud URL.
+<screen><xi:include href="api/instance-states.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
+    </section>
+    <section>
+      <title>Images</title>
+      <para>
+        The <code>&lt;images&gt;</code> element returns a collection of 
+        <code>&lt;image&gt;</code> elements which describe the machine imgaes
+        which compirise this environment. SteamCannon filters the full list
+        of images provided by the underlying DeltaCloud URL and exposes only
+        those images that are associated with the environment.
+<screen><xi:include href="api/images.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
+    </section>
+    <section>
+      <title>Instances</title>
+      <para>
+        If the environment contains any running machine instances, those are
+        returned from the <code>instances</code> link.  Again, SteamCannon
+        filters what is returned to include only instances running in the 
+        context of this environment.
+<screen><xi:include href="api/instances.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
+      </para>
+    </section>
+    <section>
+      <title>Samples</title>
+      <para>
+        The SteamCannon source repository includes a script to exercise
+        the Deltacloud endpoint using the deltacloud-client rubygem.
+        To see the API in action, checkout the steamcannon repository
+        from github <ulink url="http://github.com/steamcannon/steamcannon"/>
+        and run 
+        <screen>./script/exercise_dc_endpoint</screen>
+      </para>
+    </section>
+  </section>
+</chapter>
+

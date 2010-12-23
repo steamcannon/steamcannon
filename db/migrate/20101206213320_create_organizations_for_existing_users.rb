@@ -4,6 +4,10 @@ end
 
 class User < ActiveRecord::Base
   belongs_to :organization
+
+  def cloud_username
+    read_attribute(:cloud_username)
+  end
 end
 
 class CreateOrganizationsForExistingUsers < ActiveRecord::Migration

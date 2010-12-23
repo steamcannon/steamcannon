@@ -1,0 +1,19 @@
+<environments>
+  <environment 
+    href='http://try.steamcannon.org/environments/16' 
+    name='my development env'>
+  </environment>
+  <environment 
+    href='http://try.steamcannon.org/environments/14' 
+    name='test platform'>
+  </environment>
+  <environment 
+    href='http://try.steamcannon.org/environments/12' 
+    name='Staging, 2-tier'>
+  </environment>
+  <environment 
+    href='http://try.steamcannon.org/environments/17' 
+    name='Production, 3-tier'>
+  </environment>
+</environments>
+

@@ -1,0 +1,41 @@
+<hardware_profiles 
+  proxy-for='http://try.steamcannon.org/deltacloud/api/hardware_profiles'>
+  <hardware_profile 
+    href='http://try.steamcannon.org/hardware_profiles/m1-small' 
+    id='m1-small' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/hardware_profiles/m1.small'>
+    <property kind='fixed' name='architecture' unit='label' value='i386'></property>
+    <property kind='fixed' name='storage' unit='GB' value='160.0'></property>
+    <property kind='fixed' name='cpu' unit='count' value='1.0'></property>
+    <property kind='fixed' name='memory' unit='MB' value='1740.8'></property>
+  </hardware_profile>
+  <hardware_profile 
+    href='http://try.steamcannon.org/hardware_profiles/m1-large' 
+    id='m1-large' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/hardware_profiles/m1.large'>
+    <property kind='fixed' name='architecture' unit='label' value='x86_64'></property>
+    <property kind='fixed' name='storage' unit='GB' value='850.0'></property>
+    <property kind='fixed' name='cpu' unit='count' value='4.0'></property>
+    <property kind='fixed' name='memory' unit='MB' value='7680.0'></property>
+  </hardware_profile>
+  <hardware_profile 
+    href='http://try.steamcannon.org/hardware_profiles/m1-xlarge' 
+    id='m1-xlarge' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/hardware_profiles/m1.xlarge'>
+    <property kind='fixed' name='architecture' unit='label' value='x86_64'></property>
+    <property kind='fixed' name='storage' unit='GB' value='1690.0'></property>
+    <property kind='fixed' name='cpu' unit='count' value='8.0'></property>
+    <property kind='fixed' name='memory' unit='MB' value='15360.0'></property>
+  </hardware_profile>
+  <hardware_profile 
+    href='http://try.steamcannon.org/hardware_profiles/c1-medium' 
+    id='c1-medium' 
+    proxy-for='http://try.steamcannon.org/deltacloud/api/hardware_profiles/c1.medium'>
+    <property kind='fixed' name='architecture' unit='label' value='i386'></property>
+    <property kind='fixed' name='storage' unit='GB' value='350.0'></property>
+    <property kind='fixed' name='cpu' unit='count' value='5.0'></property>
+    <property kind='fixed' name='memory' unit='MB' value='1740.8'></property>
+  </hardware_profile>
+</hardware_profiles>
+
+

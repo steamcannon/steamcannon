@@ -1,0 +1,52 @@
+<instances 
+  proxy-for='http://try.steamcannon.org/deltacloud/api/instances'>
+  <instance 
+    href='http://try.steamcannon.org/environments/14/instances/frontend-modcluster-1' 
+    id='frontend-modcluster-1'>
+    <owner_id>lanceball@gmail.com</owner_id>
+    <name>Frontend - mod_cluster #1</name>
+    <image 
+      href='http://try.steamcannon.org/environments/14/images/frontend-modcluster' 
+      id='frontend-modcluster'></image>
+    <hardware_profile 
+      href="http://try.steamcannon.org/hardware_profiles/c1-medium" 
+      id="c1-medium" />
+    <realm 
+      href='http://try.steamcannon.org/realms/us-east-1a' 
+      id='us-east-1a'></realm>
+    <state>RUNNING</state>
+    <actions>
+    </actions>
+    <public_addresses>
+      <address>ec2-174-129-68-247.compute-1.amazonaws.com</address>
+    </public_addresses>
+    <private_addresses>
+      <address>ip-10-100-11-184.ec2.internal</address>
+    </private_addresses>
+  </instance>
+  <instance 
+    href='http://try.steamcannon.org/environments/14/instances/backend-jboss-2' 
+    id='backend-jboss-2'>
+    <owner_id>lanceball@gmail.com</owner_id>
+    <name>Backend - JBoss #2</name>
+    <image 
+      href='http://try.steamcannon.org/environments/14/images/backend-jboss' 
+      id='backend-jboss'></image>
+    <hardware_profile 
+      href="http://try.steamcannon.org/hardware_profiles/c1-medium" 
+      id="c1-medium" />
+    <realm 
+      href='http://try.steamcannon.org/realms/us-east-1a' 
+      id='us-east-1a'></realm>
+    <state>RUNNING</state>
+    <actions>
+    </actions>
+    <public_addresses>
+      <address>ec2-184-73-126-181.compute-1.amazonaws.com</address>
+    </public_addresses>
+    <private_addresses>
+      <address>ip-10-100-11-231.ec2.internal</address>
+    </private_addresses>
+  </instance>
+</instances>
+

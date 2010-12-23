@@ -23,6 +23,7 @@
 class ApplicationController < ActionController::Base
   include SslRequirement
 
+  before_filter :check_deltacloud_config
   before_filter :require_complete_profile
 
   helper :all # include all helpers, all the time
@@ -65,6 +66,10 @@ class ApplicationController < ActionController::Base
   def require_complete_profile
     return false unless current_user
     store_location and redirect_to edit_account_path unless current_user.profile_complete?
+  end
+
+  def check_deltacloud_config
+    flash[:error] = "Your deltacloud configuration is not complete.  Please provide a valid deltacloud_url setting in config/steamcannon.yml" unless APP_CONFIG[:deltacloud_url]
   end
 
   def require_http_auth

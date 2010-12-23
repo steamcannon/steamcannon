@@ -1,7 +1,7 @@
 #events_index
   .page_header
     .actions
-    - if @event_subject.subject_type == 'Environment'
+    - if @event_subject.subject_type == 'Environment' and @entry_point
       - environment = @event_subject.subject
       %h1
         Event Log for #{link_to h(environment.name), environment_path(environment)}
