@@ -33,7 +33,7 @@ describe "/environments/show.xml.haml" do
   it "should contain a deployments element" do
     render
     response.should have_tag('deployments') do
-      with_tag('link[href=?][rel=?]', deployment_url(@deployments.first), 'deployment')
+      with_tag('link[href=?][rel=?]', environment_deployment_url(@environment, @deployments.first), 'deployment')
     end
   end
 

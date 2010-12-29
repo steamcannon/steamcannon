@@ -3,7 +3,7 @@
   .page_header
     .actions
       - unless @artifact.artifact_versions.empty?
-        = link_to 'Deploy Latest Version', new_deployment_path('deployment[artifact_version_id]' => @artifact.latest_version.id)
+        = render :partial => 'deploy_dialog', :locals => {:artifact_version=>@artifact.latest_version}
       = link_to 'Edit Details', edit_artifact_path( @artifact )
     %h1 
       &= @artifact.name

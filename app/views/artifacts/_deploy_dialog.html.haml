@@ -1,0 +1,8 @@
+= link_to("Deploy &raquo;", '#', :id=>"deployment_#{artifact_version.id}")
+.deployment.jqmWindow.js-popup_dialog{style_display_none.merge(:rel => "#deployment_#{artifact_version.id}")}
+  %h2 Choose an Envrionment
+  - current_user.environments.each do |e|
+    %ul
+      %li= link_to "Deploy to #{e.name}", new_environment_deployment_path(e, 'deployment[artifact_version_id]' => artifact_version.id)
+  .controls
+    = link_to("Close", "#", :class=>'jqmClose')

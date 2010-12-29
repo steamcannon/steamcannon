@@ -36,6 +36,7 @@ ActionController::Routing::Routes.draw do |map|
     end
 
     environment.resources :storage_volumes, :member => {:status => :post}, :only => [:destroy]
+    environment.resources :deployments, :member => {:status => :post}
   end
 
   map.with_options :controller => 'events' do |events|
@@ -43,7 +44,6 @@ ActionController::Routing::Routes.draw do |map|
     events.partial_events_for_subject '/partial_events/:subject_id', :action => 'partial_index'
   end
 
-  map.resources :deployments, :member => { :status => :post }
   map.resources :users, :member => {:assume_user => :get, :promote => :post, :demote => :post}
   map.resources :cloud_instances, :only => [:index, :destroy]
 

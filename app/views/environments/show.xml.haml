@@ -7,7 +7,7 @@
   %preserve_storage_volumes=@environment.preserve_storage_volumes?
   %deployments
     - @environment.deployments.each do |deployment|
-      %link{:href=>deployment_url(deployment), :rel=>'deployment'}
+      %link{:href=>environment_deployment_url(@environment, deployment), :rel=>'deployment'}
   %metadata
     =@environment.metadata
   %actions

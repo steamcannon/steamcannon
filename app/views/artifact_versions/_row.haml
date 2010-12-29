@@ -8,7 +8,7 @@
       = artifact_version_download_link(artifact_version)
   .actions
     - unless artifact_version.upload_failed?
-      = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact_version.id)
+      = render :partial => 'deploy_dialog', :locals => {:artifact_version=>artifact_version}
     - if (artifact_version.uploaded? || artifact_version.upload_failed?) && !artifact_version.is_deployed?
       = link_to 'Delete', artifact_version_path(artifact_version, :artifact_id => artifact_version.artifact.id), :method => :delete, :confirm => "Are you sure you want to delete version #{artifact_version.version_number}?"
 

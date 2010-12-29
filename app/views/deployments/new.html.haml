@@ -1,7 +1,8 @@
 .dcloud_form
   %h2
-    Deploy Artifact
-  - form_for(@deployment) do |f|
+    Deploy Artifact to
+    = @environment.name
+  - form_for([@environment, @deployment]) do |f|
     = f.error_messages
     = render :partial => "form", :object => f
     = f.submit 'Deploy', :class => "submit"

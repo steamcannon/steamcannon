@@ -32,7 +32,7 @@
               %li
                 = instance_service.instance.name
       - javascript_tag do
-        ="monitor_deployment('#{status_deployment_path(deployment.id)}', '##{dom_id(deployment)}');"
+        ="monitor_deployment('#{status_environment_deployment_path(@environment, deployment.id)}', '##{dom_id(deployment)}');"
       
       /.health
       /  &nbsp;&nbsp;

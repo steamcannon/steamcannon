@@ -19,7 +19,7 @@
 
       %td.actions
         - if artifact.latest_version_number
-          = link_to 'Deploy', new_deployment_path('deployment[artifact_version_id]' => artifact.latest_version.id)
+          = render :partial => 'deploy_dialog', :locals => {:artifact_version => artifact.latest_version}
         - else
           &nbsp;
         = link_to 'Edit', edit_artifact_path(artifact)

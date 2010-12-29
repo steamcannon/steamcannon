@@ -208,6 +208,22 @@ form {
 }
 
 #artifacts_container {
+  .artifact .deployment {
+    a { 
+      color: #777; 
+      font-weight: normal;
+    }
+    ul {
+      margin: 0;
+      list-style-type: none;
+      li {
+        margin: 0;
+      }
+    }
+    .controls {
+      float: right;
+    }
+  }
 }
 
 #show_environment {
@@ -335,6 +351,9 @@ form {
         font-size: 90%;
         width: 20%;
       }
+     .jqmWindow {
+       padding: 12px;
+     }
     }
   }
   

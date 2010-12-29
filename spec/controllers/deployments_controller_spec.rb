@@ -23,10 +23,12 @@ describe DeploymentsController do
     login
     @current_user.stub!(:deployments).and_return(Deployment)
     @current_user.stub!(:default_realm).and_return('def-realm')
+    @current_user.stub!(:environments).and_return(Environment)
+    Environment.stub!(:find).and_return(mock_environment)
   end
 
   def mock_deployment(stubs={})
-    stubs.merge!(:artifact => mock_artifact)
+    stubs.merge!(:artifact => mock_artifact, :environment => mock_environment)
     @mock_deployment ||= mock_model(Deployment, stubs)
   end
 
@@ -34,19 +36,40 @@ describe DeploymentsController do
     @mock_artifact ||= mock_model(Artifact, stubs)
   end
 
+  def mock_environment(stubs={})
+    @mock_environment ||= mock_model(Environment, stubs)
+  end
+
   describe "GET index" do
-    it "assigns all deployments as @deployments" do
+
+    before :each do
       Deployment.stub(:find).with(:all).and_return([mock_deployment])
-      get :index
+    end
+
+    it "assigns all deployments as @deployments" do
+      get :index, :environment_id => "1"
       assigns[:deployments].should == [mock_deployment]
+    end
+
+    it "assigns the current environment to @environment" do
+      get :index, :environment_id => "1"
+      assigns[:environment].should == mock_environment
     end
   end
 
   describe "GET show" do
-    it "assigns the requested deployment as @deployment" do
+    before :each do
       Deployment.stub(:find).with("37").and_return(mock_deployment)
-      get :show, :id => "37"
+    end
+
+    it "assigns the requested deployment as @deployment" do
+      get :show, :id => "37", :environment_id => "1"
       assigns[:deployment].should equal(mock_deployment)
+    end
+
+    it "assigns the current environment to @environment" do
+      get :show, :id => "37", :environment_id => "1"
+      assigns[:environment].should == mock_environment
     end
   end
 
@@ -58,13 +81,18 @@ describe DeploymentsController do
     end
 
     it "assigns a new deployment as @deployment" do
-      get :new
+      get :new, :environment_id => "1"
       assigns[:deployment].should equal(mock_deployment)
     end
 
     it "defaults to local datasource" do
       mock_deployment.should_receive(:datasource=).with("local")
-      get :new
+      get :new, :environment_id => "1"
+    end
+
+    it "assigns the current environment to @environment" do
+      get :new, :environment_id => "1"
+      assigns[:environment].should == mock_environment
     end
   end
 
@@ -77,18 +105,22 @@ describe DeploymentsController do
     describe "with valid params" do
       before(:each) do
         mock_deployment.stub!(:save).and_return(true)
+        Deployment.stub(:new).with({'these' => 'params'}).and_return(mock_deployment)
       end
 
       it "assigns a newly created deployment as @deployment" do
-        Deployment.stub(:new).with({'these' => 'params'}).and_return(mock_deployment)
-        post :create, :deployment => {:these => 'params'}
+        post :create, :deployment => {:these => 'params'}, :environment_id => "1"
         assigns[:deployment].should equal(mock_deployment)
       end
 
       it "redirects to the environment show page" do
-        Deployment.stub(:new).and_return(mock_deployment)
-        post :create, :deployment => {}
+        post :create, :deployment => {:these => 'params'}, :environment_id => "1"
         response.should redirect_to(environment_url(mock_deployment.environment))
+      end
+
+      it "assigns the current environment to @environment" do
+        post :create, :deployment => {:these => 'params'}, :environment_id => "1"
+        assigns[:environment].should == mock_environment
       end
     end
 
@@ -99,13 +131,13 @@ describe DeploymentsController do
 
       it "assigns a newly created but unsaved deployment as @deployment" do
         Deployment.stub(:new).with({'these' => 'params'}).and_return(mock_deployment)
-        post :create, :deployment => {:these => 'params'}
+        post :create, :deployment => {:these => 'params'}, :environment_id => "1"
         assigns[:deployment].should equal(mock_deployment)
       end
 
       it "re-renders the 'new' template" do
         Deployment.stub(:new).and_return(mock_deployment)
-        post :create, :deployment => {}
+        post :create, :deployment => {}, :environment_id => "1"
         response.should render_template('new')
       end
     end
@@ -113,16 +145,24 @@ describe DeploymentsController do
   end
 
   describe "DELETE destroy" do
-    it "undeploys the requested deployment" do
+    before(:each) do
       Deployment.should_receive(:find).with("37").and_return(mock_deployment)
+      mock_deployment.stub(:undeploy!)
+    end
+
+    it "undeploys the requested deployment" do
       mock_deployment.should_receive(:undeploy!)
-      delete :destroy, :id => "37"
+      delete :destroy, :id => "37", :environment_id => "1"
     end
 
     it "redirects to the artifact show page" do
-      Deployment.stub(:find).and_return(mock_deployment(:undeploy! => true))
-      delete :destroy, :id => "1"
+      delete :destroy, :id => "37", :environment_id => "1"
       response.should redirect_to(artifact_url(mock_deployment.artifact))
+    end
+
+    it "assigns the current environment to @environment" do
+      delete :destroy, :id => "37", :environment_id => "1"
+      assigns[:environment].should == mock_environment
     end
   end
 
@@ -134,8 +174,13 @@ describe DeploymentsController do
     end
 
     it "should assign the requested deployment as @deployment" do
-      post :status, :id => "13"
+      post :status, :id => "13", :environment_id => "1"
       assigns[:deployment].should equal(mock_deployment)
+    end
+
+    it "assigns the current environment to @environment" do
+      post :status, :id => "13", :environment_id => "1"
+      assigns[:environment].should == mock_environment
     end
   end
 

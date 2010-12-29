@@ -25,7 +25,7 @@
                 = render 'deployments/service_list', :deployment => deployment
 
               - javascript_tag do
-                ="monitor_deployment('#{status_deployment_path(deployment.id)}', '##{dom_id(deployment)}');"
+                ="monitor_deployment('#{status_environment_deployment_path(@environment, deployment.id)}', '##{dom_id(deployment)}');"
 
   .actions
     = link_to 'Deploy an artifact', new_deployment_path('deployment[environment_id]' => @environment.id)

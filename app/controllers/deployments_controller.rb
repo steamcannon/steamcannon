@@ -20,6 +20,7 @@
 class DeploymentsController < ApplicationController
   navigation :deployments
   before_filter :require_user
+  before_filter :find_environment
 
   # GET /deployments
   # GET /deployments.xml
@@ -88,6 +89,11 @@ class DeploymentsController < ApplicationController
   def status
     @deployment = current_user.deployments.find(params[:id])
     render(:partial => "deployments/service_list", :locals => { :deployment => @deployment }) 
+  end
+
+  protected
+  def find_environment
+    @environment = current_user.environments.find(params[:environment_id])
   end
 
 end
