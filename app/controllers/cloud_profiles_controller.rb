@@ -20,7 +20,8 @@ class CloudProfilesController < ResourceController::Base
   navigation :cloud_profiles
   
   before_filter :require_user
-
+  before_filter :require_organization_admin, :except => [:index, :show]
+  
   def cloud_settings_block
     render :partial => 'environments/cloud_settings', :locals => { :cloud_profile => object }
   end
