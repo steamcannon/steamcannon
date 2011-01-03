@@ -5,7 +5,7 @@ class CloudProfile < ActiveRecord::Base
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :organization_id
-  
+
   validate :validate_cloud_credentials
 
   attr_accessor_with_default :password_dirty, false
@@ -58,7 +58,12 @@ class CloudProfile < ActiveRecord::Base
   def validate_cloud_credentials
     if username_changed? or @password_dirty
       message = "Cloud credentials are invalid"
-      errors.add_to_base(message) unless cloud.valid_credentials?
+      begin
+        message = nil if cloud.valid_credentials?
+      rescue Exception => ex
+        #ignore
+      end
+      errors.add_to_base(message) if message
     end
   end
 end

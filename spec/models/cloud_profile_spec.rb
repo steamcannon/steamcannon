@@ -68,7 +68,7 @@ describe CloudProfile do
     end
   end
   
-  context "validate_cloud_credentials" do
+  describe "validate_cloud_credentials" do
     before(:each) do
       @cloud = mock('cloud')
       @cloud_profile.stub!(:cloud).and_return(@cloud)
@@ -97,6 +97,13 @@ describe CloudProfile do
       @cloud_profile.send(:validate_cloud_credentials)
     end
 
+    it "shouldn't validate if the cloud raises an error" do
+      @cloud_profile.username = 'username'
+      @cloud.should_receive(:valid_credentials?).and_raise(Exception.new)
+      @cloud_profile.send(:validate_cloud_credentials)
+      @cloud_profile.errors.size.should be(1)
+    end
+    
     it "should add an error if invalid" do
       @cloud_profile.username = 'username'
       @cloud.should_receive(:valid_credentials?).and_return(false)

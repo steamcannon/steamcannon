@@ -45,6 +45,6 @@
             - unless user == current_user
               - if user.organization_admin?
                 = link_to 'Demote', demote_user_path(user), :method => :post
-                - else
-                  = link_to 'Promote', promote_user_path(user), :method => :post
+              - else
+                = link_to 'Promote', promote_user_path(user), :method => :post
   

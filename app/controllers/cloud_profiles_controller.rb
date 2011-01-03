@@ -17,10 +17,21 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class CloudProfilesController < ResourceController::Base
+  navigation :cloud_profiles
+  
   before_filter :require_user
 
   def cloud_settings_block
     render :partial => 'environments/cloud_settings', :locals => { :cloud_profile => object }
+  end
+
+  # can be called with or without a member record
+  def validate_cloud_credentials
+    cloud_profile = object || CloudProfile.new
+    cloud_profile.username = params[:username] if params[:username]
+    cloud_profile.password = params[:password] unless params[:password].blank?
+    valid = cloud_profile.cloud.attempt(:valid_credentials?, false)
+    render(generate_json_response(valid ? :ok : :error))
   end
 
   protected
@@ -31,4 +42,5 @@ class CloudProfilesController < ResourceController::Base
   def build_object
     @object ||= end_of_association_chain.build object_params
   end
+
 end

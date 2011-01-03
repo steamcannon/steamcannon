@@ -25,4 +25,15 @@ module CloudProfilesHelper
     options_for_select(options, environment.try(:realm))
   end
 
+  def available_clouds
+    Cloud::Specifics::Base.available_clouds
+  end
+  
+  def available_cloud_names
+    options_for_select(available_clouds.values.collect { |c| [c[:display_name], c[:name]]}.sort_by(&:first))
+  end
+
+  def cloud_providers(cloud, selected)
+    options_for_select(cloud[:providers], selected)
+  end
 end

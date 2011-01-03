@@ -19,30 +19,3 @@
         %li
           = org_form.label :name, "Organization Name"
           = org_form.text_field :name
-        - unless form.object.profile_complete?
-          %li
-            = org_form.label :cloud_username, "Amazon Access Key"
-            = org_form.text_field :cloud_username, :class => 'js-verify_credential'
-        - else
-          %li
-            = org_form.label :cloud_username, "Amazon Access Key"
-            = org_form.text_field :cloud_username, :class => 'js-verify_credential'
-          %li#cloud_password_prompt
-            = org_form.label :cloud_password, "Amazon Secret Access Key"
-            = org_form.object.obfuscated_cloud_password 
-            .link
-              = link_to 'Change Secret Access Key', '#', :class=>'js-cloud_password_toggle'
-        %li#cloud_password_field{:style=>form.object.profile_complete? ? 'display:none' : ''}
-          = org_form.label :cloud_password, "Amazon Secret Access Key"
-          = org_form.text_field :cloud_password, :value=>"", :class => 'js-verify_credential'
-          .link
-            = link_to 'Hide', '#', :class=>'js-cloud_password_toggle' if form.object.profile_complete?
-        %li#verification_status
-          #verifying
-            Verifying cloud credentials...
-          #valid
-            Cloud credentials are valid.
-          #invalid
-            Cloud credentials are invalid. Please make sure you have entered them correctly.
-  %ul#cloud_defaults
-    = render 'users/cloud_defaults', :user => form.object

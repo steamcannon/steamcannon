@@ -1,15 +1,31 @@
-%p
-  %b Cloud name:
-  = h @cloud_profile.cloud_name
-%p
-  %b Provider name:
-  = h @cloud_profile.provider_name
-%p
-  %b Username:
-  = h @cloud_profile.username
-%p
-  %b Password:
-  = h @cloud_profile.password
-= link_to 'Edit', edit_cloud_profile_path(@cloud_profile)
-|
-\#{link_to 'Back', cloud_profiles_path}
+#show_cloud_profile
+  .page_header
+    .actions
+      - content_for_organization_admin do
+        = link_to('Edit', edit_cloud_profile_path)
+    %h1
+      Cloud Profile
+    %h2 
+      &= @cloud_profile.name
+
+  %p
+    %b Cloud:
+    = h @cloud_profile.cloud_name
+  %p
+    %b Provider:
+    = h @cloud_profile.provider_name
+  - content_for_organization_admin do
+    %p
+      %b Username:
+      = h @cloud_profile.username
+    %p
+      %b Password:
+      = h @cloud_profile.obfuscated_password
+
+  %p
+    %b Amazon S3 Artifact Bucket:
+    &= @cloud_profile.artifact_bucket_name
+  %p
+    %b Amazon Environment Clustering Bucket:
+    &= @cloud_profile.environment_bucket_name
+
