@@ -38,6 +38,7 @@ end
  
 # Ctrl-C
 Signal.trap('INT') do
-  abort("--- Exiting!\n\n") 
+  abort("--- Exiting!\n\n")
+  exit
 end
 puts "--- Watching..."
