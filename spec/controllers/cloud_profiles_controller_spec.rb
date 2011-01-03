@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe CloudProfilesController do
   before(:each) do
-    login()
+    @user = login()
     @current_organization = mock_model(Organization)
     @controller.stub(:current_organization).and_return(@current_organization)
   end
@@ -29,21 +29,44 @@ describe CloudProfilesController do
 
   describe "GET new" do
     it "assigns a new cloud_profile as @cloud_profile" do
+      @user.stub!(:organization_admin?).and_return(true)
       @current_organization.stub_chain(:cloud_profiles, :build).and_return(mock_cloud_profile)
       get :new
       assigns[:cloud_profile].should equal(mock_cloud_profile)
+    end
+
+    it "should deny a non-org admin user access" do
+      @user.stub!(:organization_admin?).and_return(false)
+      get :new
+      response.should redirect_to(new_user_session_url)
     end
   end
 
   describe "GET edit" do
     it "assigns the requested cloud_profile as @cloud_profile" do
+      @user.stub!(:organization_admin?).and_return(true)
       @current_organization.stub_chain(:cloud_profiles, :find).with("37").and_return(mock_cloud_profile)
       get :edit, :id => "37"
       assigns[:cloud_profile].should equal(mock_cloud_profile)
     end
+
+    it "should deny a non-org admin user access" do
+      @user.stub!(:organization_admin?).and_return(false)
+      get :edit, :id => '1'
+      response.should redirect_to(new_user_session_url)
+    end
   end
 
   describe "POST create" do
+    before(:each) do
+      @user.stub!(:organization_admin?).and_return(true)
+    end
+
+    it "should deny a non-org admin user access" do
+      @user.stub!(:organization_admin?).and_return(false)
+      post :create
+      response.should redirect_to(new_user_session_url)
+    end
 
     describe "with valid params" do
       it "assigns a newly created cloud_profile as @cloud_profile" do
@@ -51,7 +74,7 @@ describe CloudProfilesController do
         post :create, :cloud_profile => {:these => 'params'}
         assigns[:cloud_profile].should equal(mock_cloud_profile)
       end
-
+      
       it "redirects to the created cloud_profile" do
         @current_organization.stub_chain(:cloud_profiles, :build).and_return(mock_cloud_profile(:save => true))
         post :create, :cloud_profile => {}
@@ -76,6 +99,15 @@ describe CloudProfilesController do
   end
 
   describe "PUT update" do
+    before(:each) do
+      @user.stub!(:organization_admin?).and_return(true)
+    end
+
+    it "should deny a non-org admin user access" do
+      @user.stub!(:organization_admin?).and_return(false)
+      put :update, :id => '1'
+      response.should redirect_to(new_user_session_url)
+    end
 
     describe "with valid params" do
       it "updates the requested cloud_profile" do
@@ -120,6 +152,16 @@ describe CloudProfilesController do
   end
 
   describe "DELETE destroy" do
+    before(:each) do
+      @user.stub!(:organization_admin?).and_return(true)
+    end
+    
+    it "should deny a non-org admin user access" do
+      @user.stub!(:organization_admin?).and_return(false)
+      delete :update, :id => '1'
+      response.should redirect_to(new_user_session_url)
+    end
+
     it "destroys the requested cloud_profile" do
       @current_organization.stub_chain(:cloud_profiles, :find).with("37").and_return(mock_cloud_profile)
       mock_cloud_profile.should_receive(:destroy)
