@@ -30,7 +30,8 @@ describe "/environments/edit.html.haml" do
                  :platform => stub_model(Platform,
                                          :platform_versions => []),
                  :cloud_profile => stub_model(CloudProfile,
-                                              :name_with_details => 'name'))
+                                              :name_with_details => 'name',
+                                              :cloud => stub('cloud', :attempt => [])))
     @controller.template.stub!(:hardware_profile_options).and_return([])
   end
 
