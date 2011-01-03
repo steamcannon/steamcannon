@@ -17,6 +17,8 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module Cloud
-  class Mock < Cloud::Base
+  module Specifics
+    class Virtualbox < Cloud::Specifics::Base
+    end
   end
 end

@@ -31,13 +31,13 @@ class CloudProfile < ActiveRecord::Base
   def name_with_details
     "#{name} (#{cloud_name}:#{provider_name})"
   end
-  
+
   def cloud
     @cloud ||= Cloud::Deltacloud.new(username, password, cloud_name, provider_name)
   end
 
   def cloud_specific_hacks
-    @cloud_hacks ||= "Cloud::#{cloud_name.camelize}".constantize.new(self)
+    @cloud_hacks ||= Cloud::Specifics::Base.cloud_specifics(cloud_name, self)
   end
 
   def environment_bucket_name

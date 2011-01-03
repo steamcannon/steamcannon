@@ -18,10 +18,10 @@
 
 require 'spec_helper'
 
-describe Cloud::Base do
+describe Cloud::Specifics::Base do
   before(:each) do
     @user = Factory.build(:user)
-    @base = Cloud::Base.new(@user)
+    @base = Cloud::Specifics::Base.new(@user)
   end
 
   it "should have empty multicast_config" do
@@ -89,4 +89,15 @@ describe Cloud::Base do
   it "should have no runaway instances" do
     @base.runaway_instances.should be_empty
   end
+
+  describe "cloud_specifics" do
+    it "should instantiate a cloud instance" do
+      cloud_profile = mock(CloudProfile)
+      Cloud::Specifics::Ec2.should_receive(:new).with(cloud_profile)
+      Cloud::Specifics::Base.cloud_specifics('ec2', cloud_profile)
+    end
+
+  end
+
+
 end

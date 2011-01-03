@@ -18,12 +18,12 @@
 
 require 'spec_helper'
 
-describe Cloud::Ec2 do
+describe Cloud::Specifics::Ec2 do
   before(:each) do
     @cloud_profile = Factory.build(:cloud_profile,
                                    :username => 'username',
                                    :password => 'password')
-    @ec2 = Cloud::Ec2.new(@cloud_profile)
+    @ec2 = Cloud::Specifics::Ec2.new(@cloud_profile)
     @instance = Factory.build(:instance)
   end
 
@@ -290,5 +290,26 @@ describe Cloud::Ec2 do
       @ec2.instance_run_cost(120, 'x1.micro').should == 0.0
     end
     
+  end
+
+  describe 'cloud registration' do
+    it "should be registered" do
+      Cloud::Specifics::Base.available_clouds.keys.should include(:ec2)
+    end
+
+    it "should include the name" do
+      Cloud::Specifics::Base.available_clouds[:ec2][:name].should == :ec2
+    end
+
+    it "should include the display name" do
+      Cloud::Specifics::Base.available_clouds[:ec2][:display_name].should == 'Amazon EC2'
+    end
+    
+    it "should include its regions as providers" do
+      providers = Cloud::Specifics::Base.available_clouds[:ec2][:providers]
+      %w{ us-east-1 us-west-1 eu-west-1 ap-southeast-1 }.each do |region|
+        providers.should include(region)
+      end
+    end
   end
 end
