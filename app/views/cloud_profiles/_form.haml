@@ -1,0 +1,40 @@
+#cloud_profile_form
+  %ul
+    %li
+      = form.label :name
+      = form.text_field :name
+    %li
+      = form.label :cloud
+      = form.select :cloud_name, available_cloud_names
+    %li
+      = form.label :provider
+      -# This needs to have some js love when we have multiple clouds
+      - available_clouds.each do |cloud_name, cloud|
+        .providers{:class => cloud_name}
+          = form.select :provider_name, cloud_providers(cloud, form.object.provider_name)
+    - if form.object.new_record?
+      %li
+        = form.label :username, "Amazon Access Key"
+        = form.text_field :username, :class => 'js-verify_credential'
+    - else
+      %li
+        = form.label :username, "Amazon Access Key"
+        = form.text_field :username, :class => 'js-verify_credential'
+      %li#password_prompt
+        = form.label :password, "Amazon Secret Access Key"
+        = form.object.obfuscated_password 
+        .link
+          = link_to 'Change Secret Access Key', '#', :class=>'js-password_toggle'
+    %li#password_field{:style=>form.object.new_record? ? '' : 'display:none'}
+      = form.label :password, "Amazon Secret Access Key"
+      = form.text_field :password, :value=>"", :class => 'js-verify_credential'
+      .link
+        = link_to 'Hide', '#', :class=>'js-password_toggle' unless form.object.new_record?
+    %li#verification_status
+      #verifying
+        Verifying cloud credentials...
+      #valid
+        Cloud credentials are valid.
+      #invalid
+        Cloud credentials are invalid. Please make sure you have entered them correctly.
+

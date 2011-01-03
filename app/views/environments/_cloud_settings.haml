@@ -1,0 +1,14 @@
+- environment ||= nil
+#cloud_settings
+  %li
+    %label{:for => :environment_ssh_key_name} Amazon SSH Key Name (leave blank to disable SSH access)
+    .loaded
+      = select_tag 'environment[ssh_key_name]', cloud_ssh_key_select_options(cloud_profile, environment)
+    .loading
+      Loading...
+  %li
+    %label{:for => :environment_realm} Amazon Availability Zone
+    .loaded
+      = select_tag 'environment[realm]', cloud_realm_select_options(cloud_profile, environment)
+    .loading
+      Loading...

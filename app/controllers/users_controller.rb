@@ -92,12 +92,6 @@ class UsersController < ResourceController::Base
     redirect_to users_path
   end
 
-  def validate_cloud_credentials
-    update_cloud_credentials_from_params
-    valid = object.cloud.attempt(:valid_credentials?, false)
-    render(generate_json_response(valid ? :ok : :error))
-  end
-
   protected
   def object
     super || current_user
@@ -124,9 +118,4 @@ class UsersController < ResourceController::Base
     end
   end
 
-  def update_cloud_credentials_from_params
-    org = object.organization
-    org.cloud_username = params[:cloud_username] if params[:cloud_username]
-    org.cloud_password = params[:cloud_password] unless params[:cloud_password].blank?
-  end
 end

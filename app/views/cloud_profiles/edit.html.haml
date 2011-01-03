@@ -1,24 +1,11 @@
-%h1 Editing cloud_profile
-- form_for(@cloud_profile) do |f|
-  = f.error_messages
-  %p
-    = f.label :cloud_name
-    %br/
-    = f.text_field :cloud_name
-  %p
-    = f.label :provider_name
-    %br/
-    = f.text_field :provider_name
-  %p
-    = f.label :username
-    %br/
-    = f.text_field :username
-  %p
-    = f.label :password
-    %br/
-    = f.text_field :password
-  %p
-    = f.submit 'Update'
-= link_to 'Show', @cloud_profile
-|
-\#{link_to 'Back', cloud_profiles_path}
+#edit_cloud_profile
+  %h1 Edit a Cloud Profile
+  .left_column
+    - form_for(@cloud_profile) do |f|
+      = f.error_messages
+      = render :partial => "form", :object => f
+      = f.submit "Update Cloud Profile"
+      = link_to 'Back', :back
+  .right_column
+    =# render :partial=>'amazon_credentials_help' if current_user.organization_admin?
+

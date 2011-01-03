@@ -56,9 +56,9 @@ function apply_ujs_rules($) {
         $('.content_row:hidden').remove()
     })
 
-    $('body.users_controller form .js-cloud_password_toggle').applyOnce().click(function() {
-        $("#cloud_password_field").slideToggle();
-        $("#cloud_password_prompt").slideToggle();
+    $('body.cloud_profiles_controller form .js-password_toggle').applyOnce().click(function() {
+        $("#password_field").slideToggle();
+        $("#password_prompt").slideToggle();
     });
 
     $('#environment_images_container .image_row .start_another a').applyOnce().click(function() {
@@ -75,22 +75,21 @@ function apply_ujs_rules($) {
         return false
     })
 
-    $('#edit_user .js-verify_credential').applyOnce().change(function() {
-        if ($('#user_organization_attributes_cloud_username').val() === '' &&
-            $('#user_organization_attributes_cloud_password').val() === '') {
+    $('#cloud_profile_form .js-verify_credential').applyOnce().change(function() {
+        if ($('#cloud_profile_username').val() === '' &&
+            $('#cloud_profile_password').val() === '') {
             return;
         }
 
-        $('#edit_user').removeClass('credentials_valid credentials_invalid')
-        $('#edit_user').addClass('verifying_credentials')
+        $('#cloud_profile_form').removeClass('credentials_valid credentials_invalid')
+        $('#cloud_profile_form').addClass('verifying_credentials')
 
-        get_with_cloud_credentials('/account/validate_cloud_credentials', function(data) {
-            $('#edit_user').removeClass('verifying_credentials credentials_valid credentials_invalid')
+        get_with_cloud_credentials($('form').attr('action') + '/validate_cloud_credentials', function(data) {
+            $('#cloud_profile_form').removeClass('verifying_credentials credentials_valid credentials_invalid')
             if (data.status == 'ok') {
-                $('#edit_user').addClass('credentials_valid')
-                load_account_cloud_defaults()
+                $('#cloud_profile_form').addClass('credentials_valid')
             } else {
-                $('#edit_user').addClass('credentials_invalid')
+                $('#cloud_profile_form').addClass('credentials_invalid')
             }
         })
     })
@@ -130,7 +129,7 @@ jQuery(document).ready(function($) {
 
 
 function get_with_cloud_credentials(url, callback) {
-    var params = 'cloud_username=' + encodeURIComponent($('#user_organization_attributes_cloud_username').val()) + '&cloud_password=' + encodeURIComponent($('#user_organization_attributes_cloud_password').val());
+    var params = 'username=' + encodeURIComponent($('#cloud_profile_username').val()) + '&password=' + encodeURIComponent($('#cloud_profile_password').val());
     $.get(url + '?' + params, callback);
 }
 
