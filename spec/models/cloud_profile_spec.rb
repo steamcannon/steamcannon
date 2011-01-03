@@ -115,8 +115,9 @@ describe CloudProfile do
   it "should create cloud specific hacks" do
     cloud_profile = Factory.build(:cloud_profile)
     cloud_profile.should_receive(:cloud_name).and_return('ec2')
-    Cloud::Ec2.should_receive(:new).with(cloud_profile)
+    Cloud::Specifics::Base.should_receive(:cloud_specifics).with('ec2', cloud_profile)
     cloud_profile.cloud_specific_hacks
   end
 
 end
+
