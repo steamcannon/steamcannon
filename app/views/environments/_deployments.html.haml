@@ -28,4 +28,4 @@
                 ="monitor_deployment('#{status_environment_deployment_path(@environment, deployment.id)}', '##{dom_id(deployment)}');"
 
   .actions
-    = link_to 'Deploy an artifact', new_deployment_path('deployment[environment_id]' => @environment.id)
+    = link_to 'Deploy an artifact', new_environment_deployment_path(@environment)
