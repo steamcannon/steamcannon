@@ -25,6 +25,7 @@ describe DeploymentsController do
     @current_user.stub!(:default_realm).and_return('def-realm')
     @current_user.stub!(:environments).and_return(Environment)
     Environment.stub!(:find).and_return(mock_environment)
+    Environment.stub!(:deployments).and_return(Deployment)
   end
 
   def mock_deployment(stubs={})
@@ -100,6 +101,7 @@ describe DeploymentsController do
     before(:each) do
       mock_deployment.stub!(:environment).and_return(Environment.new(:name => "test_env",
                                                                      :user => @current_user))
+      mock_environment.stub(:deployments).and_return(Deployment)
     end
 
     describe "with valid params" do
