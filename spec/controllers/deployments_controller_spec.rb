@@ -124,6 +124,11 @@ describe DeploymentsController do
         post :create, :deployment => {:these => 'params'}, :environment_id => "1"
         assigns[:environment].should == mock_environment
       end
+
+      it "scopes the deployment to the current @environment" do
+        mock_environment.should_receive(:deployments).and_return(Deployment)
+        post :create, :deployment => {:these => 'params'}, :environment_id => "1"
+      end
     end
 
     describe "with invalid params" do
