@@ -1,0 +1,3 @@
+%deployments{:href=>environment_deployments_url(@environment)}
+  - @deployments.each do |deployment|
+    = render :partial => 'deployment', :locals => {:deployment=>deployment}
