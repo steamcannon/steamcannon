@@ -1,0 +1,11 @@
+%deployment{:href=>environment_deployment_url(@environment, @deployment)}
+  %environment{:href=>environment_url(@environment), :rel=>"environment"}
+  / TODO: How to deal with versions?
+  %artifact{:href=>artifact_url(@deployment.artifact)}
+  %name=@deployment.simple_name
+  %current_state=@deployment.current_state
+  %datasource TODO
+  %actions
+    - if @deployment.deployed?
+      / TODO: 
+      %link{:href=>environment_deployment_url(@environment, @deployment), :rel=>'undeploy'}
