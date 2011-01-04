@@ -60,6 +60,7 @@ class DeploymentsController < ApplicationController
   # POST /deployments.xml
   def create
     @deployment = @environment.deployments.new(params[:deployment])
+    @deployment.user = current_user
 
     respond_to do |format|
       if @deployment.save

@@ -107,6 +107,7 @@ describe DeploymentsController do
     describe "with valid params" do
       before(:each) do
         mock_deployment.stub!(:save).and_return(true)
+        mock_deployment.stub!(:user=)
         Deployment.stub(:new).with({'these' => 'params'}).and_return(mock_deployment)
       end
 
@@ -129,11 +130,17 @@ describe DeploymentsController do
         mock_environment.should_receive(:deployments).and_return(Deployment)
         post :create, :deployment => {:these => 'params'}, :environment_id => "1"
       end
+
+      it "associates the deployment with the current user" do
+        mock_deployment.should_receive(:user=).with(@current_user)
+        post :create, :deployment => {:these => 'params'}, :environment_id => "1"
+      end
     end
 
     describe "with invalid params" do
       before(:each) do
         mock_deployment.stub!(:save).and_return(false)
+        mock_deployment.stub!(:user=)
       end
 
       it "assigns a newly created but unsaved deployment as @deployment" do
