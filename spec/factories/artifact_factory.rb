@@ -22,4 +22,5 @@ end
 Factory.define :artifact do |a|
   a.name { Factory.next :artifact_name }
   a.association :service
+  a.cloud_profile { CloudProfile.first || Factory(:cloud_profile) }
 end

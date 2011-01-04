@@ -1,11 +1,14 @@
 class CloudProfile < ActiveRecord::Base
   belongs_to :organization
 
+  has_many :environments
+  has_many :artifacts
+  
   before_save :encrypt_password
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :organization_id
-
+  
   validate :validate_cloud_credentials
 
   attr_accessor_with_default :password_dirty, false

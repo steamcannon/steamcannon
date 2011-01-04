@@ -21,7 +21,11 @@ require 'spec_helper'
 describe Cloud::Storage::Ec2Storage do
   before(:each) do
     @cloud_specific_hacks = mock('hacks')
-    @ec2 = Cloud::Storage::Ec2Storage.new('access_key', 'secret_access_key', @cloud_specific_hacks)
+    @cloud_profile = mock_model(CloudProfile,
+                                :username => 'access_key',
+                                :password => 'secret_access_key',
+                                :cloud_specific_hacks => @cloud_specific_hacks)
+    @ec2 = Cloud::Storage::Ec2Storage.new(@cloud_profile)
     @artifact_version = Factory.build(:artifact_version)
     @path = 'path/to/file.war'
     @ec2.stub!(:path).and_return(@path)

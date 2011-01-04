@@ -31,6 +31,7 @@ describe Artifact do
   
   it { should validate_presence_of :name}
   it { should validate_uniqueness_of :name }
+  it { should validate_presence_of :cloud_profile }
   
   it "should belong to a user" do
     @artifact.should respond_to(:user)

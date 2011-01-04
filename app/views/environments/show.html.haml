@@ -13,6 +13,8 @@
       &= @environment.name
     %h2
       &= @environment.platform_version.platform.name
+    %h3
+      Cloud profile: #{@environment.cloud_profile.name_with_details}
     - if @environment.can_stop?
       %h3
         Availability Zone: #{@environment.realm}
