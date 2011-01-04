@@ -7,7 +7,7 @@
       - div_for( deployment ) do
         .actions
           - if deployment.is_deployed?
-            = link_to 'Undeploy', deployment, :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
+            = link_to 'Undeploy', environment_deployment_path(@environment, deployment), :method => :delete, :confirm => "Are you sure you want to undeploy this artifact?"
           - else
             .current_state
               = deployment_state(deployment)
