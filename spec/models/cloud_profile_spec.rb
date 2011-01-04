@@ -7,6 +7,8 @@ describe CloudProfile do
 
   it { should belong_to :organization }
   it { should validate_presence_of :name }
+  it { should have_many :environments }
+  it { should have_many :artifacts }
   
   it "should encrypt the cloud password attribute before save" do
     @cloud_profile.stub!(:validate_cloud_credentials)

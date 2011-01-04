@@ -12,6 +12,8 @@
       - unless @artifact.latest_version.nil?
         \:
         = @artifact.latest_version.type_description
+    %h3
+      Cloud profile: #{@artifact.cloud_profile.name_with_details}
 
 
   .left_column

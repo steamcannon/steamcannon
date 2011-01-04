@@ -29,14 +29,30 @@ module DeploymentsHelper
     end
   end
 
-  def deployment_artifact_versions_for_select
+  def deployment_artifact_versions_for_select(deployment)
     latest = []
     rest = []
-    current_user.artifacts.sort_by(&:name).each do |artifact|
+    artifacts = [deployment.artifact] if deployment.artifact
+    artifacts ||= (deployment.cloud_profile || current_user).artifacts
+    artifacts.sort_by(&:name).each do |artifact|
       versions = artifact.artifact_versions.all.collect { |av| [av.to_s, av.id ] }
       latest += [versions.shift]
       rest += versions
     end
     grouped_options_for_select([['Latest Versions:', latest], ['Prior Versions:', rest]], @deployment.artifact_version_id)
+  end
+
+  def environments_available_for_deployment_for_select(deployment)
+    environments_with_status_for_select((deployment.cloud_profile || current_user).environments)
+  end
+
+  def deployment_header_text(deployment)
+    if deployment.environment
+      "Deploy Artifact to #{deployment.environment.name}"
+    elsif deployment.artifact
+      "Deploy #{deployment.artifact.name}"
+    else
+      "Deploy Artifact"
+    end
   end
 end

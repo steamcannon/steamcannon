@@ -68,8 +68,9 @@ module EnvironmentsHelper
     end
   end
   
-  def environments_with_status_for_select
-    current_user.environments.all.collect { |ev| ["#{ev.name} (#{ev.current_state})", ev.id ] }
+  def environments_with_status_for_select(environments = nil)
+    environments ||= current_user.environments
+    environments.all.collect { |ev| ["#{ev.name} (#{ev.current_state})", ev.id ] }
   end
   
   def formatted_run_time(seconds)

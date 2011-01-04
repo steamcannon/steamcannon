@@ -21,10 +21,11 @@ module Cloud
     class Ec2Storage
       extend ActiveSupport::Memoizable
 
-      def initialize(access_key, secret_access_key, cloud_specific_hacks)
-        @access_key = access_key
-        @secret_access_key = secret_access_key
-        @cloud_specific_hacks = cloud_specific_hacks
+      def initialize(cloud_profile)
+        @cloud_profile = cloud_profile
+        @access_key = cloud_profile.username
+        @secret_access_key = cloud_profile.password
+        @cloud_specific_hacks = cloud_profile.cloud_specific_hacks
       end
 
       def write(artifact_version)

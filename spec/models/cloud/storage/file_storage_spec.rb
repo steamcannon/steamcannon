@@ -20,7 +20,7 @@ require 'spec_helper'
 
 describe Cloud::Storage::FileStorage do
   before(:each) do
-    @storage = Cloud::Storage::FileStorage.new(nil, nil, nil)
+    @storage = Cloud::Storage::FileStorage.new(nil)
     @artifact_version = Factory.build(:artifact_version)
     @path = 'path/to/file.war'
     @storage.stub!(:path).and_return(@path)

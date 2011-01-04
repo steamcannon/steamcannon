@@ -21,11 +21,15 @@ require 'spec_helper'
 describe "/artifacts/new.html.haml" do
   include ArtifactsHelper
 
+  def current_user
+
+  end
   before(:each) do
     assigns[:artifact] = stub_model(Artifact,
                                     :new_record? => true,
                                     :name => "value for name"
                                     )
+    template.stub(:current_user).and_return(mock(User, :cloud_profiles => []))
   end
 
   it "renders new artifact form" do

@@ -20,5 +20,5 @@ Factory.define :environment do |env|
   env.name 'Environment'
   env.association :user
   env.association :platform_version
-  env.association :cloud_profile
+  env.cloud_profile { CloudProfile.first || Factory(:cloud_profile) }
 end

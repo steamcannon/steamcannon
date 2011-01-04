@@ -29,13 +29,20 @@ describe Deployment do
     @instance_service = mock(InstanceService)
   end
 
-  it "should belong to an artifact" do
-    artifact = Artifact.new
-    artifact_version = ArtifactVersion.new
-    artifact_version.artifact = artifact
-    deployment = Deployment.new
-    deployment.artifact_version = artifact_version
-    deployment.artifact.should equal(artifact)
+  describe "artifact" do
+    it "should belong to an artifact" do
+      artifact = Artifact.new
+      artifact_version = ArtifactVersion.new
+      artifact_version.artifact = artifact
+      deployment = Deployment.new
+      deployment.artifact_version = artifact_version
+      deployment.artifact.should equal(artifact)
+    end
+
+    it "should return nil of no artifact_version set" do
+      @deployment.stub(:artifact_version).and_return(nil)
+      @deployment.artifact.should be_nil
+    end
   end
 
   describe 'artifact_identifier' do
@@ -193,4 +200,22 @@ describe Deployment do
     end
   end
 
+  describe "cloud_profile" do
+    before(:each) do
+      @profile = mock_model(CloudProfile)
+    end
+    
+    it "should return the cloud_profile from the artifact if available" do
+      artifact = mock_model(Artifact, :cloud_profile => @profile)
+      @deployment.stub(:artifact).and_return(artifact)
+      @deployment.stub(:environment).and_return(nil)
+      @deployment.cloud_profile.should == @profile
+    end
+
+    it "should return the cloud_profile from the environment if available" do
+      environment = mock_model(Environment, :cloud_profile => @profile)
+      @deployment.stub(:environment).and_return(environment)
+      @deployment.cloud_profile.should == @profile
+    end
+  end
 end

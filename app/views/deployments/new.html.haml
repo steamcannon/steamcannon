@@ -1,6 +1,6 @@
 .dcloud_form
   %h2
-    Deploy Artifact
+    =h deployment_header_text(@deployment)
   - form_for(@deployment) do |f|
     = f.error_messages
     = render :partial => "form", :object => f

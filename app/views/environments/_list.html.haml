@@ -2,6 +2,8 @@
   %tr
     %th.name
       Name
+    %th.cloud_profile
+      Cloud Profile
     %th.status
       Status
     %th.actions
@@ -17,6 +19,8 @@
           = link_to h(environment.name), environment
           .platform
             &= environment.platform_version
+        %td.cloud_profile
+          = h environment.cloud_profile.name
         %td.status
           = render :partial => '/environments/instance_states', :locals => {:environment=>environment}
         %td.actions

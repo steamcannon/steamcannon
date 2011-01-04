@@ -2,6 +2,8 @@
   %tr
     %th.name
       Name
+    %th.cloud_profile
+      Cloud Profile
     %th.service
       Service
     %th.latest_version
@@ -12,6 +14,8 @@
     - content_tag_for( :tr, artifact ) do
       %td.name
         = link_to h(artifact.name), artifact_path(artifact)
+      %td.cloud_profile
+        =h artifact.cloud_profile.name
       %td.service
         = artifact.service_name
       %td.latest_version

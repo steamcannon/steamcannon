@@ -1,19 +1,16 @@
-= form.label :artifact_version, "Artifact Version"
-%br
-= form.select :artifact_version_id, deployment_artifact_versions_for_select
-%br
-%br
-= form.label :environment
-%br
-= form.select :environment_id, environments_with_status_for_select
-%br
-/%br
-/= form.label :datasource
-/%br
-/= form.radio_button :datasource, "local"
-/Local
-/%br
-/= form.radio_button :datasource, "cloud"
-/Cloud
-/%br
-%br
+#deployments_form
+  #left_column
+    %ul
+      %li
+        = form.label :artifact_version, "Artifact Version"
+        = form.select :artifact_version_id, deployment_artifact_versions_for_select(form.object)
+      %li
+        = form.label :environment
+        - if form.object.environment
+          == #{form.object.environment.name} (#{form.object.environment.current_state})
+          = form.hidden_field :environment_id
+        - else
+          = form.select :environment_id, environments_available_for_deployment_for_select(form.object)
+  #right_column
+
+

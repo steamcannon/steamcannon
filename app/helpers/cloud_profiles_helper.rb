@@ -1,8 +1,10 @@
 module CloudProfilesHelper
   
-  def cloud_profile_options
-    
-    options_for_select('Select...' => nil) + options_from_collection_for_select(current_user.cloud_profiles, :id, :name_with_details)
+  def cloud_profile_options(with_prompt = true)
+    accum = ''
+    accum << options_for_select('Select...' => nil) if with_prompt
+    accum << options_from_collection_for_select(current_user.cloud_profiles, :id, :name_with_details)
+    accum
   end
 
   def cloud_profiles_available_to_environment(environment)

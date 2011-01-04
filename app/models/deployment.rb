@@ -28,9 +28,7 @@ class Deployment < ActiveRecord::Base
   has_many :deployment_instance_services, :dependent => :destroy
   has_many :instance_services, :through => :deployment_instance_services
 
-  validates_each :environment_id, :on => :create do |record, attr, value|
-    record.send(:validate_artifact_unique_in_environment)
-  end
+  validate_on_create :validate_artifact_unique_in_environment_and_cloud_profiles_match
 
   aasm_column :current_state
   aasm_initial_state :pending
@@ -49,13 +47,17 @@ class Deployment < ActiveRecord::Base
   after_create :deploy!
 
   def artifact
-    artifact_version.artifact
+    artifact_version.try(:artifact)
   end
 
   def service
-    artifact.service
+    artifact.try(:service)
   end
 
+  def cloud_profile
+    environment.try(:cloud_profile) || artifact.try(:cloud_profile)
+  end
+  
   def artifact_identifier
     !agent_artifact_identifier.blank? ? agent_artifact_identifier : artifact_version.archive_file_name
   end
@@ -76,9 +78,14 @@ class Deployment < ActiveRecord::Base
   def is_deployed?
     instance_services.exists?
   end
-
+  
+  def validate_artifact_unique_in_environment_and_cloud_profiles_match
+    validate_artifact_unique_in_environment
+    validate_cloud_profiles_match
+  end
+  
   protected
-
+  
   def validate_artifact_unique_in_environment
     artifact = artifact_version.artifact
     if environment.artifacts.include?(artifact)
@@ -86,6 +93,13 @@ class Deployment < ActiveRecord::Base
     end
   end
 
+  def validate_cloud_profiles_match
+    artifact = artifact_version.artifact
+    if artifact.cloud_profile != environment.cloud_profile
+      errors.add_to_base "'#{environment.name}' and '#{artifact.name}' do not use the same cloud profile."
+    end
+  end
+  
   def perform_deploy_async
     audit_action :deployed
     ModelTask.async(self, :perform_deploy)
