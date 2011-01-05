@@ -36,4 +36,25 @@ describe Organization do
     Organization.create!(@valid_attributes)
   end
 
+  describe "has_cloud_profiles?" do
+    it "should return true if the org has at least one saved cloud profile" do
+      @organization.cloud_profiles << Factory.build(:cloud_profile) 
+      @organization.has_cloud_profiles?.should be_true
+    end
+
+    it "should return false if the org has no cloud profiles" do
+      @organization.has_cloud_profiles?.should_not be_true
+    end
+
+    it "should return false if the org has one cloud profile and that cloud profile is not saved" do
+      @organization.cloud_profiles << Factory.build(:cloud_profile, :name => nil) 
+      @organization.has_cloud_profiles?.should_not be_true
+    end
+
+    it "should return true if the org has multiple cloud profiles and one cloud profile is not saved" do
+      @organization.cloud_profiles << Factory.build(:cloud_profile) 
+      @organization.cloud_profiles << Factory.build(:cloud_profile, :name => nil) 
+      @organization.has_cloud_profiles?.should be_true
+    end
+  end
 end

@@ -47,13 +47,6 @@ class User < ActiveRecord::Base
 
   attr_protected :superuser, :organization_admin
 
-  def profile_complete?
-#     self.superuser? || (!self.cloud_username.blank? &&
-#                         !self.cloud_password.blank? &&
-#                         !self.default_realm.blank?)
-    true
-  end
-
   def send_password_reset_instructions!(host)
     reset_perishable_token!
     from = APP_CONFIG[:default_reply_to_address] || self.email

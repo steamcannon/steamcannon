@@ -26,15 +26,10 @@ class UsersController < ResourceController::Base
   before_filter :require_superuser, :only => [:assume_user]
   before_filter :require_superuser_to_edit_other_user, :only => [:edit, :update]
   before_filter :require_organization_admin, :only => [:promote, :demote]
-  skip_before_filter :require_complete_profile, :except => [:show]
 
   new_action.before do
     object.email = @account_request.email if @account_request
     object.organization = @account_request.organization if @account_request
-  end
-
-  edit.before do
-    flash[:error] = "Please complete your profile before continuing." unless current_user.profile_complete?
   end
 
   update.before do

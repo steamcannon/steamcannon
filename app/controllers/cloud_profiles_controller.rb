@@ -21,6 +21,13 @@ class CloudProfilesController < ResourceController::Base
   
   before_filter :require_user
   before_filter :require_organization_admin, :except => [:index, :show]
+  skip_before_filter :require_cloud_profile, :only => [:new, :create]
+
+  new_action.before do
+    logger.ap current_organization.has_cloud_profiles?
+    logger.ap current_organization.cloud_profiles
+    flash.now[:error] = "You must create at least one cloud profile before continuing." unless current_organization.has_cloud_profiles?
+  end
   
   def cloud_settings_block
     render :partial => 'environments/cloud_settings', :locals => { :cloud_profile => object }

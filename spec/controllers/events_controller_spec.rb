@@ -22,7 +22,6 @@ describe EventsController do
 
   before(:each) do
     @current_user = Factory(:user)
-    @current_user.stub!(:profile_complete?).and_return(true)
     login_with_user(@current_user)
     @event_subject = Factory(:event_subject, :owner => @current_user)
     @event = Factory(:event, :event_subject => @event_subject)

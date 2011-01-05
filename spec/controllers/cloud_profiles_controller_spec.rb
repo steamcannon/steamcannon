@@ -1,10 +1,26 @@
+#
+# Copyright 2010 Red Hat, Inc.
+#
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 3 of
+# the License, or (at your option) any later version.
+#
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
 require 'spec_helper'
 
 describe CloudProfilesController do
   before(:each) do
     @user = login()
-    @current_organization = mock_model(Organization)
-    @controller.stub(:current_organization).and_return(@current_organization)
   end
   
   def mock_cloud_profile(stubs={})
@@ -28,9 +44,12 @@ describe CloudProfilesController do
   end
 
   describe "GET new" do
-    it "assigns a new cloud_profile as @cloud_profile" do
+    before(:each) do
       @user.stub!(:organization_admin?).and_return(true)
       @current_organization.stub_chain(:cloud_profiles, :build).and_return(mock_cloud_profile)
+    end
+    
+    it "assigns a new cloud_profile as @cloud_profile" do
       get :new
       assigns[:cloud_profile].should equal(mock_cloud_profile)
     end
@@ -40,6 +59,7 @@ describe CloudProfilesController do
       get :new
       response.should redirect_to(new_user_session_url)
     end
+
   end
 
   describe "GET edit" do

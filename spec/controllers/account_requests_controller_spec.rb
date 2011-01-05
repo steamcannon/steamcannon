@@ -30,8 +30,7 @@ describe AccountRequestsController do
 
   context "as a superuser" do
     before(:each) do
-      @logged_in_user = mock_model(User, { :superuser? => true, :profile_complete? => true, :email => 'admin@example.com' })
-      login_with_user(@logged_in_user)
+      @logged_in_user = login({}, :superuser? => true, :email => 'admin@example.com')
     end
 
     describe "GET index" do
@@ -251,18 +250,14 @@ describe AccountRequestsController do
 
     end
 
-
   end
 
   context "as an organization admin" do
     before(:each) do
-      @organization = mock_model(Organization)
-      @logged_in_user = mock_model(User,
-                                   { :organization_admin? => true,
-                                     :profile_complete? => true,
-                                     :email => 'org_admin@example.com',
-                                     :organization => @organization })
-      login_with_user(@logged_in_user)
+      @logged_in_user = login({ },
+                              :organization_admin? => true,
+                              :profile_complete? => true,
+                              :email => 'org_admin@example.com')
     end
 
     describe "GET new" do

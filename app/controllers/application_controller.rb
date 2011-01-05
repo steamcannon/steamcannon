@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   include SslRequirement
 
   before_filter :check_deltacloud_config
-  before_filter :require_complete_profile
+  before_filter :require_cloud_profile
 
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -63,9 +63,9 @@ class ApplicationController < ActionController::Base
     !open_signup_mode?
   end
 
-  def require_complete_profile
+  def require_cloud_profile
     return false unless current_user
-    store_location and redirect_to edit_account_path unless current_user.profile_complete?
+    store_location and redirect_to new_cloud_profile_path unless current_organization.has_cloud_profiles?
   end
 
   def check_deltacloud_config

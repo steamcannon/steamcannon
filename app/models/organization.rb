@@ -26,5 +26,15 @@ class Organization < ActiveRecord::Base
   def to_s
     name
   end
-  
+
+  def has_cloud_profiles?
+    case cloud_profiles.count
+    when 0
+      false
+    when 1
+      !cloud_profiles.first.new_record?
+    else
+      true
+    end
+  end
 end

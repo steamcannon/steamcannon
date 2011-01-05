@@ -18,7 +18,11 @@ end
 
 def run_single_spec *spec
   spec = spec.join(' ')
-  run "spec -O spec/spec.opts #{spec}"
+  if File.exists?(spec)
+    run "spec -O spec/spec.opts #{spec}"
+  else
+    puts "#{spec} does not exist - skipping..."
+  end
 end
 
 # --------------------------------------------------
@@ -32,7 +36,7 @@ watch( '^app/(.*)\.rb' ) { |m| run_single_spec("spec/%s_spec.rb" % m[1]) }
 # --------------------------------------------------
 # Ctrl-Z
 Signal.trap('TSTP') do
-  puts " --- Running all tests ---\n\n"
+  puts " --- Running all specs ---\n\n"
   run_all_specs
 end
  

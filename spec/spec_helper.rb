@@ -54,12 +54,14 @@ Spec::Runner.configure do |config|
 
     # AuthLogic test helpers
     def login(session_stubs = {}, user_stubs = {})
-      login_with_user(mock_model(User, { :superuser? => false, :profile_complete? => true }.merge(user_stubs)),
+      login_with_user(mock_model(User, { :superuser? => false }.merge(user_stubs)),
                       session_stubs)
     end
 
     def login_with_user(user, session_stubs = {})
       @current_user = user
+      @current_organization = mock_model(Organization, :has_cloud_profiles? => true)
+      @current_user.stub(:organization).and_return(@current_organization)
       session_stubs = {:record => @current_user}.merge(session_stubs)
       @current_user_session = mock_model(UserSession, session_stubs)
       UserSession.stub!(:find).and_return(@current_user_session)
@@ -71,7 +73,7 @@ Spec::Runner.configure do |config|
     def login_with_http_basic
       UserSession.stub!(:find).and_return(nil)
       user = Factory.build(:user)
-      user.stub!(:superuser? => false, :profile_complete? => true)
+      user.stub!(:superuser? => false)
       User.stub!(:find_by_smart_case_login_field).with(user.email).and_return(user)
       user.stub!(:valid_password?).with(user.password).and_return(true)
       encoded_credentials = Base64.encode64("#{user.email}:#{user.password}")

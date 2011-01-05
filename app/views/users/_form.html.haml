@@ -1,17 +1,15 @@
-
-- if form.object.new_record? or current_user.profile_complete?
-  %ul
-    %li
-      = form.label :email
-      = form.text_field :email
-    %li
-      = form.label :password, form.object.new_record? ? nil : "Change password"
-      = form.password_field :password
-    %li
-      = form.label :password_confirmation
-      = form.password_field :password_confirmation
-  - if params[:token]
-    = hidden_field_tag :token, params[:token]
+- if params[:token]
+  = hidden_field_tag :token, params[:token]
+%ul
+  %li
+    = form.label :email
+    = form.text_field :email
+  %li
+    = form.label :password, form.object.new_record? ? nil : "Change password"
+    = form.password_field :password
+  %li
+    = form.label :password_confirmation
+    = form.password_field :password_confirmation
 - unless form.object.new_record?
   - if current_user.organization_admin?
     - form.fields_for :organization do |org_form|
