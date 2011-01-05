@@ -1,8 +1,12 @@
-= link_to("Deploy &raquo;", '#', :id=>"deployment_#{artifact_version.id}")
-.deployment.jqmWindow.js-popup_dialog{style_display_none.merge(:rel => "#deployment_#{artifact_version.id}")}
-  %h2 Choose an Envrionment
-  - current_user.environments.each do |e|
-    %ul
-      %li= link_to "Deploy to #{e.name}", new_environment_deployment_path(e, 'deployment[artifact_version_id]' => artifact_version.id)
-  .controls
-    = link_to("Close", "#", :class=>'jqmClose')
+= link_to("Deploy &raquo;", '#', :class=>"deployment_popup_#{artifact_version.id}")
+- render_once("deploy_dialog_#{artifact_version.id}") do
+  .deployment_dialog.jqmWindow.js-popup_dialog{style_display_none.merge(:rel => ".deployment_popup_#{artifact_version.id}")}
+    %h2 Choose an Envrionment
+    - environments_available_for_deployment(artifact_version.artifact).each do |e|
+      %ul
+        %li
+          = link_to "Deploy to #{e.name} (#{e.current_state})", new_environment_deployment_path(e, 'deployment[artifact_version_id]' => artifact_version.id)
+    .notice
+      Note: only environments using the same cloud profile as the artifact (in this case, '#{artifact_version.artifact.cloud_profile.name}') will be available for deployment.
+    .controls
+      %button{:class => 'jqmClose'}Cancel

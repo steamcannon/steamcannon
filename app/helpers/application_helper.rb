@@ -72,4 +72,10 @@ module ApplicationHelper
     options[:class] ||= "timeago"
     content_tag(:abbr, time.to_s(:standard), options.merge(:title => time.getutc.iso8601)) if time
   end
+
+  def render_once(key, text = nil)
+    @__once_rendered_blocks ||= []
+    concat(text || yield) unless @__once_rendered_blocks.include?(key)
+    @__once_rendered_blocks << key
+  end
 end

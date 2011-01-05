@@ -4,12 +4,5 @@
       %li
         = form.label :artifact_version, "Artifact Version"
         = form.select :artifact_version_id, deployment_artifact_versions_for_select(form.object)
-      %li
-        = form.label :environment
-        - if form.object.environment
-          == #{form.object.environment.name} (#{form.object.environment.current_state})
-          = form.hidden_field :environment_id
-        - else
-          = form.select :environment_id, environments_available_for_deployment_for_select(form.object)
   #right_column
 

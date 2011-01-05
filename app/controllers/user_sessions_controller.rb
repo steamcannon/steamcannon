@@ -20,7 +20,7 @@
 class UserSessionsController < ApplicationController
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => :destroy
-  skip_before_filter :require_complete_profile
+  skip_before_filter :require_cloud_profile
 
   def new
     @user_session = UserSession.new

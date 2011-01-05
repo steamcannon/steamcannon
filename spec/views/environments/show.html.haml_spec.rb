@@ -23,6 +23,7 @@ describe "/environments/show.html.haml" do
   before(:each) do
     @environment = assigns[:environment] = stub_model(Environment, :name=>'env-1')
     @environment.stub_chain(:platform_version, :platform, :name).and_return('the platform')
+    @environment.stub_chain(:cloud_profile, :name_with_details).and_return('cloud profile w/details')
     assigns[:deployments] = mock
     assigns[:deployments].stub(:values).and_return([])
   end

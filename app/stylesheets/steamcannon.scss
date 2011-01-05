@@ -207,23 +207,28 @@ form {
   }
 }
 
-#artifacts_container {
-  .artifact .deployment {
+.deployment_dialog {
     a { 
-      color: #777; 
-      font-weight: normal;
+        color: #777; 
+        font-weight: normal;
     }
     ul {
-      margin: 0;
-      list-style-type: none;
-      li {
         margin: 0;
-      }
+        list-style-type: none;
+        li {
+            margin: 0;
+            a {
+                float: none !important;
+            }
+        }
+    }
+    .notice {
+        margin-top: 10px;
+        font-weight: bold;
     }
     .controls {
-      float: right;
+        float: right;
     }
-  }
 }
 
 #show_environment {

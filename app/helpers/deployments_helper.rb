@@ -42,17 +42,14 @@ module DeploymentsHelper
     grouped_options_for_select([['Latest Versions:', latest], ['Prior Versions:', rest]], @deployment.artifact_version_id)
   end
 
-  def environments_available_for_deployment_for_select(deployment)
-    environments_with_status_for_select((deployment.cloud_profile || current_user).environments)
-  end
-
-  def deployment_header_text(deployment)
-    if deployment.environment
-      "Deploy Artifact to #{deployment.environment.name}"
-    elsif deployment.artifact
-      "Deploy #{deployment.artifact.name}"
+  def deployment_header_text(deployment, environment)
+    accum = 'Deploy '
+    if deployment.artifact
+      accum << "#{deployment.artifact.name} "
     else
-      "Deploy Artifact"
+      accum << "Artifact "
     end
+    accum << "to #{environment.name}"
+    accum
   end
 end

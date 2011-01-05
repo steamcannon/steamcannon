@@ -18,5 +18,7 @@
 
 
 module ArtifactsHelper
-
+  def environments_available_for_deployment(artifact)
+    (artifact.cloud_profile || current_user).environments
+  end
 end

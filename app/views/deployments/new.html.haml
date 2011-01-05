@@ -1,7 +1,7 @@
 .dcloud_form
   %h2
-    =h deployment_header_text(@deployment)
-  - form_for(@deployment) do |f|
+    =h deployment_header_text(@deployment, @environment)
+  - form_for([@environment, @deployment]) do |f|
     = f.error_messages
     = render :partial => "form", :object => f
     = f.submit 'Deploy', :class => "submit"

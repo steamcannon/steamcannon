@@ -24,8 +24,6 @@ class CloudProfilesController < ResourceController::Base
   skip_before_filter :require_cloud_profile, :only => [:new, :create]
 
   new_action.before do
-    logger.ap current_organization.has_cloud_profiles?
-    logger.ap current_organization.cloud_profiles
     flash.now[:error] = "You must create at least one cloud profile before continuing." unless current_organization.has_cloud_profiles?
   end
   
