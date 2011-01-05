@@ -1,0 +1,3 @@
+%artifacts{:href=>artifacts_url}
+  - @artifacts.each do |artifact|
+    = render :partial => 'artifact', :locals => {:artifact=>artifact}

@@ -28,7 +28,7 @@ class ArtifactsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @artifacts }
+      format.xml  # index.xml.haml
     end
   end
 
@@ -39,7 +39,7 @@ class ArtifactsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml { render :xml => @artifact }
+      format.xml  # show.xml.haml
     end
   end
 

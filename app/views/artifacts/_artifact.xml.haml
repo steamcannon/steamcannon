@@ -1,0 +1,6 @@
+%artifact{:href=>artifact_url(artifact)}
+  %name=artifact.name
+  - artifact.artifact_versions.each do |version|
+    %artifact_version{:href=>artifact_version_url(version)}
+      - version.deployments.each do |deployment|
+        %deployment{:href=>environment_deployment_url(deployment.environment, deployment)}
