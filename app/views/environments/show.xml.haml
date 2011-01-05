@@ -5,7 +5,7 @@
   %updated=@environment.updated_at
   %current_state=@environment.current_state
   %preserve_storage_volumes=@environment.preserve_storage_volumes?
-  %deployments
+  %deployments{:href=>environment_deployments_url(@environment)}
     - @environment.deployments.each do |deployment|
       %link{:href=>environment_deployment_url(@environment, deployment), :rel=>'deployment'}
   %metadata

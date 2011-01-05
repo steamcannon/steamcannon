@@ -6,8 +6,10 @@
     %artifact{:href=>artifact_url(deployment.artifact)}
   %name=deployment.simple_name
   %current_state=deployment.current_state
-  %datasource TODO
+  %datasource=deployment.datasource 
   %actions
     - if deployment.deployed?
-      / TODO: 
+      / TODO: current routes assume DELETE of deployment (via HTTP verb), but we probably want POST
       %link{:href=>environment_deployment_url(@environment, deployment), :rel=>'undeploy'}
+    - else
+      / TODO: should we allow deployment here? 
