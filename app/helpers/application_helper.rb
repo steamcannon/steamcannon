@@ -33,6 +33,11 @@ module ApplicationHelper
     concat(text || capture(&block)) if current_user.organization_admin?
   end
 
+  def content_for_non_organization_admin(text = nil, &block)
+    raise ArgumentError.new("Don't supply both text and a block") if text and block_given?
+    concat(text || capture(&block)) unless current_user.organization_admin?
+  end
+
   def style_display_none
     { :style => 'display: none;' }
   end

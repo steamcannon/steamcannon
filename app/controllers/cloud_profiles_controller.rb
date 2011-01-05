@@ -18,7 +18,7 @@
 
 class CloudProfilesController < ResourceController::Base
   navigation :cloud_profiles
-  
+
   before_filter :require_user
   before_filter :require_organization_admin, :except => [:index, :show]
   skip_before_filter :require_cloud_profile, :only => [:new, :create]
@@ -26,7 +26,23 @@ class CloudProfilesController < ResourceController::Base
   new_action.before do
     flash.now[:error] = "You must create at least one cloud profile before continuing." unless current_organization.has_cloud_profiles?
   end
-  
+
+  create.flash { "Cloud profile created." }
+
+  update do
+    before do
+      if  params && params[:cloud_profile]
+        if params[:cloud_profile][:password].blank?
+          params[:cloud_profile].delete(:password)
+        else
+          object.password_dirty = true
+        end
+      end
+    end
+
+    flash { "Cloud profile updated." }
+  end
+
   def cloud_settings_block
     render :partial => 'environments/cloud_settings', :locals => { :cloud_profile => object }
   end

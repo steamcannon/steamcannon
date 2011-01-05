@@ -34,15 +34,7 @@ class UsersController < ResourceController::Base
 
   update.before do
     if params && params[:user] && params[:user][:organization_attributes]
-      if current_user.organization_admin?
-        if params[:user][:organization_attributes][:cloud_password].blank?
-          params[:user][:organization_attributes].delete(:cloud_password)
-        else
-          object.organization.cloud_password_dirty = true
-        end
-      else
-        params[:user].delete(:organization_attributes)
-      end
+      params[:user].delete(:organization_attributes) unless current_user.organization_admin?
     end
   end
 

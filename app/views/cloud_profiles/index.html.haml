@@ -1,28 +1,30 @@
 #cloud_profiles_index
-  .page_header
-    - content_for_organization_admin do
-      .actions
-        = link_to '+ Create New Cloud Profile', new_cloud_profile_path
-    %h1 Cloud Profiles
-
-  %table.header_top
-    %tr
-      %th Name
-      %th Cloud
-      %th Provider
+  .left_column
+    .page_header
       - content_for_organization_admin do
-        %th Username
-      %th Actions
-    - @cloud_profiles.each do |cloud_profile|
-      %tr
-        %td= h cloud_profile.name
-        %td= h cloud_profile.cloud_name
-        %td= h cloud_profile.provider_name
-        - content_for_organization_admin do
-          %td= h cloud_profile.username
-        %td.actions
-          = link_to 'Show', cloud_profile_path(cloud_profile)
-          - content_for_organization_admin do
-            = link_to 'Edit', edit_cloud_profile_path(cloud_profile)
-            =# link_to 'Destroy', cloud_profile, :confirm => 'Are you sure?', :method => :delete
+        .actions
+          = link_to '+ Create New Cloud Profile', new_cloud_profile_path
+      %h1 Cloud Profiles
 
+    %table.header_top
+      %tr
+        %th Name
+        %th Cloud
+        %th Provider
+        - content_for_organization_admin do
+          %th Username
+        %th Actions
+      - @cloud_profiles.each do |cloud_profile|
+        %tr
+          %td= h cloud_profile.name
+          %td= h cloud_profile.cloud_name
+          %td= h cloud_profile.provider_name
+          - content_for_organization_admin do
+            %td= h cloud_profile.username
+          %td.actions
+            = link_to 'Show', cloud_profile_path(cloud_profile)
+            - content_for_organization_admin do
+              = link_to 'Edit', edit_cloud_profile_path(cloud_profile)
+              =# link_to 'Destroy', cloud_profile, :confirm => 'Are you sure?', :method => :delete
+  .right_column
+    = render 'index_help'

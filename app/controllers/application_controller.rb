@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
   # Export to views
-  helper_method :current_user_session, :current_user, :open_signup_mode?, :invite_only_mode?
+  helper_method :current_user_session, :current_user, :current_organization, :open_signup_mode?, :invite_only_mode?
 
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password, :password_confirmation

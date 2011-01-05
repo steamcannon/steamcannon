@@ -1,12 +1,16 @@
 #new-artifact
-  %h2
-    Add Artifact
-  - form_for(@artifact, :html => {:multipart => true}) do |f|
-    = f.error_messages
-    = render :partial => "form", :object => f
-    %p
-      Optionally, upload the first version of this artifact.
-    - f.fields_for :artifact_versions do |version_form|
-      = render :partial => "artifact_versions/form", :object => version_form
-    = f.submit 'Create', :class => "submit"
-    = link_to 'Cancel', artifacts_path, :class => "actionlink"
+  .page_header
+    %h1
+      Add Artifact
+  .left_column
+    - form_for(@artifact, :html => {:multipart => true}) do |f|
+      = f.error_messages
+      = render :partial => "form", :object => f
+      %p
+        Optionally, upload the first version of this artifact.
+        - f.fields_for :artifact_versions do |version_form|
+          = render :partial => "artifact_versions/form", :object => version_form
+          = f.submit 'Create', :class => "submit"
+          = link_to 'Cancel', artifacts_path, :class => "actionlink"
+  .right_column
+    = render :partial=>'form_new_help'

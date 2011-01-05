@@ -150,10 +150,6 @@ body.ninesixty {
   @include two-column-wide-left;
 }
 
-#edit_user {
-  @include two-column-wide-left;
-}
-
 #environments_index {
   @include two-column-wide-left;
 }
@@ -177,3 +173,12 @@ body.ninesixty {
 #environment_usage {
    @include two-column-narrow-right;
 }
+
+#new_cloud_profile, 
+#edit_cloud_profile,
+#cloud_profiles_index,
+#new-artifact {
+    @include two-column-wide-left;
+}
+
+

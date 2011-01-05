@@ -1,0 +1,11 @@
+#cloud_profiles_index_help
+  #sidebar
+    %h1 About Cloud Profiles...
+    %p
+      Cloud Profiles define the settings used by environments and artifacts. Currently, only
+      the Amazon EC2 public IaaS provider is supported, but you can specify regions that use
+      different EC2 regions and credentials. 
+    - content_for_non_organization_admin do 
+      %p
+        Cloud Profiles can only be created or modified by an organization admin. Please contact
+        your admin if you need a cloud profile created or modified.
