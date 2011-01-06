@@ -10,7 +10,7 @@
         Optionally, upload the first version of this artifact.
         - f.fields_for :artifact_versions do |version_form|
           = render :partial => "artifact_versions/form", :object => version_form
-          = f.submit 'Create', :class => "submit"
-          = link_to 'Cancel', artifacts_path, :class => "actionlink"
+        = f.submit 'Create', :class => "submit"
+        = link_to 'Cancel', artifacts_path, :class => "actionlink"
   .right_column
     = render :partial=>'form_new_help'
