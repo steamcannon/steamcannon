@@ -21,10 +21,14 @@ class CloudProfilesController < ResourceController::Base
 
   before_filter :require_user
   before_filter :require_organization_admin, :except => [:index, :show]
-  skip_before_filter :require_cloud_profile, :only => [:new, :create]
+  skip_before_filter :require_cloud_profile, :only => [:index, :new, :create]
 
   new_action.before do
     flash.now[:error] = "You must create at least one cloud profile before continuing." unless current_organization.has_cloud_profiles?
+  end
+
+  index.before do
+    flash.now[:error] = "Your administrator must create at least one cloud profile before you will be able to create artifacts or environments." unless current_organization.has_cloud_profiles?
   end
 
   create.flash { "Cloud profile created." }

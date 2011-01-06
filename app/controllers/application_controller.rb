@@ -65,7 +65,8 @@ class ApplicationController < ActionController::Base
 
   def require_cloud_profile
     return false unless current_user
-    store_location and redirect_to new_cloud_profile_path unless current_organization.has_cloud_profiles?
+    store_location and
+      redirect_to(current_user.organization_admin? ? new_cloud_profile_path : cloud_profiles_path) unless current_organization.has_cloud_profiles?
   end
 
   def check_deltacloud_config
