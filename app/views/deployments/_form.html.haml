@@ -1,8 +1,5 @@
 #deployments_form
-  #left_column
-    %ul
-      %li
-        = form.label :artifact_version, "Artifact Version"
-        = form.select :artifact_version_id, deployment_artifact_versions_for_select(form.object)
-  #right_column
-
+  %ul
+    %li
+      = form.label :artifact_version, "Artifact Version"
+      = form.select :artifact_version_id, deployment_artifact_versions_for_select(form.object)

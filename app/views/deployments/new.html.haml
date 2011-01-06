@@ -1,8 +1,11 @@
-.dcloud_form
+#new_deployment.dcloud_form
   %h2
     =h deployment_header_text(@deployment, @environment)
-  - form_for([@environment, @deployment]) do |f|
-    = f.error_messages
-    = render :partial => "form", :object => f
-    = f.submit 'Deploy', :class => "submit"
-    = link_to 'Cancel', :back, :class => "actionlink"
+  .left_column
+    - form_for([@environment, @deployment]) do |f|
+      = f.error_messages
+      = render :partial => "form", :object => f
+      = f.submit 'Deploy', :class => "submit"
+      = link_to 'Cancel', :back, :class => "actionlink"
+  .right_column
+    = render 'form_new_help'

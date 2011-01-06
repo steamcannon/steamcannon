@@ -1,0 +1,9 @@
+#sidebar
+  %h1 Editing a cloud profile
+  
+  :markdown
+    Be careful when editing a cloud profile. Any environments 
+    that currently use this cloud profile will become unreachable
+    if you change the cloud, provider, or credentials.
+
+  = render 'amazon_credentials_help'
