@@ -334,6 +334,8 @@ class Instance < ActiveRecord::Base
 
   def event_subject_metadata
     {
+      :cloud_name => cloud_profile.cloud_name,
+      :cloud_provider => cloud_profile.provider_name,
       :cloud_instance_id => cloud_id,
       :cloud_image_id => image.cloud_id(hardware_profile, cloud_profile),
       :cloud_hardware_profile => hardware_profile,

@@ -76,6 +76,30 @@ module Cloud
       end
 
       INSTANCE_COSTS = {
+        'ap-southeast-1' => {
+          'm1.small' => 0.095,
+          'm1.large' => 0.38,
+          'm1.xlarge' => 0.76,
+          't1.micro' => 0.025,
+          'm2.xlarge' => 0.57,
+          'm2.2xlarge' => 1.14,
+          'm2.4xlarge' => 2.28,
+          'c1.medium' => 0.19,
+          'c1.xlarge' => 0.76
+        },
+
+        'eu-west-1' => {
+          'm1.small' => 0.095,
+          'm1.large' => 0.38,
+          'm1.xlarge' => 0.76,
+          't1.micro' => 0.025,
+          'm2.xlarge' => 0.57,
+          'm2.2xlarge' => 1.14,
+          'm2.4xlarge' => 2.28,
+          'c1.medium' => 0.19,
+          'c1.xlarge' => 0.76
+        },
+
         'us-east-1' => {
           'm1.small' => 0.085,
           'm1.large' => 0.34,
@@ -86,14 +110,25 @@ module Cloud
           'm2.4xlarge' => 2.0,
           'c1.medium' => 0.17,
           'c1.xlarge' => 0.68
+        },
+        
+        'us-west-1' => {
+          'm1.small' => 0.095,
+          'm1.large' => 0.38,
+          'm1.xlarge' => 0.76,
+          't1.micro' => 0.025,
+          'm2.xlarge' => 0.57,
+          'm2.2xlarge' => 1.14,
+          'm2.4xlarge' => 2.28,
+          'c1.medium' => 0.19,
+          'c1.xlarge' => 0.76
         }
       }
 
-      def instance_run_cost(minutes, hardware_profile)
-        #TODO: this will need to be passed a region when we have support
-        #for that
+      def instance_run_cost(minutes, hardware_profile, region)
+        region ||= 'us-east-1' #default to us-east-1 for legacy data
         hours = minutes ? (minutes.to_i/60 + (minutes%60 > 0 ? 1 : 0)) : 0.0
-        cost_per_hour = INSTANCE_COSTS['us-east-1'][hardware_profile] || 0.0
+        cost_per_hour = INSTANCE_COSTS[region][hardware_profile] || 0.0
         hours * cost_per_hour
       end
 

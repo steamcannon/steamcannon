@@ -133,8 +133,8 @@ class Environment < ActiveRecord::Base
     end
   end
 
-  def usage_data(cloud_helper)
-    @usage_data ||= EnvironmentUsage.new(self, cloud_helper)
+  def usage_data
+    @usage_data ||= EnvironmentUsage.new(self, cloud_profile.cloud_specific_hacks)
   end
 
   def validate_ssh_key_name

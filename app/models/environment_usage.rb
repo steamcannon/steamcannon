@@ -38,6 +38,7 @@ class EnvironmentUsage
         instance_data[event.event_subject_id] ||= { }
         instance_data[event.event_subject_id][:name] ||= event.event_subject.name
         instance_data[event.event_subject_id][:profile] ||= event.event_subject.metadata[:cloud_hardware_profile]
+        instance_data[event.event_subject_id][:provider] ||= event.event_subject.metadata[:cloud_provider]
         instance_data[event.event_subject_id][event.status] = event
       end
       @instance_data_per_run[run.id] = instance_data
@@ -97,7 +98,8 @@ class EnvironmentUsage
     if !@instance_run_cost[subject_id]
       seconds = instance_run_time(run, subject_id)
       profile = instance_data_for_run(run)[subject_id][:profile]
-      @instance_run_cost[subject_id] = cloud_helper.instance_run_cost(seconds/60, profile) if seconds
+      provider = instance_data_for_run(run)[subject_id][:provider]
+      @instance_run_cost[subject_id] = cloud_helper.instance_run_cost(seconds/60, profile, provider) if seconds
     end
     @instance_run_cost[subject_id]
   end

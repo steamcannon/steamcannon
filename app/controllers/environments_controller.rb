@@ -148,7 +148,7 @@ class EnvironmentsController < ApplicationController
 
   # GET /environments/1/usage
   def usage
-    @usage = @environment.usage_data(current_user.cloud_specific_hacks)
+    @usage = @environment.usage_data
   end
   
   # GET /environments/1/deltacloud
