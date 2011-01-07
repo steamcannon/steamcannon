@@ -1,3 +1,3 @@
 %environments
   - @environments.each do |e|
-    %environment{:href=>environment_url(e), :name=>e.name, :id=>e.id}
+    = render :partial => 'environment', :locals => { :environment => e }
