@@ -3,18 +3,18 @@
 require 'rubygems'
 require 'lib/steamcannon/client'
 
-api_url = 'http://localhost:8080/api'
-api_name = 'lanceball@gmail.com'
-api_pass = 'slacker'
+#api_url = 'http://localhost:8080/api'
+#api_name = 'lanceball@gmail.com'
+#api_pass = 'redacted'
 
-# puts "What's your API endpoint URL? (e.g. http://localhost:8080/api)"
-# api_url  = gets.chomp
+puts "What's your API endpoint URL? (e.g. http://localhost:8080/api)"
+api_url  = gets.chomp
 
-# puts "What's your steamcannon username?"
-# api_name = gets.chomp
+puts "What's your steamcannon username?"
+api_name = gets.chomp
 
-# puts "What's your steamcannon password?"
-# api_pass = gets.chomp
+puts "What's your steamcannon password?"
+api_pass = gets.chomp
 
 client = SteamCannon::API::Client.new(api_url, api_name, api_pass)
 
