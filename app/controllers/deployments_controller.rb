@@ -25,7 +25,7 @@ class DeploymentsController < ApplicationController
   # GET /deployments
   # GET /deployments.xml
   def index
-    @deployments = current_user.deployments.all
+    @deployments = @environment.deployments.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -36,7 +36,7 @@ class DeploymentsController < ApplicationController
   # GET /deployments/1
   # GET /deployments/1.xml
   def show
-    @deployment = current_user.deployments.find(params[:id])
+    @deployment = @environment.deployments.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -47,7 +47,7 @@ class DeploymentsController < ApplicationController
   # GET /deployments/new
   # GET /deployments/new.xml
   def new
-    @deployment = current_user.deployments.new(params[:deployment])
+    @deployment = @environment.deployments.new(params[:deployment])
     @deployment.datasource ||= "local"
 
     respond_to do |format|
@@ -77,7 +77,7 @@ class DeploymentsController < ApplicationController
   # DELETE /deployments/1
   # DELETE /deployments/1.xml
   def destroy
-    @deployment = current_user.deployments.find(params[:id])
+    @deployment = @environment.deployments.find(params[:id])
     @deployment.undeploy!
 
     respond_to do |format|
@@ -88,7 +88,7 @@ class DeploymentsController < ApplicationController
 
   # POST /environments/:id/status.json
   def status
-    @deployment = current_user.deployments.find(params[:id])
+    @deployment = @environment.deployments.find(params[:id])
     render(:partial => "deployments/service_list", :locals => { :deployment => @deployment }) 
   end
 

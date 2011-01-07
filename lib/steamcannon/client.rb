@@ -75,7 +75,11 @@ module SteamCannon
       end
   
       def deployments
-        @deployments ||= request(@data['deployments'][0]['href'])['deployment'].collect{|d|Deployment.new(self, d)}
+        unless @deployments
+          response = request(@data['deployments'][0]['href'])['deployment']
+          @deployments = response.nil? ? [] : response.collect{|d|Deployment.new(self, d)}
+        end
+        @deployments 
       end
     end
 
