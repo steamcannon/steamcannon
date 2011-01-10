@@ -10,7 +10,7 @@
         %th.start_time
           Environment Started At
         %th.run_time
-          Total Run Time
+          Cumulative Run Time
         %th.num_instances
           == # Instances
         %th.cost
@@ -20,7 +20,7 @@
           %td.start_time
             = run.created_at.to_s(:standard)
           %td.run_time
-            = formatted_run_time(@usage.total_run_time_for_single_run(run))
+            = formatted_instance_hours(@usage.instance_hours_for_single_run(run))
           %td.num_instances
             = @usage.instance_data_for_run(run).try(:size) || 0
           %td.cost

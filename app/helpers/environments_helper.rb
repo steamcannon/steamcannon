@@ -92,6 +92,14 @@ module EnvironmentsHelper
 
   end
 
+  def formatted_instance_hours(instance_hours)
+    if instance_hours
+      "#{instance_hours} instance hours"
+    else
+      'n/a'
+    end
+  end
+  
   def formatted_run_cost(cost)
     cost ? number_to_currency(cost) : 'n/a'
   end
