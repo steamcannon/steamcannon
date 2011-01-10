@@ -19,6 +19,10 @@
 module Cloud
   module Specifics
     class Virtualbox < Cloud::Specifics::Base
+
+      def unique_bucket_name(prefix)
+        nil
+      end
     end
   end
 end

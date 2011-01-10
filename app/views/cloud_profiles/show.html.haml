@@ -22,10 +22,12 @@
       %b Password:
       = h @cloud_profile.obfuscated_password
 
-  %p
-    %b Amazon S3 Artifact Bucket:
-    &= @cloud_profile.artifact_bucket_name
-  %p
-    %b Amazon Environment Clustering Bucket:
-    &= @cloud_profile.environment_bucket_name
+  - if @cloud_profile.artifact_bucket_name
+    %p
+      %b Amazon S3 Artifact Bucket:
+      &= @cloud_profile.artifact_bucket_name
+  - if @cloud_profile.environment_bucket_name
+    %p
+      %b Amazon Environment Clustering Bucket:
+      &= @cloud_profile.environment_bucket_name
 

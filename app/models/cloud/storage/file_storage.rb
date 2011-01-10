@@ -43,7 +43,7 @@ module Cloud
         # ignore file-not-found, let everything else pass
       end
 
-      def public_url
+      def public_url(artifact_version)
         nil
       end
 
