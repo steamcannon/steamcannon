@@ -94,7 +94,7 @@ describe Cloud::Storage::FileStorage do
 
   describe "public_url" do
     it "should be nil" do
-      @storage.public_url.should be(nil)
+      @storage.public_url(Object.new).should be(nil)
     end
   end
 end
