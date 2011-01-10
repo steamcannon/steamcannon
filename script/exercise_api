@@ -3,32 +3,39 @@
 require 'rubygems'
 require 'lib/steamcannon/client'
 
-#api_url = 'http://localhost:8080/api'
-#api_name = 'lanceball@gmail.com'
-#api_pass = 'redacted'
+api_url = 'http://localhost:8080/api'
+api_name = 'lball@redhat.com'
+api_pass = 'slacker'
 
-puts "What's your API endpoint URL? (e.g. http://localhost:8080/api)"
-api_url  = gets.chomp
+#puts "What's your API endpoint URL? (e.g. http://localhost:8080/api)"
+#api_url  = gets.chomp
 
-puts "What's your steamcannon username?"
-api_name = gets.chomp
+#puts "What's your steamcannon username?"
+#api_name = gets.chomp
 
-puts "What's your steamcannon password?"
-api_pass = gets.chomp
+#puts "What's your steamcannon password?"
+#api_pass = gets.chomp
 
 client = SteamCannon::API::Client.new(api_url, api_name, api_pass)
 
 puts "Environments"
 client.environments.each do |environment|
   puts environment.name
-  puts "\towner: #{environment.owner}"
-  puts "\tcurrent_state: #{environment.current_state}"
-  puts "\thref: #{environment.href}"
-  puts "\tdeltacloud endpoint: #{environment.deltacloud_url}"
+  puts "\tOwner: #{environment.owner}"
+  puts "\tCurrent state: #{environment.current_state}"
+  puts "\tHREF: #{environment.href}"
+  puts "\tDeltacloud endpoint: #{environment.deltacloud_url}"
   puts "\tDeployments"
   environment.deployments.each do |deployment|
-    puts "\t\tname: #{deployment.name}"
-    puts "\t\thref: #{deployment.href}"
-    puts "\t\tstatus: #{deployment.current_state}"
+    puts "\t\tName: #{deployment.name}"
+    puts "\t\tHREF: #{deployment.href}"
+    puts "\t\tStatus: #{deployment.current_state}"
+    puts
   end
+end
+puts "Artifacts"
+client.artifacts.each do |artifact|
+  puts artifact.name
+  puts "\tVersions:"
+  artifact.versions.each {|v|puts "\t#{v}"}
 end
