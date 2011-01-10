@@ -28,11 +28,6 @@ module Cloud
           :name => :ec2,
           :display_name => 'Amazon EC2',
           :providers => %w{ us-east-1 us-west-1 eu-west-1 ap-southeast-1 }
-        },
-        :virtualbox => {
-          :name => :virtualbox,
-          :display_name => 'VirtualBox',
-          :providers => %w{ local }
         }
       }
 
