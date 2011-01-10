@@ -22,14 +22,17 @@ describe "/environments/index.xml.haml" do
   include EnvironmentsHelper
 
   before(:each) do
-    @environments = assigns[:environments] = [stub_model(Environment, :name=>'env-1'), stub_model(Environment, :name=>'env-2')]
+    @environments = assigns[:environments] = %w{1 2}.collect do |n|
+      user = stub_model(User, :email=>"user-#{n}@gmail.com")
+      stub_model(Environment, :name=>"env-#{n}", :user=>user)
+    end
   end
 
   it "renders a collection of environments" do
     render
     response.should have_tag("environments") do
       @environments.each do |e|
-        with_tag("environment[href=?][name=?]", environment_url(e), e.name)
+        with_tag("environment[href=?]", environment_url(e))
       end
     end
   end

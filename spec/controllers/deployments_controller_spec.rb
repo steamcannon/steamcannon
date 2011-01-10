@@ -25,7 +25,7 @@ describe DeploymentsController do
     @current_user.stub!(:default_realm).and_return('def-realm')
     @current_user.stub!(:environments).and_return(Environment)
     Environment.stub!(:find).and_return(mock_environment)
-    Environment.stub!(:deployments).and_return(Deployment)
+    mock_environment.stub!(:deployments).and_return(Deployment)
   end
 
   def mock_deployment(stubs={})

@@ -10,8 +10,8 @@
     - unless artifact_version.upload_failed?
       = render :partial => 'deploy_dialog', :locals => {:artifact_version=>artifact_version}
     - if (artifact_version.uploaded? || artifact_version.upload_failed?) && !artifact_version.is_deployed?
-      = link_to 'Delete', artifact_version_path(artifact_version, :artifact_id => artifact_version.artifact.id), :method => :delete, :confirm => "Are you sure you want to delete version #{artifact_version.version_number}?"
+      = link_to 'Delete', artifact_artifact_version_path(artifact_version.artifact, artifact_version), :method => :delete, :confirm => "Are you sure you want to delete version #{artifact_version.version_number}?"
 
 - if artifact_version.staging? or artifact_version.uploading?
   - javascript_tag do
-    ="monitor_content('#{status_artifact_version_path(artifact_version, :artifact_id => artifact_version.artifact_id)}', ['##{dom_id(artifact_version)}']);"
+    ="monitor_content('#{status_artifact_artifact_version_path(artifact_version.artifact, artifact_version)}', ['##{dom_id(artifact_version)}']);"

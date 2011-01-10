@@ -26,7 +26,7 @@
           &= @artifact.description
     = render :partial => "artifact_versions/list", :locals => { :artifact_versions => @artifact.artifact_versions }
     .actions
-      = link_to('Upload New Version', new_artifact_version_path(:artifact_id => @artifact.id) )
+      = link_to('Upload New Version', new_artifact_artifact_version_path(@artifact) )
   .right_column
     %h2 Deployments
     = render :partial => "deployments/list", :locals => { :deployments => @artifact.deployments.deployed, :header_text => "Deployments", :empty_text => "This artifact has no deployments." }

@@ -23,8 +23,9 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :account_requests, :collection => { :invite => :post, :ignore => :post }
 
-  map.resources :artifacts, :member => { :status => :post }
-  map.resources :artifact_versions, :member => { :status => :get }
+  map.resources :artifacts, :member => { :status => :post } do |artifacts|
+    artifacts.resources :artifact_versions, :member => { :status => :get }
+  end
   map.resources :platforms
   map.resources :hardware_profiles, :only => [ :index, :show ]
   map.resources :realms, :only => [ :index, :show ]
