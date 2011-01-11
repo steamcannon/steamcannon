@@ -1,1 +1,7 @@
-%artifact_versions{:href=>'/'}
+%artifact_versions{:href=>artifact_artifact_versions_url(@artifact)}
+  - @artifact_versions.each do |version|
+    %artifact_version{:href=>artifact_artifact_version_url(@artifact, version)}
+      %version_number=version.version_number
+      %archive_file_name=version.archive_file_name
+      %created_at=version.created_at
+      %current_state=version.current_state

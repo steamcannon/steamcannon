@@ -33,6 +33,11 @@ class ArtifactVersionsController < ApplicationController
     end
   end
 
+  def index
+    @artifact_versions = @artifact.artifact_versions
+    respond_to { |format| format.xml } # only available via API at the moment
+  end
+
   # POST /artifact_versions
   # POST /artifact_versions.xml
   def create
