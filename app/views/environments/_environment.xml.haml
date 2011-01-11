@@ -16,6 +16,7 @@
     - else
       %link{:rel=>'start', :href=>start_environment_url(environment)}
     %link{:rel=>'clone', :href=>clone_environment_url(environment)}
+    %link{:rel=>'delete', :href=>environment_url(environment, :_method=>:delete)}
 
   %link{:rel=>'deltacloud_endpoint', :href=>deltacloud_environment_url(environment)}
 
