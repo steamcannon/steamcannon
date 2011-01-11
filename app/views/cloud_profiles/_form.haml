@@ -8,9 +8,8 @@
       = form.select :cloud_name, available_cloud_names
     %li
       = form.label :provider
-      -# This needs to have some js love when we have multiple clouds
       - available_clouds.each do |cloud_name, cloud|
-        .providers{:class => cloud_name}
+        .providers{:class => cloud_name, :style => 'display: none'}
           = form.select :provider_name, cloud_providers(cloud, form.object.provider_name)
     - if form.object.new_record?
       %li
@@ -37,4 +36,17 @@
         Cloud credentials are valid.
       #invalid
         Cloud credentials are invalid. Please make sure you have entered them correctly.
-
+:javascript
+  function showProvider() {
+    var provider = $('#cloud_profile_cloud_name').val();
+    $('div.providers').each(function(index, provider) {
+      $(provider).hide();
+    });
+    $('div.providers.' + provider).show();
+  }
+  $(function() {
+    showProvider();
+    $('#cloud_profile_cloud_name').change(function() {
+      showProvider();
+    });
+  });
