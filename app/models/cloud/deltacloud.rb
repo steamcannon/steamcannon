@@ -63,9 +63,9 @@ module Cloud
         __send__(meth, *args, &block)
       rescue DeltaCloud::API::BackendError => ex
         @last_error = ex
-        Rails.logger.error "DeltaCloud call failed =========================="  
+        Rails.logger.error "DeltaCloud call failed =========================="
         Rails.logger.error ex.with_trace
-        Rails.logger.error "================================================="  
+        Rails.logger.error "================================================="
         default
       end
     end
@@ -106,7 +106,7 @@ module Cloud
     end
 
     def name
-      Rails.cache.fetch('DeltacloudDriverName') do
+      Rails.cache.fetch("DeltacloudDriverName_#{@driver}") do
         client.driver_name
       end
     end
@@ -133,9 +133,9 @@ module Cloud
     def deltacloud_args
       [@cloud_username, @cloud_password, APP_CONFIG[:deltacloud_url], { :driver => @driver, :provider => @provider }]
     end
-    
+
     def deltacloud_hardware_profiles
-      Rails.cache.fetch('DeltacloudHardwareProfiles') do
+      Rails.cache.fetch("DeltacloudHardwareProfiles_#{@driver}") do
         client.hardware_profiles.select do |profile|
           profile.name != 't1.micro'
         end
