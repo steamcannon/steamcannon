@@ -95,7 +95,6 @@ function apply_ujs_rules($) {
     })
 
     $('#environment_form #environment_cloud_profile_id').applyOnce('ujs_update_cloud_settings_applied').change(function() {
-        console.log($(this).val())
         if ($(this).val()) {
             $('#cloud_settings').addClass('loading')
             $.get('/cloud_profiles/' + $(this).val() + '/cloud_settings_block', function(data) {
@@ -103,7 +102,7 @@ function apply_ujs_rules($) {
             })
         }
     })
-    
+
     $('.callout').applyOnce().delay(10000).slideUp()
 
     $("abbr.timeago").applyOnce().timeago()
