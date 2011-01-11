@@ -48,6 +48,10 @@ describe DeploymentsController do
       { :delete => "/environments/1/deployments/1" }.should route_to(:controller => "deployments", :action => "destroy", :id => "1", :environment_id => '1') 
     end
 
+    it "recognizes and generates #undeploy" do
+      { :post => '/environments/1/deployments/1/undeploy' }.should route_to(:controller => 'deployments', :action => 'undeploy', :id => '1', :environment_id => '1')
+    end
+    
     it "recognizes and generates #status" do
       { :post => '/environments/1/deployments/1/status' }.should route_to(:controller => 'deployments', :action => 'status', :id => '1', :environment_id => '1')
     end

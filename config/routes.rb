@@ -41,7 +41,7 @@ ActionController::Routing::Routes.draw do |map|
     end
 
     environment.resources :storage_volumes, :member => {:status => :post}, :only => [:destroy]
-    environment.resources :deployments, :member => {:status => :post}
+    environment.resources :deployments, :member => {:status => :post, :undeploy => :post}
   end
 
   map.with_options :controller => 'events' do |events|

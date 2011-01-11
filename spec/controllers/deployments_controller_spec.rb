@@ -179,6 +179,28 @@ describe DeploymentsController do
     end
   end
 
+  describe "POST undeploy" do
+    before(:each) do
+      Deployment.should_receive(:find).with("37").and_return(mock_deployment)
+      mock_deployment.stub(:undeploy!)
+    end
+
+    it "undeploys the requested deployment" do
+      mock_deployment.should_receive(:undeploy!)
+      post :undeploy, :id => "37", :environment_id => "1"
+    end
+
+    it "redirects to the artifact show page" do
+      post :undeploy, :id => "37", :environment_id => "1"
+      response.should redirect_to(artifact_url(mock_deployment.artifact))
+    end
+
+    it "assigns the current environment to @environment" do
+      post :undeploy, :id => "37", :environment_id => "1"
+      assigns[:environment].should == mock_environment
+    end
+  end
+
   describe "POST status" do
     before(:each) do
       Deployment.stub!(:find).with("13").and_return( mock_deployment )

@@ -77,13 +77,13 @@ class DeploymentsController < ApplicationController
   # DELETE /deployments/1
   # DELETE /deployments/1.xml
   def destroy
-    @deployment = @environment.deployments.find(params[:id])
-    @deployment.undeploy!
+    undeploy_and_redirect
+  end
 
-    respond_to do |format|
-      format.html { redirect_back_or_default(@deployment.artifact, :notice => 'Artifact was queued for undeployment.') }
-      format.xml  { head :ok }
-    end
+  # POST /deployments/1/undeploy
+  # POST /deployments/1/undeploy.xml
+  def undeploy
+    undeploy_and_redirect
   end
 
   # POST /environments/:id/status.json
@@ -95,6 +95,16 @@ class DeploymentsController < ApplicationController
   protected
   def find_environment
     @environment = current_user.environments.find(params[:environment_id])
+  end
+
+  def undeploy_and_redirect
+    @deployment = @environment.deployments.find(params[:id])
+    @deployment.undeploy!
+
+    respond_to do |format|
+      format.html { redirect_back_or_default(@deployment.artifact, :notice => 'Artifact was queued for undeployment.') }
+      format.xml  { head :ok }
+    end
   end
 
 end
