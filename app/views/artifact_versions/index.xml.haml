@@ -5,3 +5,6 @@
       %archive_file_name=version.archive_file_name
       %created_at=version.created_at
       %current_state=version.current_state
+      %actions
+        - current_user.environments.each do |environment|
+          %link{:href=>environment_deployments_url(environment, :artifact_version_id=>version.id), :rel=>'deploy'}
