@@ -1,15 +1,12 @@
 %deployment{:href=>environment_deployment_url(@environment, deployment)}
   %environment{:href=>environment_url(@environment), :rel=>"environment"}
-  / TODO: How to deal with versions?
-  / It's possible to delete the deployment's artifact. We don't want to barf if one isn't there
   - unless deployment.artifact.blank?
-    %artifact{:href=>artifact_url(deployment.artifact)}
+    %artifact{:href=>artifact_artifact_version_url(deployment.artifact, deployment.artifact_version)}
   %name=deployment.simple_name
   %current_state=deployment.current_state
   %datasource=deployment.datasource 
   %actions
     - if deployment.deployed?
-      / TODO: current routes assume DELETE of deployment (via HTTP verb), but we probably want POST
-      %link{:href=>environment_deployment_url(@environment, deployment), :rel=>'undeploy'}
+      %link{:href=>undeploy_environment_deployment_url(@environment, deployment), :rel=>'undeploy'}
     - else
-      / TODO: should we allow deployment here? 
+      %link{:href=>environment_deployment_url(@environment, deployment, :_method=>'delete'), :rel=>'delete'}
