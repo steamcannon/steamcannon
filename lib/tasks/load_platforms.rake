@@ -5,7 +5,7 @@ namespace :app do
       if ENV['FILE']
         file = ENV['FILE']
         file = File.join(Rails.root, 'db', 'fixtures', 'platforms', file) if File.dirname(file) == '.'
-        Platform.create_from_yaml_file(file)
+        Platform.load_from_yaml_file(file)
       else
         puts "Please specify a FILE"
       end
