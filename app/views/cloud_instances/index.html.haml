@@ -5,14 +5,21 @@
   .left_column
     #running
       %h2 Running Instances
-      = render :partial => 'list', :locals => {:instances => @running_instances, :instance_type => :running, :allow_stop => false}
+      - @running_instances.each do |cloud_profile, instances|
+        %h3=h cloud_profile.name_with_details
+        = render :partial => 'list', :locals => {:instances => instances, :instance_type => :running, :allow_stop => false}
   
     #managed
       %h2 Managed Instances
-      = render :partial => 'list', :locals => {:instances => @managed_instances, :instance_type => :managed, :allow_stop => false}
+      - @managed_instances.each do |cloud_profile, instances|
+        %h3=h cloud_profile.name_with_details
+        = render :partial => 'list', :locals => {:instances => instances, :instance_type => :managed, :allow_stop => false}
   
     #runaway
       %h2 Orphaned Instances
-      = render :partial => 'list', :locals => {:instances => @runaway_instances, :instance_type => :runaway, :allow_stop => true}
+      - @runaway_instances.each do |cloud_profile, instances|
+        %h3= cloud_profile.name_with_details
+        = render :partial => 'list', :locals => {:instances => instances, :instance_type => :runaway, :allow_stop => true}
+
   .right_column
     = render :partial=>'index_help'

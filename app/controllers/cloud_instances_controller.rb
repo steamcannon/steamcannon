@@ -21,11 +21,18 @@ class CloudInstancesController < ApplicationController
   before_filter :require_user
 
   def index
-    cloud = current_user.cloud_specific_hacks
-    cloud.instances_summary(true) # force refresh of instances summary
-    @running_instances = cloud.running_instances
-    @managed_instances = cloud.managed_instances
-    @runaway_instances = cloud.runaway_instances
+    @running_instances = { }
+    @managed_instances = { }
+    @runaway_instances = { }
+    
+    current_user.cloud_profiles.each do |cloud_profile|
+      cloud = cloud_profile.cloud_specific_hacks
+      cloud.instances_summary(true) # force refresh of instances summary
+      @running_instances[cloud_profile] = cloud.running_instances
+      @managed_instances[cloud_profile] = cloud.managed_instances
+      @runaway_instances[cloud_profile] = cloud.runaway_instances
+    end
+
   end
 
   def destroy
