@@ -1,0 +1,3 @@
+%platforms{:href=>platforms_url}
+  - @platforms.each do |platform|
+    = render :partial => 'platform.xml', :locals=>{:platform=>platform}

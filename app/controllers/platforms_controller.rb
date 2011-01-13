@@ -17,5 +17,14 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class PlatformsController < ResourceController::Base
-  before_filter :require_superuser
+  before_filter :require_superuser, :only => [:new, :create, :edit, :update, :delete]
+  before_filter :require_user, :only => [:index, :show]
+
+  index.wants.xml do
+    render :template => 'platforms/index.xml'
+  end
+
+  show.wants.xml do
+    render :template => 'platforms/show.xml'
+  end
 end
