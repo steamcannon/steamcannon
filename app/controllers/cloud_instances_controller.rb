@@ -26,7 +26,7 @@ class CloudInstancesController < ApplicationController
     @runaway_instances = { }
     
     current_user.cloud_profiles.each do |cloud_profile|
-      cloud = cloud_profile.cloud_specific_hacks
+      cloud = cloud_profile.cloud_specifics
       cloud.instances_summary(true) # force refresh of instances summary
       @running_instances[cloud_profile] = cloud.running_instances
       @managed_instances[cloud_profile] = cloud.managed_instances

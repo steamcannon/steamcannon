@@ -52,7 +52,7 @@ module AgentServices
 
     def multicast_config(instance_service)
       instance = instance_service.instance
-      instance.cloud_specific_hacks.multicast_config(instance)
+      instance.cloud_specifics.multicast_config(instance)
     end
 
     def proxy_list

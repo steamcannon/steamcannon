@@ -154,8 +154,8 @@ describe Instance do
     instance = Factory.build(:instance)
     cloud_profile = Factory.build(:cloud_profile)
     instance.should_receive(:cloud_profile).and_return(cloud_profile)
-    cloud_profile.should_receive(:cloud_specific_hacks).and_return('hacks')
-    instance.cloud_specific_hacks.should == 'hacks'
+    cloud_profile.should_receive(:cloud_specifics).and_return('hacks')
+    instance.cloud_specifics.should == 'hacks'
   end
 
   it "should delegate to environment for user" do
@@ -168,10 +168,10 @@ describe Instance do
 
   describe "instance_launch_options" do
     before(:each) do
-      cloud_specific_hacks = mock(Object)
-      cloud_specific_hacks.stub!(:launch_options).and_return({})
+      cloud_specifics = mock(Object)
+      cloud_specifics.stub!(:launch_options).and_return({})
       @instance = Instance.new
-      @instance.stub!(:cloud_specific_hacks).and_return(cloud_specific_hacks)
+      @instance.stub!(:cloud_specifics).and_return(cloud_specifics)
       @instance.stub_chain(:environment, :ssh_key_name).and_return('something_not_default')
       @instance.stub_chain(:environment, :realm).and_return('a_realm_id')
     end

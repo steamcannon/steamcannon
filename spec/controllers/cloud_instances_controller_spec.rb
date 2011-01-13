@@ -30,7 +30,8 @@ describe CloudInstancesController do
       @cloud.stub!(:managed_instances).and_return([])
       @cloud.stub!(:runaway_instances).and_return([])
       @cloud.stub!(:instances_summary)
-      @current_user.stub!(:cloud_specific_hacks).and_return(@cloud)
+      @cloud_profile = mock(CloudProfile, :cloud_specifics => @cloud)
+      @current_user.stub!(:cloud_profiles).and_return([@cloud_profile])
     end
 
     it "should be successful" do

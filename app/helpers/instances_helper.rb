@@ -50,7 +50,7 @@ module InstancesHelper
 
   def cloud_instances_summary(type)
     current_user.environments.inject(0) do |sum, env|
-      sum += env.cloud_profile.cloud_specific_hacks.instances_summary[type]
+      sum += env.cloud_profile.cloud_specifics.instances_summary[type]
     end
   end
 end

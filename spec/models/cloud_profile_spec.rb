@@ -143,8 +143,7 @@ describe CloudProfile do
     cloud_profile = Factory.build(:cloud_profile)
     cloud_profile.should_receive(:cloud_name).and_return('ec2')
     Cloud::Specifics::Base.should_receive(:cloud_specifics).with('ec2', cloud_profile)
-    cloud_profile.cloud_specific_hacks
+    cloud_profile.cloud_specifics
   end
-
 end
 

@@ -202,8 +202,8 @@ class Instance < ActiveRecord::Base
     false
   end
 
-  def cloud_specific_hacks
-    cloud_profile.cloud_specific_hacks
+  def cloud_specifics
+    cloud_profile.cloud_specifics
   end
 
   def user
@@ -249,7 +249,7 @@ class Instance < ActiveRecord::Base
       :key_name => cloud_keyname,
       :user_data => instance_user_data,
       :realm_id => environment.realm
-    }.merge(cloud_specific_hacks.launch_options(self))
+    }.merge(cloud_specifics.launch_options(self))
   end
 
   def cloud_keyname
