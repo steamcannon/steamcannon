@@ -22,7 +22,9 @@ describe Cloud::Specifics::Ec2 do
   before(:each) do
     @cloud_profile = Factory.build(:cloud_profile,
                                    :username => 'username',
-                                   :password => 'password')
+                                   :password => 'password',
+                                   :provider_name => 'eu-west-1',
+                                   :cloud_name => 'ec2')
     @ec2 = Cloud::Specifics::Ec2.new(@cloud_profile)
     @instance = Factory.build(:instance)
   end
@@ -127,36 +129,28 @@ describe Cloud::Specifics::Ec2 do
 
     it "should get access_key from cloud_profile object" do
       @cloud_profile.should_receive(:username).and_return('username')
-      @sig.should_receive(:generate_temporary_url).
-        with(hash_including(:access_key => 'username'))
-      @ec2.send(:pre_signed_url, @instance, {})
+      verify_signature_contains(:access_key => 'username')
     end
 
     it "should get secret_access_key from cloud_profile object" do
       @cloud_profile.should_receive(:password).and_return('password')
-      @sig.should_receive(:generate_temporary_url).
-        with(hash_including(:secret_access_key => 'password'))
-      @ec2.send(:pre_signed_url, @instance, {})
+      verify_signature_contains(:secret_access_key => 'password')
     end
 
     it "should get multicast bucket" do
       @ec2.should_receive(:multicast_bucket).and_return('bucket')
-      @sig.should_receive(:generate_temporary_url).
-        with(hash_including(:bucket => 'bucket'))
-      @ec2.send(:pre_signed_url, @instance, {})
+      verify_signature_contains(:bucket => 'bucket')
     end
 
     it "should expire 1 year after instance creation" do
       expires_at = @created_at + 1.year
       @instance.should_receive(:created_at).and_return(@created_at)
-      @sig.should_receive(:generate_temporary_url).
-        with(hash_including(:expires_at => expires_at))
-      @ec2.send(:pre_signed_url, @instance, {})
+      verify_signature_contains(:expires_at => expires_at)
     end
 
-    it "should return temporary url" do
-      @sig.should_receive(:generate_temporary_url).and_return('url')
-      @ec2.send(:pre_signed_url, @instance, {}).should == 'url'
+    def verify_signature_contains(options)
+      @ec2.should_receive(:generate_temporary_s3_url).with(hash_including(options)).and_return('a-url')
+      @ec2.send(:pre_signed_url, @instance, { })
     end
   end
 
@@ -167,32 +161,45 @@ describe Cloud::Specifics::Ec2 do
       @s3::Bucket.stub(:create)
     end
 
-    it "should generate suffix from username and ca certificate" do
+    it "should generate suffix from username, ca certificate, and region" do
       ca_certificate = Factory(:certificate)
       Certificate.should_receive(:ca_certificate).and_return(ca_certificate)
       ca_certificate.should_receive(:certificate).and_return('certificate')
       Digest::SHA1.should_receive(:hexdigest).with('username')
-      Digest::SHA1.should_receive(:hexdigest).with('certificate')
+      Digest::SHA1.should_receive(:hexdigest).with('certificateeu-west-1')
       Digest::SHA1.should_receive(:hexdigest).and_return('hexdigest')
       @ec2.send(:multicast_bucket)
     end
 
     it "should create a new s3 object" do
-      @s3.should_receive(:new).with('username', 'password')
+      @s3.should_receive(:new).with('username', 'password', :server => 's3.amazonaws.com')
       @ec2.send(:multicast_bucket)
     end
 
     it "should create s3 bucket with public read permissions" do
-      @s3::Bucket.should_receive(:create).with(anything, anything, true, 'public-read')
+      @s3::Bucket.should_receive(:create).with(anything, anything, true, 'public-read', :location => 'EU')
       @ec2.send(:multicast_bucket)
     end
 
     it "should return bucket name" do
       Digest::SHA1.stub!(:hexdigest).and_return('suffix')
-      @ec2.send(:multicast_bucket).should == "SteamCannonEnvironments_suffix"
+      @ec2.send(:multicast_bucket).should == "steamcannonenvironmentssuffix"
     end
   end
 
+  describe "generate_temporary_s3_url" do
+    it "should use S3::Signature.generate_temporary_url" do
+      S3::Signature.should_receive(:generate_temporary_url).with('the-options').and_return('')
+      @ec2.send(:generate_temporary_s3_url, 'the-options')
+    end
+    
+    it "should set the region specific host in the url" do
+      S3::Signature.stub(:generate_temporary_url).and_return('http://s3.amazonaws.com/')
+      @ec2.should_receive(:s3_endpoint).and_return('a-different-host')
+      @ec2.send(:generate_temporary_s3_url, @artifact_version).should =~ /a-different-host/
+    end
+  end
+  
   describe "base_security_group" do
     it "should be named steamcannon" do
       @ec2.send(:base_security_group)[:name].should == 'steamcannon'
@@ -309,6 +316,82 @@ describe Cloud::Specifics::Ec2 do
       providers = Cloud::Specifics::Base.available_clouds[:ec2][:providers]
       %w{ us-east-1 us-west-1 eu-west-1 ap-southeast-1 }.each do |region|
         providers.should include(region)
+      end
+    end
+  end
+
+  describe "ec2_endpoint" do
+    it "should use the provider from the profile to lookup the url" do
+      @cloud_profile.should_receive(:provider_name).and_return('us-east-1')
+      @ec2.ec2_endpoint.should == 'ec2.us-east-1.amazonaws.com'
+    end
+  end
+
+    describe "s3_endpoint" do
+    it "should use the provider from the profile to lookup the url" do
+      @cloud_profile.should_receive(:provider_name).and_return('ap-southeast-1')
+      @ec2.s3_endpoint.should == 's3-ap-southeast-1.amazonaws.com'
+    end
+  end
+
+  describe "s3_location" do
+    it "should use the provider from the profile to lookup the location constraint" do
+      @cloud_profile.should_receive(:provider_name).and_return('eu-west-1')
+      @ec2.s3_location.should == 'EU'
+    end
+  end
+
+  describe 'unique_bucket_name' do
+    it "should raise if the prefix length is too long" do
+      lambda {
+        @ec2.unique_bucket_name('x' * 24)
+      }.should raise_error(ArgumentError)
+    end
+    
+    it "should raise if the prefix contains uppercase characters" do
+      lambda {
+        @ec2.unique_bucket_name('ABC')
+      }.should raise_error(ArgumentError)
+    end
+
+    it "should raise if the prefix contains invalid characters" do
+      lambda {
+        @ec2.unique_bucket_name('a_b')
+      }.should raise_error(ArgumentError)
+    end
+
+    it "should not raise when given a properly formatted prefix" do
+      lambda {
+        @ec2.unique_bucket_name(('x' * 21) + '-1')
+      }.should_not raise_error
+    end
+  end
+
+  {
+    :artifact => 'steamcannonartifacts',
+    :environment => 'steamcannonenvironments'
+  }.each do |type, prefix|
+    describe type do
+      before(:each) do
+        @metadata = { }
+        @cloud_profile.stub(:metadata).and_return(@metadata)
+        @ec2.stub(:unique_bucket_name).and_return('a-bucket')
+      end
+      
+      it "should ask for a unique bucket name" do
+        @ec2.should_receive(:unique_bucket_name).with(prefix).and_return('a-bucket')
+        @ec2.send("#{type}_bucket_name")
+      end
+
+      it "should use the value stored in the cloud_profile if available" do
+        @metadata[:"s3_#{type}_bucket_name"] = 'a-bucket' 
+        @ec2.should_not_receive(:unique_bucket_name)
+        @ec2.send("#{type}_bucket_name").should == 'a-bucket'
+      end
+
+      it "should store the bucket name in the cloud profile's metadata" do
+        @cloud_profile.should_receive(:merge_and_update_metadata).with(:"s3_#{type}_bucket_name" => 'a-bucket')
+        @ec2.send("#{type}_bucket_name")
       end
     end
   end

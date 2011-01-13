@@ -25,7 +25,7 @@ module Cloud
         @cloud_profile = cloud_profile
         @access_key = cloud_profile.username
         @secret_access_key = cloud_profile.password
-        @cloud_specific_hacks = cloud_profile.cloud_specific_hacks
+        @cloud_specifics = cloud_profile.cloud_specifics
       end
 
       def write(artifact_version)
@@ -50,18 +50,17 @@ module Cloud
           :resource => path(artifact_version),
           :expires_at => expires_at
         }
-        S3::Signature.generate_temporary_url(options)
+        @cloud_specifics.generate_temporary_s3_url(options)
       end
 
       def bucket_name
-        prefix = "SteamCannonArtifacts_"
-        @cloud_specific_hacks.unique_bucket_name(prefix)
+        @cloud_specifics.artifact_bucket_name
       end
-
+      
       def bucket
         # Ensure our bucket exists and has correct permissions
-        s3 = Aws::S3.new(@access_key, @secret_access_key)
-        bucket = Aws::S3::Bucket.create(s3, bucket_name, true, 'private')
+        s3 = Aws::S3.new(@access_key, @secret_access_key, :server => @cloud_specifics.s3_endpoint)
+        bucket = Aws::S3::Bucket.create(s3, bucket_name, true, 'private', :location => @cloud_specifics.s3_location)
         bucket
       end
       memoize :bucket

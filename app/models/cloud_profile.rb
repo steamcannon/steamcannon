@@ -17,6 +17,8 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 class CloudProfile < ActiveRecord::Base
+  include HasMetadata
+
   belongs_to :organization
 
   has_many :environments
@@ -57,17 +59,9 @@ class CloudProfile < ActiveRecord::Base
     @cloud ||= Cloud::Deltacloud.new(username, password, cloud_name, provider_name)
   end
 
-  def cloud_specific_hacks
+  def cloud_specifics
     @cloud_hacks ||= Cloud::Specifics::Base.cloud_specifics(cloud_name, self)
-  end
-
-  def environment_bucket_name
-    cloud_specific_hacks.unique_bucket_name("SteamCannonEnvironments_")
-  end
-
-  def artifact_bucket_name
-    cloud_specific_hacks.unique_bucket_name("SteamCannonArtifacts_")
-  end
+  end 
 
   protected
   def encrypt_password

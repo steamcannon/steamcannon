@@ -20,11 +20,11 @@ require 'spec_helper'
 
 describe Cloud::Storage::Ec2Storage do
   before(:each) do
-    @cloud_specific_hacks = mock('hacks')
+    @cloud_specifics = mock('cloud_specifics')
     @cloud_profile = mock_model(CloudProfile,
                                 :username => 'access_key',
                                 :password => 'secret_access_key',
-                                :cloud_specific_hacks => @cloud_specific_hacks)
+                                :cloud_specifics => @cloud_specifics)
     @ec2 = Cloud::Storage::Ec2Storage.new(@cloud_profile)
     @artifact_version = Factory.build(:artifact_version)
     @path = 'path/to/file.war'
@@ -68,8 +68,8 @@ describe Cloud::Storage::Ec2Storage do
 
   describe "public_url" do
     before(:each) do
-      @sig = S3::Signature
       @ec2.stub!(:bucket_name).and_return('name')
+      @cloud_specifics.stub!(:s3_endpoint).and_return('s3-endpoint')
     end
 
     it "should generate url for cloud credentials" do
@@ -88,9 +88,9 @@ describe Cloud::Storage::Ec2Storage do
     it "should generate url for correct resource" do
       verify_signature_contains(:resource => @path)
     end
-
+    
     def verify_signature_contains(options)
-      @sig.should_receive(:generate_temporary_url).with(hash_including(options))
+      @cloud_specifics.should_receive(:generate_temporary_s3_url).with(hash_including(options)).and_return('a-url')
       @ec2.public_url(@artifact_version)
     end
   end
@@ -99,30 +99,37 @@ describe Cloud::Storage::Ec2Storage do
     before(:each) do
       @bucket = Aws::S3::Bucket
       @bucket.stub!(:create)
-      @cloud_specific_hacks.stub!(:unique_bucket_name).and_return('')
+      @cloud_specifics.stub!(:unique_bucket_name).and_return('')
+      @cloud_specifics.stub!(:s3_location).and_return('')
+      @cloud_specifics.stub!(:s3_endpoint).and_return('s3.local')
+      @cloud_specifics.stub!(:artifact_bucket_name).and_return('bucket')
     end
 
-    it "should create with correct prefix" do
-      prefix = "SteamCannonArtifacts_"
-      @cloud_specific_hacks.should_receive(:unique_bucket_name).with(prefix).and_return(prefix)
-      @bucket.should_receive(:create).with(anything, /^#{prefix}/, anything, anything)
+    it "should provide the s3_endpoint when creating the s3 connection" do
+      @cloud_specifics.should_receive(:s3_endpoint).and_return('s3.local')
+      Aws::S3.should_receive(:new).with('access_key', 'secret_access_key', :server => 's3.local')
+      @ec2.bucket
+    end
+    
+    it "should use the bucket name from the cloud_specifics" do
+      @cloud_specifics.should_receive(:artifact_bucket_name).and_return('bucket')
+      @bucket.should_receive(:create).with(anything, 'bucket', anything, anything, anything)
       @ec2.bucket
     end
 
     it "should create if it doesn't already exist" do
-      @bucket.should_receive(:create).with(anything, anything, true, anything)
+      @bucket.should_receive(:create).with(anything, anything, true, anything, anything)
       @ec2.bucket
     end
 
     it "should create with private permissions" do
-      @bucket.should_receive(:create).with(anything, anything, anything, 'private')
+      @bucket.should_receive(:create).with(anything, anything, anything, 'private', anything)
       @ec2.bucket
     end
 
-    it "should create a unique bucket name" do
-      suffix = /unique_bucket_name$/
-      @cloud_specific_hacks.should_receive(:unique_bucket_name).and_return('unique_bucket_name')
-      @bucket.should_receive(:create).with(anything, suffix, anything, anything)
+    it "should create with the correct location constraint" do
+      @cloud_specifics.should_receive(:s3_location).and_return('GOOP')
+      @bucket.should_receive(:create).with(anything, anything, anything, anything, :location => 'GOOP')
       @ec2.bucket
     end
   end

@@ -22,6 +22,29 @@ module Cloud
   module Specifics
     class Ec2 < Base
 
+      EC2_OPTIONS = {
+        'ap-southeast-1' => {
+          :ec2_endpoint => 'ec2.ap-southeast-1.amazonaws.com',
+          :s3_endpoint => 's3-ap-southeast-1.amazonaws.com',
+          :s3_location => 'ap-southeast-1'
+        },
+        'eu-west-1' => {
+          :ec2_endpoint => 'ec2.eu-west-1.amazonaws.com',
+          :s3_endpoint => 's3.amazonaws.com',
+          :s3_location => 'EU'
+        },
+        'us-east-1' => {
+          :ec2_endpoint => 'ec2.us-east-1.amazonaws.com',
+          :s3_endpoint => 's3.amazonaws.com',
+          :s3_location => ''
+        },
+        'us-west-1' => {
+          :ec2_endpoint => 'ec2.us-west-1.amazonaws.com',
+          :s3_endpoint => 's3-us-west-1.amazonaws.com',
+          :s3_location => 'us-west-1'
+        }
+      }
+      
       def multicast_config(instance)
         {
           :s3_ping => {
@@ -46,7 +69,7 @@ module Cloud
 
       def running_instances
         return [] if access_key.blank? or secret_access_key.blank?
-        ec2 = Aws::Ec2.new(access_key, secret_access_key)
+        ec2 = Aws::Ec2.new(access_key, secret_access_key, :server => ec2_endpoint)
         all = ec2.describe_instances.map do |instance|
           instance.merge(:id => instance[:aws_instance_id],
                          :image => instance[:aws_image_id],
@@ -69,7 +92,10 @@ module Cloud
       end
 
       def unique_bucket_name(prefix)
-        sc_salt = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate)
+        if prefix =~ /[^0-9a-z-]/ or prefix.length > 23
+          raise ArgumentError.new("Prefix '#{prefix}' has an invalid format. It must contain only lowercase letters, numbers, or - and have a length <= 23")
+        end
+        sc_salt = Digest::SHA1.hexdigest(Certificate.ca_certificate.certificate + @cloud_profile.provider_name)
         creds_salt = Digest::SHA1.hexdigest(access_key)
         suffix = Digest::SHA1.hexdigest("#{sc_salt} #{creds_salt}")
         "#{prefix}#{suffix}"
@@ -132,6 +158,25 @@ module Cloud
         hours * cost_per_hour
       end
 
+      def ec2_endpoint
+        EC2_OPTIONS[@cloud_profile.provider_name][:ec2_endpoint]
+      end
+
+      def s3_endpoint
+        EC2_OPTIONS[@cloud_profile.provider_name][:s3_endpoint]
+      end
+
+      def s3_location
+        EC2_OPTIONS[@cloud_profile.provider_name][:s3_location]
+      end
+
+      def generate_temporary_s3_url(options)
+        url = S3::Signature.generate_temporary_url(options)
+        #replace host with region specific host, since the S3 gem does
+        #not support setting it
+        url.gsub(/s3\.amazonaws\.com/, s3_endpoint)
+      end
+
       protected
 
       def access_key
@@ -162,16 +207,32 @@ module Cloud
                        :bucket => s3_bucket,
                        :resource => s3_resource,
                        :expires_at => expires_at)
-        S3::Signature.generate_temporary_url(options)
+        generate_temporary_s3_url(options)
       end
-
+      
+      {
+        :artifact_bucket_name => 'steamcannonartifacts',
+        :environment_bucket_name => 'steamcannonenvironments'
+      }.each do |bucket_name, prefix|
+        define_method bucket_name do                                   # def artifact_bucket_name
+          if @cloud_profile.metadata[:"s3_#{bucket_name}"]             #   if @cloud_profile.metadata[:s3_artifact_bucket_name]
+            @cloud_profile.metadata[:"s3_#{bucket_name}"]              #     @cloud_profile.metadata[:s3_artifact_bucket_name]
+          else                                                         #   else
+            name = unique_bucket_name(prefix)                          #     name = unique_bucket_name('steamcannonartifacts')
+            @cloud_profile.                                            #     @cloud_profile.
+              merge_and_update_metadata(:"s3_#{bucket_name}" => name)  #       merge_and_update_metadata(:s3_artifact_bucket_name => name)
+            name                                                       #     name
+          end                                                          #   end
+        end                                                            # end
+      end
+      
       def multicast_bucket
-        bucket_name = unique_bucket_name("SteamCannonEnvironments_")
+        bucket_name = environment_bucket_name
 
-        s3 = Aws::S3.new(access_key, secret_access_key)
+        s3 = Aws::S3.new(access_key, secret_access_key, :server => s3_endpoint)
 
         # Ensure our bucket exists and has correct permissions
-        bucket = Aws::S3::Bucket.create(s3, bucket_name, true, 'public-read')
+        bucket = Aws::S3::Bucket.create(s3, bucket_name, true, 'public-read', :location => s3_location)
         bucket_name
       end
       memoize :multicast_bucket
@@ -233,7 +294,7 @@ module Cloud
         group_name = options[:name]
         group_description = options[:description]
 
-        ec2 = Aws::Ec2.new(access_key, secret_access_key)
+        ec2 = Aws::Ec2.new(access_key, secret_access_key, :server => ec2_endpoint)
         begin
           group = ec2.describe_security_groups([group_name])[0]
         rescue Aws::AwsError => e
