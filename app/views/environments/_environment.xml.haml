@@ -11,8 +11,8 @@
       %cloud_name=cloud.cloud_name
       %provider=cloud.provider_name
       %name=cloud.name
-      %artifacts_bucket=cloud.artifact_bucket_name
-      %clustering_bucket=cloud.environment_bucket_name
+      %artifacts_bucket=cloud.cloud_specifics.artifact_bucket_name
+      %clustering_bucket=cloud.cloud_specifics.environment_bucket_name
   %deployments{:href=>environment_deployments_url(environment)}
     - environment.deployments.each do |deployment|
       %link{:href=>environment_deployment_url(environment, deployment), :rel=>'deployment'}
