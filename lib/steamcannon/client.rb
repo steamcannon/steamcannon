@@ -22,6 +22,10 @@ module SteamCannon
         @artifacts ||= fetch_artifacts
       end
 
+      def platforms
+        @platforms ||= fetch_platforms
+      end
+
       def cloud_profiles
         puts "Not done yet. File a Jira or something."
       end
@@ -32,6 +36,7 @@ module SteamCannon
         @environments_url   = response['link']['environments']['href']
         @artifacts_url      = response['link']['artifacts']['href']
         @cloud_profiles_url = response['link']['cloud_profiles']['href']
+        @platforms_url      = response['link']['platforms']['href']
       end
 
       def fetch_environments
@@ -41,6 +46,9 @@ module SteamCannon
       def fetch_artifacts
         @connector.request(@artifacts_url)['artifact'].collect { |a| Artifact.new(@connector, a) }
       end
+
+      def fetch_platforms
+        @connector.request(@platforms_url)['platform']
     end
   end
 end
