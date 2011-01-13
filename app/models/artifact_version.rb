@@ -36,7 +36,8 @@ class ArtifactVersion < ActiveRecord::Base
 
   belongs_to :artifact
   has_many :deployments, :dependent => :destroy
-
+  has_one :cloud_profile, :through => :artifact
+  
   before_create :assign_version_number
   after_create :upload!
   # This before_destroy must come before has_attached_file

@@ -36,9 +36,8 @@ describe ArtifactVersion do
     artifact_version.save!
   end
 
-  it "should belong to an artifact" do
-    ArtifactVersion.new.should respond_to(:artifact)
-  end
+  it { should belong_to :artifact }
+  it { should have_one(:cloud_profile).through(:artifact) }
 
   it "should assign a version number before creating" do
     artifact_version = ArtifactVersion.new(@valid_attributes)
