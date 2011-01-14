@@ -1,7 +1,8 @@
 module SteamCannon
   module API
-    class Deployment  < AbstractApi ; end
+    class CloudProfile < AbstractApi ; end
   end
 end
+
 
 

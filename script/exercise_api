@@ -4,7 +4,7 @@ require 'rubygems'
 require 'lib/steamcannon/client'
 
 api_url = 'http://localhost:8080/api'
-api_name = 'lball@redhat.com'
+api_name = 'lanceball@gmail.com'
 api_pass = 'slacker'
 
 #puts "What's your API endpoint URL? (e.g. http://localhost:8080/api)"
@@ -20,7 +20,7 @@ client = SteamCannon::API::Client.new(api_url, api_name, api_pass)
 
 puts "Environments"
 client.environments.each do |environment|
-  puts environment.name
+  puts "Name: #{environment.name}"
   puts "\tOwner: #{environment.owner}"
   puts "\tCurrent state: #{environment.current_state}"
   puts "\tHREF: #{environment.href}"
@@ -33,9 +33,25 @@ client.environments.each do |environment|
     puts
   end
 end
-puts "Artifacts"
+
+puts "\nArtifacts"
 client.artifacts.each do |artifact|
-  puts artifact.name
+  puts "Name: #{artifact.name}"
   puts "\tVersions:"
-  artifact.versions.each {|v|puts "\t#{v}"}
+  artifact.versions.each do |version|
+    puts "\tVersion #{version.id} at #{version.href}"
+    unless version.deployments.nil?
+      version.deployments.each do |deployment|
+        puts "\t\tDeployment: #{deployment.href}"
+      end
+    end
+  end
+  puts
+end
+
+puts "\nPlatforms"
+client.platforms.each do |platform|
+  puts "Name: #{platform.name} ID: #{platform.id}"
+  puts "URL: #{platform.href}"
+  puts
 end

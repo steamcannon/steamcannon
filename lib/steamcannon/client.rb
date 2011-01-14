@@ -1,8 +1,10 @@
 require File.join(File.dirname(__FILE__), 'api', 'abstract_api')
 require File.join(File.dirname(__FILE__), 'api', 'connector')
 require File.join(File.dirname(__FILE__), 'api', 'artifact')
+require File.join(File.dirname(__FILE__), 'api', 'artifact_version')
 require File.join(File.dirname(__FILE__), 'api', 'deployment')
 require File.join(File.dirname(__FILE__), 'api', 'environment')
+require File.join(File.dirname(__FILE__), 'api', 'platform')
 
 module SteamCannon
   module API
@@ -27,7 +29,7 @@ module SteamCannon
       end
 
       def cloud_profiles
-        puts "Not done yet. File a Jira or something."
+        @cloud_profiles ||= fetch_cloud_profiles
       end
 
       protected
@@ -40,18 +42,29 @@ module SteamCannon
       end
 
       def fetch_environments
-        @connector.request(@environments_url)['environment'].collect{|e|Environment.new(@connector, e)}
+        fetch(@environments_url, 'environment', Environment)
       end
 
       def fetch_artifacts
-        @connector.request(@artifacts_url)['artifact'].collect { |a| Artifact.new(@connector, a) }
+        fetch(@artifacts_url, 'artifact', Artifact)
       end
 
       def fetch_platforms
-        @connector.request(@platforms_url)['platform']
+        fetch(@platforms_url, 'platform', Platform)
+      end
+
+      def fetch_cloud_profiles
+        fetch(@cloud_profiles_url, 'cloud_profile', CloudProfile)
+      end
+
+      def fetch(url, key, clazz)
+        response = @connector.request(url)[key]
+        response.nil? ? [] : response.collect { |p| clazz.new(@connector, p) }
+      end
     end
   end
 end
+
 
 
 

@@ -1,11 +1,6 @@
 module SteamCannon
   module API
     class Environment < AbstractApi
-      def initialize(connector, data)
-        @connector = connector
-        @data = data
-      end
-
       def deltacloud_url
         @data['link']['deltacloud_endpoint']['href']
       end
