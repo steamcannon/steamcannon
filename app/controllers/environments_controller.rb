@@ -108,7 +108,6 @@ class EnvironmentsController < ApplicationController
   # POST /environments/1/start
   # POST /environments/1/start.xml
   def start
-    spit
     @environment.start!
     respond_to do |format|
       format.html { redirect_back_or_default(environments_url, :notice => 'Environment is starting.') }
