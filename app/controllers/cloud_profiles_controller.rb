@@ -60,6 +60,14 @@ class CloudProfilesController < ResourceController::Base
     render(generate_json_response(valid ? :ok : :error))
   end
 
+  index.wants.xml do 
+    render :template => 'cloud_profiles/index.xml'
+  end
+
+  show.wants.xml do
+    render :template => 'cloud_profiles/show.xml'
+  end
+
   protected
   def end_of_association_chain
     current_organization.cloud_profiles

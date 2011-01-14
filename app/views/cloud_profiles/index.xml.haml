@@ -1,0 +1,3 @@
+%cloud_profiles{:href=>cloud_profiles_url}
+  - @cloud_profiles.each do |cloud|
+    = render :partial => 'cloud_profile.xml', :locals=>{:cloud=>cloud}

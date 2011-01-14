@@ -5,14 +5,8 @@
   %updated=environment.updated_at
   %current_state=environment.current_state
   %preserve_storage_volumes=environment.preserve_storage_volumes?
-  - cloud = environment.cloud_profile
-  - if cloud
-    %cloud_profile{:href=>cloud_profile_url(cloud)}
-      %cloud_name=cloud.cloud_name
-      %provider=cloud.provider_name
-      %name=cloud.name
-      %artifacts_bucket=cloud.cloud_specifics.artifact_bucket_name
-      %clustering_bucket=cloud.cloud_specifics.environment_bucket_name
+  - if environment.cloud_profile
+    = render :partial => 'cloud_profiles/cloud_profile', :locals=>{:cloud=>environment.cloud_profile} 
   %deployments{:href=>environment_deployments_url(environment)}
     - environment.deployments.each do |deployment|
       %link{:href=>environment_deployment_url(environment, deployment), :rel=>'deployment'}

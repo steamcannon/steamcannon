@@ -1,0 +1,6 @@
+%cloud_profile{:href=>cloud_profile_url(cloud), :id=>cloud.id}
+  %cloud_name=cloud.cloud_name
+  %provider=cloud.provider_name
+  %name=cloud.name
+  %artifacts_bucket=cloud.cloud_specifics.artifact_bucket_name
+  %clustering_bucket=cloud.cloud_specifics.environment_bucket_name
