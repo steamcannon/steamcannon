@@ -32,6 +32,13 @@ client.environments.each do |environment|
     puts "\t\tStatus: #{deployment.current_state}"
     puts
   end
+  puts "Launch this environment? Type 'yes' to launch, otherwise we won't"
+  if (gets.chomp == "yes")
+    puts "Launching #{environment.name}"
+    environment.launch
+  else
+    puts "Moving on"
+  end
 end
 
 puts "\nArtifacts"

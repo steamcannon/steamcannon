@@ -4,6 +4,10 @@ module SteamCannon
       def deltacloud_url
         @data['link']['deltacloud_endpoint']['href']
       end
+
+      def launch
+        @connector.post(@data['actions'][0]['link']['start']['href'])
+      end
   
       def deployments
         unless @deployments

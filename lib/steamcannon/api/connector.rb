@@ -21,8 +21,12 @@ module SteamCannon
       end
 
       def request(url, options = {'KeyAttr' => ['rel']})
-        response = RestClient.send(:get, url.to_s, default_headers)
+        response = RestClient.get(url.to_s, default_headers)
         XmlSimple.xml_in(response.dup, options)
+      end
+
+      def post(url, data = {})
+        RestClient.post(url, data, default_headers)
       end
     end
   end

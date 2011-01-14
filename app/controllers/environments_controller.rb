@@ -22,6 +22,7 @@ class EnvironmentsController < ApplicationController
   navigation :environments
   before_filter :require_user
   before_filter :load_environment, :except => [:index, :new, :create, :status]
+
   # GET /environments
   # GET /environments.xml
   def index
@@ -107,6 +108,7 @@ class EnvironmentsController < ApplicationController
   # POST /environments/1/start
   # POST /environments/1/start.xml
   def start
+    spit
     @environment.start!
     respond_to do |format|
       format.html { redirect_back_or_default(environments_url, :notice => 'Environment is starting.') }
