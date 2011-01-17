@@ -81,7 +81,7 @@ class ArtifactVersion < ActiveRecord::Base
   end
 
   def deployment_file
-    archive.to_file
+    File.new(storage.path(self))
   end
 
   def type_key
