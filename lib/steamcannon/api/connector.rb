@@ -16,7 +16,8 @@ module SteamCannon
         auth_header.gsub!("\n", "")
         {
           :authorization => auth_header,
-          :accept => "text/xml"
+          :accept => "text/xml",
+          :x_requested_with => 'XMLHttpRequest' # Make rails authenticity token stuff irrelevant
         }
       end
 
