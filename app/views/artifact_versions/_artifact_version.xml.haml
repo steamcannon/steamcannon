@@ -4,5 +4,8 @@
   %created_at=version.created_at
   %current_state=version.current_state
   %actions
+    - unless version.is_deployed?
+      %link{:href=>artifact_artifact_version_url(version.artifact, version, :_method=>:delete), :rel=>'delete'}
+
     - current_user.environments.each do |environment|
       %link{:href=>environment_deployments_url(environment, :artifact_version_id=>version.id), :rel=>'deploy'}
