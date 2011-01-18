@@ -44,8 +44,13 @@ module Cloud
     end
 
     def terminate instance_id
-      i = client.instance(instance_id)
-      i ? i.stop! : false
+      instance = client.instance(instance_id)
+      if instance
+        instance.stop!
+        instance.destroy!
+      else
+        false
+      end
     end
 
     def method_missing(meth, *args, &block)
