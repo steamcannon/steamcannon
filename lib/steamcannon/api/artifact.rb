@@ -8,6 +8,7 @@ module SteamCannon
         end
       end
 
+      protected
       def parse_versions
         @data['artifact_version'].collect{|v| ArtifactVersion.new(@connector, v)}
       end

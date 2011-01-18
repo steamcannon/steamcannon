@@ -17,7 +17,7 @@ module SteamCannon
         {
           :authorization => auth_header,
           :accept => "text/xml",
-          :x_requested_with => 'XMLHttpRequest' # Make rails authenticity token stuff irrelevant
+          :x_requested_with => 'XMLHttpRequest' # Make protect_from_forgery happy
         }
       end
 

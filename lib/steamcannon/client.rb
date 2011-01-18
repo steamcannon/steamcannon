@@ -17,19 +17,19 @@ module SteamCannon
       end
 
       def environments
-        @environments ||= fetch_environments
+        @environments ||= fetch(@environments_url, 'environment', Environment)
       end
 
       def artifacts
-        @artifacts ||= fetch_artifacts
+        @artifacts ||= fetch(@artifacts_url, 'artifact', Artifact)
       end
 
       def platforms
-        @platforms ||= fetch_platforms
+        @platforms ||= fetch(@platforms_url, 'platform', Platform)
       end
 
       def cloud_profiles
-        @cloud_profiles ||= fetch_cloud_profiles
+        @cloud_profiles ||= fetch(@cloud_profiles_url, 'cloud_profile', CloudProfile)
       end
 
       protected
@@ -39,22 +39,6 @@ module SteamCannon
         @artifacts_url      = response['link']['artifacts']['href']
         @cloud_profiles_url = response['link']['cloud_profiles']['href']
         @platforms_url      = response['link']['platforms']['href']
-      end
-
-      def fetch_environments
-        fetch(@environments_url, 'environment', Environment)
-      end
-
-      def fetch_artifacts
-        fetch(@artifacts_url, 'artifact', Artifact)
-      end
-
-      def fetch_platforms
-        fetch(@platforms_url, 'platform', Platform)
-      end
-
-      def fetch_cloud_profiles
-        fetch(@cloud_profiles_url, 'cloud_profile', CloudProfile)
       end
 
       def fetch(url, key, clazz)
