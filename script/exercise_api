@@ -64,6 +64,12 @@ client.artifacts.each do |artifact|
       end
     end
   end
+  puts "Upload a new version? Type 'yes' to provide a new file, otherwise we'll just move on"
+  if (gets.chomp == "yes")
+    puts "Whats the file?"
+    file_name = gets.chomp
+    artifact.create_version(file_name)
+  end
   puts
 end
 

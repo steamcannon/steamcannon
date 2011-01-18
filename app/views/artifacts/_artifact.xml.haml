@@ -3,5 +3,6 @@
   - unless artifact.is_deployed?
     %actions
       %link{:href=>artifact_url(artifact, :_method=>:delete), :rel=>'delete'}
-  - artifact.artifact_versions.each do |version|
-    = render :partial => 'artifact_versions/artifact_version', :locals=>{:version=>version}
+  %artifact_versions{:href=>artifact_artifact_versions_url(artifact)}
+    - artifact.artifact_versions.each do |version|
+      = render :partial => 'artifact_versions/artifact_version', :locals=>{:version=>version}
