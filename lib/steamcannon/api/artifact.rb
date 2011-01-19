@@ -8,8 +8,8 @@ module SteamCannon
         end
       end
 
-      def create_version(data)
-        puts "This part isn't done yet - but when it is, we'll upload #{data}"
+      def create_version(artifact_file)
+        @connector.post(@data['artifact_versions'][0]['href'], "artifact_version[archive]"=>File.new(artifact_file, "rb"))
       end
 
       protected

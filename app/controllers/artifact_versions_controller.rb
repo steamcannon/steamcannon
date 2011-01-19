@@ -46,7 +46,7 @@ class ArtifactVersionsController < ApplicationController
     respond_to do |format|
       if @artifact_version.save
         format.html { redirect_to(@artifact, :notice => 'Version was successfully created.') }
-        format.xml  { render :xml => @artifact_version, :status => :created, :location => @artifact_version }
+        format.xml  { redirect_to(artifact_url(@artifact), :status => :created) }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @artifact_version.errors, :status => :unprocessable_entity }
