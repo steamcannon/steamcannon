@@ -73,6 +73,15 @@ client.artifacts.each do |artifact|
   puts
 end
 
+puts "\nCloud Profiles"
+client.cloud_profiles.each do |profile|
+  puts "Name: #{profile.name}"
+  puts "Cloud: #{profile.cloud_name}"
+  puts "Provider: #{profile.provider}"
+  puts "Artifacts Bucket: #{profile.artifacts_bucket}"
+  puts "Clustering Bucket: #{profile.clustering_bucket}"
+end
+
 puts "\nPlatforms"
 client.platforms.each do |platform|
   puts "Name: #{platform.name} ID: #{platform.id}"
