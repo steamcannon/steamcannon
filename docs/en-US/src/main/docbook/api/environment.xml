@@ -1,15 +1,27 @@
-<environment href='http://localhost:8080/environments/15'>
-  <name>Staging, 2-tier</name>
-  <owner>lanceball@gmail.com</owner>
-  <created>2010-11-04 22:26:03 UTC</created>
-  <updated>2010-12-10 22:02:01 UTC</updated>
-  <current_state>stopped</current_state>
+<environment href='http://try.steamcannon.org/environments/2'>
+  <name>Test API</name>
+  <owner>lball@redhat.com</owner>
+  <created>2011-01-17 21:56:48 UTC</created>
+  <updated>2011-01-17 22:33:16 UTC</updated>
+  <current_state>stopping</current_state>
   <preserve_storage_volumes>false</preserve_storage_volumes>
+  <cloud_profile href='http://try.steamcannon.org/cloud_profiles/1' id='1'>
+    <cloud_name>ec2</cloud_name>
+    <provider>us-east-1</provider>
+    <name>Default EC2</name>
+    <artifacts_bucket>SteamCannonArtifacts_d1c38d12aafb7d886f65f56321a7bf94318caa45</artifacts_bucket>
+    <clustering_bucket>SteamCannonEnvironments_d1c38d12aafb7d886f65f56321a7bf94318caa45</clustering_bucket>
+  </cloud_profile>
+  <deployments href='http://try.steamcannon.org/environments/2/deployments'>
+  </deployments>
   <metadata>
-    
+    jboss_as_admin_useruseradminpasswordf7f0ea78b216337c7d1f91eaf4239f
   </metadata>
-  <link 
-    href='http://try.steamcannon.org/environments/15/deltacloud' 
-    rel='deltacloud_endpoint' />
+  <actions>
+    <link href='http://try.steamcannon.org/environments/2/start' rel='start' />
+    <link href='http://try.steamcannon.org/environments/2/clone' rel='clone' />
+    <link href='http://try.steamcannon.org/environments/2?_method=delete' rel='delete' />
+  </actions>
+  <link href='http://try.steamcannon.org/environments/2/deltacloud' rel='deltacloud_endpoint' />
 </environment>
 

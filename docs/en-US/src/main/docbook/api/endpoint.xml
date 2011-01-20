@@ -1,3 +1,7 @@
-<api version='0.1'>
+<api version='0.2'>
   <link href='http://try.steamcannon.org/environments' rel='environments' />
+  <link href='http://try.steamcannon.org/artifacts' rel='artifacts' />
+  <link href='http://try.steamcannon.org/cloud_profiles' rel='cloud_profiles' />
+  <link href='http://try.steamcannon.org/platforms' rel='platforms' />
 </api>
+

@@ -20,10 +20,10 @@
     </para>
     <para>
       SteamCannon's <acronym>API</acronym> is implemented using
-      <acronym>HATEOS</acronym> (Hypermedia as the Engine of Application State)
+      <acronym>HATEOAS</acronym> (Hypermedia as the Engine of Application State)
       where all a client needs to know is the entry point URL. Subsequent
       access to objects within the system is made possible by URLs returned in
-      the server response.  For more information about REST and HATEOS, please
+      the server response.  For more information about REST and HATEOAS, please
       see the reference below.
       <itemizedlist>
         <listitem>
@@ -41,11 +41,11 @@
     </para>
 
     <section>
-      <title>Deltacloud Endpoint</title>
+      <title>DeltaCloud Endpoint</title>
       <para>
-        The primary function of the SteamCannon API in this nascent version is
-        to expose a user- and environment-specific Deltacloud endpoint which
-        may be used to start and stop SteamCannon machine instances within a
+        SteamCannon uses DeltaCloud under the covers to communicate with 
+        the cloud.  Our API exposes a DeltaCloud-compatible endpoint which may
+        be used to start and stop SteamCannon machine instances within a
         SteamCannon environment. Through this Deltacloud endpoint, clients have
         access to instances, images, hardware profiles and realms.  These
         entities are abstractions of specific cloud-based objects, allowing
@@ -77,7 +77,7 @@
     <section>
       <title>Server Responses</title>
       <para>
-        All server responses from the API will be in XML format.  In the event
+        All server responses from the API are in XML format.  In the event
         that a client attempts to access a resource which does not exist or for
         which the user is not authorized, the server will issue an HTTP 404
         (Not Found) error code in response.  Creation of new objects, for example
@@ -98,8 +98,9 @@
       <code>&lt;link&gt;</code> elements.  The <code>rel</code> attribute
       provides the name of the collection.  A <code>GET</code> request to the
       URL in the <code>href</code> attribute provides access to the collection
-      itself. As you can see, the API endpoint for version 0.1 contains a
-      single collection &mdash; environments.
+      itself. The API endpoint contains links to collections of the SteamCannon
+      objects, including <code>environments</code>, <code>artifacts</code>
+      <code>cloud_profiles</code> and <code>platforms</code>.
     </para>
   </section>
   <section>
@@ -118,10 +119,8 @@
       <title>Environment Collections</title>
       <para>
         By sending a GET request to the endpoint's <code>environments</code>
-        link, you can access a collection of all environments available.  The
-        server returns a list of the authenticated user's environments as
-        <code>&lt;environment&gt;</code> elements, each containing
-        <code>name</code> and <code>href</code> attributes as shown below. 
+        link, you can access a collection of all environments available to the
+        authenticated user as shown below.
 <screen><xi:include href="api/environments.xml" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></screen>
       </para>
     </section>
@@ -130,7 +129,7 @@
       <para>
         Clients may access a single <code>&lt;environment&gt;</code> using an
         <code>href</code> from the environments collection.  For example
-        <code>http://try.steamcannon.org/environments/12</code> provides
+        <code>http://try.steamcannon.org/environments/2</code> provides
         identifying information about the environment, as well as information
         about the current state, and a link to a Deltacloud API endpoint
         for the environment.
@@ -170,7 +169,6 @@
           no instances are running the environment will be considered
           <code>stopped</code>
         </para>
-      </section>
       <section>
         <title>preserve_storage_volumes</title>
         <para>
@@ -179,9 +177,27 @@
           on shutdown.
         </para>
       </section>
+      </section>
+      <section>
+        <title>cloud_profile</title>
+        <para>
+          This is information about the cloud the environment is configured
+          to run on, including the cloud and provider names as well as any
+          storage buckets created at runtime.
+        </para>
+      </section>
+      <section>
+        <title>deployments</title>
+        <para>If any artifacts have been deployed to this environment
+        they will appear here as links to the deployment object.</para>
+      </section>
       <section>
         <title>metadata</title>
         <para>Any metadata associated with this environment.</para>
+      </section>
+      <section>
+        <title>actions</title>
+        <para>TODO: Fill this in</para>
       </section>
       <section>
         <title>link</title>
